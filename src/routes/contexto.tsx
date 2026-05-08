@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PlaceholderRoute } from "@/components/kratos/views/PlaceholderRoute";
+import { ContextoView } from "@/components/kratos/views/ContextoView";
 
 export const Route = createFileRoute("/contexto")({
   head: () => ({
@@ -7,15 +7,9 @@ export const Route = createFileRoute("/contexto")({
       { title: "Contexto · KRATOS" },
       {
         name: "description",
-        content: "Janelas, abas e sessões — onde sua atenção esteve.",
+        content: "Onde você está, onde se perdeu e como voltar.",
       },
     ],
   }),
-  component: () => (
-    <PlaceholderRoute
-      eyebrow="Contexto"
-      title="Janelas, abas e sessões"
-      description="Visão consolidada do contexto ativo do operador."
-    />
-  ),
+  component: ContextoView,
 });

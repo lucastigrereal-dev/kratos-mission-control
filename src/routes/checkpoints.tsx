@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PlaceholderRoute } from "@/components/kratos/views/PlaceholderRoute";
+import { CheckpointsView } from "@/components/kratos/views/CheckpointsView";
 
 export const Route = createFileRoute("/checkpoints")({
   head: () => ({
@@ -7,15 +7,9 @@ export const Route = createFileRoute("/checkpoints")({
       { title: "Checkpoints · KRATOS" },
       {
         name: "description",
-        content: "Timeline de checkpoints salvos pelo operador.",
+        content: "Seu save game mental para retomar sem se perder.",
       },
     ],
   }),
-  component: () => (
-    <PlaceholderRoute
-      eyebrow="Checkpoints"
-      title="Timeline de estados salvos"
-      description="Pontos de retorno seguros por sessão e por projeto."
-    />
-  ),
+  component: CheckpointsView,
 });
