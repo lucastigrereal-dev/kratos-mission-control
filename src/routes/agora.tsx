@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AgoraView } from "@/components/kratos/views/AgoraView";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/agora")({
   head: () => ({
     meta: [
       { title: "Agora · KRATOS" },
