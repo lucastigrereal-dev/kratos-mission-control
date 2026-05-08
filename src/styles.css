@@ -132,6 +132,38 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* ============================================================
+ * KRATOS Mission Control — Design Tokens
+ * Source: 03_KRATOS_DESIGN_TOKENS.md (hex exact). Append-only.
+ * ============================================================ */
+:root,
+.dark {
+  --kratos-surface-0: #0C0C0E;
+  --kratos-surface-1: #111114;
+  --kratos-surface-2: #17171B;
+  --kratos-surface-3: #1E1E24;
+  --kratos-surface-4: #26262F;
+
+  --kratos-text-primary: #F0F0F2;
+  --kratos-text-secondary: #8A8A9A;
+  --kratos-text-muted: #4A4A5A;
+
+  --kratos-ok: #22C55E;
+  --kratos-warn: #F59E0B;
+  --kratos-critical: #EF4444;
+  --kratos-info: #3B82F6;
+  --kratos-ghost: #6366F1;
+  --kratos-accent: #818CF8;
+
+  --kratos-border: rgba(255, 255, 255, 0.06);
+  --kratos-border-on-focus: rgba(34, 197, 94, 0.15);
+  --kratos-border-off-focus: rgba(239, 68, 68, 0.15);
+  --kratos-border-live: rgba(99, 102, 241, 0.15);
+
+  --kratos-font-sans: "Inter", "Inter Variable", system-ui, -apple-system, sans-serif;
+  --kratos-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -141,4 +173,40 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  /* KRATOS dark-only shell. The .dark class is forced on <html>. */
+  html.dark,
+  html.dark body {
+    background-color: var(--kratos-surface-0);
+    color: var(--kratos-text-primary);
+    font-family: var(--kratos-font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* KRATOS animations — calm, never bouncy */
+@keyframes kratos-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+@keyframes kratos-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.2; }
+}
+@keyframes kratos-fade-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.kratos-pulse  { animation: kratos-pulse 2s ease-in-out infinite; }
+.kratos-blink  { animation: kratos-blink 1.2s ease-in-out infinite; }
+.kratos-fadein { animation: kratos-fade-in 300ms ease-out both; }
+
+.kratos-mono { font-family: var(--kratos-font-mono); }
+
+.kratos-focus-ring:focus-visible {
+  outline: 2px solid var(--kratos-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
