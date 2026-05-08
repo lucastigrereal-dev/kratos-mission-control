@@ -103,7 +103,7 @@ export function CurrentContextHero({
             className="text-[12px]"
             style={{ color: "var(--kratos-text-primary)" }}
           >
-            {window}
+            {windowName}
           </div>
         </div>
       </div>
