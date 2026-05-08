@@ -210,3 +210,40 @@
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+.kratos-card-hover:hover {
+  background: var(--kratos-surface-3) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+.kratos-nav-item-active {
+  position: relative;
+  background: var(--kratos-surface-3);
+  color: var(--kratos-text-primary);
+}
+.kratos-nav-item-active::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 2px;
+  background: var(--kratos-accent);
+  border-radius: 2px;
+}
+
+.kratos-aurora-glass {
+  background: linear-gradient(
+    180deg,
+    rgba(99, 102, 241, 0.06),
+    rgba(23, 23, 27, 0.65) 40%,
+    rgba(17, 17, 20, 0.85)
+  );
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.kratos-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.kratos-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--kratos-surface-4);
+  border-radius: 3px;
+}
+.kratos-scrollbar::-webkit-scrollbar-track { background: transparent; }
