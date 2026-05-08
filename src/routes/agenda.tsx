@@ -1,18 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PlaceholderRoute } from "@/components/kratos/views/PlaceholderRoute";
+import { AgendaView } from "@/components/kratos/views/AgendaView";
 
 export const Route = createFileRoute("/agenda")({
   head: () => ({
     meta: [
       { title: "Agenda · KRATOS" },
-      { name: "description", content: "Eventos, prazos e calendário do operador." },
+      {
+        name: "description",
+        content:
+          "Plano do dia, prazos, atrasados e recomendação do Mentor Operacional.",
+      },
     ],
   }),
-  component: () => (
-    <PlaceholderRoute
-      eyebrow="Agenda"
-      title="Calendário e prazos"
-      description="Próximos compromissos e deadlines em ordem de urgência."
-    />
-  ),
+  component: AgendaView,
 });
