@@ -9,8 +9,44 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SistemaRouteImport } from './routes/sistema'
+import { Route as ProjetosRouteImport } from './routes/projetos'
+import { Route as ContextoRouteImport } from './routes/contexto'
+import { Route as CheckpointsRouteImport } from './routes/checkpoints'
+import { Route as AgoraRouteImport } from './routes/agora'
+import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SistemaRoute = SistemaRouteImport.update({
+  id: '/sistema',
+  path: '/sistema',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjetosRoute = ProjetosRouteImport.update({
+  id: '/projetos',
+  path: '/projetos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContextoRoute = ContextoRouteImport.update({
+  id: '/contexto',
+  path: '/contexto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckpointsRoute = CheckpointsRouteImport.update({
+  id: '/checkpoints',
+  path: '/checkpoints',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgoraRoute = AgoraRouteImport.update({
+  id: '/agora',
+  path: '/agora',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgendaRoute = AgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +55,116 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/agora': typeof AgoraRoute
+  '/checkpoints': typeof CheckpointsRoute
+  '/contexto': typeof ContextoRoute
+  '/projetos': typeof ProjetosRoute
+  '/sistema': typeof SistemaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/agora': typeof AgoraRoute
+  '/checkpoints': typeof CheckpointsRoute
+  '/contexto': typeof ContextoRoute
+  '/projetos': typeof ProjetosRoute
+  '/sistema': typeof SistemaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/agora': typeof AgoraRoute
+  '/checkpoints': typeof CheckpointsRoute
+  '/contexto': typeof ContextoRoute
+  '/projetos': typeof ProjetosRoute
+  '/sistema': typeof SistemaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/agenda'
+    | '/agora'
+    | '/checkpoints'
+    | '/contexto'
+    | '/projetos'
+    | '/sistema'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/agenda'
+    | '/agora'
+    | '/checkpoints'
+    | '/contexto'
+    | '/projetos'
+    | '/sistema'
+  id:
+    | '__root__'
+    | '/'
+    | '/agenda'
+    | '/agora'
+    | '/checkpoints'
+    | '/contexto'
+    | '/projetos'
+    | '/sistema'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgendaRoute: typeof AgendaRoute
+  AgoraRoute: typeof AgoraRoute
+  CheckpointsRoute: typeof CheckpointsRoute
+  ContextoRoute: typeof ContextoRoute
+  ProjetosRoute: typeof ProjetosRoute
+  SistemaRoute: typeof SistemaRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sistema': {
+      id: '/sistema'
+      path: '/sistema'
+      fullPath: '/sistema'
+      preLoaderRoute: typeof SistemaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projetos': {
+      id: '/projetos'
+      path: '/projetos'
+      fullPath: '/projetos'
+      preLoaderRoute: typeof ProjetosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contexto': {
+      id: '/contexto'
+      path: '/contexto'
+      fullPath: '/contexto'
+      preLoaderRoute: typeof ContextoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkpoints': {
+      id: '/checkpoints'
+      path: '/checkpoints'
+      fullPath: '/checkpoints'
+      preLoaderRoute: typeof CheckpointsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agora': {
+      id: '/agora'
+      path: '/agora'
+      fullPath: '/agora'
+      preLoaderRoute: typeof AgoraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agenda': {
+      id: '/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof AgendaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +177,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgendaRoute: AgendaRoute,
+  AgoraRoute: AgoraRoute,
+  CheckpointsRoute: CheckpointsRoute,
+  ContextoRoute: ContextoRoute,
+  ProjetosRoute: ProjetosRoute,
+  SistemaRoute: SistemaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
