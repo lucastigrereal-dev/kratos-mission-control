@@ -1,452 +1,57 @@
-# Crédito 5/5 — Polish Final + Responsividade + Handoff
 
-Refino puramente visual do sandbox. Sem novas features, sem lógica real, sem backend, hooks, API, types, package, vite, tsconfig ou .env. Nenhum arquivo proibido será tocado.
+# Crédito 5A — Design Elevation Pass
 
-## Arquivos a alterar (refino visual)
+Elevação visual do sandbox KRATOS para parecer cockpit premium Apple-clean (VisionOS + Raycast + Linear + Vercel + observability). Sem nova lógica, sem features, sem dependências.
 
-Shell e estilos globais:
+## Direção (resumo de qualidade)
 
-- `src/styles.css` — pequenos ajustes: utilitários de container responsivo, breakpoint helpers e refinamento dos tokens de hover/focus já existentes (sem mudar paleta).
-- `src/components/kratos/shell/AppShell.tsx` — sidebar colapsada por padrão em telas estreitas, AuroraPanel fechado por padrão em mobile, container `max-w` e `px` responsivos.
-- `src/components/kratos/shell/Sidebar.tsx` — comportamento responsivo (largura/colapso em <1024px), focus rings, `aria-label` nos botões.
-- `src/components/kratos/shell/Topbar.tsx` — densidade, truncamento, `aria-label` no toggle Aurora.
-- `src/components/kratos/shell/AuroraPanel.tsx` — manter estrutura externa; só ajustar largura responsiva (overlay em mobile).
-- `src/components/kratos/shell/StatusBar.tsx` — esconder metadados secundários em mobile, sem virar poluição.
+1. **Mais Apple-clean**: tipografia com mais hierarquia (display tight, mono para números/prazos), espaçamento mais generoso entre seções, bordas hairline (1px @ 6–8% white), profundidade via *layered surfaces* (surface-1/2/3) e não via sombra colorida. Zero gradiente chamativo, zero neon, zero branco puro (texto primário fica em `--kratos-text-primary` que já é off-white).
+2. **Não vira admin template**: substituir títulos genéricos por *operational copy* curta; cada tela ganha um *hero strip* fino (eyebrow + título + 1 linha de contexto) em vez do header retangular padrão; navegação ativa marcada por barra lateral fina + leve `surface-3`, não por bloco colorido.
+3. **/agora mais impactante sem encher**: hero do Foco vira protagonista — ocupa coluna inteira em desktop com tipografia maior, número/prazo em mono e badge LIVE discreta. Demais cards descem em densidade visual (subtler) para criar contraste de prioridade. Nenhum card novo.
+4. **AuroraPanel premium sem virar chat**: glass sutil mantido (já existe), adicionar header com micro divisor luminoso, mensagens em cápsulas com borda hairline, quick-actions como chips compactos, input mock com placeholder calmo ("Aurora está em modo visual"). Nada de bolha de chat infinita.
+5. **Cards menos genéricos**: padronizar interior — eyebrow mono em `text-muted` + título 14–15px semibold + corpo 13px + footer com badge/meta em mono 10–11px tracking 0.15em. Hover eleva para `surface-3` + borda 10% white. Focus ring em `--kratos-accent` com offset.
 
-Views (apenas espaçamento, hierarquia, microcopy, empilhamento mobile):
+## Arquivos a alterar
 
-- `src/components/kratos/views/AgoraView.tsx`
-- `src/components/kratos/views/AgendaView.tsx` (manter `DoNotDoPanel` na primeira dobra)
-- `src/components/kratos/views/ContextoView.tsx`
-- `src/components/kratos/views/CheckpointsView.tsx`
-- `src/routes/sistema.tsx` ou view correspondente (manter como referência dos 9 estados)
-- `src/routes/index.tsx` (ajustar microcopy da home)
+Shell:
+- `src/styles.css` — adicionar utilitários *visuais* (não-tokens novos): `.kratos-eyebrow`, `.kratos-display`, `.kratos-num`, `.kratos-divider-soft`, `.kratos-hairline`, refinar `.kratos-card-hover`, `.kratos-focus-ring`, `.kratos-aurora-glass`. Sem cores novas, sem dependências.
+- `src/components/kratos/shell/AppShell.tsx` — ritmo do container principal, padding vertical maior, gutter responsivo (apenas estética).
+- `src/components/kratos/shell/Sidebar.tsx` — agrupamento visual (eyebrow "Operação" / "Sistema"), refino do item ativo (barra accent + surface-3), espaçamento.
+- `src/components/kratos/shell/Topbar.tsx` — limpar densidade, logo com mais presença, separadores hairline, botão Aurora com estado mais elegante.
+- `src/components/kratos/shell/StatusBar.tsx` — texto mais compacto e calmo, separadores em vez de bullets, microcopy operacional.
+- `src/components/kratos/shell/AuroraPanel.tsx` — header refinado (divisor luminoso, eyebrow "Aurora · Mentor"), manter largura/transição/fechar.
 
-Componentes base (apenas inconsistências pequenas, sem reescrever):
+Aurora:
+- `src/components/kratos/aurora/AuroraPanelContent.tsx`, `AuroraMessagePreview.tsx`, `AuroraQuickActions.tsx`, `AuroraInputMock.tsx` — visual VisionOS sutil, cápsulas com hairline, chips compactos, input mock calmo.
 
-- `src/components/kratos/base/StatusCard.tsx`
-- `src/components/kratos/base/SystemCard.tsx`
-- `src/components/kratos/base/SectionHeader.tsx`
-- `src/components/kratos/base/AlertBadge.tsx`
-- `src/components/kratos/base/EmptyState.tsx`
-- `src/components/kratos/base/LoadingState.tsx`
-- `src/components/kratos/base/ErrorState.tsx`
-- `src/components/kratos/base/LiveStatusIndicator.tsx`
-- `src/components/kratos/base/StatusDot.tsx`
+Base (apenas refino visual, sem mudar API):
+- `src/components/kratos/base/SystemCard.tsx` — borda hairline, hover mais elegante, transições 180–200ms.
+- `src/components/kratos/base/StatusCard.tsx` — accents mais discretos.
+- `src/components/kratos/base/SectionHeader.tsx` — eyebrow + título + meta alinhados, divisor soft opcional.
+- `src/components/kratos/base/AlertBadge.tsx`, `StatusDot.tsx`, `LiveStatusIndicator.tsx` — densidade, mono, pulse mais sutil.
 
-Cards das telas (microcopy + acessibilidade + botões mock com `aria-label` e `disabled` quando não fazem ação):
+Views (apenas hierarquia, ritmo, microcopy — sem novos cards):
+- `src/components/kratos/views/AgoraView.tsx` — promover FocusCard a hero (maior, mais ar), demais cards em densidade reduzida.
+- `src/components/kratos/views/AgendaView.tsx` — manter `DoNotDoPanel` na primeira dobra, refinar hierarquia entre Mentor/Score/Risk e o plano do dia.
+- `src/components/kratos/views/ContextoView.tsx` — hero do contexto mais limpo, lista limitada a respiração visual.
+- `src/components/kratos/views/CheckpointsView.tsx` — "Retomar daqui" como peça visual mais forte (card destacado, não botão isolado).
+- `src/routes/sistema.tsx` — organização em grid mais técnico/legível dos 9 estados.
+- `src/routes/index.tsx` — microcopy operacional ("Você está aqui.") e CTA discreto para `/agora`.
 
-- `src/components/kratos/agora/*` (NextActionCard, AuroraShortcutCard, etc.)
-- `src/components/kratos/agenda/*`
-- `src/components/kratos/contexto/ContextActionStrip.tsx` e demais
-- `src/components/kratos/checkpoints/*`
-- `src/components/kratos/aurora/AuroraQuickActions.tsx`, `AuroraInputMock.tsx`
+## Arquivos NÃO tocados
 
-## Arquivos a criar
+`backend/**`, `src/hooks/**`, `src/lib/**`, `src/types/**`, `package.json`, `vite.config.ts`, `tsconfig.json`, qualquer `.env`, `src/router.tsx`, `src/routeTree.gen.ts`, `src/server.ts`, `src/start.ts`.
 
-- `KRATOS_VISUAL_HANDOFF.md` (raiz) — markdown curto com:
-  - resumo dos 5 créditos
-  - principais componentes criados
-  - componentes mais portáveis
-  - telas a adaptar primeiro no KRATOS real
-  - pontos de atenção para conectar hooks reais
-  - lista de arquivos que Claude Code deve olhar
-  - aviso "tudo é mock visual"
-  - proibição de copiar cegamente
+## Microinterações permitidas
 
-Nenhum outro arquivo novo. Nenhum hook, lib, type, asset.
+Hover 180ms (surface + border), pulse LIVE 2s ease-in-out já existente, fade-in 300ms já existente, focus ring accent. Nada de bounce, parallax, 3D, neon.
 
-## Telas refinadas
+## Garantias
 
-`/`, `/agora`, `/agenda`, `/contexto`, `/checkpoints`, `/sistema` — sempre só polish (espaçamento, hierarquia, microcopy, hover/focus, empilhamento mobile).
+- Nenhuma lógica nova: sem `fetch`, sem `useEffect` novo com side effect, sem hooks customizados, sem handlers reais. Botões mock continuam mock (`disabled` + `aria-label` + `title` quando aplicável).
+- Nenhuma cor fora dos tokens KRATOS existentes em `src/styles.css`.
+- Nenhuma dependência adicionada.
+- Estrutura funcional aprovada preservada em `/agora`, `/agenda`, `/contexto`, `/checkpoints`, `/sistema` e AuroraPanel.
+- Responsividade ampla, acessibilidade completa e padronização de estados ruins ficam para 5B / 6 / 7 conforme acordado — este passe foca só em elevação visual.
 
-## Estados revisados (visual apenas)
-
-`loading`, `empty`, `error`, `degraded`, `cached`, `reconnecting`, `fallback`, `offline`, `live` — padronizados via os componentes base já existentes (`LoadingState`, `EmptyState`, `ErrorState`, `LiveStatusIndicator`). `/sistema` segue como referência dos 9 estados; demais telas usam de forma discreta com a microcopy sugerida.
-
-## Responsividade
-
-Breakpoints alvo: 360–414 (mobile), 768 (tablet), 1280 (notebook), 1440, 1920.
-
-- Sidebar colapsa <1024px.
-- AuroraPanel fechado por padrão em mobile; quando aberto, vira overlay e não comprime o main.
-- Grids das views passam de multi-coluna para coluna única em <768px.
-- StatusBar reduz informações secundárias em <640px.
-
-## Microcopy
-
-Substituir frases genéricas por operacionais conforme o briefing ("Faça isso agora.", "Retome daqui.", "Sem alerta crítico agora.", etc.) nos cards e headers das telas existentes.
-
-## Acessibilidade
-
-- `aria-label` em botões icônicos.
-- `disabled` + `title` em botões mock sem side effect.
-- focus ring (`kratos-focus-ring`) em todos os interativos.
-- contraste mantido pelos tokens existentes; nenhuma cor nova fora dos tokens KRATOS.
-
-## Confirmações obrigatórias
-
-- Não toca: `backend/**`, `src/hooks/**`, `src/lib/**`, `src/types/**`, `package.json`, `vite.config.ts`, `tsconfig.json`, qualquer `.env`.
-- Não cria lógica real, fetch, hooks, API client, SSE, WebSocket, IA, auth, banco, endpoint.
-- Não adiciona dependências.
-- Não usa emojis, neon, gráficos, glassmorphism fora do AuroraPanel.
-- `/agora`, `/agenda`, `/contexto`, `/checkpoints`, `/sistema` continuam funcionando como aprovados; `DoNotDoPanel` segue na primeira dobra de `/agenda`; `/sistema` segue com os 9 estados; AuroraPanel segue visual (não chat real).
-
-Aguardando aprovação para executar o Build.  
-  
-  
-KRATOS LOVABLE — REPLANEJAMENTO DO CRÉDITO 5
-
-Não execute o plano anterior ainda.
-
-Como agora temos mais créditos disponíveis, não precisamos comprimir polish, responsividade, acessibilidade, estados ruins e handoff em um único Build.
-
-Vamos fazer direito.
-
-A partir de agora, divida a evolução em passes separados:
-
-- Crédito 5A: Design Elevation Pass
-
-- Crédito 5B: Responsividade + Acessibilidade
-
-- Crédito 6: Estados ruins + consistência visual
-
-- Crédito 7: Handoff final para Claude Code adaptar ao KRATOS real
-
-Neste momento, quero executar APENAS o:
-
-CRÉDITO 5A — DESIGN ELEVATION PASS
-
-Apple-clean futurista · Raycast · Linear · VisionOS · Jarvis calmo
-
-OBJETIVO:
-
-Elevar o visual do sandbox KRATOS para parecer um cockpit premium Apple-clean do futuro.
-
-Não quero apenas ajustes de padding.
-
-Não quero apenas aria-label.
-
-Não quero apenas responsividade.
-
-Quero que o KRATOS deixe de parecer protótipo organizado e comece a parecer produto visual premium.
-
-DIREÇÃO VISUAL:
-
-Apple VisionOS + Raycast + Linear + Vercel + observability cockpit.
-
-80% operacional.
-
-20% Jarvis.
-
-0% carnaval sci-fi.
-
-Se parecer dashboard SaaS genérico, falhou.
-
-Se parecer admin template escuro, falhou.
-
-Se parecer cyberpunk/neon, falhou.
-
-Se ficar bonito mas confuso, falhou.
-
-Se precisar de manual, falhou.
-
-REGRA CENTRAL:
-
-A interface precisa parecer incrível, mas continuar simples.
-
-One screen, one decision.
-
-NÃO CRIAR:
-
-- backend
-
-- Supabase
-
-- auth
-
-- banco
-
-- endpoint
-
-- fetch
-
-- API client
-
-- hooks reais
-
-- src/types
-
-- SSE/EventSource
-
-- WebSocket
-
-- IA real
-
-- chat real
-
-- gráficos
-
-- tabelas pesadas
-
-- dependências novas
-
-- nova arquitetura
-
-NÃO ALTERAR:
-
-- backend/**
-
-- src/hooks/**
-
-- src/lib/**
-
-- src/types/**
-
-- package.json
-
-- vite.config.ts
-
-- tsconfig.json
-
-- qualquer .env
-
-PODE ALTERAR:
-
-- src/styles.css
-
-- src/components/kratos/**
-
-- src/routes/**
-
-- views visuais existentes
-
-Mas somente para elevação visual.
-
-Nada de lógica real.
-
-NÃO MEXER NA ESTRUTURA FUNCIONAL APROVADA:
-
-- /agora continua simples
-
-- /agenda continua com DoNotDoPanel na primeira dobra
-
-- /contexto continua respondendo “onde estou?”
-
-- /checkpoints continua respondendo “onde parei?”
-
-- /sistema continua referência dos 9 estados
-
-- AuroraPanel continua visual/mock
-
-TAREFA 1 — ELEVAR O SHELL
-
-Refinar:
-
-- sidebar
-
-- topbar
-
-- main content
-
-- AuroraPanel
-
-- status bar
-
-Objetivo:
-
-O shell deve parecer um cockpit pessoal premium, não um menu lateral comum.
-
-Melhorar:
-
-- ritmo visual
-
-- contraste sutil
-
-- presença do logo KRATOS
-
-- item ativo
-
-- agrupamento da navegação
-
-- topbar mais limpa e premium
-
-- status bar discreta e elegante
-
-- AuroraPanel com sensação VisionOS sutil
-
-Glassmorphism permitido apenas no AuroraPanel.
-
-TAREFA 2 — ELEVAR OS CARDS
-
-Os cards não podem parecer blocos cinza genéricos.
-
-Refinar:
-
-- borda
-
-- profundidade
-
-- contraste interno
-
-- títulos
-
-- subtítulos
-
-- badges
-
-- hover
-
-- focus
-
-- hierarquia
-
-Não usar glass nos cards principais.
-
-Cards de dados devem ser sólidos, legíveis e calmos.
-
-TAREFA 3 — ELEVAR TIPOGRAFIA
-
-Refinar:
-
-- títulos com mais presença
-
-- labels técnicos em estilo mono
-
-- números/prazos/durações com tratamento visual premium
-
-- subtítulos mais limpos
-
-- microcopy mais curta
-
-Evitar:
-
-- texto grande demais
-
-- texto pequeno demais
-
-- poluição verbal
-
-TAREFA 4 — ELEVAR AS TELAS
-
-Revisar visualmente:
-
-/agora
-
-Deve parecer a tela principal mais impactante e simples.
-
-Ela deve dizer:
-
-- foco
-
-- próxima ação
-
-- crítico
-
-- deadline
-
-- checkpoint
-
-- Aurora
-
-/agenda
-
-Deve parecer central de execução.
-
-Não calendário.
-
-Não dashboard.
-
-/contexto
-
-Deve parecer mapa mental limpo.
-
-Onde estou, onde me perdi, como volto.
-
-/checkpoints
-
-Deve parecer save game mental.
-
-Retomar daqui precisa ser visualmente forte.
-
-/sistema
-
-Deve parecer painel técnico organizado.
-
-Não depósito de estado.
-
-AuroraPanel
-
-Deve parecer especial, mas sem dominar.
-
-Jarvis calmo, não chat gigante.
-
-TAREFA 5 — ELEVAR MICROINTERAÇÕES
-
-Aplicar apenas:
-
-- hover 150–200ms
-
-- pulse live muito sutil
-
-- fade-in leve
-
-- focus ring elegante
-
-- transições suaves de painel
-
-Não usar:
-
-- bounce
-
-- 3D
-
-- parallax
-
-- animação exagerada
-
-- neon
-
-- efeitos chamativos
-
-TAREFA 6 — MANTER PALETA
-
-Usar somente tokens KRATOS existentes.
-
-Não inventar cores novas.
-
-Não usar branco puro.
-
-Não usar neon.
-
-Não usar gradiente chamativo.
-
-Cor = significado.
-
-TAREFA 7 — TESTE DE QUALIDADE VISUAL
-
-Antes de executar, seu plano precisa responder:
-
-1. Como o visual ficará mais Apple-clean?
-
-2. Como evitará parecer admin template?
-
-3. Como a /agora ficará mais impactante sem ficar mais cheia?
-
-4. Como o AuroraPanel ficará mais premium sem virar chat gigante?
-
-5. Como os cards ficarão mais próprios e menos genéricos?
-
-6. Quais arquivos serão alterados?
-
-7. Quais arquivos NÃO serão tocados?
-
-8. Como garantirá que nenhuma lógica real será criada?
-
-ENTREGA AGORA:
-
-Apresente um plano atualizado APENAS para o CRÉDITO 5A — DESIGN ELEVATION PASS.
-
-Não execute Build ainda.
-
-Aguarde aprovação.
+Aguardando aprovação para executar o Build do 5A.
