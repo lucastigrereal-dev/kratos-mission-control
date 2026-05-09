@@ -17,16 +17,15 @@ export function SystemCard({
   const merged: CSSProperties = {
     background: "var(--kratos-surface-2)",
     border: "1px solid var(--kratos-border)",
-    borderRadius: 8,
-    transition: interactive
-      ? "background 180ms ease, border-color 180ms ease, transform 180ms ease"
-      : undefined,
+    borderRadius: 10,
+    transition:
+      "background 180ms ease, border-color 180ms ease, transform 180ms ease",
     ...style,
   };
   return (
     <div
       {...rest}
-      className={`${padded ? "p-4" : ""} ${
+      className={`${padded ? "p-5" : ""} kratos-card-elevated ${
         interactive ? "kratos-card-hover cursor-pointer" : ""
       } kratos-fadein ${className}`}
       style={merged}

@@ -203,17 +203,84 @@
 .kratos-blink  { animation: kratos-blink 1.2s ease-in-out infinite; }
 .kratos-fadein { animation: kratos-fade-in 300ms ease-out both; }
 
-.kratos-mono { font-family: var(--kratos-font-mono); }
+.kratos-mono { font-family: var(--kratos-font-mono); font-feature-settings: "tnum", "ss01"; }
 
-.kratos-focus-ring:focus-visible {
-  outline: 2px solid var(--kratos-accent);
-  outline-offset: 2px;
-  border-radius: 4px;
+/* Typography utilities — Apple-clean hierarchy */
+.kratos-eyebrow {
+  font-family: var(--kratos-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--kratos-text-muted);
+}
+.kratos-display {
+  font-family: var(--kratos-font-sans);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.08;
+  color: var(--kratos-text-primary);
+}
+.kratos-num {
+  font-family: var(--kratos-font-mono);
+  font-feature-settings: "tnum", "ss01";
+  letter-spacing: -0.01em;
+  color: var(--kratos-text-primary);
 }
 
+/* Hairline divider — 1px @ ~7% white */
+.kratos-hairline {
+  background: var(--kratos-border);
+  height: 1px;
+  width: 100%;
+}
+.kratos-divider-soft {
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(255, 255, 255, 0.08) 80%,
+    transparent
+  );
+  height: 1px;
+  width: 100%;
+}
+
+.kratos-focus-ring:focus-visible {
+  outline: 1px solid var(--kratos-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--kratos-accent) 18%, transparent);
+}
+
+.kratos-card-hover {
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
 .kratos-card-hover:hover {
   background: var(--kratos-surface-3) !important;
   border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Subtle inner highlight at the top edge — VisionOS-ish */
+.kratos-card-elevated {
+  position: relative;
+}
+.kratos-card-elevated::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  pointer-events: none;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 
 .kratos-nav-item-active {
@@ -224,21 +291,47 @@
 .kratos-nav-item-active::before {
   content: "";
   position: absolute;
-  left: 0; top: 6px; bottom: 6px;
+  left: 0; top: 7px; bottom: 7px;
   width: 2px;
   background: var(--kratos-accent);
   border-radius: 2px;
+  box-shadow: 0 0 8px color-mix(in oklab, var(--kratos-accent) 50%, transparent);
 }
 
 .kratos-aurora-glass {
   background: linear-gradient(
     180deg,
-    rgba(99, 102, 241, 0.06),
-    rgba(23, 23, 27, 0.65) 40%,
-    rgba(17, 17, 20, 0.85)
+    rgba(99, 102, 241, 0.10),
+    rgba(23, 23, 27, 0.62) 36%,
+    rgba(17, 17, 20, 0.88)
   );
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+}
+.kratos-aurora-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--kratos-ghost) 50%, transparent) 50%,
+    transparent
+  );
+}
+
+/* Soft chip for inline meta */
+.kratos-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--kratos-surface-3);
+  border: 1px solid var(--kratos-border);
+  color: var(--kratos-text-secondary);
+  font-family: var(--kratos-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .kratos-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
