@@ -4,11 +4,12 @@ export function KratosLogo({ collapsed = false }: Props) {
   return (
     <div className="flex items-center gap-2.5 select-none">
       <div
-        className="flex h-7 w-7 items-center justify-center rounded-md"
+        className="relative flex h-7 w-7 items-center justify-center rounded-md"
         style={{
           background:
             "linear-gradient(135deg, var(--kratos-accent), var(--kratos-ghost))",
-          boxShadow: "0 0 0 1px var(--kratos-border)",
+          boxShadow:
+            "0 0 0 1px rgba(255,255,255,0.06), 0 8px 24px -8px color-mix(in oklab, var(--kratos-ghost) 45%, transparent)",
         }}
         aria-hidden
       >
@@ -24,14 +25,14 @@ export function KratosLogo({ collapsed = false }: Props) {
       {!collapsed && (
         <div className="flex flex-col leading-none">
           <span
-            className="text-[13px] font-semibold tracking-wider"
+            className="text-[13px] font-semibold tracking-[0.08em]"
             style={{ color: "var(--kratos-text-primary)" }}
           >
             KRATOS
           </span>
           <span
-            className="text-[9px] uppercase tracking-[0.18em] mt-0.5 kratos-mono"
-            style={{ color: "var(--kratos-text-muted)" }}
+            className="kratos-eyebrow mt-1"
+            style={{ fontSize: 9 }}
           >
             Mission Control
           </span>
