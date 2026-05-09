@@ -53,55 +53,42 @@ const MOCK = {
 
 export function AgoraView() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <SectionHeader
         eyebrow="Agora · 14:32 BRT"
-        title="Foco do operador"
+        title="Você está aqui."
         description="Uma tela, uma decisão. O resto espera."
       />
 
-      {/* Dobra principal — 6 blocos */}
-      <div className="space-y-4">
-        {/* Linha 1: Foco + Próxima ação */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* Hero — Foco protagonista + Próxima ação ao lado */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div className="lg:col-span-3">
           <FocusCard {...MOCK.focus} />
+        </div>
+        <div className="lg:col-span-2">
           <NextActionCard {...MOCK.nextAction} />
         </div>
-
-        {/* Linha 2: Alerta crítico + Deadline + Checkpoint */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <CriticalAlertCard
-            alert={MOCK.criticalAlert}
-            warningsCount={MOCK.warningsCount}
-          />
-          <DeadlineCard deadline={MOCK.deadline} />
-          <CheckpointCard lastCheckpoint={MOCK.lastCheckpoint} />
-        </div>
-
-        {/* Linha 3: Atalho Aurora */}
-        <AuroraShortcutCard />
       </div>
 
+      {/* Linha 2: Alerta crítico + Deadline + Checkpoint */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <CriticalAlertCard
+          alert={MOCK.criticalAlert}
+          warningsCount={MOCK.warningsCount}
+        />
+        <DeadlineCard deadline={MOCK.deadline} />
+        <CheckpointCard lastCheckpoint={MOCK.lastCheckpoint} />
+      </div>
+
+      {/* Linha 3: Atalho Aurora */}
+      <AuroraShortcutCard />
+
       {/* Camada 2 — abaixo da dobra */}
-      <div className="pt-2 space-y-4">
-        <div
-          className="flex items-center gap-3"
-          aria-hidden
-        >
-          <div
-            className="h-px flex-1"
-            style={{ background: "var(--kratos-border)" }}
-          />
-          <span
-            className="text-[10px] kratos-mono uppercase tracking-[0.18em]"
-            style={{ color: "var(--kratos-text-muted)" }}
-          >
-            Contexto resumido
-          </span>
-          <div
-            className="h-px flex-1"
-            style={{ background: "var(--kratos-border)" }}
-          />
+      <div className="pt-4 space-y-5">
+        <div className="flex items-center gap-3" aria-hidden>
+          <div className="kratos-divider-soft flex-1" />
+          <span className="kratos-eyebrow">Contexto resumido</span>
+          <div className="kratos-divider-soft flex-1" />
         </div>
 
         <SystemPulseStrip

@@ -22,28 +22,31 @@ const STATE_SEVERITY: Record<LiveState, "ok" | "warn" | "critical" | "info" | "m
 export function StatusBar({ liveState, lastUpdate, buildTime }: Props) {
   return (
     <footer
-      className="flex items-center justify-between px-4 text-[10px] kratos-mono uppercase tracking-[0.12em]"
+      className="flex items-center justify-between px-5 text-[10px] kratos-mono uppercase tracking-[0.15em]"
       style={{
-        height: 32,
+        height: 30,
         background: "var(--kratos-surface-1)",
         borderTop: "1px solid var(--kratos-border)",
         color: "var(--kratos-text-muted)",
       }}
+      aria-label="Barra de status"
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 min-w-0">
         <span className="inline-flex items-center gap-1.5">
           <StatusDot
             severity={STATE_SEVERITY[liveState]}
             size="xs"
             pulse={liveState === "live"}
           />
-          mode · {liveState}
+          <span style={{ color: "var(--kratos-text-secondary)" }}>{liveState}</span>
         </span>
-        <span>last update · {lastUpdate}</span>
+        <span className="hidden sm:inline" aria-hidden>·</span>
+        <span className="hidden sm:inline truncate">last · {lastUpdate}</span>
       </div>
-      <div className="flex items-center gap-4">
-        <span>build · {buildTime}</span>
-        <span>v0.1.0 · sandbox</span>
+      <div className="flex items-center gap-3">
+        <span className="hidden md:inline">build · {buildTime}</span>
+        <span aria-hidden>·</span>
+        <span>v0.1 sandbox</span>
       </div>
     </footer>
   );

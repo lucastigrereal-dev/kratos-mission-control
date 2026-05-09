@@ -69,7 +69,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto kratos-scrollbar">
-            <div className="mx-auto w-full max-w-[1400px] px-6 py-8 lg:px-10 lg:py-10">
+            <div className="mx-auto w-full max-w-[1320px] px-6 py-10 lg:px-12 lg:py-12">
               {children}
             </div>
           </main>
