@@ -27,18 +27,18 @@ export function Topbar({ liveState, lastUpdate, onToggleAurora, auroraOpen }: Pr
     <header
       className="flex items-center justify-between px-5"
       style={{
-        height: 48,
+        height: 52,
         background: "var(--kratos-surface-1)",
         borderBottom: "1px solid var(--kratos-border)",
       }}
     >
       <nav
         aria-label="Breadcrumb"
-        className="flex items-center gap-1.5 text-[12px] kratos-mono"
+        className="flex items-center gap-2 text-[12px] kratos-mono"
       >
         <Link
           to="/agora"
-          className="transition-colors hover:text-[var(--kratos-text-primary)]"
+          className="uppercase tracking-[0.18em] transition-colors hover:text-[var(--kratos-text-primary)] kratos-focus-ring"
           style={{ color: "var(--kratos-text-muted)" }}
         >
           KRATOS
@@ -46,19 +46,30 @@ export function Topbar({ liveState, lastUpdate, onToggleAurora, auroraOpen }: Pr
         <ChevronRight
           className="h-3 w-3"
           style={{ color: "var(--kratos-text-muted)" }}
+          aria-hidden
         />
-        <span style={{ color: "var(--kratos-text-primary)" }}>{current}</span>
+        <span
+          className="uppercase tracking-[0.18em]"
+          style={{ color: "var(--kratos-text-primary)" }}
+        >
+          {current}
+        </span>
       </nav>
 
       <div className="flex items-center gap-2">
         <LiveStatusIndicator state={liveState} lastUpdate={lastUpdate} />
+        <div
+          className="h-5 w-px"
+          style={{ background: "var(--kratos-border)" }}
+          aria-hidden
+        />
         <button
           type="button"
           onClick={onToggleAurora}
-          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[10px] kratos-mono uppercase tracking-[0.15em] transition-colors duration-150 kratos-focus-ring"
+          className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] kratos-mono uppercase tracking-[0.18em] transition-colors duration-150 kratos-focus-ring"
           style={{
             background: auroraOpen
-              ? "rgba(99,102,241,0.12)"
+              ? "rgba(99,102,241,0.14)"
               : "var(--kratos-surface-2)",
             border: `1px solid ${
               auroraOpen ? "var(--kratos-border-live)" : "var(--kratos-border)"
@@ -66,8 +77,12 @@ export function Topbar({ liveState, lastUpdate, onToggleAurora, auroraOpen }: Pr
             color: auroraOpen
               ? "var(--kratos-ghost)"
               : "var(--kratos-text-secondary)",
+            boxShadow: auroraOpen
+              ? "0 0 0 4px color-mix(in oklab, var(--kratos-ghost) 10%, transparent)"
+              : undefined,
           }}
           aria-pressed={auroraOpen}
+          aria-label={auroraOpen ? "Fechar painel Aurora" : "Abrir painel Aurora"}
         >
           <Sparkles className="h-3 w-3" />
           Aurora
