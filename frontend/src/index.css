@@ -253,6 +253,191 @@ code {
   text-align: center;
 }
 
+.kr-empty-state-icon {
+  font-size: 2rem;
+  opacity: 0.35;
+  line-height: 1;
+}
+
+.kr-empty-state-title {
+  font-size: var(--kr-text-md);
+  font-weight: 600;
+  color: var(--kr-text-primary);
+  margin: 0;
+}
+
+.kr-empty-state-desc {
+  color: var(--kr-text-muted);
+  margin: 0;
+  max-width: 280px;
+}
+
+.kr-empty-state-action {
+  margin-top: 0.25rem;
+  padding: 6px 16px;
+  border: 1px solid var(--kr-border-strong);
+  border-radius: var(--kr-radius-md);
+  background: var(--kr-glass-bg);
+  color: var(--kr-text-primary);
+  font-size: var(--kr-text-sm);
+  font-family: var(--kr-font-sans);
+  cursor: pointer;
+  transition: border-color var(--kr-duration-fast) var(--kr-ease-smooth);
+}
+
+.kr-empty-state-action:hover {
+  border-color: var(--kr-azure-500);
+}
+
+/* ── Error State ─────────────────────────────────────────────────── */
+
+.kr-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
+  border-radius: var(--kr-radius-md);
+  text-align: center;
+}
+
+.kr-error-state--danger {
+  background: color-mix(in srgb, var(--kr-red-500) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--kr-red-500) 18%, transparent);
+}
+
+.kr-error-state--warning {
+  background: color-mix(in srgb, var(--kr-yellow-500) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--kr-yellow-500) 18%, transparent);
+}
+
+.kr-error-state--info {
+  background: color-mix(in srgb, var(--kr-blue-500) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--kr-blue-500) 18%, transparent);
+}
+
+.kr-error-state-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.kr-error-state-title {
+  font-size: var(--kr-text-sm);
+  font-weight: 600;
+  color: var(--kr-text-primary);
+  margin: 0;
+}
+
+.kr-error-state-desc {
+  font-size: var(--kr-text-xs);
+  color: var(--kr-text-secondary);
+  margin: 0;
+  max-width: 300px;
+}
+
+.kr-error-state-retry {
+  margin-top: 0.25rem;
+  padding: 5px 14px;
+  border: 1px solid var(--kr-border-strong);
+  border-radius: var(--kr-radius-md);
+  background: var(--kr-glass-bg-strong);
+  color: var(--kr-text-primary);
+  font-size: var(--kr-text-xs);
+  font-weight: 600;
+  font-family: var(--kr-font-sans);
+  cursor: pointer;
+  transition: border-color var(--kr-duration-fast) var(--kr-ease-smooth);
+}
+
+.kr-error-state-retry:hover {
+  border-color: var(--kr-azure-500);
+}
+
+/* ── Progress Ring ───────────────────────────────────────────────── */
+
+.kr-progress-ring {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kr-progress-ring svg {
+  display: block;
+}
+
+.kr-progress-ring-track {
+  fill: none;
+  stroke: var(--kr-glass-border);
+}
+
+.kr-progress-ring-fill {
+  fill: none;
+  transition: stroke-dashoffset var(--kr-duration-medium) var(--kr-ease-smooth);
+}
+
+.kr-progress-ring-label {
+  position: absolute;
+  font-size: var(--kr-text-xs);
+  font-weight: 700;
+  color: var(--kr-text-secondary);
+  font-family: var(--kr-font-sans);
+  line-height: 1;
+  text-align: center;
+  max-width: calc(100% - 12px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Metric Badge ────────────────────────────────────────────────── */
+
+.kr-metric-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: var(--kr-radius-md);
+  background: var(--kr-glass-bg);
+  border: 1px solid var(--kr-glass-border);
+  min-width: 64px;
+}
+
+.kr-metric-badge--compact {
+  flex-direction: row;
+  gap: 6px;
+  padding: 4px 10px;
+  min-width: 0;
+}
+
+.kr-metric-badge-value {
+  font-size: var(--kr-text-xl);
+  font-weight: 700;
+  font-family: var(--kr-font-mono);
+  color: var(--kr-text-primary);
+  line-height: 1.1;
+}
+
+.kr-metric-badge--compact .kr-metric-badge-value {
+  font-size: var(--kr-text-sm);
+}
+
+.kr-metric-badge-label {
+  font-size: var(--kr-text-xs);
+  font-weight: 500;
+  color: var(--kr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kr-metric-badge--neutral { border-left: 2px solid var(--kr-text-muted); }
+.kr-metric-badge--good    { border-left: 2px solid var(--kr-green-500); }
+.kr-metric-badge--warning { border-left: 2px solid var(--kr-yellow-500); }
+.kr-metric-badge--danger  { border-left: 2px solid var(--kr-red-500); }
+.kr-metric-badge--info    { border-left: 2px solid var(--kr-blue-500); }
+
 /* ═══════════════════════════════════════════════════════════════════════════
    KRATOS 1.0 — Visual Shell Grid
    ═══════════════════════════════════════════════════════════════════════════ */
