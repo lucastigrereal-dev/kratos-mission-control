@@ -15,6 +15,15 @@ const SOURCE_COLORS: Record<SourceType, string> = {
   unknown: "var(--kr-text-disabled)",
 };
 
+const SOURCE_BG: Record<SourceType, string> = {
+  live: "var(--kr-source-live-bg)",
+  cached: "var(--kr-source-cached-bg)",
+  fallback: "var(--kr-source-fallback-bg)",
+  mock: "var(--kr-source-mock-bg)",
+  error: "var(--kr-source-error-bg)",
+  unknown: "var(--kr-source-unknown-bg)",
+};
+
 const SOURCE_DOT_CLASS: Record<SourceType, string> = {
   live: "kr-dot kr-dot-live",
   cached: "kr-dot kr-dot-degraded",
@@ -35,6 +44,7 @@ const DEFAULT_LABELS: Record<SourceType, string> = {
 
 export default function SourceBadge({ source, label, compact = false }: SourceBadgeProps) {
   const color = SOURCE_COLORS[source] || SOURCE_COLORS.unknown;
+  const bg = SOURCE_BG[source] || SOURCE_BG.unknown;
   const dotClass = SOURCE_DOT_CLASS[source] || SOURCE_DOT_CLASS.unknown;
   const text = label || DEFAULT_LABELS[source] || source;
 
@@ -43,8 +53,7 @@ export default function SourceBadge({ source, label, compact = false }: SourceBa
       className="kr-chip"
       style={{
         color,
-        background: `${color}1a`,
-        fontSize: "var(--kr-text-xs)",
+        background: bg,
         gap: compact ? 0 : 4,
       }}
       title={`Fonte dos dados: ${text}`}

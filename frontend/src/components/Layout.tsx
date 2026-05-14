@@ -1,95 +1,119 @@
-import { ReactNode } from "react";
-import { NavLink } from "react-router-dom";
-import SourceBadge from "./SourceBadge";
+import { ReactNode, useMemo, createContext, useContext } from "react";
+import KratosVisualShell from "./KratosVisualShell";
+import KratosTopHud from "./KratosTopHud";
+import KratosSidebar from "./KratosSidebar";
+import KratosRightRail from "./KratosRightRail";
+import KratosBottomDock from "./KratosBottomDock";
 import { useLiveKratos } from "../hooks/useLiveKratos";
+import { useApi } from "../hooks/useApi";
 
-const NAV_ITEMS = [
-  { to: "/mission-lens", label: "Mission Lens", icon: "◈" },
-  { to: "/tarefas", label: "Tarefas", icon: "☰" },
-  { to: "/projetos", label: "Projetos", icon: "⬡" },
-  { to: "/contexto", label: "Contexto", icon: "◎" },
-  { to: "/sistema", label: "Sistema", icon: "⚙" },
-  { to: "/checkpoints", label: "Checkpoints", icon: "◆" },
-];
+interface KratosContextValue {
+  currentMission?: string;
+  connectionState?: string;
+}
+export const KratosContext = createContext<KratosContextValue>({});
+export function useKratosContext() {
+  return useContext(KratosContext);
+}
+
+interface MissionLensBrief {
+  data?: {
+    current_mission?: Record<string, unknown>;
+    next_action?: Record<string, unknown>;
+    risks?: Array<Record<string, string>>;
+    checkpoint?: Record<string, unknown>;
+    mentor_summary?: Record<string, unknown>;
+    checkpoint_suggestion?: Record<string, unknown>;
+  };
+}
+
+interface ContextBrief {
+  data?: {
+    drift_state?: string;
+    drift_risk?: "low" | "medium" | "high";
+    current_focus?: string;
+  };
+}
 
 export default function Layout({ children }: { children: ReactNode }) {
   const { connectionState } = useLiveKratos();
+  const { data: missionData } = useApi<MissionLensBrief>("/mission/lens");
+  const { data: contextData } = useApi<ContextBrief>("/context/current");
 
-  const statusSource = connectionState === "live" ? "live" :
-    connectionState === "polling" ? "live" :
-    connectionState === "reconnecting" ? "cached" :
-    connectionState === "fallback" ? "fallback" : "error";
+  const signals = useMemo(() => {
+    const s: Array<{ text: string; tone: "critical" | "warning" | "info" | "neutral" }> = [];
+    const summary = missionData?.data?.mentor_summary as Record<string, string> | undefined;
+    if (summary) {
+      s.push({
+        text: summary.text || "Sistema estável",
+        tone: (summary.tone as "critical" | "warning" | "info" | "neutral") || "neutral",
+      });
+    }
+    const suggestion = missionData?.data?.checkpoint_suggestion as Record<string, unknown> | undefined;
+    if (suggestion?.should_suggest) {
+      s.push({
+        text: (suggestion as Record<string, string>).reason || "Checkpoint sugerido",
+        tone: "warning",
+      });
+    }
+    return s;
+  }, [missionData]);
+
+  const risks = useMemo(() => {
+    const raw = missionData?.data?.risks || [];
+    return raw.map((r) => ({
+      title: r.title || String(r),
+      severity: (r.severity as "low" | "medium" | "high") || "medium",
+    }));
+  }, [missionData]);
+
+  const currentMission = (missionData?.data?.current_mission as Record<string, string>)?.title;
+  const nextActionTitle = (missionData?.data?.next_action as Record<string, string>)?.title;
+  const nextActionRationale = (missionData?.data?.next_action as Record<string, string>)?.rationale;
+  const checkpointAvailable = !!(missionData?.data?.checkpoint as Record<string, unknown>)?.available;
+  const checkpointLabel = (missionData?.data?.checkpoint as Record<string, string>)?.label;
+  const focusState = (contextData?.data as Record<string, string>)?.current_focus;
+  const driftRisk = (contextData?.data as Record<string, string>)?.drift_risk as "low" | "medium" | "high" | undefined;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar */}
-      <aside
-        className="glass-panel"
-        style={{
-          width: 220,
-          flexShrink: 0,
-          margin: 8,
-          padding: "1rem",
-          display: "flex",
-          flexDirection: "column",
-          gap: 4,
-        }}
-      >
-        <div style={{ marginBottom: "1rem" }}>
-          <h1 style={{ fontSize: "var(--kr-text-lg)", fontWeight: 700, letterSpacing: "0.08em" }}>
-            KRATOS
-          </h1>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-            <span
-              className={
-                connectionState === "live" ? "kr-dot kr-dot-live" :
-                connectionState === "offline" ? "kr-dot kr-dot-critical" :
-                "kr-dot kr-dot-degraded"
+    <div data-connection={connectionState} style={{ position: "relative" }}>
+      {connectionState === "offline" && (
+        <div className="kr-offline-overlay">
+          <span className="kr-dot kr-dot-critical" />
+          Backend offline — tentando reconectar...
+        </div>
+      )}
+      <KratosVisualShell
+        topHud={<KratosTopHud connectionState={connectionState} />}
+        sidebar={<KratosSidebar />}
+        rightRail={
+          <KratosRightRail
+            signals={signals}
+            focusState={focusState}
+            driftRisk={driftRisk}
+            risks={risks}
+            checkpointAvailable={checkpointAvailable}
+            checkpointLabel={checkpointLabel}
+          />
+        }
+        bottomDock={
+          <KratosBottomDock
+            currentMission={currentMission}
+            nextAction={nextActionRationale}
+            nextActionTitle={nextActionTitle}
+            activeSquads={["KRATOS", "AURORA"]}
+            onContinue={() => {
+              if (nextActionTitle) {
+                window.location.assign("/tarefas");
               }
-            />
-            <span style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)" }}>
-              {connectionState === "live" ? "online" : connectionState}
-            </span>
-          </div>
-        </div>
-
-        <nav style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              style={({ isActive }) => ({
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "6px 10px",
-                borderRadius: "var(--kr-radius-lg)",
-                fontSize: "var(--kr-text-sm)",
-                fontWeight: isActive ? 600 : 400,
-                color: isActive ? "var(--kr-text-primary)" : "var(--kr-text-secondary)",
-                background: isActive ? "var(--kr-bg-tertiary)" : "transparent",
-                textDecoration: "none",
-                transition: "background var(--kr-duration-fast) var(--kr-ease-out)",
-              })}
-            >
-              <span>{item.icon}</span>
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div style={{ borderTop: "1px solid var(--kr-border-default)", paddingTop: "0.75rem" }}>
-          <SourceBadge source={statusSource} compact />
-          <span style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)", marginLeft: 6 }}>
-            KRATOS 0.10
-          </span>
-        </div>
-      </aside>
-
-      {/* Content */}
-      <main style={{ flex: 1, padding: "1.5rem", overflowY: "auto", maxWidth: 1400, margin: "0 auto" }}>
-        {children}
-      </main>
+            }}
+          />
+        }
+      >
+        <KratosContext.Provider value={{ currentMission, connectionState }}>
+          {children}
+        </KratosContext.Provider>
+      </KratosVisualShell>
     </div>
   );
 }
