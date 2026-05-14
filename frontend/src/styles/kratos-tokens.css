@@ -148,6 +148,19 @@
   --kr-castle-roof-dark: #991b1b;
   --kr-castle-portal: #3b82f6;
 
+  /* ── 1.0B-FIX: Extended world & environment tokens ───────────────── */
+  --kr-castle-stone-light: #e8ddd0;
+  --kr-earth-light: #6b5535;
+  --kr-bg-dock-solid: #080c1c;
+  --kr-world-grass-highlight: rgba(132, 204, 22, 0.4);
+  --kr-world-grass-shadow: rgba(101, 163, 13, 0.25);
+  --kr-world-sky-radial: rgba(255, 250, 240, 0.35);
+  --kr-world-sun-core: rgba(255, 255, 255, 0.6);
+  --kr-world-sun-edge: rgba(255, 250, 230, 0.2);
+  --kr-world-cloud: rgba(255, 255, 255, 0.03);
+  --kr-world-label-text: rgba(255, 255, 255, 0.85);
+  --kr-world-label-shadow: rgba(0, 0, 0, 0.5);
+
   /* ── Source / Squad translucent backgrounds (safe — no hex concat) ─ */
   --kr-source-live-bg: color-mix(in srgb, var(--kr-green-400) 10%, transparent);
   --kr-source-cached-bg: color-mix(in srgb, var(--kr-yellow-400) 10%, transparent);
