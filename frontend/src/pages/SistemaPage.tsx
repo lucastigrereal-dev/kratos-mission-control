@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import SourceBadge, { type SourceType } from "../components/SourceBadge";
+import LoadingSkeleton from "../components/LoadingSkeleton";
+import { ErrorState } from "../components/ui";
 
 interface CollectorEntry {
   source: string;
@@ -51,8 +53,8 @@ export default function SistemaPage() {
         <SourceBadge source={source} />
       </div>
 
-      {loading && <div className="kr-empty-state">Carregando...</div>}
-      {error && <div className="kr-empty-state" style={{ color: "var(--kr-red-400)" }}>Erro: {error}</div>}
+      {loading && <LoadingSkeleton type="card" count={4} />}
+      {error && <ErrorState title="Erro ao carregar" description={error} />}
 
       {data && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 12 }}>

@@ -1,5 +1,7 @@
 import { useApi } from "../hooks/useApi";
 import SourceBadge, { type SourceType } from "../components/SourceBadge";
+import LoadingSkeleton from "../components/LoadingSkeleton";
+import { EmptyState, ErrorState } from "../components/ui";
 
 interface Task {
   id: string;
@@ -41,16 +43,12 @@ export default function TarefasPage() {
         <SourceBadge source={(source as SourceType) || "unknown"} />
       </div>
 
-      {loading && <div className="kr-empty-state">Carregando...</div>}
+      {loading && <LoadingSkeleton type="card" count={4} />}
 
-      {error && (
-        <div className="kr-empty-state" style={{ color: "var(--kr-red-400)" }}>
-          Erro: {error}
-        </div>
-      )}
+      {error && <ErrorState title="Erro ao carregar tarefas" description={error} />}
 
       {data && data.length === 0 && (
-        <div className="kr-empty-state">Nenhuma tarefa encontrada</div>
+        <EmptyState title="Nenhuma tarefa encontrada" description="Crie uma tarefa para começar." />
       )}
 
       {data && data.length > 0 && (

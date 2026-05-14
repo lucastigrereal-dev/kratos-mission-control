@@ -1,5 +1,7 @@
 import { useApi } from "../hooks/useApi";
 import SourceBadge, { type SourceType } from "../components/SourceBadge";
+import LoadingSkeleton from "../components/LoadingSkeleton";
+import { EmptyState, ErrorState } from "../components/ui";
 
 interface Project {
   id: string;
@@ -37,9 +39,9 @@ export default function ProjetosPage() {
         <SourceBadge source={(source as SourceType) || "unknown"} />
       </div>
 
-      {loading && <div className="kr-empty-state">Carregando...</div>}
-      {error && <div className="kr-empty-state" style={{ color: "var(--kr-red-400)" }}>Erro: {error}</div>}
-      {data && data.length === 0 && <div className="kr-empty-state">Nenhum projeto encontrado</div>}
+      {loading && <LoadingSkeleton type="card" count={3} />}
+      {error && <ErrorState title="Erro ao carregar projetos" description={error} />}
+      {data && data.length === 0 && <EmptyState title="Nenhum projeto encontrado" description="Crie um projeto para começar." />}
 
       {data && data.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 12 }}>

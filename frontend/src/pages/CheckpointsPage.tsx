@@ -1,5 +1,7 @@
 import { useApi } from "../hooks/useApi";
 import SourceBadge, { type SourceType } from "../components/SourceBadge";
+import LoadingSkeleton from "../components/LoadingSkeleton";
+import { EmptyState, ErrorState } from "../components/ui";
 
 interface Checkpoint {
   id: string;
@@ -21,9 +23,9 @@ export default function CheckpointsPage() {
         <SourceBadge source={(source as SourceType) || "unknown"} />
       </div>
 
-      {loading && <div className="kr-empty-state">Carregando...</div>}
-      {error && <div className="kr-empty-state" style={{ color: "var(--kr-red-400)" }}>Erro: {error}</div>}
-      {data && data.length === 0 && <div className="kr-empty-state">Nenhum checkpoint registrado</div>}
+      {loading && <LoadingSkeleton type="card" count={3} />}
+      {error && <ErrorState title="Erro ao carregar checkpoints" description={error} />}
+      {data && data.length === 0 && <EmptyState title="Nenhum checkpoint registrado" description="Salve seu primeiro checkpoint para restaurar contexto." />}
 
       {data && data.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>

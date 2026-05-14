@@ -2,6 +2,8 @@ import { useApi } from "../hooks/useApi";
 import useCheckpointSuggestion from "../hooks/useCheckpointSuggestion";
 import SourceBadge, { type SourceType } from "../components/SourceBadge";
 import CheckpointSuggestionBanner from "../components/CheckpointSuggestionBanner";
+import LoadingSkeleton from "../components/LoadingSkeleton";
+import { ErrorState } from "../components/ui";
 
 interface ContextData {
   current_app: string;
@@ -53,8 +55,8 @@ export default function ContextoPage() {
         <SourceBadge source={(source as SourceType) || "unknown"} />
       </div>
 
-      {loading && <div className="kr-empty-state">Carregando...</div>}
-      {error && <div className="kr-empty-state" style={{ color: "var(--kr-red-400)" }}>Erro: {error}</div>}
+      {loading && <LoadingSkeleton type="card" count={3} />}
+      {error && <ErrorState title="Erro ao carregar contexto" description={error} />}
 
       {data && (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

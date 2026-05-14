@@ -1,5 +1,7 @@
 import { useApi } from "../hooks/useApi";
 import SourceBadge, { type SourceType } from "../components/SourceBadge";
+import LoadingSkeleton from "../components/LoadingSkeleton";
+import { ErrorState } from "../components/ui";
 
 interface MissionLensContract {
   contract_version: string;
@@ -39,8 +41,8 @@ export default function MissionLensPage() {
         <SourceBadge source={(source as SourceType) || "unknown"} />
       </div>
 
-      {loading && <div className="kr-empty-state">Carregando...</div>}
-      {error && <div className="kr-empty-state" style={{ color: "var(--kr-red-400)" }}>Erro: {error}</div>}
+      {loading && <LoadingSkeleton type="card" count={3} />}
+      {error && <ErrorState title="Erro ao carregar Mission Lens" description={error} />}
 
       {data?.data && (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
