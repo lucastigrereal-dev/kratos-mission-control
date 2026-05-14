@@ -1,0 +1,136 @@
+import { useApi } from "../hooks/useApi";
+import SourceBadge, { type SourceType } from "../components/SourceBadge";
+
+interface ContextData {
+  current_app: string;
+  current_title: string;
+  current_url: string;
+  project_guess: string;
+  mission_guess: string;
+  reason_guess: string;
+  confidence: number;
+  focus_project_today: string;
+  on_focus: boolean;
+  drift_minutes: number;
+  context_switches_today: number;
+  source: string;
+  collector_status: string;
+  drift: {
+    state: string;
+    severity: string;
+    minutes_out_of_focus: number;
+    reason: string;
+    current_app: string;
+    current_title: string;
+    inferred_project: string;
+    expected_project: string;
+    recovery_action: Record<string, string> | null;
+  };
+  checkpoint_suggestion: {
+    should_suggest: boolean;
+    severity: string;
+    reason: string;
+    suggested_checkpoint: Record<string, unknown> | null;
+  };
+}
+
+export default function ContextoPage() {
+  const { data, source, loading, error } = useApi<ContextData>("/context/current");
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1rem" }}>
+        <h2>Contexto Atual</h2>
+        <SourceBadge source={(source as SourceType) || "unknown"} />
+      </div>
+
+      {loading && <div className="kr-empty-state">Carregando...</div>}
+      {error && <div className="kr-empty-state" style={{ color: "var(--kr-red-400)" }}>Erro: {error}</div>}
+
+      {data && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {/* Drift status */}
+          <div className="kr-card" style={{
+            borderColor: data.on_focus ? "var(--kr-green-500)" :
+              data.drift.severity === "high" ? "var(--kr-red-500)" :
+              "var(--kr-yellow-500)"
+          }}>
+            <h6>ESTADO DE FOCO</h6>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+              <span className={data.on_focus ? "kr-dot kr-dot-healthy" : "kr-dot kr-dot-critical"} />
+              <span style={{ fontWeight: 600 }}>
+                {data.drift.state === "on_focus" ? "No foco" :
+                 data.drift.state === "off_focus" ? `Fora do foco (${data.drift.minutes_out_of_focus}min)` :
+                 data.drift.state === "related" ? "Contexto relacionado" : "Desconhecido"}
+              </span>
+            </div>
+            <div style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)", marginTop: 4 }}>
+              {data.drift.reason}
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 12 }}>
+            {/* Current window */}
+            <div className="kr-card">
+              <h6>JANELA ATIVA</h6>
+              <div style={{ fontSize: "var(--kr-text-sm)" }}>{data.current_app || "?"}</div>
+              <div style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)", marginTop: 2 }}>
+                {data.current_title || "Sem título"}
+              </div>
+            </div>
+
+            {/* Project guess */}
+            <div className="kr-card">
+              <h6>PROJETO INFERIDO</h6>
+              <div style={{ fontSize: "var(--kr-text-sm)" }}>
+                {data.project_guess || data.drift.inferred_project || "Indeterminado"}
+              </div>
+              <div style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)" }}>
+                Confiança: {((data.confidence || 0) * 100).toFixed(0)}%
+              </div>
+            </div>
+
+            {/* Expected project */}
+            <div className="kr-card">
+              <h6>PROJETO ESPERADO</h6>
+              <div style={{ fontSize: "var(--kr-text-sm)" }}>
+                {data.focus_project_today || data.drift.expected_project || "Nenhum"}
+              </div>
+              <div style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)" }}>
+                Switches hoje: {data.context_switches_today}
+              </div>
+            </div>
+
+            {/* Recovery action */}
+            {data.drift.recovery_action && (
+              <div className="kr-card" style={{ borderColor: "var(--kr-orange-500)" }}>
+                <h6>AÇÃO DE RECUPERAÇÃO</h6>
+                <div style={{ fontSize: "var(--kr-text-sm)" }}>
+                  {data.drift.recovery_action.title}
+                </div>
+              </div>
+            )}
+
+            {/* Checkpoint suggestion */}
+            <div className="kr-card">
+              <h6>SUGESTÃO DE CHECKPOINT</h6>
+              <div style={{ fontSize: "var(--kr-text-sm)", color: "var(--kr-text-secondary)" }}>
+                {data.checkpoint_suggestion?.should_suggest
+                  ? data.checkpoint_suggestion.reason
+                  : "Sem sugestão no momento"}
+              </div>
+            </div>
+
+            {/* Source info */}
+            <div className="kr-card">
+              <h6>FONTE</h6>
+              <div style={{ fontSize: "var(--kr-text-sm)" }}>
+                {data.source} ({data.collector_status})
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
