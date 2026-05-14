@@ -1,0 +1,29 @@
+{
+  "current_project": {
+    "id": "kratos-mission-control",
+    "name": "KRATOS Mission Control",
+    "phase": "0.10",
+    "status": "active"
+  },
+  "current_mission": {
+    "id": "kratos-0-10-operational-truth",
+    "title": "KRATOS 0.10 — Verdade Operacional",
+    "description": "Consolidar verdade operacional antes do redesign 1.0",
+    "status": "in_progress"
+  },
+  "next_action": "Corrigir GET /tasks para ler do SQLite",
+  "mentor_focus": {
+    "mode": "deep_work",
+    "primary_goal": "Concluir entregas do KRATOS 0.10",
+    "do_not_do": [
+      "Não abrir novo projeto",
+      "Não refatorar sem objetivo",
+      "Não pesquisar ferramenta nova"
+    ]
+  },
+  "active_risks": [
+    "Tasks GET/POST desconectados",
+    "Disco C: com 5% livre",
+    "Containers Docker unhealthy"
+  ]
+}
