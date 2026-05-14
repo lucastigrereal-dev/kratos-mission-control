@@ -1480,6 +1480,177 @@ code {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   Island Mini Card — compact navigation tiles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.kr-island-mini-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--kr-glass-border);
+  border-radius: var(--kr-radius-md);
+  background: var(--kr-glass-bg);
+  color: var(--kr-text-primary);
+  font-size: var(--kr-text-sm);
+  font-family: var(--kr-font-sans);
+  cursor: pointer;
+  transition: border-color var(--kr-duration-fast) var(--kr-ease-smooth), background var(--kr-duration-fast) var(--kr-ease-smooth);
+}
+
+.kr-island-mini-card:hover {
+  border-color: var(--kr-azure-500);
+  background: var(--kr-glass-bg-strong);
+}
+
+.kr-island-mini-card:focus-visible {
+  outline: 2px solid var(--kr-azure-400);
+  outline-offset: 2px;
+}
+
+.kr-island-mini-card--selected {
+  border-color: var(--kr-azure-500);
+  background: color-mix(in srgb, var(--kr-azure-500) 8%, transparent);
+}
+
+.kr-island-mini-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.kr-island-mini-card-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kr-island-mini-card-sub {
+  font-size: var(--kr-text-xs);
+  color: var(--kr-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kr-island-mini-card-progress {
+  font-size: var(--kr-text-xs);
+  font-weight: 700;
+  color: var(--kr-text-secondary);
+  font-family: var(--kr-font-mono);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   World Map Legend
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.kr-world-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.kr-world-map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--kr-text-xs);
+  color: var(--kr-text-secondary);
+}
+
+.kr-world-map-legend-label {
+  font-weight: 500;
+}
+
+.kr-world-map-legend-desc {
+  color: var(--kr-text-muted);
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Responsive — tablet / small screens
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1024px) {
+  .kr-shell {
+    grid-template-columns: 180px 1fr 220px;
+  }
+
+  .kr-world-map-legend-desc {
+    display: inline;
+  }
+}
+
+@media (max-width: 768px) {
+  .kr-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 44px 1fr 56px;
+    grid-template-areas:
+      "top-hud"
+      "main"
+      "bottom-dock";
+  }
+
+  .kr-shell-sidebar,
+  .kr-shell-right-rail {
+    display: none;
+  }
+
+  .kr-world-ocean {
+    background:
+      radial-gradient(ellipse at 50% 15%, var(--kr-world-sky-radial) 0%, transparent 55%),
+      linear-gradient(
+        180deg,
+        var(--kr-sky-light-top) 0%,
+        var(--kr-sky-light-mid) 20%,
+        var(--kr-sky-light-horizon) 40%,
+        var(--kr-ocean-light-shallow) 55%,
+        var(--kr-ocean-light-mid) 75%,
+        var(--kr-ocean-light-deep) 100%
+      );
+  }
+
+  .kr-world {
+    height: calc(100vh - 100px);
+  }
+
+  .kr-metric-badge {
+    min-width: 48px;
+    padding: 6px 8px;
+  }
+
+  .kr-metric-badge-value {
+    font-size: var(--kr-text-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .kr-shell-main {
+    padding: var(--kr-space-hud);
+  }
+
+  .kr-castle-platform {
+    width: 160px;
+    height: 90px;
+  }
+
+  .kr-island--central .kr-island-label {
+    font-size: var(--kr-text-sm);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Reduced motion respects tokens (duration vars set to 0s via media query)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
    Visual States — loading, skeleton, error, empty, degraded
    ═══════════════════════════════════════════════════════════════════════════ */
 
