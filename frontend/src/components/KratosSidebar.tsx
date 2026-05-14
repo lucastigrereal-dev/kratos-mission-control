@@ -1,5 +1,10 @@
 import { NavLink } from "react-router-dom";
 
+// TODO(microfase-1.1): Trocar unicode chars por SVG icons de navegação.
+// O /public/icons.svg atual contém apenas ícones de redes sociais
+// (Bluesky, Discord, GitHub, X). Criar symbols novos para cada item de nav.
+// Manter unicode como fallback.
+
 interface NavItem {
   to: string;
   label: string;

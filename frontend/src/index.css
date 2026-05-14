@@ -1368,6 +1368,10 @@ code {
     animation: none;
     background: var(--kr-bg-tertiary);
   }
+
+  .kr-checkpoint-btn {
+    transition: none;
+  }
 }
 
 /* High contrast: ensure borders are visible */

@@ -6,6 +6,8 @@ interface KratosBottomDockProps {
   nextActionTitle?: string;
   activeSquads?: string[];
   onContinue?: () => void;
+  progress?: number;
+  taskCount?: { done: number; total: number };
 }
 
 const SQUAD_COLORS: Record<string, string> = {
@@ -30,6 +32,8 @@ export default function KratosBottomDock({
   nextActionTitle,
   activeSquads = ["KRATOS", "AURORA"],
   onContinue,
+  progress,
+  taskCount,
 }: KratosBottomDockProps) {
   return (
     <div className="kr-bottom-dock">
@@ -37,6 +41,8 @@ export default function KratosBottomDock({
         currentMission={currentMission}
         nextAction={nextAction}
         nextActionTitle={nextActionTitle}
+        progress={progress}
+        taskCount={taskCount}
       />
 
       <div className="kr-bottom-dock-right">

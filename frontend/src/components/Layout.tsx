@@ -35,10 +35,31 @@ interface ContextBrief {
   };
 }
 
+interface Task {
+  id: string;
+  title: string;
+  status: string;
+  priority?: string;
+  project_id?: string;
+}
+
 export default function Layout({ children }: { children: ReactNode }) {
   const { connectionState } = useLiveKratos();
   const { data: missionData } = useApi<MissionLensBrief>("/mission/lens");
   const { data: contextData } = useApi<ContextBrief>("/context/current");
+  const { data: tasksData } = useApi<Task[]>("/tasks");
+
+  const { progress, taskCount } = useMemo(() => {
+    if (!tasksData || !Array.isArray(tasksData) || tasksData.length === 0) {
+      return { progress: 0, taskCount: undefined };
+    }
+    const done = tasksData.filter((t) => t.status === "done").length;
+    const total = tasksData.length;
+    return {
+      progress: total > 0 ? (done / total) * 100 : 0,
+      taskCount: { done, total },
+    };
+  }, [tasksData]);
 
   const signals = useMemo(() => {
     const s: Array<{ text: string; tone: "critical" | "warning" | "info" | "neutral" }> = [];
@@ -102,6 +123,8 @@ export default function Layout({ children }: { children: ReactNode }) {
             nextAction={nextActionRationale}
             nextActionTitle={nextActionTitle}
             activeSquads={["KRATOS", "AURORA"]}
+            progress={progress}
+            taskCount={taskCount}
             onContinue={() => {
               if (nextActionTitle) {
                 window.location.assign("/tarefas");

@@ -2,13 +2,19 @@ interface MissionBarProps {
   currentMission?: string;
   nextAction?: string;
   nextActionTitle?: string;
+  progress?: number;
+  taskCount?: { done: number; total: number };
 }
 
 export default function MissionBar({
   currentMission,
   nextAction,
   nextActionTitle,
+  progress = 0,
+  taskCount,
 }: MissionBarProps) {
+  const safeProgress = Math.max(0, Math.min(100, progress));
+
   return (
     <div className="kr-mission-bar">
       <div className="kr-mission-bar-item">
@@ -28,8 +34,23 @@ export default function MissionBar({
       </div>
 
       <div className="kr-mission-progress">
-        <div className="kr-mission-progress-bar" />
+        <div
+          className="kr-mission-progress-bar"
+          style={{ width: `${safeProgress}%` }}
+        />
       </div>
+
+      {taskCount && taskCount.total > 0 && (
+        <span
+          style={{
+            fontSize: "var(--kr-text-xs)",
+            color: "var(--kr-text-muted)",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {taskCount.done}/{taskCount.total}
+        </span>
+      )}
     </div>
   );
 }

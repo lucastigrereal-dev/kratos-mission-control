@@ -1,5 +1,7 @@
 import { useApi } from "../hooks/useApi";
+import useCheckpointSuggestion from "../hooks/useCheckpointSuggestion";
 import SourceBadge, { type SourceType } from "../components/SourceBadge";
+import CheckpointSuggestionBanner from "../components/CheckpointSuggestionBanner";
 
 interface ContextData {
   current_app: string;
@@ -36,6 +38,13 @@ interface ContextData {
 
 export default function ContextoPage() {
   const { data, source, loading, error } = useApi<ContextData>("/context/current");
+  const {
+    createCheckpoint,
+    loading: cpLoading,
+    error: cpError,
+    success: cpSuccess,
+    clearSuccess: cpClearSuccess,
+  } = useCheckpointSuggestion();
 
   return (
     <div>
@@ -111,15 +120,24 @@ export default function ContextoPage() {
               </div>
             )}
 
-            {/* Checkpoint suggestion */}
-            <div className="kr-card">
-              <h6>SUGESTÃO DE CHECKPOINT</h6>
-              <div style={{ fontSize: "var(--kr-text-sm)", color: "var(--kr-text-secondary)" }}>
-                {data.checkpoint_suggestion?.should_suggest
-                  ? data.checkpoint_suggestion.reason
-                  : "Sem sugestão no momento"}
-              </div>
-            </div>
+            {/* Checkpoint suggestion banner */}
+            <CheckpointSuggestionBanner
+              suggestion={data.checkpoint_suggestion}
+              loading={cpLoading}
+              error={cpError}
+              success={cpSuccess}
+              onCreate={() => {
+                const sc = data.checkpoint_suggestion?.suggested_checkpoint;
+                createCheckpoint({
+                  project: (sc as Record<string, string>)?.project || data.project_guess,
+                  where_i_stopped: (sc as Record<string, string>)?.where_i_stopped || data.current_title,
+                  next_action: (sc as Record<string, string>)?.next_action || "",
+                  mission_guess: data.mission_guess,
+                  confidence: (sc as Record<string, number>)?.confidence ?? data.confidence,
+                });
+              }}
+              onDismissSuccess={cpClearSuccess}
+            />
 
             {/* Source info */}
             <div className="kr-card">
