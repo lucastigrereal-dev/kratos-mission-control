@@ -104,6 +104,18 @@ export default function Layout({ children }: { children: ReactNode }) {
           Backend offline — tentando reconectar...
         </div>
       )}
+      {connectionState === "reconnecting" && (
+        <div className="kr-offline-overlay" style={{ background: "color-mix(in srgb, var(--kr-yellow-500) 12%, transparent)", color: "var(--kr-yellow-400)" }}>
+          <span className="kr-dot kr-dot-degraded" />
+          Reconectando ao backend...
+        </div>
+      )}
+      {(connectionState === "polling" || connectionState === "fallback") && (
+        <div className="kr-offline-overlay" style={{ background: "color-mix(in srgb, var(--kr-orange-500) 10%, transparent)", color: "var(--kr-orange-400)" }}>
+          <span className="kr-dot kr-dot-degraded" />
+          Dados em cache — conexão degradada
+        </div>
+      )}
       <KratosVisualShell
         topHud={<KratosTopHud connectionState={connectionState} />}
         sidebar={<KratosSidebar />}

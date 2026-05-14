@@ -34,11 +34,20 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
 export default function MissionLensPage() {
   const { data, source, loading, error } = useApi<MissionLensContract>("/mission/lens");
 
+  const isStale = data?.generated_at && data?.stale_after_ms
+    ? Date.now() - new Date(data.generated_at).getTime() > data.stale_after_ms
+    : false;
+
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1rem" }}>
         <h2>Mission Lens</h2>
         <SourceBadge source={(source as SourceType) || "unknown"} />
+        {isStale && (
+          <span style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-yellow-400)", fontWeight: 600 }}>
+            Dados desatualizados
+          </span>
+        )}
       </div>
 
       {loading && <LoadingSkeleton type="card" count={3} />}
