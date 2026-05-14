@@ -12,17 +12,17 @@ interface AuroraPanelProps {
 const TONE_STYLES: Record<string, { border: string; bg: string; dot: string }> = {
   critical: {
     border: "var(--kr-arena-coral)",
-    bg: "rgba(244, 63, 94, 0.08)",
+    bg: "color-mix(in srgb, var(--kr-arena-coral) 8%, transparent)",
     dot: "kr-dot kr-dot-critical",
   },
   warning: {
     border: "var(--kr-gold-400)",
-    bg: "rgba(250, 204, 21, 0.08)",
+    bg: "color-mix(in srgb, var(--kr-gold-400) 8%, transparent)",
     dot: "kr-dot kr-dot-degraded",
   },
   info: {
     border: "var(--kr-azure-400)",
-    bg: "rgba(96, 165, 250, 0.08)",
+    bg: "color-mix(in srgb, var(--kr-azure-400) 8%, transparent)",
     dot: "kr-dot kr-dot-live",
   },
   neutral: {
@@ -64,8 +64,8 @@ export default function AuroraPanel({
                 color: driftRisk === "high" ? "var(--kr-arena-coral)" : "var(--kr-gold-400)",
                 background:
                   driftRisk === "high"
-                    ? "rgba(244, 63, 94, 0.12)"
-                    : "rgba(250, 204, 21, 0.12)",
+                    ? "color-mix(in srgb, var(--kr-arena-coral) 12%, transparent)"
+                    : "color-mix(in srgb, var(--kr-gold-400) 12%, transparent)",
                 fontSize: "var(--kr-text-xs)",
                 marginLeft: "auto",
               }}

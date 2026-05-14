@@ -182,12 +182,12 @@ code {
   line-height: 1.4;
 }
 
-.kr-chip-healthy { color: var(--kr-status-healthy); background: rgba(34, 197, 94, 0.12); }
-.kr-chip-degraded { color: var(--kr-status-degraded); background: rgba(234, 179, 8, 0.12); }
-.kr-chip-critical { color: var(--kr-status-critical); background: rgba(239, 68, 68, 0.12); }
-.kr-chip-offline { color: var(--kr-status-offline); background: rgba(94, 94, 120, 0.15); }
-.kr-chip-info { color: var(--kr-color-info); background: rgba(59, 130, 246, 0.12); }
-.kr-chip-neutral { color: var(--kr-color-neutral); background: rgba(157, 157, 181, 0.1); }
+.kr-chip-healthy { color: var(--kr-status-healthy); background: color-mix(in srgb, var(--kr-status-healthy) 12%, transparent); }
+.kr-chip-degraded { color: var(--kr-status-degraded); background: color-mix(in srgb, var(--kr-status-degraded) 12%, transparent); }
+.kr-chip-critical { color: var(--kr-status-critical); background: color-mix(in srgb, var(--kr-status-critical) 12%, transparent); }
+.kr-chip-offline { color: var(--kr-status-offline); background: color-mix(in srgb, var(--kr-status-offline) 15%, transparent); }
+.kr-chip-info { color: var(--kr-color-info); background: color-mix(in srgb, var(--kr-color-info) 12%, transparent); }
+.kr-chip-neutral { color: var(--kr-color-neutral); background: color-mix(in srgb, var(--kr-color-neutral) 10%, transparent); }
 
 /* Dots */
 .kr-dot {
