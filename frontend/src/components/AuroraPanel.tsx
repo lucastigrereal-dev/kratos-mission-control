@@ -10,7 +10,28 @@ interface AuroraPanelProps {
   driftRisk?: "low" | "medium" | "high";
   nextAction?: string;
   missionSummary?: string;
+  blocker?: string;
+  recommendation?: string;
+  doNotDo?: string;
 }
+
+const DECISION_STYLES = {
+  blocker: {
+    label: "BLOQUEIO",
+    icon: "⊘",
+    className: "kr-aurora-decision kr-aurora-decision--blocker",
+  },
+  recommendation: {
+    label: "RECOMENDAÇÃO",
+    icon: "◈",
+    className: "kr-aurora-decision kr-aurora-decision--recommendation",
+  },
+  doNotDo: {
+    label: "NÃO FAZER AGORA",
+    icon: "⏸",
+    className: "kr-aurora-decision kr-aurora-decision--donotdo",
+  },
+};
 
 const TONE_STYLES: Record<string, { border: string; bg: string; dot: string }> = {
   critical: {
@@ -47,6 +68,9 @@ export default function AuroraPanel({
   driftRisk = "low",
   nextAction,
   missionSummary,
+  blocker,
+  recommendation,
+  doNotDo,
 }: AuroraPanelProps) {
   return (
     <div className="kr-aurora-panel">
@@ -66,6 +90,39 @@ export default function AuroraPanel({
         <div className="kr-aurora-orb-ring--outer" />
         <div className="kr-aurora-orb-ring--inner" />
       </div>
+
+      {/* Decision cards — blocker, recommendation, do-not-do */}
+      {(blocker || recommendation || doNotDo) && (
+        <div className="kr-aurora-decisions">
+          {blocker && (
+            <div className={DECISION_STYLES.blocker.className}>
+              <span className="kr-aurora-decision-icon">{DECISION_STYLES.blocker.icon}</span>
+              <div className="kr-aurora-decision-body">
+                <span className="kr-aurora-decision-label">{DECISION_STYLES.blocker.label}</span>
+                <span className="kr-aurora-decision-text">{blocker}</span>
+              </div>
+            </div>
+          )}
+          {recommendation && (
+            <div className={DECISION_STYLES.recommendation.className}>
+              <span className="kr-aurora-decision-icon">{DECISION_STYLES.recommendation.icon}</span>
+              <div className="kr-aurora-decision-body">
+                <span className="kr-aurora-decision-label">{DECISION_STYLES.recommendation.label}</span>
+                <span className="kr-aurora-decision-text">{recommendation}</span>
+              </div>
+            </div>
+          )}
+          {doNotDo && (
+            <div className={DECISION_STYLES.doNotDo.className}>
+              <span className="kr-aurora-decision-icon">{DECISION_STYLES.doNotDo.icon}</span>
+              <div className="kr-aurora-decision-body">
+                <span className="kr-aurora-decision-label">{DECISION_STYLES.doNotDo.label}</span>
+                <span className="kr-aurora-decision-text">{doNotDo}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Next action — impossible to ignore */}
       {nextAction && (
