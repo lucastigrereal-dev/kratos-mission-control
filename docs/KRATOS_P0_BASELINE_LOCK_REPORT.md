@@ -45,8 +45,8 @@ git commit -m "docs(kratos): baseline lock + supreme sequential roadmap"
 
 | Campo | Valor |
 |---|---|
-| HEAD após commit | *(preencher após commit)* |
-| Working tree | *(preencher após commit)* |
+| HEAD após commit | `74b795b docs(kratos): baseline lock + supreme sequential roadmap` |
+| Working tree | LIMPO (zero pendências) |
 
 ## 6. Critérios de Aceite
 
@@ -55,8 +55,8 @@ git commit -m "docs(kratos): baseline lock + supreme sequential roadmap"
 - [x] Working tree: apenas docs pendentes
 - [x] Roadmap criado com 15 fases (P0-P14)
 - [x] P0 report criado
-- [ ] Commit de baseline executado *(a executar)*
-- [ ] `git status --short` limpo após commit *(a verificar)*
+- [x] Commit de baseline executado (`74b795b`)
+- [x] `git status --short` limpo após commit
 
 ## 7. Itens Fora de Escopo (NÃO TOCADOS)
 
