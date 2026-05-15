@@ -8,6 +8,7 @@ import ContextoPage from "./pages/ContextoPage";
 import SistemaPage from "./pages/SistemaPage";
 import CheckpointsPage from "./pages/CheckpointsPage";
 import OmnisPage from "./pages/OmnisPage";
+import ApprovalsPage from "./pages/ApprovalsPage";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/sistema" element={<SistemaPage />} />
         <Route path="/checkpoints" element={<CheckpointsPage />} />
         <Route path="/omnis" element={<OmnisPage />} />
+        <Route path="/approvals" element={<ApprovalsPage />} />
       </Routes>
     </Layout>
   );
