@@ -1796,10 +1796,18 @@ code {
     transform var(--kr-duration-fast) var(--kr-ease-smooth);
 }
 
-.kr-island-mini-card:has(.kr-dot-live) { border-left-color: color-mix(in srgb, var(--kr-color-live-pulse) 40%, transparent); }
-.kr-island-mini-card:has(.kr-dot-degraded) { border-left-color: color-mix(in srgb, var(--kr-yellow-400) 40%, transparent); }
-.kr-island-mini-card:has(.kr-dot-critical) { border-left-color: color-mix(in srgb, var(--kr-arena-coral) 40%, transparent); }
-.kr-island-mini-card:has(.kr-dot-healthy) { border-left-color: color-mix(in srgb, var(--kr-status-healthy) 40%, transparent); }
+/* Island status border accent system (Wave 4) */
+.kr-island-mini-card:has(.kr-dot-live) { border-left-color: color-mix(in srgb, var(--kr-color-live-pulse) 50%, transparent); }
+.kr-island-mini-card:has(.kr-dot-degraded) { border-left-color: color-mix(in srgb, var(--kr-yellow-400) 50%, transparent); }
+.kr-island-mini-card:has(.kr-dot-critical) { border-left-color: color-mix(in srgb, var(--kr-arena-coral) 50%, transparent); }
+.kr-island-mini-card:has(.kr-dot-healthy) { border-left-color: color-mix(in srgb, var(--kr-status-healthy) 50%, transparent); }
+.kr-island-mini-card:has(.kr-dot-offline) { border-left-color: color-mix(in srgb, var(--kr-text-muted) 40%, transparent); }
+
+/* Island status glow on world map */
+.kr-island--status-live::before { box-shadow: 0 0 24px var(--kr-island-omnis-glow); }
+.kr-island--status-active::before { box-shadow: 0 0 18px color-mix(in srgb, var(--kr-azure-400) 20%, transparent); }
+.kr-island--status-degraded::before { box-shadow: 0 0 18px color-mix(in srgb, var(--kr-yellow-400) 20%, transparent); }
+.kr-island--status-critical::before { box-shadow: 0 0 18px color-mix(in srgb, var(--kr-arena-coral) 20%, transparent); }
 
 .kr-island-mini-card:hover {
   border-color: var(--kr-azure-500);

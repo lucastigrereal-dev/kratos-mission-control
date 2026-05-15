@@ -9,6 +9,7 @@ interface FloatingIslandProps {
   y: number;
   onClick?: () => void;
   pulse?: boolean;
+  status?: "live" | "active" | "degraded" | "critical";
 }
 
 const SIZE_MAP = {
@@ -29,12 +30,13 @@ export default function FloatingIsland({
   y,
   onClick,
   pulse = false,
+  status,
 }: FloatingIslandProps) {
   const dims = SIZE_MAP[size];
 
   return (
     <button
-      className={`kr-island kr-island--${size}${pulse ? " kr-island--pulse" : ""}`}
+      className={`kr-island kr-island--${size}${pulse ? " kr-island--pulse" : ""}${status ? ` kr-island--status-${status}` : ""}`}
       style={{
         left: `calc(${x}% - ${dims.w / 2}px)`,
         top: `calc(${y}% - ${dims.h / 2}px)`,
