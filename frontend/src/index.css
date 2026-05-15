@@ -551,9 +551,10 @@ code {
   height: 100%;
   padding: 0 var(--kr-space-panel);
   background: var(--kr-glass-bg);
-  backdrop-filter: blur(var(--kr-glass-blur));
-  -webkit-backdrop-filter: blur(var(--kr-glass-blur));
+  backdrop-filter: blur(var(--kr-glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur-strong));
   border-bottom: 1px solid var(--kr-glass-border);
+  transition: border-bottom-color var(--kr-duration-fast) var(--kr-ease-smooth);
 }
 
 .kr-top-hud-left {
@@ -565,7 +566,7 @@ code {
 .kr-top-hud-greeting {
   font-size: var(--kr-text-sm);
   color: var(--kr-text-secondary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .kr-top-hud-brand {
@@ -574,9 +575,10 @@ code {
   letter-spacing: 0.12em;
   color: var(--kr-text-primary);
   background: var(--kr-glass-bg-strong);
-  border: 1px solid var(--kr-glass-border);
+  border: 1px solid color-mix(in srgb, var(--kr-azure-500) 12%, var(--kr-glass-border));
   border-radius: var(--kr-radius-sm);
   padding: 3px 10px;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--kr-azure-500) 6%, transparent);
 }
 
 .kr-top-hud-center {
@@ -646,20 +648,22 @@ code {
   text-decoration: none;
   transition:
     background var(--kr-duration-fast) var(--kr-ease-smooth),
-    color var(--kr-duration-fast) var(--kr-ease-smooth);
+    color var(--kr-duration-fast) var(--kr-ease-smooth),
+    transform var(--kr-duration-fast) var(--kr-ease-smooth);
   position: relative;
 }
 
 .kr-sidebar-item:hover {
   background: var(--kr-sidebar-hover);
   color: var(--kr-text-primary);
+  transform: translateX(2px);
 }
 
 .kr-sidebar-item--active {
   background: var(--kr-sidebar-active);
   color: var(--kr-text-primary);
   font-weight: 600;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kr-azure-500) 8%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kr-azure-500) 12%, transparent);
 }
 
 .kr-sidebar-item--active::before {
@@ -669,10 +673,12 @@ code {
   top: 50%;
   transform: translateY(-50%);
   width: 3px;
-  height: 18px;
+  height: 20px;
   border-radius: 0 3px 3px 0;
   background: var(--kr-azure-500);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--kr-azure-500) 40%, transparent);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--kr-azure-500) 50%, transparent),
+    0 0 20px color-mix(in srgb, var(--kr-azure-500) 20%, transparent);
 }
 
 .kr-sidebar-item-icon {
@@ -699,7 +705,13 @@ code {
 
 .kr-sidebar-divider {
   height: 1px;
-  background: var(--kr-sidebar-border);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--kr-sidebar-border) 20%,
+    var(--kr-sidebar-border) 80%,
+    transparent 100%
+  );
   margin: var(--kr-space-hud) 0;
 }
 
@@ -1073,6 +1085,15 @@ code {
   padding: 3px 10px;
   font-weight: 600;
   letter-spacing: 0.03em;
+  background: var(--kr-glass-bg-light);
+  border: 1px solid var(--kr-glass-border);
+  transition: border-color var(--kr-duration-fast) var(--kr-ease-smooth),
+              background var(--kr-duration-fast) var(--kr-ease-smooth);
+}
+
+.kr-bottom-dock .kr-chip:hover {
+  border-color: var(--kr-glass-border-strong);
+  background: var(--kr-glass-bg);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1080,11 +1101,18 @@ code {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .kr-shell[data-connection="offline"] .kr-top-hud {
-  border-bottom-color: var(--kr-arena-coral);
+  border-bottom-color: color-mix(in srgb, var(--kr-arena-coral) 50%, transparent);
+  box-shadow: 0 1px 8px color-mix(in srgb, var(--kr-arena-coral) 15%, transparent);
 }
 
 .kr-shell[data-connection="reconnecting"] .kr-top-hud {
-  border-bottom-color: var(--kr-gold-400);
+  border-bottom-color: color-mix(in srgb, var(--kr-gold-400) 50%, transparent);
+  box-shadow: 0 1px 8px color-mix(in srgb, var(--kr-gold-400) 12%, transparent);
+}
+
+.kr-shell[data-connection="polling"] .kr-top-hud,
+.kr-shell[data-connection="fallback"] .kr-top-hud {
+  border-bottom-color: color-mix(in srgb, var(--kr-yellow-400) 30%, transparent);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
