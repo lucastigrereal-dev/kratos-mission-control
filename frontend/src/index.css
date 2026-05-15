@@ -1572,28 +1572,41 @@ code {
 /* Earth/rock body below the island — more organic, deeper */
 .kr-island-body {
   position: absolute;
-  top: 90%;
-  left: 5%;
-  right: 5%;
-  bottom: -26px;
+  top: 88%;
+  left: 8%;
+  right: 8%;
+  bottom: -32px;
   background: linear-gradient(
     175deg,
     var(--kr-earth-light) 0%,
-    var(--kr-earth-base) 35%,
-    var(--kr-earth-rock) 70%,
+    var(--kr-earth-base) 30%,
+    var(--kr-earth-rock) 65%,
     color-mix(in srgb, var(--kr-earth-rock) 80%, black 20%) 100%
   );
-  border-radius: 0 0 50% 50% / 0 0 45% 45%;
-  transform: translateZ(-2px);
+  border-radius: 38% 42% 50% 48% / 28% 32% 56% 52%;
+  transform: translateZ(-3px);
   box-shadow:
     inset 0 3px 8px color-mix(in srgb, black 35%, transparent),
-    0 2px 6px color-mix(in srgb, black 40%, transparent);
+    0 4px 12px color-mix(in srgb, black 45%, transparent),
+    0 8px 24px color-mix(in srgb, black 30%, transparent);
 }
 
 .kr-island:hover .kr-island-body {
   box-shadow:
     inset 0 3px 8px color-mix(in srgb, black 35%, transparent),
-    0 4px 12px color-mix(in srgb, black 45%, transparent);
+    0 6px 20px color-mix(in srgb, black 50%, transparent),
+    0 12px 32px color-mix(in srgb, black 35%, transparent);
+}
+
+/* Per-size border-radius variation for island tops */
+.kr-island--sm .kr-island-top {
+  border-radius: 46% 54% 48% 52% / 54% 46% 52% 48%;
+}
+.kr-island--md .kr-island-top {
+  border-radius: 44% 56% 50% 50% / 52% 48% 54% 46%;
+}
+.kr-island--lg .kr-island-top {
+  border-radius: 42% 58% 45% 55% / 50% 52% 48% 50%;
 }
 
 /* Tiny structures on the island surface */
