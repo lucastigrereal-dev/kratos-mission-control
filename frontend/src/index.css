@@ -1729,8 +1729,9 @@ code {
   animation-play-state: paused;
   z-index: 350;
   filter:
-    drop-shadow(0 0 20px color-mix(in srgb, var(--kr-gold-400) 20%, transparent))
-    drop-shadow(0 0 40px color-mix(in srgb, var(--kr-azure-400) 10%, transparent));
+    drop-shadow(0 0 28px color-mix(in srgb, var(--kr-gold-400) 28%, transparent))
+    drop-shadow(0 0 56px color-mix(in srgb, var(--kr-azure-400) 15%, transparent))
+    drop-shadow(0 0 80px color-mix(in srgb, var(--kr-aurora-500) 8%, transparent));
 }
 
 .kr-castle:focus-visible {
@@ -1862,21 +1863,22 @@ code {
   bottom: 3%;
   left: 50%;
   transform: translateX(-50%);
-  width: 56px;
-  height: 56px;
+  width: var(--kr-castle-portal-size);
+  height: var(--kr-castle-portal-size);
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--kr-azure-400) 85%, transparent) 0%,
+    var(--kr-castle-portal-glow-inner) 0%,
     color-mix(in srgb, var(--kr-azure-500) 40%, transparent) 30%,
     color-mix(in srgb, var(--kr-gold-400) 15%, transparent) 50%,
-    color-mix(in srgb, var(--kr-aurora-500) 5%, transparent) 65%,
+    var(--kr-castle-portal-glow-outer) 65%,
     transparent 80%
   );
   box-shadow:
-    0 0 32px color-mix(in srgb, var(--kr-azure-500) 30%, transparent),
-    0 0 64px color-mix(in srgb, var(--kr-azure-500) 12%, transparent),
-    0 0 100px color-mix(in srgb, var(--kr-azure-500) 5%, transparent);
+    0 0 32px color-mix(in srgb, var(--kr-azure-500) 35%, transparent),
+    0 0 64px color-mix(in srgb, var(--kr-azure-500) 15%, transparent),
+    0 0 100px color-mix(in srgb, var(--kr-azure-500) 6%, transparent),
+    0 0 140px color-mix(in srgb, var(--kr-gold-400) 4%, transparent);
   z-index: 0;
   animation: kr-portal-pulse 2.5s ease-in-out infinite;
 }
