@@ -1,0 +1,42 @@
+[
+  {
+    "id": "task-001",
+    "title": "Corrigir GET /tasks para ler do SQLite",
+    "project_id": "kratos-mission-control",
+    "status": "doing",
+    "priority": "high",
+    "source": "manual",
+    "created_at": "2026-05-13T10:00:00Z",
+    "updated_at": "2026-05-13T14:00:00Z"
+  },
+  {
+    "id": "task-002",
+    "title": "Migrar GET /projects para SQLite",
+    "project_id": "kratos-mission-control",
+    "status": "planned",
+    "priority": "high",
+    "source": "manual",
+    "created_at": "2026-05-13T10:00:00Z",
+    "updated_at": "2026-05-13T10:00:00Z"
+  },
+  {
+    "id": "task-003",
+    "title": "Criar componente SourceBadge no frontend",
+    "project_id": "kratos-mission-control",
+    "status": "planned",
+    "priority": "medium",
+    "source": "manual",
+    "created_at": "2026-05-13T10:00:00Z",
+    "updated_at": "2026-05-13T10:00:00Z"
+  },
+  {
+    "id": "task-004",
+    "title": "Corrigir bug alert_service (system nested data)",
+    "project_id": "kratos-mission-control",
+    "status": "planned",
+    "priority": "medium",
+    "source": "manual",
+    "created_at": "2026-05-13T10:00:00Z",
+    "updated_at": "2026-05-13T10:00:00Z"
+  }
+]

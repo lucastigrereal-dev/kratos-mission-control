@@ -1,0 +1,52 @@
+[
+  {
+    "id": "kratos-mission-control",
+    "name": "KRATOS Mission Control",
+    "description": "Cockpit local-first de observabilidade operacional",
+    "phase": "0.10",
+    "status": "active",
+    "category": "dev-tool",
+    "repo_path": "C:\\Users\\lucas\\kratos-mission-control",
+    "last_checkpoint_at": "2026-05-13T00:00:00Z"
+  },
+  {
+    "id": "publisher-os",
+    "name": "Publisher OS (JARVIS)",
+    "description": "Sistema de produção de conteúdo para 6 páginas Instagram",
+    "phase": "production",
+    "status": "active",
+    "category": "business",
+    "repo_path": "C:\\Users\\lucas\\publisher-os",
+    "last_checkpoint_at": "2026-05-12T00:00:00Z"
+  },
+  {
+    "id": "omnis-control",
+    "name": "OMNIS Control",
+    "description": "Sistema de auditoria e verificação de skills",
+    "phase": "1.0",
+    "status": "active",
+    "category": "dev-tool",
+    "repo_path": "C:\\Users\\lucas\\omnis-control",
+    "last_checkpoint_at": "2026-05-12T00:00:00Z"
+  },
+  {
+    "id": "daily-prophet-hotels",
+    "name": "Daily Prophet Hotels",
+    "description": "App de calendário editorial para hotéis",
+    "phase": "mvp",
+    "status": "active",
+    "category": "product",
+    "repo_path": "C:\\Users\\lucas\\daily-prophet-hotels",
+    "last_checkpoint_at": "2026-03-15T00:00:00Z"
+  },
+  {
+    "id": "publisher-os-cockpit",
+    "name": "Publisher OS Cockpit",
+    "description": "Cockpit web do Publisher OS",
+    "phase": "mvp",
+    "status": "active",
+    "category": "dev-tool",
+    "repo_path": "C:\\Users\\lucas\\publisher-os-cockpit",
+    "last_checkpoint_at": "2026-04-01T00:00:00Z"
+  }
+]

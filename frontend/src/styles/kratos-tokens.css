@@ -1,0 +1,186 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   KRATOS 1.0 — Visual Design Tokens
+   Apple-clean · mundo vivo · ilhas flutuantes · HUD operacional
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Sky & Ocean ───────────────────────────────────────────────── */
+  --kr-sky-top: #0b0d1a;
+  --kr-sky-mid: #0f1529;
+  --kr-sky-horizon: #162040;
+  --kr-ocean-deep: #080e20;
+  --kr-ocean-mid: #0c1630;
+  --kr-ocean-shallow: #101e40;
+  --kr-ocean-surface: rgba(16, 40, 72, 0.3);
+
+  /* ── Azure / Blue family ───────────────────────────────────────── */
+  --kr-azure-50: #eff6ff;
+  --kr-azure-100: #dbeafe;
+  --kr-azure-200: #bfdbfe;
+  --kr-azure-300: #93c5fd;
+  --kr-azure-400: #60a5fa;
+  --kr-azure-500: #3b82f6;
+  --kr-azure-600: #2563eb;
+  --kr-azure-700: #1d4ed8;
+  --kr-azure-800: #1e40af;
+  --kr-azure-900: #1e3a8a;
+
+  /* ── Ocean / Teal-Cyan family ──────────────────────────────────── */
+  --kr-ocean-blue: #0d9488;
+  --kr-ocean-teal: #14b8a6;
+  --kr-ocean-cyan: #06b6d4;
+  --kr-ocean-sky: #0ea5e9;
+
+  /* ── Island / Green family ─────────────────────────────────────── */
+  --kr-isle-moss: #4d7c0f;
+  --kr-isle-fern: #65a30d;
+  --kr-isle-lime: #84cc16;
+  --kr-isle-glow: rgba(132, 204, 22, 0.25);
+
+  /* ── Arena / Red-Orange family ─────────────────────────────────── */
+  --kr-arena-coral: #f43f5e;
+  --kr-arena-rose: #e11d48;
+  --kr-arena-ember: #f97316;
+  --kr-arena-glow: rgba(249, 115, 22, 0.2);
+
+  /* ── Gold / KRATOS accent ──────────────────────────────────────── */
+  --kr-gold-300: #fde047;
+  --kr-gold-400: #facc15;
+  --kr-gold-500: #eab308;
+  --kr-gold-600: #ca8a04;
+  --kr-gold-glow: rgba(234, 179, 8, 0.18);
+
+  /* ── Aurora / Purple-Violet ────────────────────────────────────── */
+  --kr-aurora-300: #c4b5fd;
+  --kr-aurora-400: #a78bfa;
+  --kr-aurora-500: #8b5cf6;
+  --kr-aurora-600: #7c3aed;
+  --kr-aurora-glow: rgba(139, 92, 246, 0.18);
+
+  /* ── Sidebar blues ─────────────────────────────────────────────── */
+  --kr-sidebar-bg: rgba(8, 12, 28, 0.85);
+  --kr-sidebar-border: rgba(255, 255, 255, 0.06);
+  --kr-sidebar-active: rgba(59, 130, 246, 0.12);
+  --kr-sidebar-hover: rgba(255, 255, 255, 0.04);
+
+  /* ── Glass panel system ────────────────────────────────────────── */
+  --kr-glass-bg: rgba(12, 18, 36, 0.55);
+  --kr-glass-bg-strong: rgba(12, 18, 36, 0.78);
+  --kr-glass-bg-light: rgba(12, 18, 36, 0.3);
+  --kr-glass-border: rgba(255, 255, 255, 0.08);
+  --kr-glass-border-strong: rgba(255, 255, 255, 0.14);
+  --kr-glass-blur: 12px;
+  --kr-glass-blur-strong: 20px;
+
+  /* ── Shadows ───────────────────────────────────────────────────── */
+  --kr-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --kr-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --kr-shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.55);
+  --kr-shadow-float: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --kr-shadow-glow-blue: 0 0 24px rgba(59, 130, 246, 0.15);
+  --kr-shadow-glow-gold: 0 0 20px rgba(234, 179, 8, 0.12);
+  --kr-shadow-glow-aurora: 0 0 20px rgba(139, 92, 246, 0.12);
+
+  /* ── Border radius ─────────────────────────────────────────────── */
+  --kr-radius-sm: 6px;
+  --kr-radius-md: 8px;
+  --kr-radius-lg: 12px;
+  --kr-radius-xl: 16px;
+  --kr-radius-2xl: 24px;
+
+  /* ── Spacing (HUD scale) ───────────────────────────────────────── */
+  --kr-space-hud: 8px;
+  --kr-space-section: 16px;
+  --kr-space-panel: 20px;
+  --kr-space-page: 32px;
+
+  /* ── Z-index shell ─────────────────────────────────────────────── */
+  --kr-z-world: 0;
+  --kr-z-island: 10;
+  --kr-z-bridge: 5;
+  --kr-z-cloud: 3;
+  --kr-z-hud: 100;
+  --kr-z-sidebar: 200;
+  --kr-z-rail: 200;
+  --kr-z-dock: 300;
+  --kr-z-overlay: 400;
+  --kr-z-aurora: 350;
+
+  /* ── Motion ────────────────────────────────────────────────────── */
+  --kr-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --kr-ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --kr-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --kr-duration-instant: 0.08s;
+  --kr-duration-fast: 0.15s;
+  --kr-duration-normal: 0.25s;
+  --kr-duration-medium: 0.4s;
+  --kr-duration-slow: 0.6s;
+  --kr-duration-float: 6s;
+  --kr-duration-cloud: 40s;
+
+  /* ── Island sizing ─────────────────────────────────────────────── */
+  --kr-island-central-size: 200px;
+  --kr-island-large-size: 140px;
+  --kr-island-medium-size: 110px;
+  --kr-island-small-size: 85px;
+  --kr-island-gap: 40px;
+
+  /* ── 1.0A-FIX: Sky light blues ─────────────────────────────────── */
+  --kr-sky-light-top: #dbeafe;
+  --kr-sky-light-mid: #93c5fd;
+  --kr-sky-light-horizon: #60a5fa;
+  --kr-ocean-light-shallow: #3b82f6;
+  --kr-ocean-light-mid: #2563eb;
+  --kr-ocean-light-deep: #1e40af;
+
+  /* ── 1.0A-FIX: Earth & Wood ────────────────────────────────────── */
+  --kr-earth-top: #4d7c0f;
+  --kr-earth-mid: #3f6212;
+  --kr-earth-base: #5c4a3a;
+  --kr-earth-rock: #4a3828;
+  --kr-wood-bridge: #8b7355;
+  --kr-wood-bridge-dim: #7a6348;
+  --kr-wood-dark: #6b5744;
+
+  /* ── 1.0A-FIX: Castle ──────────────────────────────────────────── */
+  --kr-castle-stone: #d4c5b9;
+  --kr-castle-stone-dark: #b8a99a;
+  --kr-castle-roof: #b91c1c;
+  --kr-castle-roof-dark: #991b1b;
+  --kr-castle-portal: #3b82f6;
+
+  /* ── 1.0B-FIX: Extended world & environment tokens ───────────────── */
+  --kr-castle-stone-light: #e8ddd0;
+  --kr-earth-light: #6b5535;
+  --kr-bg-dock-solid: #080c1c;
+  --kr-world-grass-highlight: rgba(132, 204, 22, 0.4);
+  --kr-world-grass-shadow: rgba(101, 163, 13, 0.25);
+  --kr-world-sky-radial: rgba(255, 250, 240, 0.35);
+  --kr-world-sun-core: rgba(255, 255, 255, 0.6);
+  --kr-world-sun-edge: rgba(255, 250, 230, 0.2);
+  --kr-world-cloud: rgba(255, 255, 255, 0.03);
+  --kr-world-label-text: rgba(255, 255, 255, 0.85);
+  --kr-world-label-shadow: rgba(0, 0, 0, 0.5);
+
+  /* ── Source / Squad translucent backgrounds (safe — no hex concat) ─ */
+  --kr-source-live-bg: color-mix(in srgb, var(--kr-green-400) 10%, transparent);
+  --kr-source-cached-bg: color-mix(in srgb, var(--kr-yellow-400) 10%, transparent);
+  --kr-source-fallback-bg: color-mix(in srgb, var(--kr-orange-400) 10%, transparent);
+  --kr-source-mock-bg: color-mix(in srgb, var(--kr-text-muted) 10%, transparent);
+  --kr-source-error-bg: color-mix(in srgb, var(--kr-red-400) 10%, transparent);
+  --kr-source-unknown-bg: color-mix(in srgb, var(--kr-text-disabled) 10%, transparent);
+  --kr-squad-kratos-bg: color-mix(in srgb, var(--kr-azure-500) 10%, transparent);
+  --kr-squad-omnis-bg: color-mix(in srgb, var(--kr-aurora-500) 10%, transparent);
+  --kr-squad-aurora-bg: color-mix(in srgb, var(--kr-aurora-400) 10%, transparent);
+  --kr-squad-codex-bg: color-mix(in srgb, var(--kr-ocean-cyan) 10%, transparent);
+  --kr-squad-akasha-bg: color-mix(in srgb, var(--kr-ocean-teal) 10%, transparent);
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --kr-duration-float: 0s;
+    --kr-duration-cloud: 0s;
+    --kr-duration-slow: 0s;
+  }
+}
