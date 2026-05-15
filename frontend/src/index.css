@@ -1662,21 +1662,22 @@ code {
 /* Label below island — stronger contrast, glass backdrop */
 .kr-island-label {
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.94);
   text-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.7),
-    0 0 8px rgba(0, 0, 0, 0.5),
-    0 0 16px color-mix(in srgb, var(--kr-world-label-text) 30%, transparent);
-  letter-spacing: 0.04em;
-  line-height: 1.1;
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(0, 0, 0, 0.6),
+    0 0 16px color-mix(in srgb, var(--kr-world-label-text) 40%, transparent);
+  letter-spacing: 0.05em;
+  line-height: 1.15;
+  text-rendering: optimizeLegibility;
   z-index: 5;
   pointer-events: none;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: var(--kr-radius-sm);
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Organic shadow — deeper and more diffuse for depth */
