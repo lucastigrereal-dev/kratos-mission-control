@@ -1510,7 +1510,12 @@ code {
   position: absolute;
   inset: -15% -20% -25% -20%;
   border-radius: 50%;
-  opacity: 0.08;
+  background: radial-gradient(
+    ellipse,
+    var(--kr-island-glow) 0%,
+    transparent 70%
+  );
+  opacity: 0.12;
   pointer-events: none;
   z-index: -1;
   transition: opacity var(--kr-duration-normal) var(--kr-ease-smooth);
@@ -2048,11 +2053,11 @@ code {
 .kr-island-mini-card:has(.kr-dot-healthy) { border-left-color: color-mix(in srgb, var(--kr-status-healthy) 50%, transparent); }
 .kr-island-mini-card:has(.kr-dot-offline) { border-left-color: color-mix(in srgb, var(--kr-text-muted) 40%, transparent); }
 
-/* Island status glow on world map */
-.kr-island--status-live::before { box-shadow: 0 0 24px var(--kr-island-omnis-glow); }
-.kr-island--status-active::before { box-shadow: 0 0 18px color-mix(in srgb, var(--kr-azure-400) 20%, transparent); }
-.kr-island--status-degraded::before { box-shadow: 0 0 18px color-mix(in srgb, var(--kr-yellow-400) 20%, transparent); }
-.kr-island--status-critical::before { box-shadow: 0 0 18px color-mix(in srgb, var(--kr-arena-coral) 20%, transparent); }
+/* Island status glow on world map — per-island accent via CSS custom properties */
+.kr-island--status-live::before { box-shadow: 0 0 28px var(--kr-island-glow), 0 0 48px color-mix(in srgb, var(--kr-island-glow) 50%, transparent); }
+.kr-island--status-active::before { box-shadow: 0 0 20px var(--kr-island-glow); }
+.kr-island--status-degraded::before { box-shadow: 0 0 16px color-mix(in srgb, var(--kr-yellow-400) 20%, transparent); }
+.kr-island--status-critical::before { box-shadow: 0 0 20px color-mix(in srgb, var(--kr-arena-coral) 25%, transparent), 0 0 36px color-mix(in srgb, var(--kr-arena-coral) 10%, transparent); }
 
 .kr-island-mini-card:hover {
   border-color: var(--kr-azure-500);
