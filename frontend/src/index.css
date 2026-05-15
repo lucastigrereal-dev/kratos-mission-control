@@ -1003,6 +1003,67 @@ code {
               background var(--kr-duration-fast) var(--kr-ease-smooth);
 }
 
+.kr-aurora-signal-action {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: var(--kr-radius-sm);
+  background: color-mix(in srgb, var(--kr-aurora-400) 10%, transparent);
+  color: var(--kr-aurora-300);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.kr-aurora-mission-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--kr-radius-md);
+  background: color-mix(in srgb, var(--kr-aurora-500) 6%, var(--kr-glass-bg));
+  border: 1px solid color-mix(in srgb, var(--kr-aurora-400) 10%, transparent);
+}
+
+.kr-aurora-mission-summary-icon {
+  font-size: 14px;
+  color: var(--kr-aurora-400);
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.kr-aurora-mission-summary-text {
+  font-size: var(--kr-text-xs);
+  color: var(--kr-text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+.kr-aurora-next-action {
+  padding: 14px;
+  border-radius: var(--kr-radius-md);
+  background: color-mix(in srgb, var(--kr-azure-500) 6%, var(--kr-glass-bg-strong));
+  border: 1px solid color-mix(in srgb, var(--kr-azure-400) 15%, transparent);
+  text-align: center;
+}
+
+.kr-aurora-next-action-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--kr-azure-300);
+  margin-bottom: 4px;
+}
+
+.kr-aurora-next-action-text {
+  font-size: var(--kr-text-sm);
+  font-weight: 600;
+  color: var(--kr-text-primary);
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Mission Bar
    ═══════════════════════════════════════════════════════════════════════════ */

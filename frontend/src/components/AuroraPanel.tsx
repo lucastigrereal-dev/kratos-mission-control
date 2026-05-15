@@ -1,12 +1,15 @@
 interface AuroraSignal {
   text: string;
   tone: "critical" | "warning" | "info" | "neutral";
+  action?: string;
 }
 
 interface AuroraPanelProps {
   signals: AuroraSignal[];
   focusState?: string;
   driftRisk?: "low" | "medium" | "high";
+  nextAction?: string;
+  missionSummary?: string;
 }
 
 const TONE_STYLES: Record<string, { border: string; bg: string; dot: string }> = {
@@ -42,17 +45,35 @@ export default function AuroraPanel({
   signals,
   focusState,
   driftRisk = "low",
+  nextAction,
+  missionSummary,
 }: AuroraPanelProps) {
   return (
     <div className="kr-aurora-panel">
-      <div className="kr-section-title">AURORA · Inteligência</div>
+      <div className="kr-section-title">AURORA · Sentinel</div>
 
-      {/* Holographic orb */}
+      {/* Mission summary — what matters now */}
+      {missionSummary && (
+        <div className="kr-aurora-mission-summary">
+          <span className="kr-aurora-mission-summary-icon">◈</span>
+          <span className="kr-aurora-mission-summary-text">{missionSummary}</span>
+        </div>
+      )}
+
+      {/* Holographic orb — presence indicator */}
       <div className="kr-aurora-orb">
         <div className="kr-aurora-orb-inner" />
         <div className="kr-aurora-orb-ring--outer" />
         <div className="kr-aurora-orb-ring--inner" />
       </div>
+
+      {/* Next action — impossible to ignore */}
+      {nextAction && (
+        <div className="kr-aurora-next-action">
+          <div className="kr-aurora-next-action-label">PRÓXIMA AÇÃO</div>
+          <div className="kr-aurora-next-action-text">{nextAction}</div>
+        </div>
+      )}
 
       {focusState && (
         <div className="kr-aurora-focus">
@@ -82,7 +103,10 @@ export default function AuroraPanel({
               style={{ borderLeftColor: s.border, background: s.bg }}
             >
               <span className={s.dot} />
-              <span style={{ fontSize: "var(--kr-text-xs)" }}>{signal.text}</span>
+              <span style={{ fontSize: "var(--kr-text-xs)", flex: 1 }}>{signal.text}</span>
+              {signal.action && (
+                <span className="kr-aurora-signal-action">{signal.action}</span>
+              )}
             </div>
           );
         })}
