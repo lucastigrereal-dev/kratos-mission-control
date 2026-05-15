@@ -1179,16 +1179,57 @@ code {
   position: absolute;
   inset: 0;
   background:
+    /* subtle vignette at edges */
+    radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(4, 8, 16, 0.5) 100%),
+    /* atmospheric sky dome */
     radial-gradient(ellipse at 50% 15%, var(--kr-world-sky-radial) 0%, transparent 55%),
+    /* deep ocean gradient — 6 stops for depth */
     linear-gradient(
       180deg,
       var(--kr-sky-top) 0%,
-      var(--kr-sky-mid) 20%,
-      var(--kr-sky-horizon) 40%,
-      var(--kr-ocean-mid) 55%,
-      var(--kr-ocean-shallow) 75%,
+      color-mix(in srgb, var(--kr-sky-top) 80%, var(--kr-sky-mid) 20%) 15%,
+      var(--kr-sky-mid) 30%,
+      var(--kr-sky-horizon) 45%,
+      var(--kr-ocean-mid) 60%,
+      var(--kr-ocean-shallow) 80%,
       var(--kr-ocean-deep) 100%
     );
+}
+
+/* Horizon atmospheric layer — subtle light band at the world's edge */
+.kr-world-horizon {
+  position: absolute;
+  top: 38%;
+  left: 0;
+  right: 0;
+  height: 8%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(20, 40, 80, 0.15) 30%,
+    rgba(20, 40, 80, 0.2) 50%,
+    rgba(20, 40, 80, 0.1) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ocean depth layers — subtle horizontal bands for water depth illusion */
+.kr-world-depth {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      transparent 42%,
+      rgba(4, 12, 28, 0.3) 55%,
+      rgba(4, 12, 28, 0.5) 70%,
+      rgba(4, 8, 16, 0.7) 85%,
+      rgba(4, 8, 16, 0.85) 100%
+    );
+  pointer-events: none;
+  z-index: 2;
 }
 
 .kr-world-sun {
