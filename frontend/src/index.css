@@ -548,9 +548,10 @@ code {
   background: linear-gradient(
     180deg,
     var(--kr-sky-top) 0%,
-    var(--kr-sky-mid) 30%,
-    var(--kr-ocean-deep) 70%,
-    var(--kr-ocean-deep) 100%
+    var(--kr-sky-mid) 25%,
+    var(--kr-sky-horizon) 50%,
+    var(--kr-ocean-deep) 75%,
+    var(--kr-ocean-abyss, #040810) 100%
   );
 }
 
@@ -1181,12 +1182,12 @@ code {
     radial-gradient(ellipse at 50% 15%, var(--kr-world-sky-radial) 0%, transparent 55%),
     linear-gradient(
       180deg,
-      var(--kr-sky-light-top) 0%,
-      var(--kr-sky-light-mid) 20%,
-      var(--kr-sky-light-horizon) 40%,
-      var(--kr-ocean-light-shallow) 55%,
-      var(--kr-ocean-light-mid) 75%,
-      var(--kr-ocean-light-deep) 100%
+      var(--kr-sky-top) 0%,
+      var(--kr-sky-mid) 20%,
+      var(--kr-sky-horizon) 40%,
+      var(--kr-ocean-mid) 55%,
+      var(--kr-ocean-shallow) 75%,
+      var(--kr-ocean-deep) 100%
     );
 }
 
@@ -1904,12 +1905,12 @@ code {
       radial-gradient(ellipse at 50% 15%, var(--kr-world-sky-radial) 0%, transparent 55%),
       linear-gradient(
         180deg,
-        var(--kr-sky-light-top) 0%,
-        var(--kr-sky-light-mid) 20%,
-        var(--kr-sky-light-horizon) 40%,
-        var(--kr-ocean-light-shallow) 55%,
-        var(--kr-ocean-light-mid) 75%,
-        var(--kr-ocean-light-deep) 100%
+        var(--kr-sky-top) 0%,
+        var(--kr-sky-mid) 20%,
+        var(--kr-sky-horizon) 40%,
+        var(--kr-ocean-mid) 55%,
+        var(--kr-ocean-shallow) 75%,
+        var(--kr-ocean-deep) 100%
       );
   }
 

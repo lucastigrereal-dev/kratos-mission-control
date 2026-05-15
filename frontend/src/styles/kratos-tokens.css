@@ -4,14 +4,15 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Sky & Ocean ───────────────────────────────────────────────── */
-  --kr-sky-top: #0b0d1a;
-  --kr-sky-mid: #0f1529;
-  --kr-sky-horizon: #162040;
-  --kr-ocean-deep: #080e20;
-  --kr-ocean-mid: #0c1630;
-  --kr-ocean-shallow: #101e40;
-  --kr-ocean-surface: rgba(16, 40, 72, 0.3);
+  /* ── Sky & Ocean (Visual Bible §5.1) ────────────────────────────── */
+  --kr-sky-top: #06060d;
+  --kr-sky-mid: #0a1020;
+  --kr-sky-horizon: #0e1830;
+  --kr-ocean-deep: #060d1a;
+  --kr-ocean-mid: #0a1530;
+  --kr-ocean-shallow: #0e1e40;
+  --kr-ocean-surface: rgba(14, 30, 64, 0.35);
+  --kr-ocean-abyss: #040810;
 
   /* ── Azure / Blue family ───────────────────────────────────────── */
   --kr-azure-50: #eff6ff;
@@ -63,14 +64,41 @@
   --kr-sidebar-active: rgba(59, 130, 246, 0.12);
   --kr-sidebar-hover: rgba(255, 255, 255, 0.04);
 
-  /* ── Glass panel system ────────────────────────────────────────── */
-  --kr-glass-bg: rgba(12, 18, 36, 0.55);
-  --kr-glass-bg-strong: rgba(12, 18, 36, 0.78);
-  --kr-glass-bg-light: rgba(12, 18, 36, 0.3);
+  /* ── Glass panel system (Visual Bible §5.2-5.3) ────────────────── */
+  --kr-glass-bg: rgba(15, 23, 42, 0.55);
+  --kr-glass-bg-strong: rgba(15, 23, 42, 0.75);
+  --kr-glass-bg-light: rgba(15, 23, 42, 0.35);
+  --kr-glass-bg-hover: rgba(15, 23, 42, 0.68);
   --kr-glass-border: rgba(255, 255, 255, 0.08);
   --kr-glass-border-strong: rgba(255, 255, 255, 0.14);
+  --kr-glass-border-accent: rgba(255, 255, 255, 0.18);
   --kr-glass-blur: 12px;
   --kr-glass-blur-strong: 20px;
+  --kr-glass-blur-max: 24px;
+
+  /* ── Island identity tokens (Visual Bible §3 — 11 ilhas) ────────── */
+  --kr-island-omnis: #7C3AED;
+  --kr-island-omnis-glow: rgba(139, 92, 246, 0.25);
+  --kr-island-omnis-label: #C4B5FD;
+  --kr-island-akasha: #059669;
+  --kr-island-akasha-glow: rgba(16, 185, 129, 0.25);
+  --kr-island-akasha-gold: #F59E0B;
+  --kr-island-arena: #DC2626;
+  --kr-island-arena-glow: rgba(220, 38, 38, 0.25);
+  --kr-island-agencia: #F97316;
+  --kr-island-agencia-glow: rgba(249, 115, 22, 0.25);
+  --kr-island-vila: #16A34A;
+  --kr-island-vila-glow: rgba(22, 163, 74, 0.25);
+  --kr-island-observatorio: #1E3A8A;
+  --kr-island-observatorio-glow: rgba(30, 58, 138, 0.25);
+  --kr-island-nimbus: #0EA5E9;
+  --kr-island-nimbus-glow: rgba(14, 165, 233, 0.25);
+  --kr-island-financas: #166534;
+  --kr-island-financas-glow: rgba(22, 101, 52, 0.25);
+  --kr-island-forja: #475569;
+  --kr-island-forja-glow: rgba(234, 88, 12, 0.25);
+  --kr-island-filosofia: #7C3AED;
+  --kr-island-filosofia-glow: rgba(124, 58, 237, 0.25);
 
   /* ── Shadows ───────────────────────────────────────────────────── */
   --kr-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
@@ -125,13 +153,13 @@
   --kr-island-small-size: 85px;
   --kr-island-gap: 40px;
 
-  /* ── 1.0A-FIX: Sky light blues ─────────────────────────────────── */
-  --kr-sky-light-top: #dbeafe;
-  --kr-sky-light-mid: #93c5fd;
-  --kr-sky-light-horizon: #60a5fa;
-  --kr-ocean-light-shallow: #3b82f6;
-  --kr-ocean-light-mid: #2563eb;
-  --kr-ocean-light-deep: #1e40af;
+  /* ── 1.0A-FIX: Sky dusk/atmospheric (deep, non-generic) ─────────── */
+  --kr-sky-light-top: #0d1225;
+  --kr-sky-light-mid: #111d38;
+  --kr-sky-light-horizon: #162548;
+  --kr-ocean-light-shallow: #1a3058;
+  --kr-ocean-light-mid: #0f2040;
+  --kr-ocean-light-deep: #0a1830;
 
   /* ── 1.0A-FIX: Earth & Wood ────────────────────────────────────── */
   --kr-earth-top: #4d7c0f;
@@ -155,10 +183,10 @@
   --kr-bg-dock-solid: #080c1c;
   --kr-world-grass-highlight: rgba(132, 204, 22, 0.4);
   --kr-world-grass-shadow: rgba(101, 163, 13, 0.25);
-  --kr-world-sky-radial: rgba(255, 250, 240, 0.35);
-  --kr-world-sun-core: rgba(255, 255, 255, 0.6);
-  --kr-world-sun-edge: rgba(255, 250, 230, 0.2);
-  --kr-world-cloud: rgba(255, 255, 255, 0.03);
+  --kr-world-sky-radial: rgba(30, 50, 100, 0.4);
+  --kr-world-sun-core: rgba(255, 255, 255, 0.15);
+  --kr-world-sun-edge: rgba(200, 210, 240, 0.06);
+  --kr-world-cloud: rgba(255, 255, 255, 0.025);
   --kr-world-label-text: rgba(255, 255, 255, 0.85);
   --kr-world-label-shadow: rgba(0, 0, 0, 0.5);
 
