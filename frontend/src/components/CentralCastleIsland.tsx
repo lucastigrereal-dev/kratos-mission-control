@@ -56,9 +56,9 @@ export default function CentralCastleIsland({
       {/* Banner below */}
       <div className="kr-castle-banner">
         <span className={statusDot(connectionState)} />
-        <span className="kr-castle-banner-label">MISSÃO ATUAL</span>
+        <span className="kr-castle-banner-label">MISSÃO</span>
         <span className="kr-castle-banner-text">
-          {currentMission || "Indefinida"}
+          {currentMission || "—"}
         </span>
       </div>
     </button>

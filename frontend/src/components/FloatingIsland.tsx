@@ -44,7 +44,7 @@ export default function FloatingIsland({
         "--kr-island-glow": glowColor,
       } as React.CSSProperties}
       onClick={onClick}
-      aria-label={label}
+      aria-label={`Ilha ${label}`}
       title={label}
     >
       <div className="kr-island-platform">
