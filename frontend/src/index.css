@@ -2263,6 +2263,26 @@ code {
   }
 }
 
+/* Focus mode — dims non-essential elements, keeps primary action clear */
+.kr-focus-mode .kr-shell-sidebar,
+.kr-focus-mode .kr-shell-right-rail {
+  opacity: 0.4;
+  transition: opacity var(--kr-duration-slow) var(--kr-ease-smooth);
+  pointer-events: none;
+}
+
+.kr-focus-mode .kr-shell-sidebar:hover,
+.kr-focus-mode .kr-shell-right-rail:hover {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.kr-focus-mode .kr-world-map-legend,
+.kr-focus-mode .kr-cloud {
+  opacity: 0.3;
+  transition: opacity var(--kr-duration-slow) var(--kr-ease-smooth);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Reduced motion respects tokens (duration vars set to 0s via media query)
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -2628,6 +2648,13 @@ code {
   .kr-world-horizon,
   .kr-world-depth {
     opacity: 0.5;
+  }
+
+  .kr-focus-mode .kr-shell-sidebar,
+  .kr-focus-mode .kr-shell-right-rail,
+  .kr-focus-mode .kr-world-map-legend,
+  .kr-focus-mode .kr-cloud {
+    transition: none;
   }
 }
 
