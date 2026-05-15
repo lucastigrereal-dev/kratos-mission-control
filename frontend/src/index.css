@@ -158,6 +158,51 @@ code {
     inset 0 1px 0 color-mix(in srgb, white 3%, transparent);
 }
 
+/* WA6: Canonical KRATOS glass panel (Visual Bible §5.2-5.3) */
+.kr-glass-panel {
+  background: var(--kr-glass-bg);
+  backdrop-filter: blur(var(--kr-glass-blur));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur));
+  border: 1px solid var(--kr-glass-border);
+  border-radius: var(--kr-radius-lg);
+  box-shadow: var(--kr-shadow-glass);
+  transition: box-shadow var(--kr-duration-normal) var(--kr-ease-smooth),
+              border-color var(--kr-duration-normal) var(--kr-ease-smooth);
+}
+.kr-glass-panel:hover {
+  border-color: var(--kr-glass-border-strong);
+  box-shadow: var(--kr-shadow-glass-hover);
+}
+.kr-glass-panel--strong {
+  background: var(--kr-glass-bg-strong);
+  backdrop-filter: blur(var(--kr-glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur-strong));
+}
+.kr-glass-panel--light {
+  background: var(--kr-glass-depth-1);
+  backdrop-filter: blur(var(--kr-glass-blur));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur));
+}
+.kr-glass-panel--deep {
+  background: var(--kr-glass-depth-4);
+  backdrop-filter: blur(var(--kr-glass-blur-max));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur-max));
+  border-color: var(--kr-glass-border-strong);
+}
+
+/* WA6: Atmosphere depth utilities */
+.kr-depth-vignette {
+  position: relative;
+}
+.kr-depth-vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 50% 40%, transparent 55%, var(--kr-canvas-vignette-color) 100%);
+}
+
 /* Card */
 .kr-card {
   background: var(--kr-bg-card);
@@ -548,9 +593,9 @@ code {
   background: linear-gradient(
     180deg,
     var(--kr-sky-top) 0%,
-    var(--kr-sky-mid) 25%,
-    var(--kr-sky-horizon) 50%,
-    var(--kr-ocean-deep) 75%,
+    var(--kr-sky-mid) 22%,
+    var(--kr-sky-horizon) 44%,
+    var(--kr-ocean-deep) 72%,
     var(--kr-ocean-abyss, #040810) 100%
   );
 }
