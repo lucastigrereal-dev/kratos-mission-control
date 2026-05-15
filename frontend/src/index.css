@@ -249,13 +249,39 @@ code {
 
 .kr-dot-healthy { background: var(--kr-status-healthy); }
 .kr-dot-degraded { background: var(--kr-status-degraded); }
-.kr-dot-critical { background: var(--kr-status-critical); }
+.kr-dot-critical {
+  background: var(--kr-status-critical);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--kr-status-critical) 60%, transparent);
+  animation: kr-pulse-dot 1.2s linear infinite;
+}
 .kr-dot-offline { background: var(--kr-status-offline); }
+.kr-dot-stale {
+  background: var(--kr-status-stale);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--kr-status-stale) 40%, transparent);
+}
 .kr-dot-live {
   background: var(--kr-color-live-pulse);
   box-shadow: 0 0 6px var(--kr-color-live-pulse);
   animation: kr-pulse-dot var(--kr-duration-pulse) linear infinite;
 }
+
+/* WB6: Status badge — larger contextual indicator */
+.kr-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--kr-radius-full);
+  font-size: var(--kr-text-xs);
+  font-weight: 600;
+  font-family: var(--kr-font-sans);
+  letter-spacing: 0.04em;
+}
+.kr-status-badge--live { color: var(--kr-color-live); background: color-mix(in srgb, var(--kr-color-live) 12%, transparent); }
+.kr-status-badge--degraded { color: var(--kr-status-degraded); background: color-mix(in srgb, var(--kr-status-degraded) 12%, transparent); }
+.kr-status-badge--critical { color: var(--kr-status-critical); background: color-mix(in srgb, var(--kr-status-critical) 12%, transparent); }
+.kr-status-badge--offline { color: var(--kr-status-offline); background: color-mix(in srgb, var(--kr-status-offline) 15%, transparent); }
+.kr-status-badge--stale { color: var(--kr-status-stale); background: color-mix(in srgb, var(--kr-status-stale) 12%, transparent); }
 
 @keyframes kr-pulse-dot {
   0%, 100% { opacity: 1; }
