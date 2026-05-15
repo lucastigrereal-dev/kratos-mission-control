@@ -50,26 +50,16 @@ export default function AuroraPanel({
       {/* Holographic orb */}
       <div className="kr-aurora-orb">
         <div className="kr-aurora-orb-inner" />
-        <div className="kr-aurora-orb-rings" />
+        <div className="kr-aurora-orb-ring--outer" />
+        <div className="kr-aurora-orb-ring--inner" />
       </div>
 
       {focusState && (
         <div className="kr-aurora-focus">
-          <span className="kr-dot kr-dot-live" />
-          <span>{focusState}</span>
+          <span className="kr-aurora-focus-pulse" />
+          <span className="kr-aurora-focus-label">{focusState}</span>
           {driftRisk !== "low" && (
-            <span
-              className="kr-chip"
-              style={{
-                color: driftRisk === "high" ? "var(--kr-arena-coral)" : "var(--kr-gold-400)",
-                background:
-                  driftRisk === "high"
-                    ? "color-mix(in srgb, var(--kr-arena-coral) 12%, transparent)"
-                    : "color-mix(in srgb, var(--kr-gold-400) 12%, transparent)",
-                fontSize: "var(--kr-text-xs)",
-                marginLeft: "auto",
-              }}
-            >
+            <span className={`kr-aurora-drift kr-aurora-drift--${driftRisk}`}>
               {DRIFT_LABELS[driftRisk]}
             </span>
           )}
@@ -78,8 +68,9 @@ export default function AuroraPanel({
 
       <div className="kr-aurora-signals">
         {signals.length === 0 && (
-          <div style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)" }}>
-            Nenhum sinal ativo
+          <div className="kr-aurora-signals-empty">
+            <span className="kr-aurora-signals-empty-icon" />
+            Mente clara. Nenhum sinal ativo.
           </div>
         )}
         {signals.map((signal, i) => {
