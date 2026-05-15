@@ -563,6 +563,7 @@ code {
   grid-area: sidebar;
   z-index: var(--kr-z-sidebar);
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 .kr-shell-main {
@@ -570,6 +571,7 @@ code {
   overflow-y: auto;
   padding: var(--kr-space-page);
   z-index: var(--kr-z-world);
+  scroll-behavior: smooth;
 }
 
 .kr-shell-right-rail {
@@ -577,6 +579,7 @@ code {
   z-index: var(--kr-z-rail);
   overflow-y: auto;
   padding: var(--kr-space-section) var(--kr-space-panel);
+  scroll-behavior: smooth;
 }
 
 .kr-shell-bottom-dock {
@@ -2113,25 +2116,75 @@ code {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  .kr-island {
-    animation: none;
-  }
-
+  .kr-island,
+  .kr-island--pulse,
   .kr-island--pulse .kr-island-top {
     animation: none;
   }
 
-  .kr-cloud {
+  .kr-cloud,
+  .kr-cloud--1,
+  .kr-cloud--2,
+  .kr-cloud--3,
+  .kr-cloud--4,
+  .kr-cloud--5 {
     animation: none;
   }
 
-  .kr-skeleton {
+  .kr-skeleton,
+  .kr-skeleton::after,
+  .kr-skeleton-glass::after {
     animation: none;
     background: var(--kr-bg-tertiary);
   }
 
-  .kr-checkpoint-btn {
+  .kr-aurora-orb {
+    animation: none;
+  }
+  .kr-aurora-orb-ring--outer,
+  .kr-aurora-orb-ring--inner {
+    animation: none;
+  }
+  .kr-aurora-focus-pulse {
+    animation: none;
+  }
+  .kr-aurora-drift--high {
+    animation: none;
+  }
+
+  .kr-data-fresh {
+    animation: none;
+  }
+
+  .kr-state-transition > * {
+    animation: none;
+  }
+
+  .kr-degraded-indicator-dot {
+    animation: none;
+  }
+
+  .kr-sidebar-item:hover {
+    transform: none;
+  }
+
+  .kr-island-mini-card:hover {
+    transform: none;
+  }
+
+  .kr-checkpoint-btn,
+  .kr-sidebar-item,
+  .kr-island-mini-card,
+  .kr-right-rail-risk,
+  .kr-empty-state-action,
+  .kr-error-state-retry,
+  .kr-bottom-dock .kr-chip {
     transition: none;
+  }
+
+  .kr-spinner {
+    animation: none;
+    border-top-color: var(--kr-glass-border);
   }
 }
 
@@ -2171,4 +2224,47 @@ code {
 
 .kr-skip-link:focus {
   top: var(--kr-space-hud);
+}
+
+/* Selection styling */
+::selection {
+  background: color-mix(in srgb, var(--kr-azure-500) 25%, transparent);
+  color: var(--kr-text-primary);
+}
+
+/* Breadcrumb */
+.kr-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--kr-text-xs);
+  color: var(--kr-text-muted);
+}
+
+.kr-breadcrumb-item {
+  color: var(--kr-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--kr-duration-fast) var(--kr-ease-smooth);
+}
+
+.kr-breadcrumb-item:hover {
+  color: var(--kr-text-primary);
+}
+
+.kr-breadcrumb-item--current {
+  color: var(--kr-text-primary);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.kr-breadcrumb-separator {
+  color: var(--kr-text-muted);
+  opacity: 0.5;
+  user-select: none;
+}
+
+/* Scroll margin for anchor targets (checkpoints, headings) */
+.kr-scroll-anchor {
+  scroll-margin-top: 56px;
 }
