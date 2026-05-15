@@ -25,6 +25,7 @@ const TOP_NAV: NavItem[] = [
 const BOTTOM_NAV: NavItem[] = [
   { to: "/omnis", label: "OMNIS Lab", icon: "◬" },
   { to: "/approvals", label: "Approvals", icon: "◷" },
+  { to: "/aurora", label: "Aurora FS", icon: "✦" },
 ];
 
 interface KratosSidebarProps {
