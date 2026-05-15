@@ -320,23 +320,38 @@ code {
   color: var(--kr-text-muted);
   margin: 0;
   max-width: 280px;
+  font-style: italic;
 }
 
 .kr-empty-state-action {
   margin-top: 0.25rem;
   padding: 6px 16px;
-  border: 1px solid var(--kr-border-strong);
+  border: 1px solid var(--kr-glass-border-strong);
   border-radius: var(--kr-radius-md);
   background: var(--kr-glass-bg);
   color: var(--kr-text-primary);
   font-size: var(--kr-text-sm);
+  font-weight: 600;
   font-family: var(--kr-font-sans);
   cursor: pointer;
-  transition: border-color var(--kr-duration-fast) var(--kr-ease-smooth);
+  transition: border-color var(--kr-duration-fast) var(--kr-ease-smooth),
+              background var(--kr-duration-fast) var(--kr-ease-smooth),
+              box-shadow var(--kr-duration-fast) var(--kr-ease-smooth);
 }
 
 .kr-empty-state-action:hover {
   border-color: var(--kr-azure-500);
+  background: color-mix(in srgb, var(--kr-azure-500) 6%, var(--kr-glass-bg));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--kr-azure-500) 8%, transparent);
+}
+
+/* Empty-state glass panel variant */
+.kr-empty-state--glass {
+  background: var(--kr-glass-bg);
+  border: 1px solid var(--kr-glass-border);
+  border-radius: var(--kr-radius-lg);
+  backdrop-filter: blur(var(--kr-glass-blur));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur));
 }
 
 /* ── Error State ─────────────────────────────────────────────────── */
@@ -388,7 +403,7 @@ code {
 .kr-error-state-retry {
   margin-top: 0.25rem;
   padding: 5px 14px;
-  border: 1px solid var(--kr-border-strong);
+  border: 1px solid var(--kr-glass-border-strong);
   border-radius: var(--kr-radius-md);
   background: var(--kr-glass-bg-strong);
   color: var(--kr-text-primary);
@@ -396,11 +411,40 @@ code {
   font-weight: 600;
   font-family: var(--kr-font-sans);
   cursor: pointer;
-  transition: border-color var(--kr-duration-fast) var(--kr-ease-smooth);
+  transition: border-color var(--kr-duration-fast) var(--kr-ease-smooth),
+              background var(--kr-duration-fast) var(--kr-ease-smooth);
 }
 
 .kr-error-state-retry:hover {
   border-color: var(--kr-azure-500);
+  background: color-mix(in srgb, var(--kr-azure-500) 8%, var(--kr-glass-bg-strong));
+}
+
+/* Skeleton card — enhanced glass variant */
+.kr-skeleton-card {
+  height: 120px;
+  border-radius: var(--kr-radius-lg);
+}
+
+.kr-skeleton-glass {
+  position: relative;
+  background: var(--kr-glass-bg);
+  border: 1px solid var(--kr-glass-border);
+  overflow: hidden;
+}
+.kr-skeleton-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, white 3%, transparent) 40%,
+    color-mix(in srgb, white 6%, transparent) 50%,
+    color-mix(in srgb, white 3%, transparent) 60%,
+    transparent 100%
+  );
+  animation: kr-shimmer 2s ease-in-out infinite;
 }
 
 /* ── Progress Ring ───────────────────────────────────────────────── */
@@ -1970,6 +2014,78 @@ code {
 
 [data-connection="fallback"] .kr-shell-top-hud {
   border-bottom-color: color-mix(in srgb, var(--kr-orange-500) 30%, transparent);
+}
+
+/* Stale data indicator — subtle amber tint on data containers */
+.kr-data-stale {
+  position: relative;
+}
+.kr-data-stale::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--kr-status-stale) 4%, transparent);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.kr-stale-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--kr-radius-full);
+  font-size: var(--kr-text-xs);
+  font-weight: 500;
+  color: var(--kr-status-stale);
+  background: color-mix(in srgb, var(--kr-status-stale) 12%, transparent);
+}
+
+/* Fresh data pulse — brief green flash when live data refreshes */
+.kr-data-fresh {
+  animation: kr-fresh-pulse 1.2s ease-out;
+}
+
+@keyframes kr-fresh-pulse {
+  0% { box-shadow: inset 0 0 0 0 color-mix(in srgb, var(--kr-color-live-pulse) 25%, transparent); }
+  30% { box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--kr-color-live-pulse) 15%, transparent); }
+  100% { box-shadow: inset 0 0 0 0 color-mix(in srgb, var(--kr-color-live-pulse) 0%, transparent); }
+}
+
+/* State transition — crossfade between loading/empty/error/data */
+.kr-state-transition {
+  position: relative;
+}
+.kr-state-transition > * {
+  animation: kr-state-enter 0.3s ease-out;
+}
+
+@keyframes kr-state-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Degraded mode inline indicator */
+.kr-degraded-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--kr-radius-sm);
+  background: color-mix(in srgb, var(--kr-yellow-500) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--kr-yellow-500) 12%, transparent);
+  font-size: var(--kr-text-xs);
+  color: var(--kr-yellow-400);
+  font-weight: 500;
+}
+
+.kr-degraded-indicator-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--kr-yellow-400);
+  animation: kr-pulse 2s ease-in-out infinite;
 }
 
 /* Offline overlay (subtle) */
