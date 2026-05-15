@@ -1017,21 +1017,23 @@ code {
 
 .kr-world-sun {
   position: absolute;
-  top: 8%;
+  top: 5%;
   left: 50%;
   transform: translateX(-50%);
-  width: 180px;
-  height: 90px;
-  background: radial-gradient(
-    ellipse at center,
-    var(--kr-world-sun-core) 0%,
-    var(--kr-world-sun-edge) 40%,
-    transparent 70%
-  );
+  width: 220px;
+  height: 110px;
+  background:
+    radial-gradient(
+      ellipse at 50% 60%,
+      var(--kr-world-sun-core) 0%,
+      var(--kr-world-sun-edge) 30%,
+      transparent 65%
+    );
   border-radius: 50%;
-  filter: blur(4px);
+  filter: blur(3px);
   pointer-events: none;
   z-index: 0;
+  opacity: 0.9;
 }
 
 .kr-world-stars {
@@ -1057,16 +1059,32 @@ code {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  transition: transform var(--kr-duration-medium) var(--kr-ease-spring);
+  transition: transform var(--kr-duration-medium) var(--kr-ease-spring),
+              filter var(--kr-duration-medium) var(--kr-ease-smooth);
   transform-style: preserve-3d;
   animation: kr-island-float var(--kr-duration-float) ease-in-out infinite;
 }
 
+.kr-island::before {
+  content: "";
+  position: absolute;
+  inset: -15% -20% -25% -20%;
+  border-radius: 50%;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity var(--kr-duration-normal) var(--kr-ease-smooth);
+}
+
 .kr-island:hover {
-  transform: translateY(-10px) scale(1.06);
+  transform: translateY(-14px) scale(1.08);
   animation-play-state: paused;
   z-index: var(--kr-z-aurora);
-  filter: brightness(1.1);
+  filter: brightness(1.18);
+}
+
+.kr-island:hover::before {
+  opacity: 0.2;
 }
 
 .kr-island:focus-visible {
@@ -1096,7 +1114,8 @@ code {
   );
   box-shadow:
     inset 0 3px 12px var(--kr-glass-border),
-    0 1px 3px color-mix(in srgb, black 30%, transparent);
+    0 1px 3px color-mix(in srgb, black 30%, transparent),
+    0 2px 8px color-mix(in srgb, var(--kr-isle-glow) 15%, transparent);
   overflow: hidden;
 }
 
@@ -1147,32 +1166,38 @@ code {
   filter: drop-shadow(0 1px 2px color-mix(in srgb, black 30%, transparent));
 }
 
-/* Label below island */
+/* Label below island — with subtle glow backdrop */
 .kr-island-label {
   font-weight: 600;
   color: var(--kr-world-label-text);
-  text-shadow: 0 1px 4px var(--kr-world-label-shadow);
-  letter-spacing: 0.02em;
+  text-shadow: 0 1px 6px var(--kr-world-label-shadow),
+               0 0 12px color-mix(in srgb, var(--kr-world-label-text) 25%, transparent);
+  letter-spacing: 0.03em;
   line-height: 1.1;
   z-index: 5;
   pointer-events: none;
+  padding: 2px 8px;
+  border-radius: var(--kr-radius-sm);
+  background: color-mix(in srgb, black 25%, transparent);
+  backdrop-filter: blur(4px);
 }
 
-/* Organic shadow */
+/* Organic shadow — deeper and more diffuse for depth */
 .kr-island-shadow {
   position: absolute;
-  top: 106%;
-  left: 15%;
-  right: 15%;
-  height: 16px;
+  top: 104%;
+  left: 8%;
+  right: 8%;
+  height: 20px;
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
-    color-mix(in srgb, black 35%, transparent) 0%,
-    color-mix(in srgb, black 10%, transparent) 50%,
+    color-mix(in srgb, black 40%, transparent) 0%,
+    color-mix(in srgb, black 15%, transparent) 40%,
     transparent 70%
   );
   transform: translateZ(-4px);
+  filter: blur(2px);
 }
 
 /* Size variants */
@@ -1218,10 +1243,12 @@ code {
 .kr-bridges-svg path {
   fill: none;
   stroke: var(--kr-wood-bridge);
-  stroke-width: 3;
-  stroke-linecap: round;
-  filter: drop-shadow(0 1px 2px color-mix(in srgb, black 40%, transparent));
+  stroke-width: 2.5;
   opacity: 0.7;
+  transition: stroke-width var(--kr-duration-fast) var(--kr-ease-smooth),
+              opacity var(--kr-duration-fast) var(--kr-ease-smooth);
+  filter: drop-shadow(0 1px 3px color-mix(in srgb, black 40%, transparent));
+  stroke-linecap: round;
 }
 
 /* ── Central Castle ──────────────────────────────────────────────── */
@@ -1374,24 +1401,26 @@ code {
   z-index: 3;
 }
 
-/* Portal glow at base */
+/* Portal glow at base — dramatic entrance */
 .kr-castle-portal {
   position: absolute;
-  bottom: 5%;
+  bottom: 3%;
   left: 50%;
   transform: translateX(-50%);
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--kr-azure-400) 70%, transparent) 0%,
-    color-mix(in srgb, var(--kr-azure-500) 25%, transparent) 40%,
+    color-mix(in srgb, var(--kr-azure-400) 80%, transparent) 0%,
+    color-mix(in srgb, var(--kr-azure-500) 35%, transparent) 35%,
+    color-mix(in srgb, var(--kr-gold-400) 10%, transparent) 55%,
     transparent 70%
   );
   box-shadow:
-    0 0 20px color-mix(in srgb, var(--kr-azure-500) 20%, transparent),
-    0 0 40px color-mix(in srgb, var(--kr-azure-500) 8%, transparent);
+    0 0 28px color-mix(in srgb, var(--kr-azure-500) 25%, transparent),
+    0 0 56px color-mix(in srgb, var(--kr-azure-500) 10%, transparent),
+    0 0 80px color-mix(in srgb, var(--kr-azure-500) 4%, transparent);
   z-index: 0;
   animation: kr-portal-pulse 2.5s ease-in-out infinite;
 }
@@ -1401,18 +1430,20 @@ code {
   50% { opacity: 1; transform: translateX(-50%) scale(1.15); }
 }
 
-/* Banner */
+/* Banner — prominent mission readout */
 .kr-castle-banner {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 8px 18px;
   background: var(--kr-glass-bg-strong);
-  backdrop-filter: blur(var(--kr-glass-blur));
-  -webkit-backdrop-filter: blur(var(--kr-glass-blur));
+  backdrop-filter: blur(var(--kr-glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur-strong));
   border: 1px solid var(--kr-glass-border-strong);
-  border-radius: var(--kr-radius-md);
-  box-shadow: var(--kr-shadow-md);
+  border-radius: var(--kr-radius-lg);
+  box-shadow:
+    var(--kr-shadow-md),
+    0 0 20px color-mix(in srgb, var(--kr-gold-500) 6%, transparent);
   z-index: 5;
 }
 
@@ -1476,6 +1507,26 @@ code {
   left: -15%;
   animation-duration: 45s;
   animation-delay: -10s;
+}
+
+.kr-cloud--4 {
+  width: 200px;
+  height: 40px;
+  top: 55%;
+  left: -8%;
+  animation-duration: 70s;
+  animation-delay: -35s;
+  opacity: 0.6;
+}
+
+.kr-cloud--5 {
+  width: 280px;
+  height: 55px;
+  top: 12%;
+  left: -20%;
+  animation-duration: 55s;
+  animation-delay: -15s;
+  opacity: 0.5;
 }
 
 @keyframes kr-cloud-drift {

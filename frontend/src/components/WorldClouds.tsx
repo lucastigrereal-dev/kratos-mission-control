@@ -4,6 +4,8 @@ export default function WorldClouds() {
       <div className="kr-cloud kr-cloud--1" />
       <div className="kr-cloud kr-cloud--2" />
       <div className="kr-cloud kr-cloud--3" />
+      <div className="kr-cloud kr-cloud--4" />
+      <div className="kr-cloud kr-cloud--5" />
     </div>
   );
 }
