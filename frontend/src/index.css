@@ -2069,6 +2069,81 @@ code {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Motion System — reusable CSS-only animation utilities
+   All respect prefers-reduced-motion. Durations follow token scale:
+   --kr-duration-fast (150ms) / --kr-duration-motion (300ms) / slow (600ms+)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes kr-motion-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes kr-motion-attention {
+  0%, 100% { transform: scale(1); }
+  10% { transform: scale(1.04); }
+  30% { transform: scale(0.98); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes kr-motion-slide-in-right {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes kr-motion-slide-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes kr-motion-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes kr-motion-glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px color-mix(in srgb, var(--kr-azure-500) 10%, transparent); }
+  50% { box-shadow: 0 0 20px color-mix(in srgb, var(--kr-azure-500) 20%, transparent); }
+}
+
+/* Utility classes */
+.kr-motion-enter {
+  animation: kr-state-enter 0.3s ease-out;
+}
+
+.kr-motion-breathe {
+  animation: kr-motion-breathe 3s ease-in-out infinite;
+}
+
+.kr-motion-attention {
+  animation: kr-motion-attention 0.8s ease-out;
+}
+
+.kr-motion-slide-in-right {
+  animation: kr-motion-slide-in-right 0.3s ease-out;
+}
+
+.kr-motion-slide-in-up {
+  animation: kr-motion-slide-in-up 0.3s ease-out;
+}
+
+.kr-motion-fade-in {
+  animation: kr-motion-fade-in 0.3s ease-out;
+}
+
+.kr-motion-glow-pulse {
+  animation: kr-motion-glow-pulse 2.5s ease-in-out infinite;
+}
+
+/* Stagger children — add delay to nth items */
+.kr-motion-stagger > *:nth-child(1) { animation-delay: 0s; }
+.kr-motion-stagger > *:nth-child(2) { animation-delay: 0.06s; }
+.kr-motion-stagger > *:nth-child(3) { animation-delay: 0.12s; }
+.kr-motion-stagger > *:nth-child(4) { animation-delay: 0.18s; }
+.kr-motion-stagger > *:nth-child(5) { animation-delay: 0.24s; }
+.kr-motion-stagger > *:nth-child(n+6) { animation-delay: 0.3s; }
+
 /* Degraded mode inline indicator */
 .kr-degraded-indicator {
   display: inline-flex;
@@ -2185,6 +2260,20 @@ code {
   .kr-spinner {
     animation: none;
     border-top-color: var(--kr-glass-border);
+  }
+
+  .kr-motion-enter,
+  .kr-motion-breathe,
+  .kr-motion-attention,
+  .kr-motion-slide-in-right,
+  .kr-motion-slide-in-up,
+  .kr-motion-fade-in,
+  .kr-motion-glow-pulse {
+    animation: none;
+  }
+
+  .kr-motion-stagger > * {
+    animation-delay: 0s;
   }
 }
 
