@@ -202,6 +202,96 @@
   --kr-squad-aurora-bg: color-mix(in srgb, var(--kr-aurora-400) 10%, transparent);
   --kr-squad-codex-bg: color-mix(in srgb, var(--kr-ocean-cyan) 10%, transparent);
   --kr-squad-akasha-bg: color-mix(in srgb, var(--kr-ocean-teal) 10%, transparent);
+
+  /* ── W3B2: Supreme Design Tokens ─────────────────────────────────── */
+
+  /* Depth shadow scale (Visual Bible §5.2 — canônico) */
+  --kr-shadow-surface: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --kr-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --kr-shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --kr-shadow-glass-hover: 0 12px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --kr-shadow-island: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --kr-shadow-island-hover: 0 32px 72px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --kr-shadow-hud: 0 4px 24px rgba(0, 0, 0, 0.55);
+  --kr-shadow-float: 0 12px 40px rgba(0, 0, 0, 0.65);
+
+  /* Island glow tokens (por ilha canônica) */
+  --kr-glow-omnis: 0 0 40px var(--kr-island-omnis-glow);
+  --kr-glow-akasha: 0 0 40px var(--kr-island-akasha-glow);
+  --kr-glow-arena: 0 0 40px var(--kr-island-arena-glow);
+  --kr-glow-agencia: 0 0 40px var(--kr-island-agencia-glow);
+  --kr-glow-vila: 0 0 40px var(--kr-island-vila-glow);
+  --kr-glow-observatorio: 0 0 40px var(--kr-island-observatorio-glow);
+  --kr-glow-nimbus: 0 0 40px var(--kr-island-nimbus-glow);
+  --kr-glow-financas: 0 0 40px var(--kr-island-financas-glow);
+  --kr-glow-forja: 0 0 40px var(--kr-island-forja-glow);
+  --kr-glow-filosofia: 0 0 40px var(--kr-island-filosofia-glow);
+
+  /* Status / risk color tokens */
+  --kr-status-healthy: var(--kr-green-400);
+  --kr-status-degraded: var(--kr-yellow-400);
+  --kr-status-critical: var(--kr-red-400);
+  --kr-status-offline: var(--kr-text-muted);
+  --kr-status-stale: var(--kr-orange-400);
+  --kr-status-healthy-bg: color-mix(in srgb, var(--kr-green-400) 10%, transparent);
+  --kr-status-degraded-bg: color-mix(in srgb, var(--kr-yellow-400) 10%, transparent);
+  --kr-status-critical-bg: color-mix(in srgb, var(--kr-red-400) 10%, transparent);
+  --kr-status-offline-bg: color-mix(in srgb, var(--kr-text-muted) 15%, transparent);
+
+  /* Aurora / Energy spectrum */
+  --kr-energy-core: #FACC15;
+  --kr-energy-glow: rgba(250, 204, 21, 0.2);
+  --kr-energy-pulse: rgba(250, 204, 21, 0.35);
+  --kr-aurora-core: var(--kr-aurora-400);
+  --kr-aurora-ambient: rgba(139, 92, 246, 0.08);
+  --kr-aurora-active: rgba(139, 92, 246, 0.18);
+  --kr-aurora-signal-weak: rgba(139, 92, 246, 0.05);
+  --kr-aurora-signal-strong: rgba(139, 92, 246, 0.22);
+
+  /* Mission state tokens */
+  --kr-mission-active: var(--kr-azure-400);
+  --kr-mission-pending: var(--kr-text-muted);
+  --kr-mission-blocked: var(--kr-arena-coral);
+  --kr-mission-done: var(--kr-green-400);
+  --kr-mission-active-bg: color-mix(in srgb, var(--kr-azure-400) 8%, transparent);
+  --kr-mission-blocked-bg: color-mix(in srgb, var(--kr-arena-coral) 8%, transparent);
+
+  /* Spacing scale (4px base, 8px rhythm — Material + Apple combined) */
+  --kr-space-1: 4px;
+  --kr-space-2: 8px;
+  --kr-space-3: 12px;
+  --kr-space-4: 16px;
+  --kr-space-5: 20px;
+  --kr-space-6: 24px;
+  --kr-space-8: 32px;
+  --kr-space-10: 40px;
+  --kr-space-12: 48px;
+  --kr-space-16: 64px;
+
+  /* Glass depth variants */
+  --kr-glass-depth-1: rgba(15, 23, 42, 0.25);
+  --kr-glass-depth-2: rgba(15, 23, 42, 0.45);
+  --kr-glass-depth-3: rgba(15, 23, 42, 0.6);
+  --kr-glass-depth-4: rgba(15, 23, 42, 0.78);
+
+  /* Typography scale (Visual Bible §5.5 alignment) */
+  --kr-font-display: 1.5rem;
+  --kr-font-headline: 1.25rem;
+  --kr-font-title: 1rem;
+  --kr-font-body: 0.8125rem;
+  --kr-font-label: 0.75rem;
+  --kr-font-caption: 0.625rem;
+  --kr-font-weight-display: 700;
+  --kr-font-weight-headline: 600;
+  --kr-font-weight-body: 400;
+  --kr-font-weight-label: 500;
+  --kr-leading-tight: 1.2;
+  --kr-leading-normal: 1.5;
+  --kr-leading-relaxed: 1.7;
+  --kr-tracking-tight: -0.02em;
+  --kr-tracking-normal: 0;
+  --kr-tracking-wide: 0.04em;
+  --kr-tracking-label: 0.08em;
 }
 
 /* ── Reduced motion ──────────────────────────────────────────────── */
