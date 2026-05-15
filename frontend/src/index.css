@@ -1854,6 +1854,22 @@ code {
   .kr-world-map-legend-desc {
     display: inline;
   }
+
+  /* Scale down islands slightly on tablet */
+  .kr-island--lg {
+    width: 120px !important;
+    height: 120px !important;
+  }
+  .kr-island--central {
+    width: 170px !important;
+    height: 170px !important;
+  }
+
+  /* Reduce cloud layers for performance */
+  .kr-cloud--4,
+  .kr-cloud--5 {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1871,6 +1887,18 @@ code {
     display: none;
   }
 
+  /* Compact HUD */
+  .kr-top-hud {
+    padding: 0 var(--kr-space-hud);
+  }
+  .kr-top-hud-brand {
+    display: none;
+  }
+  .kr-top-hud-date {
+    display: none;
+  }
+
+  /* World adjustments */
   .kr-world-ocean {
     background:
       radial-gradient(ellipse at 50% 15%, var(--kr-world-sky-radial) 0%, transparent 55%),
@@ -1889,6 +1917,24 @@ code {
     height: calc(100vh - 100px);
   }
 
+  /* Island scaling for mobile */
+  .kr-island--sm {
+    width: 65px !important;
+    height: 65px !important;
+  }
+  .kr-island--md {
+    width: 85px !important;
+    height: 85px !important;
+  }
+  .kr-island--lg {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  .kr-island--central {
+    width: 150px !important;
+    height: 150px !important;
+  }
+
   .kr-metric-badge {
     min-width: 48px;
     padding: 6px 8px;
@@ -1897,20 +1943,96 @@ code {
   .kr-metric-badge-value {
     font-size: var(--kr-text-md);
   }
+
+  /* Mobile bottom nav bar (replaces sidebar) */
+  .kr-mobile-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+    padding: 0 4px;
+  }
+
+  .kr-mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+    border-radius: var(--kr-radius-sm);
+    color: var(--kr-text-muted);
+    font-size: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--kr-duration-fast) var(--kr-ease-smooth);
+  }
+
+  .kr-mobile-nav-item--active {
+    color: var(--kr-azure-400);
+  }
+
+  .kr-mobile-nav-item-icon {
+    font-size: var(--kr-text-md);
+    line-height: 1;
+  }
 }
 
 @media (max-width: 480px) {
+  .kr-shell {
+    grid-template-rows: 40px 1fr 52px;
+  }
+
   .kr-shell-main {
     padding: var(--kr-space-hud);
   }
 
+  /* Maximum compaction */
+  .kr-top-hud {
+    padding: 0 8px;
+  }
+  .kr-top-hud-greeting {
+    font-size: var(--kr-text-xs);
+  }
+  .kr-top-hud-time {
+    font-size: var(--kr-text-sm);
+  }
+
   .kr-castle-platform {
-    width: 160px;
-    height: 90px;
+    width: 140px;
+    height: 80px;
+  }
+
+  .kr-castle-banner {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+
+  .kr-castle-banner-label {
+    font-size: 7px;
   }
 
   .kr-island--central .kr-island-label {
-    font-size: var(--kr-text-sm);
+    font-size: var(--kr-text-xs);
+  }
+  .kr-island--central {
+    width: 130px !important;
+    height: 130px !important;
+  }
+
+  /* Hide all clouds on tiny screens */
+  .kr-cloud--3 {
+    display: none;
+  }
+
+  /* Compact bottom dock */
+  .kr-continue-btn {
+    padding: 6px 14px;
+    font-size: var(--kr-text-xs);
+  }
+
+  .kr-world-map-legend {
+    padding: 6px 8px;
+    gap: 6px;
   }
 }
 
