@@ -1,0 +1,341 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   KRATOS 1.0 — Responsive & Accessibility Media Queries
+   Tablet · Mobile · Reduced Motion · High Contrast
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* WB8: Desktop-wide responsive breakpoints */
+@media (min-width: 1920px) {
+  .kr-shell {
+    grid-template-columns: 260px 1fr 360px;
+  }
+  .kr-world {
+    height: calc(100vh - 116px);
+  }
+}
+
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .kr-shell {
+    grid-template-columns: 240px 1fr 320px;
+  }
+  .kr-world {
+    height: calc(100vh - 116px);
+  }
+}
+
+@media (min-width: 1366px) and (max-width: 1439px) {
+  .kr-shell {
+    grid-template-columns: 220px 1fr 300px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .kr-shell {
+    grid-template-columns: 180px 1fr 220px;
+  }
+
+  .kr-world-map-legend-desc {
+    display: inline;
+  }
+
+  /* Scale down islands slightly on tablet */
+  .kr-island--lg {
+    width: 120px !important;
+    height: 120px !important;
+  }
+  .kr-island--central {
+    width: 170px !important;
+    height: 170px !important;
+  }
+
+  /* Reduce cloud layers for performance */
+  .kr-cloud--4,
+  .kr-cloud--5 {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .kr-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 44px 1fr 56px;
+    grid-template-areas:
+      "top-hud"
+      "main"
+      "bottom-dock";
+  }
+
+  .kr-shell-sidebar,
+  .kr-shell-right-rail {
+    display: none;
+  }
+
+  /* Compact HUD */
+  .kr-top-hud {
+    padding: 0 var(--kr-space-hud);
+  }
+  .kr-top-hud-brand {
+    display: none;
+  }
+  .kr-top-hud-date {
+    display: none;
+  }
+
+  /* World adjustments */
+  .kr-world-ocean {
+    background:
+      radial-gradient(ellipse at 50% 15%, var(--kr-world-sky-radial) 0%, transparent 55%),
+      linear-gradient(
+        180deg,
+        var(--kr-sky-top) 0%,
+        var(--kr-sky-mid) 20%,
+        var(--kr-sky-horizon) 40%,
+        var(--kr-ocean-mid) 55%,
+        var(--kr-ocean-shallow) 75%,
+        var(--kr-ocean-deep) 100%
+      );
+  }
+
+  .kr-world {
+    height: calc(100vh - 100px);
+  }
+
+  /* Island scaling for mobile */
+  .kr-island--sm {
+    width: 65px !important;
+    height: 65px !important;
+  }
+  .kr-island--md {
+    width: 85px !important;
+    height: 85px !important;
+  }
+  .kr-island--lg {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  .kr-island--central {
+    width: 150px !important;
+    height: 150px !important;
+  }
+
+  .kr-metric-badge {
+    min-width: 48px;
+    padding: 6px 8px;
+  }
+
+  .kr-metric-badge-value {
+    font-size: var(--kr-text-md);
+  }
+
+  /* Mobile bottom nav bar (replaces sidebar) */
+  .kr-mobile-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+    padding: 0 4px;
+  }
+
+  .kr-mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+    border-radius: var(--kr-radius-sm);
+    color: var(--kr-text-muted);
+    font-size: 10px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--kr-duration-fast) var(--kr-ease-smooth);
+  }
+
+  .kr-mobile-nav-item--active {
+    color: var(--kr-azure-400);
+  }
+
+  .kr-mobile-nav-item-icon {
+    font-size: var(--kr-text-md);
+    line-height: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .kr-shell {
+    grid-template-rows: 40px 1fr 52px;
+  }
+
+  .kr-shell-main {
+    padding: var(--kr-space-hud);
+  }
+
+  /* Maximum compaction */
+  .kr-top-hud {
+    padding: 0 8px;
+  }
+  .kr-top-hud-greeting {
+    font-size: var(--kr-text-xs);
+  }
+  .kr-top-hud-time {
+    font-size: var(--kr-text-sm);
+  }
+
+  .kr-castle-platform {
+    width: 140px;
+    height: 80px;
+  }
+
+  .kr-castle-banner {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+
+  .kr-castle-banner-label {
+    font-size: 7px;
+  }
+
+  .kr-island--central .kr-island-label {
+    font-size: var(--kr-text-xs);
+  }
+  .kr-island--central {
+    width: 130px !important;
+    height: 130px !important;
+  }
+
+  /* Hide all clouds on tiny screens */
+  .kr-cloud--3 {
+    display: none;
+  }
+
+  /* Compact bottom dock */
+  .kr-continue-btn {
+    padding: 6px 14px;
+    font-size: var(--kr-text-xs);
+  }
+
+  .kr-world-map-legend {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Reduced motion
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .kr-island,
+  .kr-island--pulse,
+  .kr-island--pulse .kr-island-top {
+    animation: none;
+  }
+
+  .kr-cloud,
+  .kr-cloud--1,
+  .kr-cloud--2,
+  .kr-cloud--3,
+  .kr-cloud--4,
+  .kr-cloud--5 {
+    animation: none;
+  }
+
+  .kr-skeleton,
+  .kr-skeleton::after,
+  .kr-skeleton-glass::after {
+    animation: none;
+    background: var(--kr-bg-tertiary);
+  }
+
+  .kr-aurora-orb {
+    animation: none;
+  }
+  .kr-aurora-orb-ring--outer,
+  .kr-aurora-orb-ring--inner {
+    animation: none;
+  }
+  .kr-aurora-focus-pulse {
+    animation: none;
+  }
+  .kr-aurora-drift--high {
+    animation: none;
+  }
+
+  .kr-data-fresh {
+    animation: none;
+  }
+
+  .kr-state-transition > * {
+    animation: none;
+  }
+
+  .kr-degraded-indicator-dot {
+    animation: none;
+  }
+
+  .kr-sidebar-item:hover {
+    transform: none;
+  }
+
+  .kr-island-mini-card:hover {
+    transform: none;
+  }
+
+  .kr-checkpoint-btn,
+  .kr-sidebar-item,
+  .kr-island-mini-card,
+  .kr-right-rail-risk,
+  .kr-empty-state-action,
+  .kr-error-state-retry,
+  .kr-bottom-dock .kr-chip {
+    transition: none;
+  }
+
+  .kr-spinner {
+    animation: none;
+    border-top-color: var(--kr-glass-border);
+  }
+
+  .kr-motion-enter,
+  .kr-motion-breathe,
+  .kr-motion-attention,
+  .kr-motion-slide-in-right,
+  .kr-motion-slide-in-up,
+  .kr-motion-fade-in,
+  .kr-motion-glow-pulse {
+    animation: none;
+  }
+
+  .kr-motion-stagger > * {
+    animation-delay: 0s;
+  }
+
+  .kr-world-horizon,
+  .kr-world-depth {
+    opacity: 0.5;
+  }
+
+  .kr-focus-mode .kr-shell-sidebar,
+  .kr-focus-mode .kr-shell-right-rail,
+  .kr-focus-mode .kr-world-map-legend,
+  .kr-focus-mode .kr-cloud {
+    transition: none;
+  }
+}
+
+/* High contrast: ensure borders are visible */
+@media (prefers-contrast: high) {
+  .kr-glass-panel,
+  .kr-shell-top-hud,
+  .kr-shell-sidebar,
+  .kr-shell-right-rail,
+  .kr-shell-bottom-dock {
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .kr-text-secondary {
+    color: #ccc;
+  }
+
+  .kr-text-muted {
+    color: #999;
+  }
+}
