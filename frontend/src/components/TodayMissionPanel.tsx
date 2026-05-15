@@ -20,17 +20,17 @@ export default function TodayMissionPanel() {
     on_focus: "Em foco",
     drifting: "Deriva",
     focus: "Focado",
-    execution: "Execucao",
+    execution: "Execução",
     planning: "Planejamento",
   };
 
   return (
     <div className="kr-glass-panel" style={{ padding: "var(--kr-space-section)", height: "100%" }}>
-      <div className="kr-section-title">Missao Atual</div>
+      <div className="kr-section-title">Missão Atual</div>
 
       {error && (
         <div style={{ fontSize: "var(--kr-text-sm)", color: "var(--kr-text-muted)" }}>
-          Indisponivel — {error}
+          Indisponível — {error}
         </div>
       )}
 
@@ -50,7 +50,7 @@ export default function TodayMissionPanel() {
               Missao
             </div>
             <div style={{ fontWeight: 500, fontSize: "var(--kr-text-base)", color: "var(--kr-text-secondary)" }}>
-              {mission?.title ?? "Missao indefinida"}
+              {mission?.title ?? "Missão indefinida"}
             </div>
           </div>
 

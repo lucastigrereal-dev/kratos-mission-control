@@ -109,7 +109,7 @@
 .kr-top-hud-status {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--kr-space-hud);
   font-size: var(--kr-text-xs);
   color: var(--kr-text-secondary);
 }
@@ -140,7 +140,7 @@
 .kr-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--kr-space-hud);
   padding: var(--kr-space-section) var(--kr-space-hud);
   background: var(--kr-glass-bg-strong);
   backdrop-filter: blur(var(--kr-glass-blur-strong));
@@ -159,7 +159,7 @@
   display: flex;
   align-items: center;
   gap: var(--kr-space-hud);
-  padding: 7px 10px;
+  padding: 12px 14px;
   border-radius: var(--kr-radius-md);
   font-size: var(--kr-text-sm);
   font-weight: 400;
@@ -253,7 +253,7 @@
 .kr-right-rail-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--kr-space-hud);
 }
 
 .kr-right-rail-risks {
@@ -265,8 +265,8 @@
 .kr-right-rail-risk {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  gap: var(--kr-space-hud);
+  padding: 12px 12px;
   border-radius: var(--kr-radius-sm);
   background: var(--kr-glass-bg-light);
   border-left: 2px solid transparent;
@@ -326,7 +326,7 @@
   position: relative;
   width: 72px;
   height: 72px;
-  margin: 0 auto 6px;
+  margin: 0 auto var(--kr-space-hud);
   border-radius: 50%;
   background: radial-gradient(
     circle at 40% 35%,
@@ -728,7 +728,7 @@
 .kr-bottom-dock-squads {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--kr-space-hud);
 }
 
 .kr-continue-btn {
@@ -765,7 +765,7 @@
 
 /* Squad chips in dock */
 .kr-bottom-dock .kr-chip {
-  padding: 3px 10px;
+  padding: 6px 12px;
   font-weight: 600;
   letter-spacing: 0.03em;
   background: var(--kr-glass-bg-light);

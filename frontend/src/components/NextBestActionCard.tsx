@@ -11,10 +11,10 @@ function extractAction(action: string | { title?: string; priority?: string; con
   priority: string;
   context: string;
 } {
-  if (!action) return { title: "Nenhuma acao definida", priority: "low", context: "" };
+  if (!action) return { title: "Nenhuma ação definida", priority: "low", context: "" };
   if (typeof action === "string") return { title: action, priority: "low", context: "" };
   return {
-    title: action.title ?? "Nenhuma acao definida",
+    title: action.title ?? "Nenhuma ação definida",
     priority: action.priority ?? "low",
     context: action.context ?? "",
   };
@@ -36,11 +36,11 @@ export default function NextBestActionCard() {
 
   return (
     <div className="kr-glass-panel" style={{ padding: "var(--kr-space-section)", height: "100%" }}>
-      <div className="kr-section-title">Proxima Acao</div>
+      <div className="kr-section-title">Próxima Ação</div>
 
       {error && (
         <div style={{ fontSize: "var(--kr-text-sm)", color: "var(--kr-text-muted)", marginTop: 8 }}>
-          Indisponivel
+          Indisponível
         </div>
       )}
 

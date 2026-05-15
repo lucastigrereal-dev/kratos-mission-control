@@ -25,9 +25,9 @@ const STATUS_OPTIONS = [
 
 const RISK_LABELS: Record<string, { label: string; className: string }> = {
   low: { label: "Baixo", className: "kr-metric-badge kr-metric-badge--good" },
-  medium: { label: "Medio", className: "kr-metric-badge kr-metric-badge--warning" },
+  medium: { label: "Médio", className: "kr-metric-badge kr-metric-badge--warning" },
   high: { label: "Alto", className: "kr-metric-badge kr-metric-badge--danger" },
-  critical: { label: "Critico", className: "kr-metric-badge kr-metric-badge--danger" },
+  critical: { label: "Crítico", className: "kr-metric-badge kr-metric-badge--danger" },
 };
 
 export default function ApprovalCard({ approval, onStatusChange, onDelete }: ApprovalCardProps) {
@@ -75,20 +75,25 @@ export default function ApprovalCard({ approval, onStatusChange, onDelete }: App
             ))}
           </select>
           <button
-            onClick={() => onDelete(approval.id)}
+            onClick={() => {
+              if (window.confirm(`Remover "${approval.title}"? Esta ação é irreversível.`)) {
+                onDelete(approval.id);
+              }
+            }}
             className="kr-interactive"
             style={{
               border: "none",
               background: "var(--kr-risk-critical-bg)",
               color: "var(--kr-risk-critical)",
-              padding: "4px 10px",
+              padding: "6px 14px",
               borderRadius: "var(--kr-radius-sm)",
               fontSize: "var(--kr-text-sm)",
+              fontWeight: 600,
               cursor: "pointer",
             }}
             title="Remover"
           >
-            x
+            ✕
           </button>
         </div>
       </div>

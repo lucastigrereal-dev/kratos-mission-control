@@ -34,7 +34,7 @@ export default function CheckpointsPage() {
           <SourceBadge source={(source as SourceType) || "unknown"} />
         </div>
         <p className="kr-section-title-sub">
-          Linha do tempo de contexto — cada ponto e um lugar seguro para retomar
+          Linha do tempo de contexto — cada ponto é um lugar seguro para retomar
         </p>
         <div className="kr-section-title-divider" />
       </div>
@@ -44,7 +44,7 @@ export default function CheckpointsPage() {
       {data && data.length === 0 && !loading && (
         <EmptyState
           title="Nenhum checkpoint registrado"
-          description="Salve seu primeiro checkpoint para poder retomar o contexto entre sessoes."
+          description="Salve seu primeiro checkpoint para poder retomar o contexto entre sessões."
         />
       )}
 

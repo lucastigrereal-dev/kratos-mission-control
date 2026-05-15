@@ -10,7 +10,7 @@ interface FocusData {
 }
 
 const MODE_LABELS: Record<string, { label: string; icon: string; className: string }> = {
-  execution: { label: "Execucao", icon: ">>", className: "kr-chip kr-chip-healthy" },
+  execution: { label: "Execução", icon: ">>", className: "kr-chip kr-chip-healthy" },
   planning: { label: "Planejamento", icon: "O", className: "kr-chip kr-chip-info" },
   review: { label: "Review", icon: "R", className: "kr-chip kr-chip-degraded" },
   learning: { label: "Aprendizado", icon: "L", className: "kr-chip kr-chip-neutral" },
@@ -30,7 +30,7 @@ export default function FocusNowCard() {
 
       {error && (
         <div style={{ fontSize: "var(--kr-text-sm)", color: "var(--kr-text-muted)", marginTop: 8 }}>
-          Indisponivel
+          Indisponível
         </div>
       )}
 
@@ -54,7 +54,7 @@ export default function FocusNowCard() {
           {data?.do_not_do && data.do_not_do.length > 0 && (
             <div style={{ marginTop: 12, borderTop: "1px solid var(--kr-glass-border)", paddingTop: 8 }}>
               <div style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)", marginBottom: 4 }}>
-                NAO fazer agora
+                NÃO fazer agora
               </div>
               {data.do_not_do.map((item, i) => (
                 <div key={i} style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)", padding: "2px 0" }}>

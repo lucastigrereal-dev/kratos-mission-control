@@ -33,9 +33,9 @@ export default function ProjectContinuityCard() {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <span style={{ fontSize: "1rem" }}>...</span>
-            <span style={{ fontWeight: 600, fontSize: "var(--kr-text-sm)" }}>Retomar sessao anterior</span>
+            <span style={{ fontWeight: 600, fontSize: "var(--kr-text-sm)" }}>Retomar sessão anterior</span>
             <span className="kr-chip kr-chip-info" style={{ fontSize: "var(--kr-text-xs)" }}>
-              sessao {state.session_count ?? 1}
+              sessão {state.session_count ?? 1}
             </span>
           </div>
           <div style={{ fontSize: "var(--kr-text-sm)", color: "var(--kr-text-secondary)", lineHeight: 1.4 }}>
@@ -63,13 +63,13 @@ export default function ProjectContinuityCard() {
               fontSize: "var(--kr-text-sm)",
               color: "var(--kr-purple-200)",
             }}>
-              Proximo passo: {state.next_step}
+              Próximo passo: {state.next_step}
             </div>
           )}
 
           {state.critical_files && state.critical_files.length > 0 && (
             <div style={{ marginTop: 6, fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)" }}>
-              Arquivos criticos: {state.critical_files.join(", ")}
+              Arquivos críticos: {state.critical_files.join(", ")}
             </div>
           )}
         </div>

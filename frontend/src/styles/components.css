@@ -107,7 +107,7 @@ code {
   background: var(--kr-bg-card);
   border: 1px solid var(--kr-border-default);
   border-radius: var(--kr-radius-lg);
-  padding: 1rem;
+  padding: var(--kr-space-section);
   transition: border-color var(--kr-duration-fast) var(--kr-ease-out), background var(--kr-duration-fast) var(--kr-ease-out);
 }
 
@@ -230,7 +230,7 @@ code {
 }
 
 .kr-section-title-action {
-  padding: 2px 10px;
+  padding: 8px 14px;
   border: 1px solid var(--kr-border-subtle);
   border-radius: var(--kr-radius-sm);
   background: transparent;
@@ -266,8 +266,8 @@ code {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 2.5rem 1rem;
+  gap: var(--kr-space-section);
+  padding: var(--kr-space-10) var(--kr-space-section);
   color: var(--kr-text-muted);
   font-size: var(--kr-text-sm);
   text-align: center;

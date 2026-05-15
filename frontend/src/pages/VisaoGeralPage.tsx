@@ -39,7 +39,7 @@ export default function VisaoGeralPage() {
           <SourceBadge source={omnisSource} />
         </div>
         <p className="kr-section-title-sub">
-          KRATOS 0.10 — Verdade Operacional. Nada executa sem aprovacao humana.
+          KRATOS 0.10 — Verdade Operacional. Nada executa sem aprovação humana.
         </p>
         <div className="kr-section-title-divider" />
       </div>
@@ -60,7 +60,7 @@ export default function VisaoGeralPage() {
           style={{ cursor: "pointer" }}
         >
           <span className="kr-metric-badge-value">{pendingCount}</span>
-          <span className="kr-metric-badge-label">Pendencias</span>
+          <span className="kr-metric-badge-label">Pendências</span>
         </div>
         <div
           className="kr-metric-badge kr-metric-badge--info"

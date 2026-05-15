@@ -76,7 +76,7 @@ export default function ApprovalsPage() {
           <SourceBadge source={source} />
         </div>
         <p className="kr-section-title-sub">
-          Fila de decisao local — nada executa sem aprovacao humana
+          Fila de decisão local — nada executa sem aprovação humana
         </p>
         <div className="kr-section-title-divider" />
       </div>
@@ -86,13 +86,13 @@ export default function ApprovalsPage() {
         <div style={{ display: "flex", gap: 8, alignItems: "flex-end", flexWrap: "wrap" }}>
           <div style={{ flex: "1 1 200px" }}>
             <label style={{ fontSize: "var(--kr-text-xs)", color: "var(--kr-text-muted)", display: "block", marginBottom: 2 }}>
-              Titulo
+              Título
             </label>
             <input
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-              placeholder="Nova aprovacao..."
+              placeholder="Nova aprovação..."
               style={{
                 width: "100%",
                 padding: "6px 10px",
@@ -148,9 +148,9 @@ export default function ApprovalsPage() {
 
       {/* List */}
       {loading && <LoadingSkeleton type="card" count={3} />}
-      {error && !loading && <ErrorState title="Erro ao carregar aprovacoes" description={error} onRetry={refetch} />}
+      {error && !loading && <ErrorState title="Erro ao carregar aprovações" description={error} onRetry={refetch} />}
       {!loading && !error && approvals.length === 0 && (
-        <EmptyState title="Nenhuma aprovacao" description="Crie uma aprovacao para comecar a fila de decisao." />
+        <EmptyState title="Nenhuma aprovação" description="Crie uma aprovação para começar a fila de decisão." />
       )}
 
       {!loading && approvals.length > 0 && (
