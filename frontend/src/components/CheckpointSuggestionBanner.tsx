@@ -118,8 +118,8 @@ export default function CheckpointSuggestionBanner({
               color: suggestion.severity === "high" ? "var(--kr-red-400)" : "var(--kr-yellow-400)",
               background:
                 suggestion.severity === "high"
-                  ? "rgba(239, 68, 68, 0.12)"
-                  : "rgba(234, 179, 8, 0.12)",
+                  ? "color-mix(in srgb, var(--kr-red-500) 12%, transparent)"
+                  : "color-mix(in srgb, var(--kr-gold-500) 12%, transparent)",
               fontSize: "var(--kr-text-xs)",
             }}
           >
@@ -141,7 +141,7 @@ export default function CheckpointSuggestionBanner({
             flexDirection: "column",
             gap: 3,
             padding: "8px 10px",
-            background: "rgba(0,0,0,0.2)",
+            background: "color-mix(in srgb, black 20%, transparent)",
             borderRadius: "var(--kr-radius-sm)",
           }}
         >
@@ -184,7 +184,7 @@ export default function CheckpointSuggestionBanner({
           background: loading
             ? "var(--kr-bg-tertiary)"
             : "linear-gradient(135deg, var(--kr-aurora-500) 0%, var(--kr-aurora-600) 100%)",
-          color: loading ? "var(--kr-text-muted)" : "#fff",
+          color: loading ? "var(--kr-text-muted)" : "var(--kr-text-primary)",
           fontSize: "var(--kr-text-sm)",
           fontWeight: 600,
           fontFamily: "var(--kr-font-sans)",

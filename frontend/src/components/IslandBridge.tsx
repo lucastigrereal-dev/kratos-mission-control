@@ -43,7 +43,7 @@ export default function IslandBridge({ bridges }: IslandBridgeProps) {
         <path
           key={i}
           d={buildPath(b)}
-          style={{ stroke: b.color || "#8b7355" }}
+          style={{ stroke: b.color || "var(--kr-wood-bridge)" }}
           filter="url(#kr-bridge-shadow)"
         />
       ))}
