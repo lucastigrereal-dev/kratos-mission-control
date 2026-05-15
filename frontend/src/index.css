@@ -2189,6 +2189,31 @@ code {
    Responsive — tablet / small screens
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* WB8: Desktop-wide responsive breakpoints */
+@media (min-width: 1920px) {
+  .kr-shell {
+    grid-template-columns: 260px 1fr 360px;
+  }
+  .kr-world {
+    height: calc(100vh - 116px);
+  }
+}
+
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .kr-shell {
+    grid-template-columns: 240px 1fr 320px;
+  }
+  .kr-world {
+    height: calc(100vh - 116px);
+  }
+}
+
+@media (min-width: 1366px) and (max-width: 1439px) {
+  .kr-shell {
+    grid-template-columns: 220px 1fr 300px;
+  }
+}
+
 @media (max-width: 1024px) {
   .kr-shell {
     grid-template-columns: 180px 1fr 220px;
