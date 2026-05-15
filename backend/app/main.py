@@ -44,6 +44,8 @@ from app.routes.now import router as now_router
 from app.routes.timeline import router as timeline_router
 from app.routes.execution import router as execution_router
 from app.routes.tabs import router as tabs_router
+from app.routes.approvals import router as approvals_router
+from app.routes.continuity import router as continuity_router
 
 app.include_router(health_router)
 app.include_router(tasks_router)
@@ -72,6 +74,8 @@ app.include_router(now_router)
 app.include_router(timeline_router)
 app.include_router(execution_router)
 app.include_router(tabs_router)
+app.include_router(approvals_router)
+app.include_router(continuity_router)
 
 
 @app.get("/")

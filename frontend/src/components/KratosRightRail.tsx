@@ -12,6 +12,11 @@ interface KratosRightRailProps {
   risks?: RiskItem[];
   checkpointAvailable?: boolean;
   checkpointLabel?: string;
+  nextAction?: string;
+  missionSummary?: string;
+  blocker?: string;
+  recommendation?: string;
+  doNotDo?: string;
 }
 
 export default function KratosRightRail({
@@ -21,14 +26,28 @@ export default function KratosRightRail({
   risks = [],
   checkpointAvailable = false,
   checkpointLabel,
+  nextAction,
+  missionSummary,
+  blocker,
+  recommendation,
+  doNotDo,
 }: KratosRightRailProps) {
   return (
     <div className="kr-right-rail">
-      <AuroraPanel signals={signals} focusState={focusState} driftRisk={driftRisk} />
+      <AuroraPanel
+        signals={signals}
+        focusState={focusState}
+        driftRisk={driftRisk}
+        nextAction={nextAction}
+        missionSummary={missionSummary}
+        blocker={blocker}
+        recommendation={recommendation}
+        doNotDo={doNotDo}
+      />
 
       {risks.length > 0 && (
         <div className="kr-right-rail-section">
-          <div className="kr-section-title">RISCOS</div>
+          <div className="kr-section-title">RISCOS NO RADAR</div>
           <div className="kr-right-rail-risks">
             {risks.slice(0, 3).map((r, i) => (
               <div key={i} className="kr-right-rail-risk">

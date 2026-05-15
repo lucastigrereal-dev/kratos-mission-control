@@ -127,6 +127,8 @@ export default function Layout({ children }: { children: ReactNode }) {
             risks={risks}
             checkpointAvailable={checkpointAvailable}
             checkpointLabel={checkpointLabel}
+            nextAction={nextActionTitle}
+            missionSummary={currentMission}
           />
         }
         bottomDock={

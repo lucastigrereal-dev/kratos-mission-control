@@ -9,6 +9,7 @@ interface FloatingIslandProps {
   y: number;
   onClick?: () => void;
   pulse?: boolean;
+  status?: "live" | "active" | "degraded" | "critical";
 }
 
 const SIZE_MAP = {
@@ -19,36 +20,42 @@ const SIZE_MAP = {
 };
 
 export default function FloatingIsland({
+  id,
   label,
   icon,
+  color,
+  glowColor,
   size = "md",
   x,
   y,
   onClick,
   pulse = false,
+  status,
 }: FloatingIslandProps) {
   const dims = SIZE_MAP[size];
 
   return (
     <button
-      className={`kr-island kr-island--${size}${pulse ? " kr-island--pulse" : ""}`}
+      className={`kr-island kr-island--${size}${pulse ? " kr-island--pulse" : ""}${status ? ` kr-island--status-${status}` : ""}`}
       style={{
         left: `calc(${x}% - ${dims.w / 2}px)`,
         top: `calc(${y}% - ${dims.h / 2}px)`,
         width: dims.w,
         height: dims.h,
-      }}
+        "--kr-island-accent": color,
+        "--kr-island-glow": glowColor,
+      } as React.CSSProperties}
       onClick={onClick}
-      aria-label={label}
+      aria-label={`Ilha ${label}`}
       title={label}
     >
       <div className="kr-island-platform">
-        <div className="kr-island-top">
+        <div className="kr-island-top" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 25%, var(--kr-isle-fern)) 0%, var(--kr-isle-moss) 40%, var(--kr-earth-mid) 100%)` }}>
           <div className="kr-island-grass" />
         </div>
         <div className="kr-island-body" />
         <div className="kr-island-buildings">
-          <span className="kr-island-icon">{icon}</span>
+          <span className="kr-island-icon" style={{ color }}>{icon}</span>
         </div>
         <div className="kr-island-shadow" />
       </div>

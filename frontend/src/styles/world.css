@@ -1,0 +1,790 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   KRATOS 1.0 — World Map Styles
+   Mundo de ilhas flutuantes, castelo central, pontes, nuvens, oceano
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Mundo de Ilhas — Pseudo-3D World Map
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.kr-world {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 96px); /* minus top HUD + bottom dock */
+  overflow: hidden;
+  perspective: 900px;
+}
+
+.kr-world-ocean {
+  position: absolute;
+  inset: 0;
+  background:
+    /* subtle vignette at edges */
+    radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(4, 8, 16, 0.5) 100%),
+    /* atmospheric sky dome */
+    radial-gradient(ellipse at 50% 15%, var(--kr-world-sky-radial) 0%, transparent 55%),
+    /* deep ocean gradient — 6 stops for depth */
+    linear-gradient(
+      180deg,
+      var(--kr-sky-top) 0%,
+      color-mix(in srgb, var(--kr-sky-top) 80%, var(--kr-sky-mid) 20%) 15%,
+      var(--kr-sky-mid) 30%,
+      var(--kr-sky-horizon) 45%,
+      var(--kr-ocean-mid) 60%,
+      var(--kr-ocean-shallow) 80%,
+      var(--kr-ocean-deep) 100%
+    );
+}
+
+/* Horizon atmospheric layer — subtle light band at the world's edge */
+.kr-world-horizon {
+  position: absolute;
+  top: 38%;
+  left: 0;
+  right: 0;
+  height: 8%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--kr-canvas-horizon-band) 30%,
+    color-mix(in srgb, var(--kr-canvas-horizon-band) 70%, var(--kr-ocean-surface) 30%) 50%,
+    var(--kr-canvas-horizon-band) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* WA-B1: Atmospheric mist — subtle fog band above horizon */
+.kr-world-mist {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(14, 30, 50, 0.06) 40%,
+    rgba(14, 30, 50, 0.08) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ocean depth layers — subtle horizontal bands for water depth illusion */
+.kr-world-depth {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      transparent 42%,
+      rgba(4, 12, 28, 0.3) 55%,
+      var(--kr-canvas-depth-gradient-start) 65%,
+      var(--kr-canvas-depth-gradient-end) 100%
+    );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.kr-world-sun {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 110px;
+  background:
+    radial-gradient(
+      ellipse at 50% 60%,
+      var(--kr-world-sun-core) 0%,
+      var(--kr-world-sun-edge) 30%,
+      transparent 65%
+    );
+  border-radius: 50%;
+  filter: blur(3px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.9;
+}
+
+.kr-world-stars {
+  display: none;
+}
+
+.kr-world-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: var(--kr-z-island);
+}
+
+/* ── Floating Islands ────────────────────────────────────────────────── */
+
+.kr-island {
+  position: absolute;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: transform var(--kr-duration-medium) var(--kr-ease-spring),
+              filter var(--kr-duration-medium) var(--kr-ease-smooth);
+  transform-style: preserve-3d;
+  animation: kr-island-float var(--kr-duration-float) ease-in-out infinite;
+}
+
+.kr-island::before {
+  content: "";
+  position: absolute;
+  inset: -15% -20% -25% -20%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    var(--kr-island-glow) 0%,
+    transparent 70%
+  );
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity var(--kr-duration-normal) var(--kr-ease-smooth);
+}
+
+.kr-island:hover {
+  transform: translateY(-14px) scale(1.08);
+  animation-play-state: paused;
+  z-index: var(--kr-z-aurora);
+  filter: brightness(1.18);
+}
+
+.kr-island:hover::before {
+  opacity: 0.2;
+}
+
+.kr-island:focus-visible {
+  outline: 2px solid var(--kr-azure-400);
+  outline-offset: 8px;
+  border-radius: 50%;
+}
+
+.kr-island-platform {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: rotateX(55deg);
+  transform-style: preserve-3d;
+}
+
+/* Organic island top — not a perfect circle */
+.kr-island-top {
+  position: absolute;
+  inset: 0;
+  border-radius: 44% 56% 50% 50% / 52% 48% 54% 46%;
+  background: linear-gradient(
+    135deg,
+    var(--kr-isle-fern) 0%,
+    var(--kr-isle-moss) 40%,
+    var(--kr-earth-mid) 100%
+  );
+  box-shadow:
+    inset 0 3px 12px var(--kr-glass-border),
+    0 1px 3px color-mix(in srgb, black 30%, transparent),
+    0 2px 8px color-mix(in srgb, var(--kr-isle-glow) 15%, transparent);
+  overflow: hidden;
+}
+
+.kr-island-grass {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 35% 30%, var(--kr-world-grass-highlight) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 55%, var(--kr-world-grass-shadow) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+/* Earth/rock body below the island — more organic, deeper */
+.kr-island-body {
+  position: absolute;
+  top: 88%;
+  left: 8%;
+  right: 8%;
+  bottom: -32px;
+  background: linear-gradient(
+    175deg,
+    var(--kr-earth-light) 0%,
+    var(--kr-earth-base) 30%,
+    var(--kr-earth-rock) 65%,
+    color-mix(in srgb, var(--kr-earth-rock) 80%, black 20%) 100%
+  );
+  border-radius: 38% 42% 50% 48% / 28% 32% 56% 52%;
+  transform: translateZ(-3px);
+  box-shadow:
+    inset 0 3px 8px color-mix(in srgb, black 35%, transparent),
+    0 4px 12px color-mix(in srgb, black 45%, transparent),
+    0 8px 24px color-mix(in srgb, black 30%, transparent);
+}
+
+.kr-island:hover .kr-island-body {
+  box-shadow:
+    inset 0 3px 8px color-mix(in srgb, black 35%, transparent),
+    0 6px 20px color-mix(in srgb, black 50%, transparent),
+    0 12px 32px color-mix(in srgb, black 35%, transparent);
+}
+
+/* Per-size border-radius variation for island tops */
+.kr-island--sm .kr-island-top {
+  border-radius: 46% 54% 48% 52% / 54% 46% 52% 48%;
+}
+.kr-island--md .kr-island-top {
+  border-radius: 44% 56% 50% 50% / 52% 48% 54% 46%;
+}
+.kr-island--lg .kr-island-top {
+  border-radius: 42% 58% 45% 55% / 50% 52% 48% 50%;
+}
+
+/* Tiny structures on the island surface */
+.kr-island-buildings {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kr-island-icon {
+  font-size: 1.2rem;
+  opacity: 0.5;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px color-mix(in srgb, black 30%, transparent));
+}
+
+/* Label below island — stronger contrast, glass backdrop */
+.kr-island-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(0, 0, 0, 0.6),
+    0 0 16px color-mix(in srgb, var(--kr-world-label-text) 40%, transparent);
+  letter-spacing: 0.05em;
+  line-height: 1.15;
+  text-rendering: optimizeLegibility;
+  z-index: 5;
+  pointer-events: none;
+  padding: 4px 12px;
+  border-radius: var(--kr-radius-sm);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Organic shadow — deeper and more diffuse for depth */
+.kr-island-shadow {
+  position: absolute;
+  top: 104%;
+  left: 12%;
+  right: 12%;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, black 45%, transparent) 0%,
+    color-mix(in srgb, black 20%, transparent) 30%,
+    color-mix(in srgb, black 8%, transparent) 60%,
+    transparent 80%
+  );
+  transform: translateZ(-5px);
+  filter: blur(3px);
+  animation: kr-island-shadow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes kr-island-shadow-pulse {
+  0%, 100% { opacity: 0.7; transform: translateZ(-5px) scale(1); }
+  50% { opacity: 0.9; transform: translateZ(-5px) scale(1.06); }
+}
+
+/* Size variants */
+.kr-island--sm .kr-island-label { font-size: var(--kr-text-xs); }
+.kr-island--sm .kr-island-icon { font-size: 0.9rem; }
+.kr-island--md .kr-island-label { font-size: var(--kr-text-sm); }
+.kr-island--md .kr-island-icon { font-size: 1.2rem; }
+.kr-island--lg .kr-island-label { font-size: var(--kr-text-md); }
+.kr-island--lg .kr-island-icon { font-size: 1.6rem; }
+.kr-island--central .kr-island-label { font-size: var(--kr-text-lg); }
+
+/* Vary organic shape per size for visual variety */
+.kr-island--sm .kr-island-top { border-radius: 48% 52% 46% 54% / 55% 45% 56% 44%; }
+.kr-island--md .kr-island-top { border-radius: 44% 56% 50% 50% / 52% 48% 54% 46%; }
+.kr-island--lg .kr-island-top { border-radius: 46% 54% 48% 52% / 50% 55% 48% 52%; }
+
+@keyframes kr-island-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Central island subtle pulse — only the shadow expands */
+.kr-island--pulse .kr-island-shadow {
+  animation: kr-island-shadow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes kr-island-shadow-pulse {
+  0%, 100% { opacity: 0.35; transform: translateZ(-4px) scale(1); }
+  50% { opacity: 0.55; transform: translateZ(-4px) scale(1.15); }
+}
+
+/* Island status glow on world map — per-island accent via CSS custom properties */
+.kr-island--status-live::before { box-shadow: 0 0 28px var(--kr-island-glow), 0 0 48px color-mix(in srgb, var(--kr-island-glow) 50%, transparent); }
+.kr-island--status-active::before { box-shadow: 0 0 20px var(--kr-island-glow); }
+.kr-island--status-degraded::before { box-shadow: 0 0 16px color-mix(in srgb, var(--kr-yellow-400) 20%, transparent); }
+.kr-island--status-critical::before { box-shadow: 0 0 20px color-mix(in srgb, var(--kr-arena-coral) 25%, transparent), 0 0 36px color-mix(in srgb, var(--kr-arena-coral) 10%, transparent); }
+
+/* ── Bridges ─────────────────────────────────────────────────────────── */
+
+.kr-bridges-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--kr-z-bridge);
+  pointer-events: none;
+}
+
+.kr-bridges-svg path {
+  fill: none;
+  stroke: var(--kr-wood-bridge);
+  stroke-width: 2.5;
+  opacity: 0.7;
+  transition: stroke-width var(--kr-duration-fast) var(--kr-ease-smooth),
+              opacity var(--kr-duration-fast) var(--kr-ease-smooth);
+  filter: drop-shadow(0 1px 3px color-mix(in srgb, black 40%, transparent));
+  stroke-linecap: round;
+}
+
+/* ── Central Castle ──────────────────────────────────────────────── */
+
+.kr-castle {
+  position: absolute;
+  left: 50%;
+  top: 32%;
+  transform: translate(-50%, -50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 20;
+  transition: transform var(--kr-duration-medium) var(--kr-ease-spring);
+  animation: kr-island-float 5s ease-in-out infinite;
+}
+
+.kr-castle:hover {
+  transform: translate(-50%, calc(-50% - 8px)) scale(1.06);
+  animation-play-state: paused;
+  z-index: 350;
+  filter:
+    drop-shadow(0 0 28px color-mix(in srgb, var(--kr-gold-400) 28%, transparent))
+    drop-shadow(0 0 56px color-mix(in srgb, var(--kr-azure-400) 15%, transparent))
+    drop-shadow(0 0 80px color-mix(in srgb, var(--kr-aurora-500) 8%, transparent));
+}
+
+.kr-castle:focus-visible {
+  outline: 2px solid var(--kr-azure-400);
+  outline-offset: 10px;
+  border-radius: 12px;
+}
+
+.kr-castle-platform {
+  position: relative;
+  width: 220px;
+  height: 120px;
+  transform: rotateX(55deg);
+  transform-style: preserve-3d;
+}
+
+/* Island base under castle */
+.kr-castle-base {
+  position: absolute;
+  inset: 0;
+  border-radius: 42% 58% 45% 55% / 52% 48% 55% 45%;
+  background: linear-gradient(
+    135deg,
+    var(--kr-isle-fern) 0%,
+    var(--kr-isle-moss) 35%,
+    var(--kr-earth-mid) 100%
+  );
+  box-shadow:
+    inset 0 3px 12px color-mix(in srgb, white 6%, transparent),
+    0 2px 8px color-mix(in srgb, black 30%, transparent);
+  z-index: 0;
+}
+
+/* Towers */
+.kr-castle-tower {
+  position: absolute;
+  bottom: 15%;
+  width: 28%;
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(
+    180deg,
+    var(--kr-castle-stone-light) 0%,
+    var(--kr-castle-stone) 50%,
+    var(--kr-castle-stone-dark) 100%
+  );
+  box-shadow: inset 0 2px 4px color-mix(in srgb, white 30%, transparent);
+  z-index: 1;
+}
+
+.kr-castle-tower--left {
+  left: 10%;
+  height: 55%;
+}
+
+.kr-castle-tower--right {
+  right: 10%;
+  height: 55%;
+}
+
+.kr-castle-tower--center {
+  left: 50%;
+  transform: translateX(-50%);
+  height: 70%;
+  width: 30%;
+}
+
+/* Tower roofs (CSS triangles) */
+.kr-castle-roof {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-bottom: 18px solid var(--kr-castle-roof);
+  filter: drop-shadow(0 1px 2px color-mix(in srgb, black 30%, transparent));
+}
+
+.kr-castle-roof--center {
+  border-left-width: 22px;
+  border-right-width: 22px;
+  border-bottom-width: 22px;
+  top: -20px;
+}
+
+/* Windows */
+.kr-castle-window {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 12px;
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--kr-azure-500) 60%, transparent) 0%,
+    color-mix(in srgb, var(--kr-azure-500) 20%, transparent) 100%
+  );
+  box-shadow: 0 0 6px color-mix(in srgb, var(--kr-azure-500) 15%, transparent);
+}
+
+.kr-castle-window--center {
+  width: 16px;
+  height: 18px;
+  top: 30%;
+}
+
+/* K shield on center tower */
+.kr-castle-shield {
+  font-family: var(--kr-font-sans);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--kr-gold-400);
+  text-shadow: 0 0 4px color-mix(in srgb, var(--kr-gold-500) 30%, transparent);
+  line-height: 1;
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+/* Portal glow at base — dramatic entrance */
+.kr-castle-portal {
+  position: absolute;
+  bottom: 3%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--kr-castle-portal-size);
+  height: var(--kr-castle-portal-size);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--kr-castle-portal-glow-inner) 0%,
+    color-mix(in srgb, var(--kr-azure-500) 40%, transparent) 30%,
+    color-mix(in srgb, var(--kr-gold-400) 15%, transparent) 50%,
+    var(--kr-castle-portal-glow-outer) 65%,
+    transparent 80%
+  );
+  box-shadow:
+    0 0 32px color-mix(in srgb, var(--kr-azure-500) 35%, transparent),
+    0 0 64px color-mix(in srgb, var(--kr-azure-500) 15%, transparent),
+    0 0 100px color-mix(in srgb, var(--kr-azure-500) 6%, transparent),
+    0 0 140px color-mix(in srgb, var(--kr-gold-400) 4%, transparent);
+  z-index: 0;
+  animation: kr-portal-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes kr-portal-pulse {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.15); }
+}
+
+/* Banner — prominent mission readout */
+.kr-castle-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: var(--kr-glass-bg-strong);
+  backdrop-filter: blur(var(--kr-glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur-strong));
+  border: 1px solid var(--kr-glass-border-strong);
+  border-radius: var(--kr-radius-lg);
+  box-shadow:
+    var(--kr-shadow-md),
+    0 0 20px color-mix(in srgb, var(--kr-gold-500) 6%, transparent);
+  z-index: 5;
+}
+
+.kr-castle-banner-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--kr-text-muted);
+}
+
+.kr-castle-banner-text {
+  font-size: var(--kr-text-sm);
+  font-weight: 600;
+  color: var(--kr-text-primary);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Clouds ──────────────────────────────────────────────────────────── */
+
+.kr-clouds {
+  position: absolute;
+  inset: 0;
+  z-index: var(--kr-z-cloud);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.kr-cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--kr-world-cloud);
+  filter: blur(30px);
+  animation: kr-cloud-drift var(--kr-duration-cloud) linear infinite;
+}
+
+.kr-cloud--1 {
+  width: 300px;
+  height: 60px;
+  top: 30%;
+  left: -10%;
+  animation-duration: 50s;
+}
+
+.kr-cloud--2 {
+  width: 240px;
+  height: 50px;
+  top: 45%;
+  left: -5%;
+  animation-duration: 60s;
+  animation-delay: -20s;
+}
+
+.kr-cloud--3 {
+  width: 360px;
+  height: 70px;
+  top: 22%;
+  left: -15%;
+  animation-duration: 45s;
+  animation-delay: -10s;
+}
+
+.kr-cloud--4 {
+  width: 200px;
+  height: 40px;
+  top: 55%;
+  left: -8%;
+  animation-duration: 70s;
+  animation-delay: -35s;
+  opacity: 0.6;
+}
+
+.kr-cloud--5 {
+  width: 280px;
+  height: 55px;
+  top: 12%;
+  left: -20%;
+  animation-duration: 55s;
+  animation-delay: -15s;
+  opacity: 0.5;
+}
+
+@keyframes kr-cloud-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(100vw + 600px)); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Island Mini Card — compact navigation tiles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.kr-island-mini-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--kr-glass-border);
+  border-left: 3px solid transparent;
+  border-radius: 0 var(--kr-radius-md) var(--kr-radius-md) 0;
+  background: var(--kr-glass-bg);
+  color: var(--kr-text-primary);
+  font-size: var(--kr-text-sm);
+  font-family: var(--kr-font-sans);
+  cursor: pointer;
+  transition:
+    border-color var(--kr-duration-fast) var(--kr-ease-smooth),
+    border-left-color var(--kr-duration-fast) var(--kr-ease-smooth),
+    background var(--kr-duration-fast) var(--kr-ease-smooth),
+    transform var(--kr-duration-fast) var(--kr-ease-smooth);
+}
+
+/* Island status border accent system (Wave 4) */
+.kr-island-mini-card:has(.kr-dot-live) { border-left-color: color-mix(in srgb, var(--kr-color-live-pulse) 50%, transparent); }
+.kr-island-mini-card:has(.kr-dot-degraded) { border-left-color: color-mix(in srgb, var(--kr-yellow-400) 50%, transparent); }
+.kr-island-mini-card:has(.kr-dot-critical) { border-left-color: color-mix(in srgb, var(--kr-arena-coral) 50%, transparent); }
+.kr-island-mini-card:has(.kr-dot-healthy) { border-left-color: color-mix(in srgb, var(--kr-status-healthy) 50%, transparent); }
+.kr-island-mini-card:has(.kr-dot-offline) { border-left-color: color-mix(in srgb, var(--kr-text-muted) 40%, transparent); }
+
+.kr-island-mini-card:hover {
+  border-color: var(--kr-azure-500);
+  background: var(--kr-glass-bg-strong);
+  transform: translateX(2px);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--kr-azure-500) 8%, transparent);
+}
+
+.kr-island-mini-card:focus-visible {
+  outline: 2px solid var(--kr-azure-400);
+  outline-offset: 2px;
+}
+
+.kr-island-mini-card--selected {
+  border-color: var(--kr-azure-500);
+  border-left-color: var(--kr-azure-500) !important;
+  background: color-mix(in srgb, var(--kr-azure-500) 8%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--kr-azure-500) 10%, transparent),
+    0 0 14px color-mix(in srgb, var(--kr-azure-500) 10%, transparent);
+}
+
+.kr-island-mini-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.kr-island-mini-card-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kr-island-mini-card-sub {
+  font-size: var(--kr-text-xs);
+  color: var(--kr-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kr-island-mini-card-progress {
+  font-size: var(--kr-text-xs);
+  font-weight: 700;
+  color: var(--kr-text-secondary);
+  font-family: var(--kr-font-mono);
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: var(--kr-radius-sm);
+  background: var(--kr-glass-bg-light);
+  min-width: 38px;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   World Map Legend
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.kr-world-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--kr-glass-bg);
+  border: 1px solid var(--kr-glass-border);
+  border-radius: var(--kr-radius-md);
+  backdrop-filter: blur(var(--kr-glass-blur));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur));
+}
+
+.kr-world-map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--kr-text-xs);
+  color: var(--kr-text-secondary);
+}
+
+.kr-world-map-legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.kr-world-map-legend-label {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.kr-world-map-legend-desc {
+  color: var(--kr-text-muted);
+  display: none;
+}
