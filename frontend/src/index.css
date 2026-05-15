@@ -923,21 +923,22 @@ code {
 
 .kr-aurora-orb {
   position: relative;
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 4px;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 6px;
   border-radius: 50%;
   background: radial-gradient(
     circle at 40% 35%,
-    color-mix(in srgb, white 70%, transparent) 0%,
-    color-mix(in srgb, var(--kr-purple-300) 40%, transparent) 15%,
-    color-mix(in srgb, var(--kr-purple-400) 25%, transparent) 35%,
-    color-mix(in srgb, var(--kr-purple-600) 10%, transparent) 60%,
+    color-mix(in srgb, white 80%, transparent) 0%,
+    color-mix(in srgb, var(--kr-purple-300) 45%, transparent) 12%,
+    color-mix(in srgb, var(--kr-purple-400) 30%, transparent) 30%,
+    color-mix(in srgb, var(--kr-purple-600) 12%, transparent) 55%,
     transparent 100%
   );
   box-shadow:
-    0 0 24px color-mix(in srgb, var(--kr-purple-400) 20%, transparent),
-    0 0 48px color-mix(in srgb, var(--kr-purple-500) 8%, transparent);
+    0 0 32px color-mix(in srgb, var(--kr-purple-400) 25%, transparent),
+    0 0 64px color-mix(in srgb, var(--kr-purple-500) 10%, transparent),
+    0 0 96px color-mix(in srgb, var(--kr-purple-600) 4%, transparent);
   animation: kr-orb-float 5s ease-in-out infinite;
   pointer-events: none;
 }
@@ -1104,11 +1105,12 @@ code {
 .kr-aurora-mission-summary {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  padding: 12px;
+  gap: 10px;
+  padding: 14px;
   border-radius: var(--kr-radius-md);
-  background: color-mix(in srgb, var(--kr-aurora-500) 6%, var(--kr-glass-bg));
-  border: 1px solid color-mix(in srgb, var(--kr-aurora-400) 10%, transparent);
+  background: color-mix(in srgb, var(--kr-aurora-500) 8%, var(--kr-glass-bg-strong));
+  border: 1px solid color-mix(in srgb, var(--kr-aurora-400) 15%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--kr-aurora-500) 5%, transparent);
 }
 
 .kr-aurora-mission-summary-icon {
