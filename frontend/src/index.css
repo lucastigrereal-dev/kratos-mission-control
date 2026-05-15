@@ -1412,9 +1412,27 @@ code {
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(20, 40, 80, 0.15) 30%,
-    rgba(20, 40, 80, 0.2) 50%,
-    rgba(20, 40, 80, 0.1) 70%,
+    var(--kr-canvas-horizon-band) 30%,
+    color-mix(in srgb, var(--kr-canvas-horizon-band) 70%, var(--kr-ocean-surface) 30%) 50%,
+    var(--kr-canvas-horizon-band) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* WA-B1: Atmospheric mist — subtle fog band above horizon */
+.kr-world-mist {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(14, 30, 50, 0.06) 40%,
+    rgba(14, 30, 50, 0.08) 60%,
     transparent 100%
   );
   pointer-events: none;
@@ -1430,9 +1448,8 @@ code {
       180deg,
       transparent 42%,
       rgba(4, 12, 28, 0.3) 55%,
-      rgba(4, 12, 28, 0.5) 70%,
-      rgba(4, 8, 16, 0.7) 85%,
-      rgba(4, 8, 16, 0.85) 100%
+      var(--kr-canvas-depth-gradient-start) 65%,
+      var(--kr-canvas-depth-gradient-end) 100%
     );
   pointer-events: none;
   z-index: 2;

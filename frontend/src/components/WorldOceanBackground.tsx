@@ -9,6 +9,7 @@ export default function WorldOceanBackground({ children }: WorldOceanBackgroundP
     <div className="kr-world">
       <div className="kr-world-ocean" />
       <div className="kr-world-horizon" />
+      <div className="kr-world-mist" />
       <div className="kr-world-depth" />
       <div className="kr-world-sun" />
       <div className="kr-world-content">{children}</div>
