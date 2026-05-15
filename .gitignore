@@ -55,3 +55,4 @@ _debug_*.py
 *.tmp
 coverage/
 htmlcov/
+.planning/
