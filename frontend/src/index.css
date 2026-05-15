@@ -1652,18 +1652,25 @@ code {
 .kr-island-shadow {
   position: absolute;
   top: 104%;
-  left: 8%;
-  right: 8%;
-  height: 20px;
+  left: 12%;
+  right: 12%;
+  height: 22px;
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
-    color-mix(in srgb, black 40%, transparent) 0%,
-    color-mix(in srgb, black 15%, transparent) 40%,
-    transparent 70%
+    color-mix(in srgb, black 45%, transparent) 0%,
+    color-mix(in srgb, black 20%, transparent) 30%,
+    color-mix(in srgb, black 8%, transparent) 60%,
+    transparent 80%
   );
-  transform: translateZ(-4px);
-  filter: blur(2px);
+  transform: translateZ(-5px);
+  filter: blur(3px);
+  animation: kr-island-shadow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes kr-island-shadow-pulse {
+  0%, 100% { opacity: 0.7; transform: translateZ(-5px) scale(1); }
+  50% { opacity: 0.9; transform: translateZ(-5px) scale(1.06); }
 }
 
 /* Size variants */
