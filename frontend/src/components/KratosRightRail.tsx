@@ -47,7 +47,7 @@ export default function KratosRightRail({
 
       {risks.length > 0 && (
         <div className="kr-right-rail-section">
-          <div className="kr-section-title">RISCOS</div>
+          <div className="kr-section-title">RISCOS NO RADAR</div>
           <div className="kr-right-rail-risks">
             {risks.slice(0, 3).map((r, i) => (
               <div key={i} className="kr-right-rail-risk">

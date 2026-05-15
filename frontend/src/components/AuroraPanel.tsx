@@ -148,7 +148,7 @@ export default function AuroraPanel({
         {signals.length === 0 && (
           <div className="kr-aurora-signals-empty">
             <span className="kr-aurora-signals-empty-icon" />
-            Mente clara. Nenhum sinal ativo.
+            Sinais limpos. Nada requer atenção agora.
           </div>
         )}
         {signals.map((signal, i) => {
