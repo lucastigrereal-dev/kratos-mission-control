@@ -4,6 +4,7 @@ import TodayMissionPanel from "../components/TodayMissionPanel";
 import NextBestActionCard from "../components/NextBestActionCard";
 import BlockedItemsCard from "../components/BlockedItemsCard";
 import FocusNowCard from "../components/FocusNowCard";
+import ProjectContinuityCard from "../components/ProjectContinuityCard";
 import { useApi } from "../hooks/useApi";
 import SourceBadge, { type SourceType } from "../components/SourceBadge";
 import { useNavigate } from "react-router-dom";
@@ -78,6 +79,9 @@ export default function VisaoGeralPage() {
           <span className="kr-metric-badge-label">Projetos</span>
         </div>
       </div>
+
+      {/* Continuity — resume previous session */}
+      <ProjectContinuityCard />
 
       {/* World Map — visual centerpiece */}
       <KratosWorldMap currentMission={currentMission} />
