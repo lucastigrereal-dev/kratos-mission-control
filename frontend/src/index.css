@@ -2427,6 +2427,24 @@ code {
   transition: opacity var(--kr-duration-slow) var(--kr-ease-smooth);
 }
 
+/* WC9: Cognitive load reduction — visual hierarchy helpers */
+.kr-section-sep {
+  height: 1px;
+  background: var(--kr-glass-border);
+  margin: var(--kr-space-2) 0;
+  opacity: 0.5;
+}
+.kr-low-density {
+  gap: var(--kr-space-4) !important;
+}
+.kr-mono-focus {
+  filter: grayscale(0.3);
+  transition: filter var(--kr-duration-normal) var(--kr-ease-smooth);
+}
+.kr-mono-focus:hover {
+  filter: grayscale(0);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Reduced motion respects tokens (duration vars set to 0s via media query)
    ═══════════════════════════════════════════════════════════════════════════ */
