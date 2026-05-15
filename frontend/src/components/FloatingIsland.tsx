@@ -19,8 +19,11 @@ const SIZE_MAP = {
 };
 
 export default function FloatingIsland({
+  id,
   label,
   icon,
+  color,
+  glowColor,
   size = "md",
   x,
   y,
@@ -37,18 +40,20 @@ export default function FloatingIsland({
         top: `calc(${y}% - ${dims.h / 2}px)`,
         width: dims.w,
         height: dims.h,
-      }}
+        "--kr-island-accent": color,
+        "--kr-island-glow": glowColor,
+      } as React.CSSProperties}
       onClick={onClick}
       aria-label={label}
       title={label}
     >
       <div className="kr-island-platform">
-        <div className="kr-island-top">
+        <div className="kr-island-top" style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 25%, var(--kr-isle-fern)) 0%, var(--kr-isle-moss) 40%, var(--kr-earth-mid) 100%)` }}>
           <div className="kr-island-grass" />
         </div>
         <div className="kr-island-body" />
         <div className="kr-island-buildings">
-          <span className="kr-island-icon">{icon}</span>
+          <span className="kr-island-icon" style={{ color }}>{icon}</span>
         </div>
         <div className="kr-island-shadow" />
       </div>
