@@ -671,10 +671,10 @@ code {
   flex-direction: column;
   gap: 4px;
   padding: var(--kr-space-section) var(--kr-space-hud);
-  background: var(--kr-sidebar-bg);
+  background: var(--kr-glass-bg-strong);
   backdrop-filter: blur(var(--kr-glass-blur-strong));
   -webkit-backdrop-filter: blur(var(--kr-glass-blur-strong));
-  border-right: 1px solid var(--kr-sidebar-border);
+  border-right: 1px solid var(--kr-glass-border);
   height: 100%;
 }
 
@@ -702,16 +702,16 @@ code {
 }
 
 .kr-sidebar-item:hover {
-  background: var(--kr-sidebar-hover);
+  background: var(--kr-glass-bg-light);
   color: var(--kr-text-primary);
   transform: translateX(2px);
 }
 
 .kr-sidebar-item--active {
-  background: var(--kr-sidebar-active);
+  background: color-mix(in srgb, var(--kr-azure-500) 12%, transparent);
   color: var(--kr-text-primary);
   font-weight: 600;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kr-azure-500) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--kr-azure-500) 14%, transparent);
 }
 
 .kr-sidebar-item--active::before {
@@ -756,8 +756,8 @@ code {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--kr-sidebar-border) 20%,
-    var(--kr-sidebar-border) 80%,
+    var(--kr-glass-border) 20%,
+    var(--kr-glass-border) 80%,
     transparent 100%
   );
   margin: var(--kr-space-hud) 0;
@@ -772,11 +772,11 @@ code {
   flex-direction: column;
   gap: var(--kr-space-section);
   height: 100%;
-  background: var(--kr-glass-bg);
+  background: var(--kr-glass-depth-2);
   backdrop-filter: blur(var(--kr-glass-blur-strong));
   -webkit-backdrop-filter: blur(var(--kr-glass-blur-strong));
   border-left: 1px solid var(--kr-glass-border);
-  box-shadow: -4px 0 24px color-mix(in srgb, black 20%, transparent);
+  box-shadow: -4px 0 24px color-mix(in srgb, black 25%, transparent);
 }
 
 .kr-right-rail-section {
@@ -1346,22 +1346,31 @@ code {
   pointer-events: none;
 }
 
-/* Earth/rock body below the island */
+/* Earth/rock body below the island — more organic, deeper */
 .kr-island-body {
   position: absolute;
-  top: 92%;
-  left: 10%;
-  right: 10%;
-  bottom: -18px;
+  top: 90%;
+  left: 5%;
+  right: 5%;
+  bottom: -26px;
   background: linear-gradient(
-    180deg,
+    175deg,
     var(--kr-earth-light) 0%,
-    var(--kr-earth-base) 40%,
-    var(--kr-earth-rock) 100%
+    var(--kr-earth-base) 35%,
+    var(--kr-earth-rock) 70%,
+    color-mix(in srgb, var(--kr-earth-rock) 80%, black 20%) 100%
   );
-  border-radius: 0 0 45% 45%;
+  border-radius: 0 0 50% 50% / 0 0 45% 45%;
   transform: translateZ(-2px);
-  box-shadow: inset 0 2px 6px color-mix(in srgb, black 30%, transparent);
+  box-shadow:
+    inset 0 3px 8px color-mix(in srgb, black 35%, transparent),
+    0 2px 6px color-mix(in srgb, black 40%, transparent);
+}
+
+.kr-island:hover .kr-island-body {
+  box-shadow:
+    inset 0 3px 8px color-mix(in srgb, black 35%, transparent),
+    0 4px 12px color-mix(in srgb, black 45%, transparent);
 }
 
 /* Tiny structures on the island surface */
@@ -1383,20 +1392,24 @@ code {
   filter: drop-shadow(0 1px 2px color-mix(in srgb, black 30%, transparent));
 }
 
-/* Label below island — with subtle glow backdrop */
+/* Label below island — stronger contrast, glass backdrop */
 .kr-island-label {
   font-weight: 600;
-  color: var(--kr-world-label-text);
-  text-shadow: 0 1px 6px var(--kr-world-label-shadow),
-               0 0 12px color-mix(in srgb, var(--kr-world-label-text) 25%, transparent);
-  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.7),
+    0 0 8px rgba(0, 0, 0, 0.5),
+    0 0 16px color-mix(in srgb, var(--kr-world-label-text) 30%, transparent);
+  letter-spacing: 0.04em;
   line-height: 1.1;
   z-index: 5;
   pointer-events: none;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: var(--kr-radius-sm);
-  background: color-mix(in srgb, black 25%, transparent);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* Organic shadow — deeper and more diffuse for depth */
@@ -1489,10 +1502,12 @@ code {
 }
 
 .kr-castle:hover {
-  transform: translate(-50%, calc(-50% - 8px)) scale(1.04);
+  transform: translate(-50%, calc(-50% - 8px)) scale(1.06);
   animation-play-state: paused;
   z-index: 350;
-  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--kr-gold-400) 15%, transparent));
+  filter:
+    drop-shadow(0 0 20px color-mix(in srgb, var(--kr-gold-400) 20%, transparent))
+    drop-shadow(0 0 40px color-mix(in srgb, var(--kr-azure-400) 10%, transparent));
 }
 
 .kr-castle:focus-visible {
@@ -1624,20 +1639,21 @@ code {
   bottom: 3%;
   left: 50%;
   transform: translateX(-50%);
-  width: 42px;
-  height: 42px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--kr-azure-400) 80%, transparent) 0%,
-    color-mix(in srgb, var(--kr-azure-500) 35%, transparent) 35%,
-    color-mix(in srgb, var(--kr-gold-400) 10%, transparent) 55%,
-    transparent 70%
+    color-mix(in srgb, var(--kr-azure-400) 85%, transparent) 0%,
+    color-mix(in srgb, var(--kr-azure-500) 40%, transparent) 30%,
+    color-mix(in srgb, var(--kr-gold-400) 15%, transparent) 50%,
+    color-mix(in srgb, var(--kr-aurora-500) 5%, transparent) 65%,
+    transparent 80%
   );
   box-shadow:
-    0 0 28px color-mix(in srgb, var(--kr-azure-500) 25%, transparent),
-    0 0 56px color-mix(in srgb, var(--kr-azure-500) 10%, transparent),
-    0 0 80px color-mix(in srgb, var(--kr-azure-500) 4%, transparent);
+    0 0 32px color-mix(in srgb, var(--kr-azure-500) 30%, transparent),
+    0 0 64px color-mix(in srgb, var(--kr-azure-500) 12%, transparent),
+    0 0 100px color-mix(in srgb, var(--kr-azure-500) 5%, transparent);
   z-index: 0;
   animation: kr-portal-pulse 2.5s ease-in-out infinite;
 }
