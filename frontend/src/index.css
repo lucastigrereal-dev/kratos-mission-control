@@ -2445,6 +2445,39 @@ code {
   filter: grayscale(0);
 }
 
+/* WD1-WD9: Interaction polish — smooth transitions, accessibility */
+.kr-interactive {
+  transition: transform var(--kr-duration-fast) var(--kr-ease-smooth),
+              opacity var(--kr-duration-fast) var(--kr-ease-smooth),
+              box-shadow var(--kr-duration-fast) var(--kr-ease-smooth);
+}
+.kr-interactive:active {
+  transform: scale(0.97);
+}
+.kr-interactive:focus-visible {
+  outline: 2px solid var(--kr-azure-400);
+  outline-offset: 3px;
+  border-radius: var(--kr-radius-sm);
+}
+.kr-data-null {
+  color: var(--kr-text-disabled);
+  font-style: italic;
+}
+
+@media (prefers-contrast: high) {
+  .kr-glass-panel,
+  .kr-glass-panel--strong,
+  .kr-glass-panel--light {
+    background: var(--kr-bg-primary);
+    border-color: var(--kr-text-secondary);
+  }
+  .kr-island-label {
+    background: var(--kr-bg-abyss);
+    border-color: var(--kr-text-primary);
+    color: white;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Reduced motion respects tokens (duration vars set to 0s via media query)
    ═══════════════════════════════════════════════════════════════════════════ */
