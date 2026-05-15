@@ -1677,18 +1677,30 @@ code {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid var(--kr-glass-border);
-  border-radius: var(--kr-radius-md);
+  border-left: 3px solid transparent;
+  border-radius: 0 var(--kr-radius-md) var(--kr-radius-md) 0;
   background: var(--kr-glass-bg);
   color: var(--kr-text-primary);
   font-size: var(--kr-text-sm);
   font-family: var(--kr-font-sans);
   cursor: pointer;
-  transition: border-color var(--kr-duration-fast) var(--kr-ease-smooth), background var(--kr-duration-fast) var(--kr-ease-smooth);
+  transition:
+    border-color var(--kr-duration-fast) var(--kr-ease-smooth),
+    border-left-color var(--kr-duration-fast) var(--kr-ease-smooth),
+    background var(--kr-duration-fast) var(--kr-ease-smooth),
+    transform var(--kr-duration-fast) var(--kr-ease-smooth);
 }
+
+.kr-island-mini-card:has(.kr-dot-live) { border-left-color: color-mix(in srgb, var(--kr-color-live-pulse) 40%, transparent); }
+.kr-island-mini-card:has(.kr-dot-degraded) { border-left-color: color-mix(in srgb, var(--kr-yellow-400) 40%, transparent); }
+.kr-island-mini-card:has(.kr-dot-critical) { border-left-color: color-mix(in srgb, var(--kr-arena-coral) 40%, transparent); }
+.kr-island-mini-card:has(.kr-dot-healthy) { border-left-color: color-mix(in srgb, var(--kr-status-healthy) 40%, transparent); }
 
 .kr-island-mini-card:hover {
   border-color: var(--kr-azure-500);
   background: var(--kr-glass-bg-strong);
+  transform: translateX(2px);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--kr-azure-500) 8%, transparent);
 }
 
 .kr-island-mini-card:focus-visible {
@@ -1698,7 +1710,11 @@ code {
 
 .kr-island-mini-card--selected {
   border-color: var(--kr-azure-500);
+  border-left-color: var(--kr-azure-500) !important;
   background: color-mix(in srgb, var(--kr-azure-500) 8%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--kr-azure-500) 10%, transparent),
+    0 0 14px color-mix(in srgb, var(--kr-azure-500) 10%, transparent);
 }
 
 .kr-island-mini-card-body {
@@ -1731,6 +1747,11 @@ code {
   color: var(--kr-text-secondary);
   font-family: var(--kr-font-mono);
   flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: var(--kr-radius-sm);
+  background: var(--kr-glass-bg-light);
+  min-width: 38px;
+  text-align: center;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1740,8 +1761,13 @@ code {
 .kr-world-map-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 8px 0;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--kr-glass-bg);
+  border: 1px solid var(--kr-glass-border);
+  border-radius: var(--kr-radius-md);
+  backdrop-filter: blur(var(--kr-glass-blur));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur));
 }
 
 .kr-world-map-legend-item {
@@ -1752,8 +1778,16 @@ code {
   color: var(--kr-text-secondary);
 }
 
+.kr-world-map-legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .kr-world-map-legend-label {
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .kr-world-map-legend-desc {
