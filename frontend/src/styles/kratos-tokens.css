@@ -292,6 +292,55 @@
   --kr-tracking-normal: 0;
   --kr-tracking-wide: 0.04em;
   --kr-tracking-label: 0.08em;
+
+  /* ── WA5: Shell layout tokens ──────────────────────────────────── */
+  --kr-shell-sidebar-width: 220px;
+  --kr-shell-rightrail-width: 320px;
+  --kr-shell-bottomdock-height: 72px;
+  --kr-shell-tophud-height: 44px;
+
+  /* ── WA5: Ghost island tokens (decorative, §4 Bible) ──────────── */
+  --kr-ghost-island-opacity: 0.12;
+  --kr-ghost-island-blur: 2px;
+  --kr-ghost-island-size-sm: 60px;
+  --kr-ghost-island-size-md: 90px;
+
+  /* ── WA5: Energy pulse system ──────────────────────────────────── */
+  --kr-energy-core: #FACC15;
+  --kr-energy-glow: rgba(250, 204, 21, 0.2);
+  --kr-energy-pulse: rgba(250, 204, 21, 0.35);
+  --kr-energy-ring-inner: rgba(250, 204, 21, 0.08);
+  --kr-energy-ring-outer: rgba(250, 204, 21, 0.04);
+
+  /* ── WA5: Risk radar tokens ────────────────────────────────────── */
+  --kr-risk-low: var(--kr-green-400);
+  --kr-risk-medium: var(--kr-yellow-400);
+  --kr-risk-high: var(--kr-arena-coral);
+  --kr-risk-critical: var(--kr-red-500);
+  --kr-risk-low-bg: color-mix(in srgb, var(--kr-green-400) 8%, transparent);
+  --kr-risk-medium-bg: color-mix(in srgb, var(--kr-yellow-400) 8%, transparent);
+  --kr-risk-high-bg: color-mix(in srgb, var(--kr-arena-coral) 8%, transparent);
+  --kr-risk-critical-bg: color-mix(in srgb, var(--kr-red-500) 10%, transparent);
+
+  /* ── WA5: Canvas atmosphere depth layers ───────────────────────── */
+  --kr-canvas-ocean-layer: rgba(6, 13, 26, 0.92);
+  --kr-canvas-horizon-band: rgba(14, 24, 48, 0.5);
+  --kr-canvas-depth-gradient-start: rgba(10, 16, 32, 0);
+  --kr-canvas-depth-gradient-end: rgba(6, 10, 26, 0.85);
+  --kr-canvas-vignette-color: rgba(4, 8, 16, 0.5);
+
+  /* ── WA5: Aurora presence tokens ───────────────────────────────── */
+  --kr-aurora-core: var(--kr-aurora-400);
+  --kr-aurora-ambient: rgba(139, 92, 246, 0.08);
+  --kr-aurora-active: rgba(139, 92, 246, 0.18);
+  --kr-aurora-signal-weak: rgba(139, 92, 246, 0.05);
+  --kr-aurora-signal-strong: rgba(139, 92, 246, 0.22);
+
+  /* ── WA5: Castle enhanced tokens ───────────────────────────────── */
+  --kr-castle-portal-glow-inner: rgba(59, 130, 246, 0.35);
+  --kr-castle-portal-glow-outer: rgba(59, 130, 246, 0.12);
+  --kr-castle-portal-size: 56px;
+  --kr-castle-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
 }
 
 /* ── Reduced motion ──────────────────────────────────────────────── */

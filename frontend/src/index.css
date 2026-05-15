@@ -542,8 +542,8 @@ code {
     "top-hud  top-hud     top-hud"
     "sidebar  main        right-rail"
     "sidebar  bottom-dock bottom-dock";
-  grid-template-columns: 220px 1fr 260px;
-  grid-template-rows: 44px 1fr 64px;
+  grid-template-columns: var(--kr-shell-sidebar-width) 1fr var(--kr-shell-rightrail-width);
+  grid-template-rows: var(--kr-shell-tophud-height) 1fr var(--kr-shell-bottomdock-height);
   min-height: 100vh;
   background: linear-gradient(
     180deg,
