@@ -5,6 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KRATOS Mission Control</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; overflow: hidden; width: 100%; height: 100%; }
+      #root { width: 100%; height: 100%; }
+
+      button:focus-visible, [role="button"]:focus-visible, [tabindex]:focus-visible {
+        outline: 2px solid #38bdf8;
+        outline-offset: 2px;
+      }
+
+      .kr-skip-link {
+        position: absolute;
+        top: -100px;
+        left: 8px;
+        background: #f59e0b;
+        color: #0f172a;
+        padding: 8px 16px;
+        z-index: 9999;
+        font-weight: 700;
+        border-radius: 0 0 8px 8px;
+        text-decoration: none;
+      }
+      .kr-skip-link:focus {
+        top: 0;
+      }
+
+      @keyframes kr-drawer-in {
+        from { transform: translateX(100%); }
+        to { transform: translateX(0); }
+      }
+
+      @media (max-width: 1400px) {
+        .kr-topbar-motto { display: none !important; }
+        .kr-squad-label { display: none !important; }
+      }
+
+      @media (max-width: 1024px) {
+        .kr-rightpanel { display: none !important; }
+        .kr-grid { grid-template-columns: 200px 1fr !important; grid-template-areas:
+          "topbar    topbar"
+          "sidebar   stage"
+          "sidebar   bottombar" !important; }
+      }
+
+      @media (max-width: 768px) {
+        .kr-sidebar { display: none !important; }
+        .kr-rightpanel { display: none !important; }
+        .kr-grid { grid-template-columns: 1fr !important; grid-template-rows: 56px 1fr 64px !important; grid-template-areas:
+          "topbar"
+          "stage"
+          "bottombar" !important; }
+        .kr-topbar-energy, .kr-topbar-level { display: none !important; }
+      }
+    </style>
   </head>
   <body>
     <a href="#main-content" class="kr-skip-link">Pular para conteúdo</a>
