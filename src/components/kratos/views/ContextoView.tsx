@@ -5,64 +5,76 @@ import { ActiveWindowCard } from "@/components/kratos/contexto/ActiveWindowCard"
 import { ContextReasonCard } from "@/components/kratos/contexto/ContextReasonCard";
 import { ContextActionStrip } from "@/components/kratos/contexto/ContextActionStrip";
 import { BrowserContextList } from "@/components/kratos/contexto/BrowserContextList";
+import { LoadingState } from "@/components/kratos/base/LoadingState";
+import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
+import { useContextSnapshot } from "@/hooks/useContexto";
+import type { BrowserTab } from "../../../api-contract/contexto.schema";
 
-const MOCK_CONTEXT = {
-  hero: {
-    project: "KRATOS · Lovable",
-    mission: "Crédito 4 — Contexto, Checkpoints e Aurora visuais.",
-    app: "Claude Code",
-    window: "KRATOS Mission Control",
-    status: "on_focus" as const,
-    confidence: 86,
-  },
-  drift: { drift: "light" as const, minutes: 18 },
-  activeWindow: {
-    app: "Claude Code",
-    window: "KRATOS Mission Control · /contexto",
-    domain: "id-preview--cf5d1730.lovable.app",
-    duration: "42 min",
-  },
-  reasons: [
-    "Detectado pela rota /contexto e título da janela.",
-    "Projeto KRATOS marcado como ativo na sessão.",
-    "Última ação registrada foi no Crédito 3.",
-  ],
-  browser: [
-    {
-      title: "KRATOS Mission Control · /contexto",
-      domain: "lovable.app",
-      project: "KRATOS · Lovable",
-      status: "active" as const,
-    },
-    {
-      title: "Plano do Crédito 4 (rascunho)",
-      domain: "notion.so",
-      project: "KRATOS · Docs",
-      status: "active" as const,
-    },
-    {
-      title: "TanStack Router · file routing",
-      domain: "tanstack.com",
-      project: "KRATOS · Lovable",
-      status: "stale" as const,
-    },
-    {
-      title: "Twitter · timeline",
-      domain: "twitter.com",
-      project: "Fora de foco",
-      status: "distraction" as const,
-    },
-    {
-      title: "Inbox principal",
-      domain: "mail.google.com",
-      project: "Indefinido",
-      status: "unknown" as const,
-    },
-  ],
-};
+type BrowserItemStatus = "active" | "stale" | "distraction" | "unknown";
+
+function mapTabStatus(status: BrowserTab["status"]): BrowserItemStatus {
+  switch (status) {
+    case "active": return "active";
+    case "idle": return "stale";
+    case "closed": return "unknown";
+  }
+}
+
+function mapTabs(tabs: BrowserTab[]) {
+  return tabs.slice(0, 5).map((t) => ({
+    title: t.title,
+    domain: t.domain,
+    project: t.project ?? "Indefinido",
+    status: mapTabStatus(t.status),
+  }));
+}
 
 export function ContextoView() {
+  const { snapshot, isLoading, isError, error, refetch } = useContextSnapshot();
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto w-full max-w-[1280px] px-6 py-8">
+        <SectionHeader
+          eyebrow="Contexto"
+          title="Onde você está, onde se perdeu e como voltar."
+          description="Carregando snapshot de contexto..."
+        />
+        <LoadingState lines={6} />
+      </div>
+    );
+  }
+
+  if (isError || !snapshot) {
+    return (
+      <div className="mx-auto w-full max-w-[1280px] px-6 py-8">
+        <SectionHeader
+          eyebrow="Contexto"
+          title="Onde você está, onde se perdeu e como voltar."
+          description="Algo falhou ao carregar."
+        />
+        <ErrorState
+          title="Não foi possível carregar o contexto"
+          description={error ?? "Snapshot indisponível."}
+          hint="Verifique a conexão e tente novamente."
+        />
+        <button
+          type="button"
+          onClick={() => refetch()}
+          className="mt-4 inline-flex items-center gap-2 rounded-md px-3 py-2 text-[11px] kratos-mono uppercase tracking-[0.15em] kratos-focus-ring"
+          style={{
+            background: "var(--kratos-surface-3)",
+            border: "1px solid var(--kratos-border)",
+            color: "var(--kratos-text-primary)",
+          }}
+        >
+          Tentar novamente
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-[1280px] px-6 py-8">
       <SectionHeader
@@ -71,26 +83,37 @@ export function ContextoView() {
         description="Save game mental do KRATOS. Sem reconstruir do zero."
       />
 
-      {/* Linha 1 — Hero + Drift */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <CurrentContextHero {...MOCK_CONTEXT.hero} />
+          <CurrentContextHero
+            project={snapshot.project}
+            mission={snapshot.mission}
+            app={snapshot.app}
+            window={snapshot.window}
+            status={snapshot.focusStatus}
+            confidence={snapshot.confidence}
+          />
         </div>
-        <FocusDriftCard {...MOCK_CONTEXT.drift} />
+        <FocusDriftCard
+          drift={snapshot.drift}
+          minutes={snapshot.driftMinutes}
+        />
       </div>
 
-      {/* Linha 2 — Janela + Razão */}
       <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ActiveWindowCard {...MOCK_CONTEXT.activeWindow} />
-        <ContextReasonCard reasons={MOCK_CONTEXT.reasons} />
+        <ActiveWindowCard
+          app={snapshot.activeWindowApp}
+          window={snapshot.activeWindowTitle}
+          domain={snapshot.activeWindowDomain ?? ""}
+          duration={snapshot.activeWindowDuration}
+        />
+        <ContextReasonCard reasons={snapshot.reasons} />
       </div>
 
-      {/* Linha 3 — Ações */}
       <div className="mt-4">
         <ContextActionStrip />
       </div>
 
-      {/* Camada de detalhe */}
       <div className="mt-10">
         <div
           className="mb-3 text-[10px] kratos-mono uppercase tracking-[0.18em]"
@@ -100,7 +123,14 @@ export function ContextoView() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
-            <BrowserContextList items={MOCK_CONTEXT.browser} />
+            {snapshot.browserTabs.length > 0 ? (
+              <BrowserContextList items={mapTabs(snapshot.browserTabs)} />
+            ) : (
+              <EmptyState
+                title="Sem abas detectadas"
+                description="O coletor de contexto não encontrou abas ativas."
+              />
+            )}
           </div>
           <EmptyState
             title="Sem outros sinais agora"

@@ -1,30 +1,64 @@
-import { Save, RotateCcw, Sparkles, ChevronRight, type LucideIcon } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { Save, RotateCcw, Sparkles, ChevronRight } from "lucide-react";
 import { SystemCard } from "@/components/kratos/base/SystemCard";
 
-type Action = {
-  icon: LucideIcon;
+interface Action {
+  icon: typeof Save;
   label: string;
   hint: string;
-};
-
-const ACTIONS: Action[] = [
-  { icon: Save, label: "Salvar checkpoint deste contexto", hint: "Visual" },
-  { icon: RotateCcw, label: "Retomar último checkpoint", hint: "Visual" },
-  { icon: Sparkles, label: "Abrir Aurora", hint: "Atalho visual" },
-  { icon: ChevronRight, label: "Ver detalhes", hint: "Visual" },
-];
+  to?: string;
+  handler?: () => void;
+}
 
 export function ContextActionStrip() {
+  const navigate = useNavigate();
+
+  const actions: Action[] = [
+    {
+      icon: Save,
+      label: "Salvar checkpoint deste contexto",
+      hint: "Ir para Checkpoints",
+      to: "/checkpoints",
+    },
+    {
+      icon: RotateCcw,
+      label: "Retomar último checkpoint",
+      hint: "Ver Checkpoints",
+      to: "/checkpoints",
+    },
+    {
+      icon: Sparkles,
+      label: "Abrir Aurora",
+      hint: "Painel lateral",
+      handler: () => {
+        window.dispatchEvent(new CustomEvent("kratos:toggle-aurora"));
+      },
+    },
+    {
+      icon: ChevronRight,
+      label: "Ver detalhes do contexto",
+      hint: "Recarregar snapshot",
+      handler: () => {
+        window.dispatchEvent(new CustomEvent("kratos:refresh-context"));
+      },
+    },
+  ];
+
   return (
     <SystemCard padded={false} className="p-2">
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
-        {ACTIONS.map(({ icon: Icon, label, hint }) => (
+        {actions.map(({ icon: Icon, label, hint, to, handler }) => (
           <button
             key={label}
             type="button"
-            onClick={(e) => e.preventDefault()}
-            title="Mock visual — sem efeito real"
-            aria-disabled="true"
+            onClick={(e) => {
+              e.preventDefault();
+              if (to) {
+                navigate({ to });
+              } else if (handler) {
+                handler();
+              }
+            }}
             className="kratos-focus-ring kratos-card-hover flex items-center gap-3 rounded-md px-3 py-2.5 text-left"
             style={{
               background: "var(--kratos-surface-3)",
