@@ -58,7 +58,7 @@ export function NextActionCard({
           className="inline-flex items-center gap-2 rounded-md px-3.5 py-2 text-[12px] font-medium kratos-focus-ring transition-colors"
           style={{
             background: "var(--kratos-accent)",
-            color: "#0C0C0E",
+            color: "var(--kratos-surface-0)",
           }}
         >
           {primaryLabel}

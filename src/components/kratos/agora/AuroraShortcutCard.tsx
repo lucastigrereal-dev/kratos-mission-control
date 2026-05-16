@@ -1,7 +1,11 @@
 import { Sparkles, ArrowUpRight } from "lucide-react";
 import { StatusCard } from "@/components/kratos/base/StatusCard";
 
-export function AuroraShortcutCard() {
+interface Props {
+  onOpen?: () => void;
+}
+
+export function AuroraShortcutCard({ onOpen }: Props) {
   return (
     <StatusCard accent="ghost">
       <div className="flex flex-wrap items-center gap-3">
@@ -33,21 +37,21 @@ export function AuroraShortcutCard() {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            /* visual mock — abertura real do Aurora vive na Topbar */
-          }}
-          className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-[11px] kratos-mono uppercase tracking-[0.15em] kratos-focus-ring transition-colors"
-          style={{
-            background: "var(--kratos-surface-3)",
-            border: "1px solid var(--kratos-border-live)",
-            color: "var(--kratos-text-primary)",
-          }}
-        >
-          Atalho visual Aurora
-          <ArrowUpRight className="h-3.5 w-3.5" />
-        </button>
+        {onOpen && (
+          <button
+            type="button"
+            onClick={onOpen}
+            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-[11px] kratos-mono uppercase tracking-[0.15em] kratos-focus-ring transition-colors"
+            style={{
+              background: "var(--kratos-surface-3)",
+              border: "1px solid var(--kratos-border-live)",
+              color: "var(--kratos-text-primary)",
+            }}
+          >
+            Abrir Aurora
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
     </StatusCard>
   );
