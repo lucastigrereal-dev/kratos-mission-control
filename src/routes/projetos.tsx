@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PlaceholderRoute } from "@/components/kratos/views/PlaceholderRoute";
+import { ProjetosView } from "@/components/kratos/views/ProjetosView";
 
 export const Route = createFileRoute("/projetos")({
   head: () => ({
@@ -8,11 +8,5 @@ export const Route = createFileRoute("/projetos")({
       { name: "description", content: "Projetos conhecidos e seu estado." },
     ],
   }),
-  component: () => (
-    <PlaceholderRoute
-      eyebrow="Projetos"
-      title="Projetos conhecidos"
-      description="Repositórios, branches ativos e foco recente."
-    />
-  ),
+  component: () => <ProjetosView />,
 });
