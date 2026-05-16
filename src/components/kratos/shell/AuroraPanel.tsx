@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Sparkles, X } from "lucide-react";
 import { AuroraPanelContent } from "@/components/kratos/aurora/AuroraPanelContent";
 
@@ -7,8 +8,20 @@ type Props = {
 };
 
 export function AuroraPanel({ open, onClose }: Props) {
+  const panelRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
+
   return (
     <aside
+      ref={panelRef}
       className="kratos-aurora-glass flex h-full flex-col overflow-hidden"
       style={{
         width: open ? 340 : 0,

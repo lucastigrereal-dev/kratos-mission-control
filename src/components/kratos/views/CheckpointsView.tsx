@@ -183,6 +183,9 @@ export function CheckpointsView() {
                 e.preventDefault();
                 handleCreate();
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") setShowCreate(false);
+              }}
               className="space-y-3"
             >
               <input
