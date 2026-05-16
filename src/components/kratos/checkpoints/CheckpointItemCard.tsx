@@ -1,4 +1,4 @@
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Trash2, Loader2 } from "lucide-react";
 import { StatusDot, type Severity } from "@/components/kratos/base/StatusDot";
 
 export type CheckpointType = "manual" | "contexto" | "sistema";
@@ -26,9 +26,19 @@ export type CheckpointItem = {
   age: CheckpointAge;
 };
 
-type Props = { item: CheckpointItem };
+interface Props {
+  item: CheckpointItem;
+  onResume?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  isPending?: boolean;
+}
 
-export function CheckpointItemCard({ item }: Props) {
+export function CheckpointItemCard({
+  item,
+  onResume,
+  onDelete,
+  isPending = false,
+}: Props) {
   const ageMeta = AGE_META[item.age];
   return (
     <div
@@ -110,21 +120,43 @@ export function CheckpointItemCard({ item }: Props) {
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={(e) => e.preventDefault()}
-        title="Mock visual — sem efeito real"
-        aria-disabled="true"
-        className="mt-4 inline-flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium kratos-focus-ring kratos-card-hover"
-        style={{
-          background: "var(--kratos-surface-3)",
-          border: "1px solid var(--kratos-border)",
-          color: "var(--kratos-text-primary)",
-        }}
-      >
-        <RotateCcw className="h-3.5 w-3.5" />
-        Retomar daqui
-      </button>
+      <div className="mt-4 flex items-center gap-2">
+        {onResume && (
+          <button
+            type="button"
+            onClick={() => onResume(item.id)}
+            disabled={isPending}
+            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium kratos-focus-ring kratos-card-hover disabled:opacity-50"
+            style={{
+              background: "var(--kratos-surface-3)",
+              border: "1px solid var(--kratos-border)",
+              color: "var(--kratos-text-primary)",
+            }}
+          >
+            {isPending ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <RotateCcw className="h-3.5 w-3.5" />
+            )}
+            Retomar daqui
+          </button>
+        )}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={() => onDelete(item.id)}
+            disabled={isPending}
+            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium kratos-focus-ring kratos-card-hover disabled:opacity-50"
+            style={{
+              background: "var(--kratos-surface-3)",
+              border: "1px solid var(--kratos-border)",
+              color: "var(--kratos-critical)",
+            }}
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

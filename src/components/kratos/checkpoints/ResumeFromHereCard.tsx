@@ -1,14 +1,23 @@
-import { RotateCcw, Bookmark } from "lucide-react";
+import { RotateCcw, Bookmark, Loader2 } from "lucide-react";
 import { StatusCard } from "@/components/kratos/base/StatusCard";
 
-type Props = {
+interface Props {
   project: string;
   time: string;
   summary: string;
   nextAction: string;
-};
+  onResume?: () => void;
+  isPending?: boolean;
+}
 
-export function ResumeFromHereCard({ project, time, summary, nextAction }: Props) {
+export function ResumeFromHereCard({
+  project,
+  time,
+  summary,
+  nextAction,
+  onResume,
+  isPending = false,
+}: Props) {
   return (
     <StatusCard accent="ghost" className="h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
@@ -74,21 +83,26 @@ export function ResumeFromHereCard({ project, time, summary, nextAction }: Props
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={(e) => e.preventDefault()}
-        title="Mock visual — sem efeito real"
-        aria-disabled="true"
-        className="mt-auto pt-4 inline-flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-[12px] font-medium kratos-focus-ring kratos-card-hover"
-        style={{
-          background: "var(--kratos-surface-3)",
-          border: "1px solid var(--kratos-border-live)",
-          color: "var(--kratos-text-primary)",
-        }}
-      >
-        <RotateCcw className="h-3.5 w-3.5" />
-        Retomar daqui
-      </button>
+      {onResume && (
+        <button
+          type="button"
+          onClick={onResume}
+          disabled={isPending}
+          className="mt-auto pt-4 inline-flex items-center justify-center gap-2 rounded-md px-3 py-2.5 text-[12px] font-medium kratos-focus-ring kratos-card-hover disabled:opacity-50"
+          style={{
+            background: "var(--kratos-surface-3)",
+            border: "1px solid var(--kratos-border-live)",
+            color: "var(--kratos-text-primary)",
+          }}
+        >
+          {isPending ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <RotateCcw className="h-3.5 w-3.5" />
+          )}
+          Retomar daqui
+        </button>
+      )}
     </StatusCard>
   );
 }

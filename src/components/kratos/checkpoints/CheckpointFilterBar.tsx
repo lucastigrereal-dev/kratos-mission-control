@@ -1,15 +1,25 @@
 import { Filter } from "lucide-react";
+import type { CheckpointStatus } from "@/../api-contract/checkpoint.schema";
 
-type Chip = { label: string; active?: boolean };
+interface Chip {
+  label: string;
+  value: CheckpointStatus | "all";
+}
 
 const CHIPS: Chip[] = [
-  { label: "Hoje", active: true },
-  { label: "Recentes" },
-  { label: "Manuais" },
-  { label: "Contexto" },
+  { label: "Todos", value: "all" },
+  { label: "Em progresso", value: "in_progress" },
+  { label: "Pendentes", value: "pending" },
+  { label: "Concluídos", value: "completed" },
+  { label: "Bloqueados", value: "blocked" },
 ];
 
-export function CheckpointFilterBar() {
+interface Props {
+  active: CheckpointStatus | "all";
+  onChange: (value: CheckpointStatus | "all") => void;
+}
+
+export function CheckpointFilterBar({ active, onChange }: Props) {
   return (
     <div
       className="flex flex-wrap items-center gap-2 rounded-md px-3 py-2"
@@ -28,25 +38,28 @@ export function CheckpointFilterBar() {
       >
         Filtros
       </span>
-      {CHIPS.map((c) => (
-        <span
-          key={c.label}
-          aria-disabled="true"
-          title="Filtro visual — sem efeito real"
-          className="rounded-sm px-2 py-1 text-[11px] kratos-mono uppercase tracking-[0.12em]"
-          style={{
-            color: c.active
-              ? "var(--kratos-text-primary)"
-              : "var(--kratos-text-secondary)",
-            background: c.active
-              ? "var(--kratos-surface-4)"
-              : "var(--kratos-surface-3)",
-            border: `1px solid ${c.active ? "var(--kratos-border-live)" : "var(--kratos-border)"}`,
-          }}
-        >
-          {c.label}
-        </span>
-      ))}
+      {CHIPS.map((c) => {
+        const isActive = active === c.value;
+        return (
+          <button
+            key={c.value}
+            type="button"
+            onClick={() => onChange(c.value)}
+            className="rounded-sm px-2 py-1 text-[11px] kratos-mono uppercase tracking-[0.12em] kratos-card-hover kratos-focus-ring"
+            style={{
+              color: isActive
+                ? "var(--kratos-text-primary)"
+                : "var(--kratos-text-secondary)",
+              background: isActive
+                ? "var(--kratos-surface-4)"
+                : "var(--kratos-surface-3)",
+              border: `1px solid ${isActive ? "var(--kratos-border-live)" : "var(--kratos-border)"}`,
+            }}
+          >
+            {c.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

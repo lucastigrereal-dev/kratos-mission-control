@@ -2,9 +2,19 @@ import { History } from "lucide-react";
 import { StatusCard } from "@/components/kratos/base/StatusCard";
 import { CheckpointItemCard, type CheckpointItem } from "./CheckpointItemCard";
 
-type Props = { items: CheckpointItem[] };
+interface Props {
+  items: CheckpointItem[];
+  onResume?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  pendingId?: string | null;
+}
 
-export function CheckpointTimeline({ items }: Props) {
+export function CheckpointTimeline({
+  items,
+  onResume,
+  onDelete,
+  pendingId,
+}: Props) {
   return (
     <StatusCard>
       <div className="flex items-center gap-2 mb-4">
@@ -36,7 +46,12 @@ export function CheckpointTimeline({ items }: Props) {
                 border: `2px solid var(--kratos-${item.age === "recente" ? "ok" : "text-muted"})`,
               }}
             />
-            <CheckpointItemCard item={item} />
+            <CheckpointItemCard
+              item={item}
+              onResume={onResume}
+              onDelete={onDelete}
+              isPending={pendingId === item.id}
+            />
           </li>
         ))}
       </ol>
