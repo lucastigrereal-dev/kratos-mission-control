@@ -103,7 +103,7 @@ function QuickLink({
 
 export function DashboardView() {
   const d = useDashboard();
-  const { data: trackedRepos } = useTrackedRepos();
+  const { data: trackedRepos, isLoading: reposLoading } = useTrackedRepos();
 
   if (d.isLoading) {
     return (
@@ -236,6 +236,17 @@ export function DashboardView() {
       </div>
 
       {/* GitHub tracked repos */}
+      {reposLoading && (
+        <div className="mt-8">
+          <div
+            className="mb-3 text-[10px] kratos-mono uppercase tracking-[0.18em]"
+            style={{ color: "var(--kratos-text-muted)" }}
+          >
+            — GitHub · Repositórios monitorados —
+          </div>
+          <LoadingState lines={3} compact />
+        </div>
+      )}
       {trackedRepos && trackedRepos.length > 0 && (
         <div className="mt-8">
           <div
