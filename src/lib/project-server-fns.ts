@@ -15,24 +15,38 @@ import {
   remove as storeRemove,
 } from "../../backend/projects/store";
 
+type Envelope<T> = { data: T | null; error: string | null };
+
 export const getProjects = createServerFn({ method: "GET" }).handler(
-  async (): Promise<Project[]> => {
-    return getAll();
-  }
+  async (): Promise<Envelope<Project[]>> => {
+    try {
+      return { data: getAll(), error: null };
+    } catch (e) {
+      return { data: null, error: e instanceof Error ? e.message : "Falha ao listar projetos" };
+    }
+  },
 );
 
 export const getProject = createServerFn({ method: "GET" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<Project | null> => {
-    return getById(data.id) ?? null;
-  }
+  async ({ data }: { data: { id: string } }): Promise<Envelope<Project>> => {
+    try {
+      return { data: getById(data.id) ?? null, error: null };
+    } catch (e) {
+      return { data: null, error: e instanceof Error ? e.message : "Falha ao buscar projeto" };
+    }
+  },
 );
 
 export const createProject = createServerFn({ method: "POST" })
   .inputValidator(CreateProjectSchema)
   .handler(
-    async ({ data }: { data: CreateProject }): Promise<Project> => {
-      return storeCreate(data);
-    }
+    async ({ data }: { data: CreateProject }): Promise<Envelope<Project>> => {
+      try {
+        return { data: storeCreate(data), error: null };
+      } catch (e) {
+        return { data: null, error: e instanceof Error ? e.message : "Falha ao criar projeto" };
+      }
+    },
   );
 
 export const updateProject = createServerFn({ method: "POST" })
@@ -42,14 +56,22 @@ export const updateProject = createServerFn({ method: "POST" })
       data,
     }: {
       data: UpdateProject & { id: string };
-    }): Promise<Project | null> => {
-      const { id, ...input } = data;
-      return storeUpdate(id, input) ?? null;
-    }
+    }): Promise<Envelope<Project>> => {
+      try {
+        const { id, ...input } = data;
+        return { data: storeUpdate(id, input) ?? null, error: null };
+      } catch (e) {
+        return { data: null, error: e instanceof Error ? e.message : "Falha ao atualizar projeto" };
+      }
+    },
   );
 
 export const deleteProject = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<boolean> => {
-    return storeRemove(data.id);
-  }
+  async ({ data }: { data: { id: string } }): Promise<Envelope<boolean>> => {
+    try {
+      return { data: storeRemove(data.id), error: null };
+    } catch (e) {
+      return { data: null, error: e instanceof Error ? e.message : "Falha ao deletar projeto" };
+    }
+  },
 );

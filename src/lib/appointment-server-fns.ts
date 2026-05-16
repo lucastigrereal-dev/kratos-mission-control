@@ -15,24 +15,38 @@ import {
   remove as storeRemove,
 } from "../../backend/appointments/store";
 
+type Envelope<T> = { data: T | null; error: string | null };
+
 export const getAppointments = createServerFn({ method: "GET" }).handler(
-  async (): Promise<Appointment[]> => {
-    return getAll();
-  }
+  async (): Promise<Envelope<Appointment[]>> => {
+    try {
+      return { data: getAll(), error: null };
+    } catch (e) {
+      return { data: null, error: e instanceof Error ? e.message : "Falha ao listar compromissos" };
+    }
+  },
 );
 
 export const getAppointment = createServerFn({ method: "GET" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<Appointment | null> => {
-    return getById(data.id) ?? null;
-  }
+  async ({ data }: { data: { id: string } }): Promise<Envelope<Appointment>> => {
+    try {
+      return { data: getById(data.id) ?? null, error: null };
+    } catch (e) {
+      return { data: null, error: e instanceof Error ? e.message : "Falha ao buscar compromisso" };
+    }
+  },
 );
 
 export const createAppointment = createServerFn({ method: "POST" })
   .inputValidator(CreateAppointmentSchema)
   .handler(
-    async ({ data }: { data: CreateAppointment }): Promise<Appointment> => {
-      return storeCreate(data);
-    }
+    async ({ data }: { data: CreateAppointment }): Promise<Envelope<Appointment>> => {
+      try {
+        return { data: storeCreate(data), error: null };
+      } catch (e) {
+        return { data: null, error: e instanceof Error ? e.message : "Falha ao criar compromisso" };
+      }
+    },
   );
 
 export const updateAppointment = createServerFn({ method: "POST" })
@@ -42,14 +56,22 @@ export const updateAppointment = createServerFn({ method: "POST" })
       data,
     }: {
       data: UpdateAppointment & { id: string };
-    }): Promise<Appointment | null> => {
-      const { id, ...input } = data;
-      return storeUpdate(id, input) ?? null;
-    }
+    }): Promise<Envelope<Appointment>> => {
+      try {
+        const { id, ...input } = data;
+        return { data: storeUpdate(id, input) ?? null, error: null };
+      } catch (e) {
+        return { data: null, error: e instanceof Error ? e.message : "Falha ao atualizar compromisso" };
+      }
+    },
   );
 
 export const deleteAppointment = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<boolean> => {
-    return storeRemove(data.id);
-  }
+  async ({ data }: { data: { id: string } }): Promise<Envelope<boolean>> => {
+    try {
+      return { data: storeRemove(data.id), error: null };
+    } catch (e) {
+      return { data: null, error: e instanceof Error ? e.message : "Falha ao deletar compromisso" };
+    }
+  },
 );

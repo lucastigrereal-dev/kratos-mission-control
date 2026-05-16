@@ -128,6 +128,15 @@ kratos-mission-control/
 - Validar entrada com schemas de `api-contract/`
 - Usar `c.env` para variáveis — nunca `process.env`
 
+### Testes
+- **Runner**: `bun test` (ou `bun run test` via package.json)
+- **Localização**: `tests/stores/` para store tests, `tests/` para integração
+- **Padrão**: `describe(...)` + `it(...)` de `bun:test`, `beforeEach` para reset
+- **Store tests**: criar `createStore()` factory inline (isolado, sem side effects de seed). Testar CRUD + data integrity
+- **Sem jsdom**: testes são pura lógica, sem DOM. Zero dependências externas
+- **Testes existentes**: `tests/stores/checkpoint-store.test.ts` (14), `project-store.test.ts` (14), `appointment-store.test.ts` (13) — 41 testes
+- **Regra**: todos os testes passam (`bun test`) antes de qualquer commit
+
 ### Estilo
 - Tailwind v4 puro via CSS — tokens em `src/styles.css` via `@theme`
 - `cn()` helper de `src/lib/utils.ts` para merge de classes

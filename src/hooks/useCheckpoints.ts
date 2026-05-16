@@ -18,17 +18,25 @@ const checkpointKeys = {
 };
 
 export function useCheckpoints() {
-  return useQuery<Checkpoint[]>({
+  return useQuery<Checkpoint[], Error>({
     queryKey: checkpointKeys.all,
-    queryFn: () => getCheckpoints(),
+    queryFn: async () => {
+      const result = await getCheckpoints();
+      if (result.error) throw new Error(result.error);
+      return result.data ?? [];
+    },
     staleTime: 30_000,
   });
 }
 
 export function useCheckpoint(id: string) {
-  return useQuery<Checkpoint | null>({
+  return useQuery<Checkpoint | null, Error>({
     queryKey: checkpointKeys.detail(id),
-    queryFn: () => getCheckpoint({ data: { id } }),
+    queryFn: async () => {
+      const result = await getCheckpoint({ data: { id } });
+      if (result.error) throw new Error(result.error);
+      return result.data;
+    },
     staleTime: 30_000,
     enabled: !!id,
   });
@@ -38,7 +46,11 @@ export function useCreateCheckpoint() {
   const queryClient = useQueryClient();
 
   return useMutation<Checkpoint, Error, CreateCheckpoint>({
-    mutationFn: (input) => createCheckpoint({ data: input }),
+    mutationFn: async (input) => {
+      const result = await createCheckpoint({ data: input });
+      if (result.error || !result.data) throw new Error(result.error ?? "Falha ao criar checkpoint");
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: checkpointKeys.all });
     },
@@ -53,8 +65,11 @@ export function useUpdateCheckpoint() {
     Error,
     { id: string; input: UpdateCheckpoint }
   >({
-    mutationFn: ({ id, input }) =>
-      updateCheckpoint({ data: { id, ...input } }),
+    mutationFn: async ({ id, input }) => {
+      const result = await updateCheckpoint({ data: { id, ...input } });
+      if (result.error) throw new Error(result.error);
+      return result.data;
+    },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: checkpointKeys.detail(variables.id),
@@ -68,7 +83,11 @@ export function useDeleteCheckpoint() {
   const queryClient = useQueryClient();
 
   return useMutation<boolean, Error, string>({
-    mutationFn: (id) => deleteCheckpoint({ data: { id } }),
+    mutationFn: async (id) => {
+      const result = await deleteCheckpoint({ data: { id } });
+      if (result.error) throw new Error(result.error);
+      return result.data ?? false;
+    },
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: checkpointKeys.all });
       queryClient.removeQueries({ queryKey: checkpointKeys.detail(id) });
