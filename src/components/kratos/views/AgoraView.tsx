@@ -67,7 +67,7 @@ export function AgoraView() {
 
   if (isLoading) {
     return (
-      <div className="space-y-10">
+      <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
         <SectionHeader eyebrow="Agora" title="Você está aqui." description="Carregando seu foco..." />
         <LoadingState lines={6} />
       </div>
@@ -76,7 +76,7 @@ export function AgoraView() {
 
   if (isError) {
     return (
-      <div className="space-y-10">
+      <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
         <SectionHeader eyebrow="Agora" title="Você está aqui." description="Algo falhou ao carregar." />
         <ErrorState
           title="Não foi possível carregar o Agora"
@@ -103,7 +103,7 @@ export function AgoraView() {
 
   if (items.length === 0) {
     return (
-      <div className="space-y-10">
+      <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
         <SectionHeader
           eyebrow="Agora"
           title="Você está aqui."
@@ -151,7 +151,7 @@ export function AgoraView() {
       : undefined;
 
   return (
-    <div className="space-y-10">
+    <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
       <SectionHeader
         eyebrow={`Agora · ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })} BRT`}
         title="Você está aqui."

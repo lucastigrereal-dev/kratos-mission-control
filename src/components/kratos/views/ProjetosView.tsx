@@ -22,7 +22,7 @@ export function ProjetosView() {
 
   if (isLoading) {
     return (
-      <div className="space-y-10">
+      <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
         <SectionHeader
           eyebrow="Projetos"
           title="Projetos conhecidos"
@@ -35,7 +35,7 @@ export function ProjetosView() {
 
   if (isError) {
     return (
-      <div className="space-y-10">
+      <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
         <SectionHeader
           eyebrow="Projetos"
           title="Projetos conhecidos"
@@ -99,7 +99,7 @@ export function ProjetosView() {
   }
 
   return (
-    <div className="space-y-10">
+    <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
       <SectionHeader
         eyebrow="Projetos"
         title="Projetos conhecidos"
