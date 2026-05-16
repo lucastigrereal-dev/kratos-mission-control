@@ -148,11 +148,15 @@ describe("Project Store — CRUD", () => {
     const b = store.create({ nome: "B", prioridade: 5 });
     const c = store.create({ nome: "C", prioridade: 3 });
 
-    // B should be first (prio 5), then A and C sorted by updatedAt
+    // B should be first (prio 5)
     const all = store.getAll();
     expect(all[0].nome).toBe("B");
+    // A and C have same prio and creation time — insertion order is A before C
+    expect(all[1].nome).toBe("A");
+    expect(all[2].nome).toBe("C");
 
-    // Update C to make it more recent than A
+    // Update C — refreshes atualizadoEm, pushing it before A
+    Bun.sleepSync(1);
     store.update(c.id, { nome: "C updated" });
     const all2 = store.getAll();
     expect(all2[0].nome).toBe("B");

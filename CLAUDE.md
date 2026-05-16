@@ -250,8 +250,17 @@ A frente `feat/deploy-config` só abre com confirmação verbal do Lucas. Seu es
 | Sistema | Propósito | Status | Relação com KRATOS |
 |---|---|---|---|
 | **Akasha** | Memória vetorial (pgvector) | Backend existe, UI placeholder | KRATOS **exibe** status e busca — não escreve na Akasha |
-| **Omnis** | Execução de skills/crews | Backend existe, UI placeholder | KRATOS **lê** status do Omnis — NUNCA comanda |
-| **GitHub** | Status de repositórios | Planejado | KRATOS exibe PRs e commits |
+| **Omnis** | Execução de skills/crews | Backend existe, bridge implementada (P2) | KRATOS **lê** status do Omnis — NUNCA comanda |
+| **GitHub** | Status de repositórios | Implementado (P1) — API real + mock fallback | KRATOS exibe PRs e commits |
+
+### Novos contratos (Phase 3)
+- `api-contract/github.schema.ts` — GitHubRepoStatus, GitHubPR, GitHubCommit
+- `api-contract/omnis.schema.ts` — OmnisStatus, OmnisCrew, OmnisJob, OmnisMemoryStats
+- `src/hooks/useGithub.ts` — useGithubRepo(), useTrackedRepos()
+- `src/hooks/useOmnis.ts` — useOmnisStatus(), useOmnisHealth(), useOmnisCrews(), useOmnisJobs()
+- `tests/stores/github-store.test.ts` — 8 testes
+- `tests/stores/omnis-store.test.ts` — 11 testes
+- Total de testes: **61 pass** (stores) + 31 fail (frontend/jsdom — pré-existentes) = 92 testes
 
 **Boundary crítica:** KRATOS é o cockpit de visualização. Akasha e Omnis são sistemas separados com contratos próprios. KRATOS consome APIs, não controla execução.
 
