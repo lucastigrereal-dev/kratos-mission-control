@@ -154,6 +154,7 @@ export function CheckpointItemCard({
             }}
           >
             <Trash2 className="h-3.5 w-3.5" />
+            Excluir
           </button>
         )}
       </div>

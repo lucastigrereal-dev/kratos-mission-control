@@ -45,7 +45,7 @@ export function CheckpointFilterBar({ active, onChange }: Props) {
             key={c.value}
             type="button"
             onClick={() => onChange(c.value)}
-            className="rounded-sm px-2 py-1 text-[11px] kratos-mono uppercase tracking-[0.12em] kratos-card-hover kratos-focus-ring"
+            className="rounded-sm px-3 py-2 text-[11px] kratos-mono uppercase tracking-[0.12em] kratos-card-hover kratos-focus-ring"
             style={{
               color: isActive
                 ? "var(--kratos-text-primary)"

@@ -23,7 +23,7 @@ export function ProjectFilterBar({ active, onChange, counts }: Props) {
           key={f.value}
           type="button"
           onClick={() => onChange(f.value)}
-          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[10px] kratos-mono uppercase tracking-[0.12em] kratos-focus-ring transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-[10px] kratos-mono uppercase tracking-[0.12em] kratos-focus-ring transition-colors"
           style={{
             background:
               active === f.value

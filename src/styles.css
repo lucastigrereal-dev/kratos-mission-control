@@ -203,6 +203,23 @@
 .kratos-blink  { animation: kratos-blink 1.2s ease-in-out infinite; }
 .kratos-fadein { animation: kratos-fade-in 300ms ease-out both; }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .kratos-pulse,
+  .kratos-blink,
+  .kratos-fadein {
+    animation: none;
+  }
+}
+
 .kratos-mono { font-family: var(--kratos-font-mono); font-feature-settings: "tnum", "ss01"; }
 
 /* Typography utilities — Apple-clean hierarchy */
