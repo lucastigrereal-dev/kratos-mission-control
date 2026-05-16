@@ -1,15 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AgoraView } from "@/components/kratos/views/AgoraView";
+import { DashboardView } from "@/components/kratos/views/DashboardView";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Agora · KRATOS" },
+      { title: "KRATOS · Mission Control" },
       {
         name: "description",
-        content: "Foco atual, próxima ação, alertas e deadline em uma só tela.",
+        content: "Visão consolidada de projetos, checkpoints, agenda e contexto.",
       },
     ],
   }),
-  component: () => <AgoraView />,
+  component: () => <DashboardView />,
 });
