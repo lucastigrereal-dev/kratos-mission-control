@@ -45,7 +45,7 @@ export function MentorRecommendationCard({ data, onPrimary }: Props) {
         <button
           type="button"
           onClick={onPrimary}
-          className="mt-5 inline-flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium transition-colors"
+          className="mt-5 inline-flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium kratos-focus-ring transition-colors"
           style={{
             background: "var(--kratos-accent)",
             color: "var(--kratos-surface-0)",

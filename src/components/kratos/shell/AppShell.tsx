@@ -57,6 +57,18 @@ export function AppShell({ children }: { children: ReactNode }) {
       className="flex h-screen w-screen overflow-hidden"
       style={{ background: "var(--kratos-surface-0)" }}
     >
+      <a
+        href="#kratos-main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:px-4 focus:py-2.5 focus:text-[13px] focus:font-medium focus:outline-none"
+        style={{
+          background: "var(--kratos-surface-3)",
+          color: "var(--kratos-text-primary)",
+          boxShadow: "0 0 0 2px var(--kratos-accent)",
+        }}
+      >
+        Pular para conteúdo principal
+      </a>
+
       <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
@@ -68,7 +80,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         />
 
         <div className="flex flex-1 overflow-hidden">
-          <main className="flex-1 overflow-y-auto kratos-scrollbar">
+          <main id="kratos-main-content" className="flex-1 overflow-y-auto kratos-scrollbar">
             <div className="mx-auto w-full max-w-[1320px] px-6 py-10 lg:px-12 lg:py-12">
               {children}
             </div>
