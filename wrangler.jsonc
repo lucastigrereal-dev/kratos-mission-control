@@ -4,4 +4,22 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+
+  // D1 + KV — configurados via dashboard ou wrangler CLI.
+  // Bindings são injetados em produção; local dev usa --local.
+  // Para ativar, preencher IDs reais e descomentar:
+  //
+  // "d1_databases": [
+  //   {
+  //     "binding": "KRATOS_DB",
+  //     "database_name": "kratos-mission-control",
+  //     "database_id": ""
+  //   }
+  // ],
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "KRATOS_KV",
+  //     "id": ""
+  //   }
+  // ],
 }

@@ -1,0 +1,13 @@
+-- KRATOS Mission Control — KV namespace for ContextSnapshot
+-- Migration: 0002_contexto_kv
+-- Data: 2026-05-16
+--
+-- Esta migration é documental — não executa SQL.
+-- O namespace KRATOS_KV é configurado no wrangler.jsonc.
+--
+-- Chave KV: "contexto:snapshot:latest"
+--   - Schema: ContextSnapshot (api-contract/contexto.schema.ts)
+--   - Valor: JSON serializado do último snapshot
+--   - TTL: 24h (expira e é re-coletado)
+--   - Escrita: via collect() no backend/contexto/store-kv.ts (a implementar na W11)
+--   - Leitura:  via getLatest() no server-fn contexto
