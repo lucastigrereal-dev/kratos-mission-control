@@ -1,6 +1,7 @@
 import { FolderGit2, Star, GitFork, GitPullRequest, ExternalLink } from "lucide-react";
 import { StatusCard } from "@/components/kratos/base/StatusCard";
 import { StatusDot } from "@/components/kratos/base/StatusDot";
+import { timeAgo } from "@/lib/utils";
 import type { GithubRepoStatus, GithubPR } from "../../../../api-contract/github.schema";
 
 const PR_SEVERITY: Record<GithubPR["status"], "ok" | "info" | "ghost" | "muted"> = {
@@ -9,17 +10,6 @@ const PR_SEVERITY: Record<GithubPR["status"], "ok" | "info" | "ghost" | "muted">
   draft: "ghost",
   closed: "muted",
 };
-
-function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "agora";
-  if (mins < 60) return `ha ${mins}m`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `ha ${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `ha ${days}d`;
-}
 
 interface Props {
   repo: GithubRepoStatus;

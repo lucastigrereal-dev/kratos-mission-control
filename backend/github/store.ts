@@ -76,19 +76,25 @@ const MOCK_REPOS: Record<string, GithubRepoStatus> = {
 const cache = new Map<string, { data: GithubRepoStatus; ts: number }>();
 const CACHE_TTL = 120_000; // 2 min
 
-async function fetchFromGithub(owner: string, repo: string): Promise<GithubRepoStatus | null> {
-  try {
-    const headers: Record<string, string> = { Accept: "application/vnd.github.v3+json" };
-    const token = (globalThis as Record<string, unknown>).GITHUB_TOKEN as string | undefined;
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
+const FETCH_TIMEOUT_MS = 3000;
 
+async function fetchFromGithub(owner: string, repo: string): Promise<GithubRepoStatus | null> {
+  const headers: Record<string, string> = { Accept: "application/vnd.github.v3+json" };
+  const token = (globalThis as Record<string, unknown>).GITHUB_TOKEN as string | undefined;
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  try {
     const [repoRes, prsRes, commitsRes] = await Promise.all([
-      fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers }),
-      fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=open&per_page=5`, { headers }),
-      fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=5`, { headers }),
+      fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers, signal: controller.signal }),
+      fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=open&per_page=5`, { headers, signal: controller.signal }),
+      fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=5`, { headers, signal: controller.signal }),
     ]);
+    clearTimeout(timeoutId);
 
     if (!repoRes.ok) return null;
 
@@ -133,6 +139,7 @@ async function fetchFromGithub(owner: string, repo: string): Promise<GithubRepoS
       atualizadoEm: new Date().toISOString(),
     };
   } catch {
+    clearTimeout(timeoutId);
     return null;
   }
 }

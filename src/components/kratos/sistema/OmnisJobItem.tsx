@@ -1,5 +1,6 @@
 import { StatusCard } from "@/components/kratos/base/StatusCard";
 import { StatusDot } from "@/components/kratos/base/StatusDot";
+import { timeAgo } from "@/lib/utils";
 import type { OmnisJob } from "../../../../api-contract/omnis.schema";
 
 const JOB_SEVERITY: Record<OmnisJob["status"], "ok" | "warn" | "critical" | "info"> = {
@@ -23,17 +24,6 @@ function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return s > 0 ? `${m}m ${s}s` : `${m}m`;
-}
-
-function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "agora";
-  if (mins < 60) return `ha ${mins}m`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `ha ${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `ha ${days}d`;
 }
 
 interface Props {
