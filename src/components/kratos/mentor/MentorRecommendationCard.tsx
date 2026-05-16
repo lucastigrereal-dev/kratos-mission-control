@@ -8,9 +8,12 @@ export type MentorRecommendation = {
   nextStep: string;
 };
 
-type Props = { data: MentorRecommendation };
+interface Props {
+  data: MentorRecommendation;
+  onPrimary?: () => void;
+}
 
-export function MentorRecommendationCard({ data }: Props) {
+export function MentorRecommendationCard({ data, onPrimary }: Props) {
   return (
     <StatusCard accent="ghost" className="h-full">
       <div className="flex items-center gap-2 mb-3">
@@ -38,24 +41,20 @@ export function MentorRecommendationCard({ data }: Props) {
         <Block label="Impacto" value={data.impact} />
       </div>
 
-      <button
-        type="button"
-        onClick={() => {}}
-        className="mt-5 inline-flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium transition-colors"
-        style={{
-          background: "var(--kratos-accent)",
-          color: "var(--kratos-surface-0)",
-        }}
-      >
-        {data.nextStep}
-        <ArrowRight className="h-3.5 w-3.5" />
-      </button>
-      <div
-        className="mt-2 text-[10px] kratos-mono uppercase tracking-[0.15em]"
-        style={{ color: "var(--kratos-text-muted)" }}
-      >
-        Atalho visual · sem efeito real neste sandbox
-      </div>
+      {onPrimary && (
+        <button
+          type="button"
+          onClick={onPrimary}
+          className="mt-5 inline-flex items-center gap-2 rounded-md px-3 py-2 text-[12px] font-medium transition-colors"
+          style={{
+            background: "var(--kratos-accent)",
+            color: "var(--kratos-surface-0)",
+          }}
+        >
+          {data.nextStep}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </button>
+      )}
     </StatusCard>
   );
 }
