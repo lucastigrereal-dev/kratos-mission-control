@@ -1,37 +1,23 @@
-import {
-  Activity,
-  Layers,
-  GitCommitHorizontal,
-  FolderKanban,
-  Calendar,
-  Cpu,
-  PanelLeftClose,
-  PanelLeftOpen,
-} from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { SidebarItem } from "./SidebarItem";
 import { KratosLogo } from "../icons/KratosLogo";
+import { VISIBLE_ROUTES } from "@/lib/kratos-routes";
 
-const NAV_GROUPS = [
-  {
-    label: "Operação",
-    items: [
-      { to: "/agora", label: "Agora", icon: Activity },
-      { to: "/agenda", label: "Agenda", icon: Calendar },
-      { to: "/projetos", label: "Projetos", icon: FolderKanban },
-    ],
-  },
-  {
-    label: "Memória",
-    items: [
-      { to: "/contexto", label: "Contexto", icon: Layers },
-      { to: "/checkpoints", label: "Checkpoints", icon: GitCommitHorizontal },
-    ],
-  },
-  {
-    label: "Sistema",
-    items: [{ to: "/sistema", label: "Sistema", icon: Cpu }],
-  },
-];
+const SECTION_LABELS: Record<string, string> = {
+  operacao: "Operação",
+  memoria: "Memória",
+  sistema: "Sistema",
+};
+
+const NAV_GROUPS = Object.entries(
+  VISIBLE_ROUTES.reduce<Record<string, typeof VISIBLE_ROUTES>>((acc, route) => {
+    (acc[route.section] ??= []).push(route);
+    return acc;
+  }, {})
+).map(([section, items]) => ({
+  label: SECTION_LABELS[section] ?? section,
+  items: items.map((r) => ({ to: r.path, label: r.label, icon: r.icon })),
+}));
 
 type Props = {
   collapsed: boolean;
