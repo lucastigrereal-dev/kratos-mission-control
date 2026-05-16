@@ -11,6 +11,7 @@ import { AuroraShortcutCard } from "@/components/kratos/agora/AuroraShortcutCard
 import { SystemPulseStrip } from "@/components/kratos/agora/SystemPulseStrip";
 import { MiniAgenda } from "@/components/kratos/agora/MiniAgenda";
 import { useCheckpoints, useCreateCheckpoint, useUpdateCheckpoint } from "@/hooks/useCheckpoints";
+import { useLiveStatus } from "@/hooks/useLiveStatus";
 import type { Checkpoint } from "../../../api-contract/checkpoint.schema";
 import type { CriticalAlert } from "@/components/kratos/agora/CriticalAlertCard";
 
@@ -100,6 +101,7 @@ export function AgoraView() {
   }
 
   const items = checkpoints ?? [];
+  const liveStatus = useLiveStatus(items.length);
 
   if (items.length === 0) {
     return (
@@ -247,14 +249,9 @@ export function AgoraView() {
         </div>
 
         <SystemPulseStrip
-          systems={[
-            { name: "Docker", severity: "warn" as const, hint: "local" },
-            { name: "Git", severity: "ok" as const, hint: "clean" },
-            { name: "KRATOS", severity: "ok" as const },
-            { name: "Checkpoints", severity: "ok" as const, hint: `${items.length} ativos` },
-          ]}
-          liveState="live"
-          lastUpdate={`${items.length} checkpoints`}
+          systems={liveStatus.systems}
+          liveState={liveStatus.liveState}
+          lastUpdate={liveStatus.lastUpdate}
         />
 
         <MiniAgenda items={[]} />
