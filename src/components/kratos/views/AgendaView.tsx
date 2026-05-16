@@ -12,6 +12,8 @@ import { FinishLinePanel, type FinishLineItem } from "@/components/kratos/agenda
 import { DoNotDoPanel } from "@/components/kratos/agenda/DoNotDoPanel";
 import { WeekDetailList, type WeekItem } from "@/components/kratos/agenda/WeekDetailList";
 import { useAppointments } from "@/hooks/useAppointments";
+import { useCheckpointSuggestion } from "@/hooks/useCheckpointSuggestion";
+import type { RiskProject } from "@/components/kratos/mentor/RiskProjectCard";
 import type { Appointment } from "../../../api-contract/appointment.schema";
 
 function todayStr(): string {
@@ -193,6 +195,21 @@ export function AgendaView() {
   const radar = deriveRadar(items);
   const week = deriveWeek(items);
 
+  const suggestion = useCheckpointSuggestion();
+
+  function derivedRisk(): RiskProject | undefined {
+    if (suggestion) {
+      return {
+        project: suggestion.affectedProject ?? suggestion.affectedCheckpoint?.titulo ?? "KRATOS",
+        risk: suggestion.severity === "critical" ? "Checkpoint bloqueado" : "Sem checkpoint ativo",
+        reason: suggestion.reason,
+        suggestedAction: suggestion.suggestedAction,
+        severity: suggestion.severity,
+      };
+    }
+    return MENTOR_MOCK.risk;
+  }
+
   return (
     <div className="mx-auto w-full max-w-[1280px] px-6 py-8">
       <SectionHeader
@@ -231,7 +248,7 @@ export function AgendaView() {
           </div>
 
           <div className="mt-4">
-            <RiskProjectCard data={MENTOR_MOCK.risk} />
+            <RiskProjectCard data={derivedRisk()} />
           </div>
 
           <div className="mt-10">
