@@ -162,7 +162,7 @@ export function DashboardView() {
             <div className="flex items-center gap-3">
               <AlertTriangle
                 className="h-4 w-4 shrink-0"
-                style={{ color: "var(--kratos-risk)" }}
+                style={{ color: "var(--kratos-warn)" }}
               />
               <span
                 className="text-[13px] font-medium"
