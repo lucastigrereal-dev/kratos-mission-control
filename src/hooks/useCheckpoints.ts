@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetch, type ApiEnvelope } from "./useApi";
+import {
+  getCheckpoints,
+  getCheckpoint,
+  createCheckpoint,
+  updateCheckpoint,
+  deleteCheckpoint,
+} from "@/lib/checkpoint-server-fns";
 import type {
   Checkpoint,
   CreateCheckpoint,
@@ -12,33 +18,27 @@ const checkpointKeys = {
 };
 
 export function useCheckpoints() {
-  return useQuery<ApiEnvelope<Checkpoint[]>>({
+  return useQuery<Checkpoint[]>({
     queryKey: checkpointKeys.all,
-    queryFn: () => apiFetch<Checkpoint[]>("/api/checkpoints"),
+    queryFn: () => getCheckpoints(),
     staleTime: 30_000,
-    select: (envelope) => envelope,
   });
 }
 
 export function useCheckpoint(id: string) {
-  return useQuery<ApiEnvelope<Checkpoint>>({
+  return useQuery<Checkpoint | null>({
     queryKey: checkpointKeys.detail(id),
-    queryFn: () => apiFetch<Checkpoint>(`/api/checkpoints/${id}`),
+    queryFn: () => getCheckpoint({ data: { id } }),
     staleTime: 30_000,
     enabled: !!id,
-    select: (envelope) => envelope,
   });
 }
 
 export function useCreateCheckpoint() {
   const queryClient = useQueryClient();
 
-  return useMutation<ApiEnvelope<Checkpoint>, Error, CreateCheckpoint>({
-    mutationFn: (input) =>
-      apiFetch<Checkpoint>("/api/checkpoints", {
-        method: "POST",
-        body: JSON.stringify(input),
-      }),
+  return useMutation<Checkpoint, Error, CreateCheckpoint>({
+    mutationFn: (input) => createCheckpoint({ data: input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: checkpointKeys.all });
     },
@@ -49,15 +49,12 @@ export function useUpdateCheckpoint() {
   const queryClient = useQueryClient();
 
   return useMutation<
-    ApiEnvelope<Checkpoint>,
+    Checkpoint | null,
     Error,
     { id: string; input: UpdateCheckpoint }
   >({
     mutationFn: ({ id, input }) =>
-      apiFetch<Checkpoint>(`/api/checkpoints/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(input),
-      }),
+      updateCheckpoint({ data: { id, ...input } }),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: checkpointKeys.detail(variables.id),
@@ -70,11 +67,8 @@ export function useUpdateCheckpoint() {
 export function useDeleteCheckpoint() {
   const queryClient = useQueryClient();
 
-  return useMutation<ApiEnvelope<null>, Error, string>({
-    mutationFn: (id) =>
-      apiFetch<null>(`/api/checkpoints/${id}`, {
-        method: "DELETE",
-      }),
+  return useMutation<boolean, Error, string>({
+    mutationFn: (id) => deleteCheckpoint({ data: { id } }),
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: checkpointKeys.all });
       queryClient.removeQueries({ queryKey: checkpointKeys.detail(id) });
