@@ -10,7 +10,11 @@ import {
 import { SectionHeader } from "@/components/kratos/base/SectionHeader";
 import { StatusCard } from "@/components/kratos/base/StatusCard";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
+import { EmptyState } from "@/components/kratos/base/EmptyState";
+import { ErrorState } from "@/components/kratos/base/ErrorState";
+import { GithubRepoCard } from "@/components/kratos/sistema/GithubRepoCard";
 import { useDashboard } from "@/hooks/useDashboard";
+import { useTrackedRepos, useGithubRepo } from "@/hooks/useGithub";
 
 function StatBlock({
   label,
@@ -47,6 +51,17 @@ function StatBlock({
       )}
     </div>
   );
+}
+
+const DEFAULT_OWNER = "lucastigrereal-dev";
+
+function TrackedRepoCard({ owner, repo }: { owner: string; repo: string }) {
+  const { data, isLoading, isError, error } = useGithubRepo(owner, repo);
+
+  if (isLoading) return <LoadingState lines={3} compact />;
+  if (isError) return <ErrorState title={repo} description={error?.message ?? "Erro ao buscar repositório."} />;
+  if (!data) return <EmptyState title={repo} description="Sem dados do repositório." />;
+  return <GithubRepoCard repo={data} />;
 }
 
 function QuickLink({
@@ -88,6 +103,7 @@ function QuickLink({
 
 export function DashboardView() {
   const d = useDashboard();
+  const { data: trackedRepos } = useTrackedRepos();
 
   if (d.isLoading) {
     return (
@@ -218,6 +234,23 @@ export function DashboardView() {
           />
         </div>
       </div>
+
+      {/* GitHub tracked repos */}
+      {trackedRepos && trackedRepos.length > 0 && (
+        <div className="mt-8">
+          <div
+            className="mb-3 text-[10px] kratos-mono uppercase tracking-[0.18em]"
+            style={{ color: "var(--kratos-text-muted)" }}
+          >
+            — GitHub · Repositórios monitorados —
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {trackedRepos.map((name) => (
+              <TrackedRepoCard key={name} owner={DEFAULT_OWNER} repo={name} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
