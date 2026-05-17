@@ -3,7 +3,7 @@ import { ChevronRight, Sparkles } from "lucide-react";
 import { LiveStatusIndicator, type LiveState } from "../base/LiveStatusIndicator";
 
 const ROUTE_LABEL: Record<string, string> = {
-  "/": "Agora",
+  "/": "Dashboard",
   "/agora": "Agora",
   "/contexto": "Contexto",
   "/checkpoints": "Checkpoints",
@@ -37,7 +37,7 @@ export function Topbar({ liveState, lastUpdate, onToggleAurora, auroraOpen }: Pr
         className="flex items-center gap-2 text-[12px] kratos-mono"
       >
         <Link
-          to="/agora"
+          to="/"
           className="uppercase tracking-[0.18em] transition-colors hover:text-[var(--kratos-text-primary)] kratos-focus-ring"
           style={{ color: "var(--kratos-text-muted)" }}
         >

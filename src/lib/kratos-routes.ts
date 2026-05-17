@@ -5,7 +5,6 @@ import {
   Layers,
   GitCommitHorizontal,
   Cpu,
-  Crosshair,
   FolderGit2,
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
