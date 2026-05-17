@@ -89,3 +89,30 @@ export function getServices(): Service[] {
     ultimoPing: new Date().toISOString(),
   }));
 }
+
+export function getServicesHealthSummary(): {
+  total: number;
+  live: number;
+  degraded: number;
+  offline: number;
+  unknown: number;
+  stale: boolean;
+  checked_at: string;
+} {
+  const services = getServices();
+  const checked_at = new Date().toISOString();
+  return {
+    total: services.length,
+    live: services.filter((s) => s.health === "live").length,
+    degraded: services.filter((s) => s.health === "degraded").length,
+    offline: services.filter((s) => s.health === "offline").length,
+    unknown: services.filter((s) => s.health === "unknown").length,
+    stale: false, // mock data is always fresh
+    checked_at,
+  };
+}
+
+/** For testing: reset store */
+export function _reset(): void {
+  store.clear();
+}
