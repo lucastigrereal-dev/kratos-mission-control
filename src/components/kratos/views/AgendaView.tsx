@@ -2,10 +2,19 @@ import { SectionHeader } from "@/components/kratos/base/SectionHeader";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
-import { MentorRecommendationCard } from "@/components/kratos/mentor/MentorRecommendationCard";
-import { ExecutionScoreCard } from "@/components/kratos/mentor/ExecutionScoreCard";
+import {
+  MentorRecommendationCard,
+  type MentorRecommendation,
+} from "@/components/kratos/mentor/MentorRecommendationCard";
+import {
+  ExecutionScoreCard,
+  type ScoreMetric,
+} from "@/components/kratos/mentor/ExecutionScoreCard";
 import { RiskProjectCard } from "@/components/kratos/mentor/RiskProjectCard";
-import { TodayExecutionPanel, type TodayItem } from "@/components/kratos/agenda/TodayExecutionPanel";
+import {
+  TodayExecutionPanel,
+  type TodayItem,
+} from "@/components/kratos/agenda/TodayExecutionPanel";
 import { DeadlineRadar, type RadarItem } from "@/components/kratos/agenda/DeadlineRadar";
 import { OverduePanel, type OverdueItem } from "@/components/kratos/agenda/OverduePanel";
 import { FinishLinePanel, type FinishLineItem } from "@/components/kratos/agenda/FinishLinePanel";
@@ -14,7 +23,7 @@ import { WeekDetailList, type WeekItem } from "@/components/kratos/agenda/WeekDe
 import { useAppointments } from "@/hooks/useAppointments";
 import { useCheckpointSuggestion } from "@/hooks/useCheckpointSuggestion";
 import type { RiskProject } from "@/components/kratos/mentor/RiskProjectCard";
-import type { Appointment } from "../../../api-contract/appointment.schema";
+import type { Appointment } from "../../../../api-contract/appointment.schema";
 
 function todayStr(): string {
   return new Date().toISOString().slice(0, 10);
@@ -28,10 +37,14 @@ function daysFromNow(n: number): string {
 
 function mapTodayStatus(status: string): TodayItem["status"] {
   switch (status) {
-    case "in_progress": return "now";
-    case "pending": return "next";
-    case "blocked": return "blocked";
-    default: return "later";
+    case "in_progress":
+      return "now";
+    case "pending":
+      return "next";
+    case "blocked":
+      return "blocked";
+    default:
+      return "later";
   }
 }
 
@@ -78,7 +91,7 @@ function deriveOverdue(appointments: Appointment[]): OverdueItem[] {
         title: a.titulo,
         daysLate: diff,
         project: a.projetoId ? "KRATOS" : "Pessoal",
-        severity: diff > 5 ? "critical" as const : "warn" as const,
+        severity: diff > 5 ? ("critical" as const) : ("warn" as const),
       };
     });
 }
@@ -112,40 +125,140 @@ function deriveWeek(appointments: Appointment[]): WeekItem[] {
     });
 }
 
-// Mentor/score/risk are AI-derived — keep as structured constants for now
-const MENTOR_MOCK = {
-  recommendation: {
-    recommendation: "Feche o Crédito 3 antes de abrir qualquer frente nova.",
-    why: "Há duas frentes ativas e nenhuma fechada. Abrir uma terceira aumenta o risco de nada terminar.",
-    impact: "Validar o Crédito 3 destrava a referência visual e libera o Crédito 4 com base estável.",
-    nextStep: "Validar Crédito 3 (visual)",
-  },
-  score: [
-    { label: "Foco", value: 78, tone: "ok" as const },
-    { label: "Urgência", value: 62, tone: "warn" as const },
-    { label: "Clareza", value: 84, tone: "info" as const },
-    { label: "Risco", value: 41, tone: "warn" as const },
-  ],
-  risk: {
-    project: "KRATOS · Handoff para Claude Code",
-    risk: "Sem checkpoint",
-    reason: "Esse projeto está parado há tempo demais e ainda não tem ponto de retomada formal.",
-    suggestedAction: "Criar checkpoint mínimo hoje, mesmo que parcial.",
-    severity: "warn" as const,
-  },
-  donotdo: [
-    "Não abra Crédito 4 antes de validar o Crédito 3.",
-    "Não mexa no KRATOS real enquanto o sandbox não for aprovado.",
-    "Não abra nova frente sem checkpoint do dia.",
-  ],
-  finishline: [
-    { title: "Shell visual KRATOS aprovado.", remaining: "1 polish final" },
-    { title: "Tela /agora ultra-intuitiva validada.", remaining: "revisão de microcopy" },
-  ],
-};
+function deriveRecommendation(
+  today: TodayItem[],
+  overdue: OverdueItem[],
+  radar: RadarItem[],
+): MentorRecommendation {
+  const blocked = today.find((item) => item.status === "blocked");
+  const next =
+    today.find((item) => item.status === "now") ?? today.find((item) => item.status === "next");
+  const urgent =
+    radar.find((item) => item.bucket === "today") ?? radar.find((item) => item.bucket === "next3");
+
+  if (overdue.length > 0) {
+    return {
+      recommendation: `Resolver atraso: ${overdue[0].title}`,
+      why: `${overdue.length} item(ns) estão vencidos e competem com a execução do dia.`,
+      impact: "Fechar ou remarcar atrasos reduz ruído e evita decisões paralelas.",
+      nextStep: "Revisar atraso",
+    };
+  }
+
+  if (blocked) {
+    return {
+      recommendation: `Desbloquear: ${blocked.title}`,
+      why: "Item bloqueado impede sequência limpa da agenda.",
+      impact: "Remover o bloqueio estabiliza a execução antes de avançar para novos compromissos.",
+      nextStep: "Desbloquear item",
+    };
+  }
+
+  if (next) {
+    return {
+      recommendation: `Executar agora: ${next.title}`,
+      why:
+        next.status === "now"
+          ? "Esse item já está em andamento."
+          : "Esse é o próximo item pendente do dia.",
+      impact: "Manter uma frente por vez reduz troca de contexto.",
+      nextStep: "Focar item",
+    };
+  }
+
+  if (urgent) {
+    return {
+      recommendation: `Preparar prazo: ${urgent.title}`,
+      why: "Há prazo próximo no radar da semana.",
+      impact: "Antecipar o prazo evita virar urgência operacional.",
+      nextStep: "Ver prazo",
+    };
+  }
+
+  return {
+    recommendation: "Manter agenda limpa e revisar próximos compromissos.",
+    why: "Não há atraso nem item em execução para priorizar automaticamente.",
+    impact: "A próxima decisão pode ser tomada a partir do detalhe semanal.",
+    nextStep: "Revisar semana",
+  };
+}
+
+function scoreTone(value: number): ScoreMetric["tone"] {
+  if (value >= 75) return "ok";
+  if (value >= 45) return "warn";
+  return "critical";
+}
+
+function deriveScore(
+  appointments: Appointment[],
+  today: TodayItem[],
+  overdue: OverdueItem[],
+  radar: RadarItem[],
+): ScoreMetric[] {
+  const activeToday = today.filter(
+    (item) => item.status === "now" || item.status === "next",
+  ).length;
+  const blockedToday = today.filter((item) => item.status === "blocked").length;
+  const completed = appointments.filter((item) => item.status === "completed").length;
+  const completion =
+    appointments.length === 0 ? 100 : Math.round((completed / appointments.length) * 100);
+  const focus = Math.max(0, 100 - Math.max(0, activeToday - 1) * 20 - blockedToday * 25);
+  const urgency = Math.min(
+    100,
+    overdue.length * 30 + radar.filter((item) => item.bucket === "today").length * 20,
+  );
+  const clarity = Math.max(0, 100 - appointments.filter((item) => !item.horario).length * 12);
+  const risk = Math.min(100, overdue.length * 35 + blockedToday * 30);
+
+  return [
+    { label: "Foco", value: focus, tone: scoreTone(focus) },
+    {
+      label: "Urgência",
+      value: urgency,
+      tone: urgency >= 70 ? "critical" : urgency >= 35 ? "warn" : "ok",
+    },
+    { label: "Clareza", value: clarity, tone: scoreTone(clarity) },
+    { label: "Conclusão", value: completion, tone: scoreTone(completion) },
+    { label: "Risco", value: risk, tone: risk >= 70 ? "critical" : risk >= 35 ? "warn" : "ok" },
+  ];
+}
+
+function deriveFinishLine(appointments: Appointment[]): FinishLineItem[] {
+  return appointments
+    .filter((item) => item.status === "in_progress" || item.status === "pending")
+    .sort(
+      (a, b) =>
+        a.data.localeCompare(b.data) || (a.horario ?? "23:59").localeCompare(b.horario ?? "23:59"),
+    )
+    .slice(0, 2)
+    .map((item) => ({
+      title: item.titulo,
+      remaining:
+        item.status === "in_progress" ? "concluir item em andamento" : "executar próximo passo",
+    }));
+}
+
+function deriveDoNotDo(today: TodayItem[], overdue: OverdueItem[]): string[] {
+  const items = ["Não abrir nova frente sem fechar ou remarcar o próximo compromisso."];
+
+  if (overdue.length > 0) {
+    items.push("Não ignorar compromissos vencidos antes de planejar a semana.");
+  }
+
+  if (today.some((item) => item.status === "blocked")) {
+    items.push("Não avançar sobre item bloqueado sem registrar o desbloqueador.");
+  }
+
+  if (today.filter((item) => item.status === "now" || item.status === "next").length > 1) {
+    items.push("Não executar duas frentes de agenda ao mesmo tempo.");
+  }
+
+  return items.slice(0, 3);
+}
 
 export function AgendaView() {
   const { data: appointments, isLoading, isError, error, refetch } = useAppointments();
+  const suggestion = useCheckpointSuggestion();
 
   if (isLoading) {
     return (
@@ -195,8 +308,6 @@ export function AgendaView() {
   const radar = deriveRadar(items);
   const week = deriveWeek(items);
 
-  const suggestion = useCheckpointSuggestion();
-
   function derivedRisk(): RiskProject | undefined {
     if (suggestion) {
       return {
@@ -204,11 +315,26 @@ export function AgendaView() {
         risk: suggestion.severity === "critical" ? "Checkpoint bloqueado" : "Sem checkpoint ativo",
         reason: suggestion.reason,
         suggestedAction: suggestion.suggestedAction,
-        severity: suggestion.severity,
+        severity: suggestion.severity === "critical" ? "critical" : "warn",
       };
     }
-    return MENTOR_MOCK.risk;
+    if (overdue.length > 0) {
+      return {
+        project: overdue[0].project,
+        risk: "Compromisso atrasado",
+        reason: `${overdue[0].title} está atrasado há ${overdue[0].daysLate} dia(s).`,
+        suggestedAction: "Reagendar, concluir ou remover bloqueio hoje.",
+        severity: overdue[0].severity === "critical" ? "critical" : "warn",
+      };
+    }
+
+    return undefined;
   }
+
+  const recommendation = deriveRecommendation(today, overdue, radar);
+  const score = deriveScore(items, today, overdue, radar);
+  const finishline = deriveFinishLine(items);
+  const donotdo = deriveDoNotDo(today, overdue);
 
   return (
     <div className="mx-auto w-full max-w-[1280px] px-6 py-8">
@@ -227,11 +353,9 @@ export function AgendaView() {
         <>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2">
-              <MentorRecommendationCard
-                data={MENTOR_MOCK.recommendation}
-              />
+              <MentorRecommendationCard data={recommendation} />
             </div>
-            <ExecutionScoreCard metrics={MENTOR_MOCK.score} />
+            <ExecutionScoreCard metrics={score} />
           </div>
 
           <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -243,8 +367,8 @@ export function AgendaView() {
 
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <OverduePanel items={overdue} />
-            <FinishLinePanel items={MENTOR_MOCK.finishline} />
-            <DoNotDoPanel items={MENTOR_MOCK.donotdo} />
+            <FinishLinePanel items={finishline} />
+            <DoNotDoPanel items={donotdo} />
           </div>
 
           <div className="mt-4">

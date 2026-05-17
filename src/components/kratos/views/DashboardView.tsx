@@ -35,17 +35,11 @@ function StatBlock({
       >
         {label}
       </span>
-      <span
-        className="text-[28px] font-bold leading-none mt-1"
-        style={{ color }}
-      >
+      <span className="text-[28px] font-bold leading-none mt-1" style={{ color }}>
         {value}
       </span>
       {sub && (
-        <span
-          className="text-[11px] mt-0.5"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
+        <span className="text-[11px] mt-0.5" style={{ color: "var(--kratos-text-muted)" }}>
           {sub}
         </span>
       )}
@@ -59,7 +53,10 @@ function TrackedRepoCard({ owner, repo }: { owner: string; repo: string }) {
   const { data, isLoading, isError, error } = useGithubRepo(owner, repo);
 
   if (isLoading) return <LoadingState lines={3} compact />;
-  if (isError) return <ErrorState title={repo} description={error?.message ?? "Erro ao buscar repositório."} />;
+  if (isError)
+    return (
+      <ErrorState title={repo} description={error?.message ?? "Erro ao buscar repositório."} />
+    );
   if (!data) return <EmptyState title={repo} description="Sem dados do repositório." />;
   return <GithubRepoCard repo={data} />;
 }
@@ -93,15 +90,13 @@ function QuickLink({
       >
         {label}
       </span>
-      <ArrowRight
-        className="h-3.5 w-3.5 shrink-0"
-        style={{ color: "var(--kratos-text-muted)" }}
-      />
+      <ArrowRight className="h-3.5 w-3.5 shrink-0" style={{ color: "var(--kratos-text-muted)" }} />
     </button>
   );
 }
 
 export function DashboardView() {
+  const navigate = useNavigate();
   const d = useDashboard();
   const { data: trackedRepos, isLoading: reposLoading } = useTrackedRepos();
 
@@ -159,14 +154,8 @@ export function DashboardView() {
           <StatBlock
             label="Foco"
             value={isOnFocus ? "ON" : "OFF"}
-            sub={
-              d.contexto
-                ? `${d.contexto.project} · ${d.contexto.focusStatus}`
-                : "Sem dados"
-            }
-            color={
-              isOnFocus ? "var(--kratos-ok)" : "var(--kratos-warn)"
-            }
+            sub={d.contexto ? `${d.contexto.project} · ${d.contexto.focusStatus}` : "Sem dados"}
+            color={isOnFocus ? "var(--kratos-ok)" : "var(--kratos-warn)"}
           />
         </StatusCard>
       </div>
@@ -174,11 +163,16 @@ export function DashboardView() {
       {/* Alert bar */}
       {hasAlerts && (
         <div className="mt-4">
-          <StatusCard accent="off_focus">
-            <div className="flex items-center gap-3">
+          <StatusCard accent="off_focus" className="kratos-critical-signal" interactive>
+            <button
+              type="button"
+              onClick={() => navigate({ to: "/agenda" })}
+              className="kratos-focus-ring flex w-full items-center gap-3 rounded-md text-left"
+              aria-label={`Abrir agenda com ${d.appointments.overdue} compromisso${d.appointments.overdue > 1 ? "s" : ""} atrasado${d.appointments.overdue > 1 ? "s" : ""}`}
+            >
               <AlertTriangle
                 className="h-4 w-4 shrink-0"
-                style={{ color: "var(--kratos-warn)" }}
+                style={{ color: "var(--kratos-critical)" }}
               />
               <span
                 className="text-[13px] font-medium"
@@ -188,13 +182,10 @@ export function DashboardView() {
                 {d.appointments.overdue > 1 ? "s" : ""} atrasado
                 {d.appointments.overdue > 1 ? "s" : ""}
               </span>
-              <span
-                className="text-[11px] ml-auto"
-                style={{ color: "var(--kratos-text-muted)" }}
-              >
+              <span className="text-[11px] ml-auto" style={{ color: "var(--kratos-critical)" }}>
                 Ir para Agenda →
               </span>
-            </div>
+            </button>
           </StatusCard>
         </div>
       )}
@@ -208,18 +199,8 @@ export function DashboardView() {
           — Acesso rápido —
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <QuickLink
-            icon={Crosshair}
-            label="Agora"
-            to="/agora"
-            accent="var(--kratos-accent)"
-          />
-          <QuickLink
-            icon={CalendarClock}
-            label="Agenda"
-            to="/agenda"
-            accent="var(--kratos-info)"
-          />
+          <QuickLink icon={Crosshair} label="Agora" to="/agora" accent="var(--kratos-accent)" />
+          <QuickLink icon={CalendarClock} label="Agenda" to="/agenda" accent="var(--kratos-info)" />
           <QuickLink
             icon={CheckCircle2}
             label="Checkpoints"

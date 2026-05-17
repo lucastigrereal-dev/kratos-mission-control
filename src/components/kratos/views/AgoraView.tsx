@@ -9,10 +9,12 @@ import { DeadlineCard } from "@/components/kratos/agora/DeadlineCard";
 import { CheckpointCard } from "@/components/kratos/agora/CheckpointCard";
 import { AuroraShortcutCard } from "@/components/kratos/agora/AuroraShortcutCard";
 import { SystemPulseStrip } from "@/components/kratos/agora/SystemPulseStrip";
-import { MiniAgenda } from "@/components/kratos/agora/MiniAgenda";
+import { MiniAgenda, type AgendaItem } from "@/components/kratos/agora/MiniAgenda";
 import { useCheckpoints, useCreateCheckpoint, useUpdateCheckpoint } from "@/hooks/useCheckpoints";
+import { useAppointments } from "@/hooks/useAppointments";
 import { useLiveStatus } from "@/hooks/useLiveStatus";
-import type { Checkpoint } from "../../../api-contract/checkpoint.schema";
+import type { Checkpoint } from "../../../../api-contract/checkpoint.schema";
+import type { Appointment } from "../../../../api-contract/appointment.schema";
 import type { CriticalAlert } from "@/components/kratos/agora/CriticalAlertCard";
 
 function relativeTime(iso: string): string {
@@ -36,11 +38,9 @@ function findBlocked(items: Checkpoint[]): Checkpoint[] {
 
 function findNearestDeadline(items: Checkpoint[]): Checkpoint | undefined {
   const withDeadline = items.filter(
-    (c) => c.deadline && c.status !== "completed" && c.status !== "cancelled"
+    (c) => c.deadline && c.status !== "completed" && c.status !== "cancelled",
   );
-  withDeadline.sort(
-    (a, b) => new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime()
-  );
+  withDeadline.sort((a, b) => new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime());
   return withDeadline[0];
 }
 
@@ -61,15 +61,58 @@ function deadlineRemaining(deadline: string): string {
   return `${Math.floor(hours / 24)}d`;
 }
 
+function todayStr(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function agendaTimeLabel(item: Appointment): string {
+  const today = todayStr();
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+  const time = item.horario ?? "dia";
+
+  if (item.data === today) return time;
+  if (item.data === tomorrowStr) return `Amanhã ${time}`;
+  return `${new Date(`${item.data}T12:00:00`).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+  })} ${time}`;
+}
+
+function deriveMiniAgenda(appointments: Appointment[]): AgendaItem[] {
+  const today = todayStr();
+  return appointments
+    .filter((item) => item.data >= today && item.status !== "completed")
+    .sort(
+      (a, b) =>
+        a.data.localeCompare(b.data) || (a.horario ?? "23:59").localeCompare(b.horario ?? "23:59"),
+    )
+    .slice(0, 4)
+    .map((item) => ({
+      time: agendaTimeLabel(item),
+      title: item.titulo,
+      hint: item.descricao ?? (item.status === "blocked" ? "Bloqueado" : undefined),
+    }));
+}
+
 export function AgoraView() {
   const { data: checkpoints, isLoading, isError, error, refetch } = useCheckpoints();
+  const { data: appointments } = useAppointments();
   const createMutation = useCreateCheckpoint();
   const updateMutation = useUpdateCheckpoint();
+  const items = checkpoints ?? [];
+  const liveStatus = useLiveStatus(items.length);
+  const miniAgendaItems = deriveMiniAgenda(appointments ?? []);
 
   if (isLoading) {
     return (
       <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
-        <SectionHeader eyebrow="Agora" title="Você está aqui." description="Carregando seu foco..." />
+        <SectionHeader
+          eyebrow="Agora"
+          title="Você está aqui."
+          description="Carregando seu foco..."
+        />
         <LoadingState lines={6} />
       </div>
     );
@@ -78,7 +121,11 @@ export function AgoraView() {
   if (isError) {
     return (
       <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
-        <SectionHeader eyebrow="Agora" title="Você está aqui." description="Algo falhou ao carregar." />
+        <SectionHeader
+          eyebrow="Agora"
+          title="Você está aqui."
+          description="Algo falhou ao carregar."
+        />
         <ErrorState
           title="Não foi possível carregar o Agora"
           description={error?.message ?? "Erro ao buscar checkpoints."}
@@ -99,9 +146,6 @@ export function AgoraView() {
       </div>
     );
   }
-
-  const items = checkpoints ?? [];
-  const liveStatus = useLiveStatus(items.length);
 
   if (items.length === 0) {
     return (
@@ -140,7 +184,7 @@ export function AgoraView() {
   const blocked = findBlocked(items);
   const nearestDeadline = findNearestDeadline(items);
   const mostRecent = [...items].sort(
-    (a, b) => new Date(b.atualizadoEm).getTime() - new Date(a.atualizadoEm).getTime()
+    (a, b) => new Date(b.atualizadoEm).getTime() - new Date(a.atualizadoEm).getTime(),
   )[0];
 
   const criticalAlert: CriticalAlert | undefined =
@@ -165,11 +209,7 @@ export function AgoraView() {
           <FocusCard
             project={inProgress?.titulo ?? "KRATOS · Mission Control"}
             state={inProgress ? "on_focus" : "off_focus"}
-            headline={
-              inProgress
-                ? "Você está no foco certo."
-                : "Nenhum checkpoint em progresso."
-            }
+            headline={inProgress ? "Você está no foco certo." : "Nenhum checkpoint em progresso."}
             subline={
               inProgress
                 ? `Atualizado ${relativeTime(inProgress.atualizadoEm)} · ${inProgress.progresso}% concluído`
@@ -254,7 +294,7 @@ export function AgoraView() {
           lastUpdate={liveStatus.lastUpdate}
         />
 
-        <MiniAgenda items={[]} />
+        <MiniAgenda items={miniAgendaItems} />
       </div>
     </div>
   );
