@@ -1,9 +1,11 @@
+import { X, Cpu } from "lucide-react";
 import type { SourceBadgeMeta } from "../../../api-contract/source-badge.schema";
 
-type Props = {
+interface Props {
   meta: SourceBadgeMeta | null;
   className?: string;
-};
+  size?: "sm" | "md";
+}
 
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -22,6 +24,8 @@ const SOURCE_LABEL: Record<string, string> = {
   cache: "Cache",
   stale: "Desatualizado",
   partial: "Parcial",
+  error: "Erro",
+  computed: "Calculado",
 };
 
 const SOURCE_SEVERITY: Record<string, string> = {
@@ -30,9 +34,11 @@ const SOURCE_SEVERITY: Record<string, string> = {
   cache: "var(--kratos-info)",
   stale: "var(--kratos-critical)",
   partial: "var(--kratos-warn)",
+  error: "var(--kratos-critical)",
+  computed: "var(--kratos-info)",
 };
 
-export function SourceBadgeIndicator({ meta, className = "" }: Props) {
+export function SourceBadgeIndicator({ meta, className = "", size = "md" }: Props) {
   if (!meta) return null;
 
   const isError = meta.stale || meta.errors.length > 0;
@@ -42,7 +48,6 @@ export function SourceBadgeIndicator({ meta, className = "" }: Props) {
 
   const label = SOURCE_LABEL[meta.source] ?? meta.source;
   const timeAgo = `há ${relativeTime(meta.updated_at)}`;
-  const originSuffix = meta.origin ? ` · ${meta.origin}` : "";
 
   const ariaParts: string[] = [`Fonte: ${label}`];
   if (meta.origin) ariaParts.push(`origem: ${meta.origin}`);
@@ -51,9 +56,39 @@ export function SourceBadgeIndicator({ meta, className = "" }: Props) {
   if (meta.errors.length > 0) ariaParts.push(`${meta.errors.length} erro(s)`);
   if (meta.confidence != null) ariaParts.push(`confiança: ${meta.confidence}%`);
 
+  const smClasses = size === "sm" ? "text-[0.55rem] px-1.5 py-0.5" : "text-[0.65rem] px-2 py-0.5";
+
+  function renderDotOrIcon() {
+    if (meta!.source === "error") {
+      return (
+        <X
+          className={size === "sm" ? "h-1 w-1 shrink-0" : "h-2.5 w-2.5 shrink-0"}
+          style={{ color: "var(--kratos-critical)" }}
+          aria-hidden
+        />
+      );
+    }
+    if (meta!.source === "computed") {
+      return (
+        <Cpu
+          className={size === "sm" ? "h-1 w-1 shrink-0" : "h-2.5 w-2.5 shrink-0"}
+          style={{ color: "var(--kratos-info)" }}
+          aria-hidden
+        />
+      );
+    }
+    return (
+      <span
+        className={`inline-block rounded-full shrink-0 ${size === "sm" ? "h-1 w-1" : "h-1.5 w-1.5"}`}
+        style={{ background: colorVar }}
+        aria-hidden
+      />
+    );
+  }
+
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.65rem] leading-none ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border leading-none ${smClasses} ${className}`}
       style={{
         borderColor: colorVar,
         color: "var(--kratos-text-secondary)",
@@ -63,11 +98,7 @@ export function SourceBadgeIndicator({ meta, className = "" }: Props) {
       title={`Fonte: ${label}${meta.origin ? ` · ${meta.origin}` : ""} · ${timeAgo}`}
       aria-label={ariaParts.join(", ")}
     >
-      <span
-        className="inline-block h-1.5 w-1.5 rounded-full shrink-0"
-        style={{ background: colorVar }}
-        aria-hidden
-      />
+      {renderDotOrIcon()}
       <span className="font-medium" style={{ color: "var(--kratos-text-primary)" }}>
         {label}
       </span>

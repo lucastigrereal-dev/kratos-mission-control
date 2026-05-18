@@ -4,7 +4,15 @@ import { z } from "zod";
  * Source badge metadata — used by all snapshot endpoints.
  * Tells the UI where data came from and whether it's stale.
  */
-export const DataSourceSchema = z.enum(["live", "mock", "cache", "stale", "partial"]);
+export const DataSourceSchema = z.enum([
+  "live",
+  "mock",
+  "cache",
+  "stale",
+  "partial",
+  "error",
+  "computed",
+]);
 export type DataSource = z.infer<typeof DataSourceSchema>;
 
 export const DataOriginSchema = z.enum(["akasha", "omnis", "github", "local", "mock"]);
