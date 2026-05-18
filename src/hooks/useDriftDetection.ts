@@ -113,7 +113,9 @@ export function useDriftDetection(): DriftStatus {
       : NUDGE_MESSAGES[driftState];
 
   useEffect(() => {
-    if (driftState !== "on-mission" && !nudgedThresholds.current.has(driftState)) {
+    if (driftState === "on-mission") {
+      nudgedThresholds.current.clear();
+    } else if (!nudgedThresholds.current.has(driftState)) {
       nudgedThresholds.current.add(driftState);
     }
   }, [driftState]);
