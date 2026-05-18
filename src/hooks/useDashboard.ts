@@ -33,6 +33,8 @@ export interface DashboardSummary {
   isLoading: boolean;
 }
 
+export type DashboardLoaderData = Omit<DashboardSummary, "isLoading">;
+
 export function useDashboard(): DashboardSummary {
   const cp = useQuery({
     queryKey: ["checkpoints"],

@@ -109,7 +109,11 @@ function RingStat({ value, color, title, sub }: RingStatProps) {
   );
 }
 
-export function DashboardView() {
+export function DashboardView({
+  ssrData,
+}: {
+  ssrData?: DashboardLoaderData;
+}) {
   const navigate = useNavigate();
   const d = useDashboard();
   const snap = useDashboardSnapshot();
@@ -122,8 +126,8 @@ export function DashboardView() {
   const { data: pausedCheckpoints, isLoading: checkpointsLoading } = usePausedCheckpoints();
   const resumeCheckpoint = useResumeCheckpoint();
 
-  // --- Loading ---
-  if (d.isLoading) {
+  // --- Loading (only full loading state when no SSR data available) ---
+  if (d.isLoading && !ssrData) {
     return (
       <div className="mx-auto w-full max-w-[1280px] px-6 py-8">
         <SectionHeader
@@ -157,19 +161,25 @@ export function DashboardView() {
     );
   }
 
+  // Resolve: prefer live hook data, fall back to SSR data while loading
+  const projects = d.isLoading && ssrData ? ssrData.projects : d.projects;
+  const checkpoints = d.isLoading && ssrData ? ssrData.checkpoints : d.checkpoints;
+  const appointments = d.isLoading && ssrData ? ssrData.appointments : d.appointments;
+  const contexto = d.isLoading && ssrData ? ssrData.contexto : d.contexto;
+
   // --- Normal: Cockpit Layout ---
-  const hasAlerts = d.appointments.overdue > 0;
-  const isOnFocus = d.contexto?.focusStatus === "on_focus";
+  const hasAlerts = appointments.overdue > 0;
+  const isOnFocus = contexto?.focusStatus === "on_focus";
 
   const projetosValue =
-    d.projects.total > 0 ? Math.round((d.projects.active / d.projects.total) * 100) : 0;
+    projects.total > 0 ? Math.round((projects.active / projects.total) * 100) : 0;
   const checkpointsValue =
-    d.checkpoints.total > 0
-      ? Math.round(((d.checkpoints.inProgress + d.checkpoints.pending) / d.checkpoints.total) * 100)
+    checkpoints.total > 0
+      ? Math.round(((checkpoints.inProgress + checkpoints.pending) / checkpoints.total) * 100)
       : 0;
   const agendaValue =
-    d.appointments.total > 0
-      ? Math.round((d.appointments.today / d.appointments.total) * 100)
+    appointments.total > 0
+      ? Math.round((appointments.today / appointments.total) * 100)
       : 0;
   const focoValue = isOnFocus ? 100 : 0;
   const focoColor = isOnFocus ? "var(--kratos-ok)" : "var(--kratos-critical)";
@@ -262,19 +272,19 @@ export function DashboardView() {
               value={projetosValue}
               color="var(--kratos-ok)"
               title="Projetos"
-              sub={`${d.projects.active}/${d.projects.total}`}
+              sub={`${projects.active}/${projects.total}`}
             />
             <RingStat
               value={checkpointsValue}
               color="var(--kratos-accent)"
               title="Checkpoints"
-              sub={`${d.checkpoints.inProgress + d.checkpoints.pending}/${d.checkpoints.total}`}
+              sub={`${checkpoints.inProgress + checkpoints.pending}/${checkpoints.total}`}
             />
             <RingStat
               value={agendaValue}
               color="var(--kratos-info)"
               title="Agenda"
-              sub={`${d.appointments.today} hoje`}
+              sub={`${appointments.today} hoje`}
             />
             <RingStat
               value={focoValue}
@@ -346,7 +356,7 @@ export function DashboardView() {
                 type="button"
                 onClick={() => navigate({ to: "/agenda" })}
                 className="kratos-focus-ring flex w-full items-center gap-3 rounded-md text-left"
-                aria-label={`Abrir agenda com ${d.appointments.overdue} compromisso${d.appointments.overdue > 1 ? "s" : ""} atrasado${d.appointments.overdue > 1 ? "s" : ""}`}
+                aria-label={`Abrir agenda com ${appointments.overdue} compromisso${appointments.overdue > 1 ? "s" : ""} atrasado${appointments.overdue > 1 ? "s" : ""}`}
               >
                 <AlertTriangle
                   className="h-4 w-4 shrink-0"
@@ -356,9 +366,9 @@ export function DashboardView() {
                   className="text-[13px] font-medium"
                   style={{ color: "var(--kratos-text-primary)" }}
                 >
-                  {d.appointments.overdue} compromisso
-                  {d.appointments.overdue > 1 ? "s" : ""} atrasado
-                  {d.appointments.overdue > 1 ? "s" : ""}
+                  {appointments.overdue} compromisso
+                  {appointments.overdue > 1 ? "s" : ""} atrasado
+                  {appointments.overdue > 1 ? "s" : ""}
                 </span>
               </button>
             </StatusCard>
