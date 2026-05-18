@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -166,13 +167,19 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isWorld = pathname === "/";
 
   return (
     <QueryClientProvider client={queryClient}>
       <ReducedMotionProvider>
-        <AppShell>
+        {isWorld ? (
           <Outlet />
-        </AppShell>
+        ) : (
+          <AppShell>
+            <Outlet />
+          </AppShell>
+        )}
       </ReducedMotionProvider>
     </QueryClientProvider>
   );

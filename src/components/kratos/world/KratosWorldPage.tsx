@@ -5,12 +5,12 @@ import {
   PanelLeftOpen,
   Sparkles,
   X,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { KratosWorldMap } from "./KratosWorldMap";
 import { CentralCastleMission } from "./CentralCastleMission";
 import { StatusBarDock } from "./StatusBarDock";
-import { WorldCharacterMarker } from "./WorldCharacterMarker";
 import { DriftIndicator } from "@/components/kratos/shell/DriftIndicator";
 import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
@@ -18,9 +18,6 @@ import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { ZombieBadge } from "@/components/kratos/base/ZombieBadge";
 import { StatusDot } from "@/components/kratos/base/StatusDot";
-import { OperatorWelcomeCard } from "@/components/kratos/hud/OperatorWelcomeCard";
-import { CurrentMissionBar } from "@/components/kratos/hud/CurrentMissionBar";
-import { AuroraChatDock } from "@/components/kratos/aurora/AuroraChatDock";
 import { KratosLogo } from "@/components/kratos/icons/KratosLogo";
 import { SidebarItem } from "@/components/kratos/shell/SidebarItem";
 import { VISIBLE_ROUTES, KRATOS_ROUTES } from "@/lib/kratos-routes";
@@ -278,18 +275,6 @@ function KratosWorldPageInner({
       />
 
       {/* ════════════════════════════════════════
-        Layer: WorldCharacterMarker (z-[75])
-        Above world map (z-70), below chrome (z-80)
-        ════════════════════════════════════════ */}
-      <div className="fixed inset-0 z-[75] pointer-events-none">
-        <WorldCharacterMarker
-          position={{ x: "50%", y: "45%" }}
-          label="Lucas"
-          isActive={connectionState === "live"}
-        />
-      </div>
-
-      {/* ════════════════════════════════════════
         Layer: Sidebar (z-80, glass overlay)
         ════════════════════════════════════════ */}
       <aside
@@ -398,11 +383,29 @@ function KratosWorldPageInner({
           transition: "left 200ms ease",
         }}
       >
-        {/* Operator welcome */}
-        <OperatorWelcomeCard
-          operatorName="Lucas"
-          className="px-3 py-1.5 rounded-lg"
-        />
+        {/* Breadcrumb */}
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center gap-2 text-[12px] kratos-mono"
+        >
+          <span
+            className="uppercase tracking-[0.18em]"
+            style={{ color: "var(--kr-gold, #FFD700)" }}
+          >
+            KRATOS
+          </span>
+          <ChevronRight
+            className="h-3 w-3"
+            style={{ color: "var(--kr-text-muted, #9CA3AF)" }}
+            aria-hidden
+          />
+          <span
+            className="uppercase tracking-[0.18em]"
+            style={{ color: "var(--kr-text-primary, #E5E7EB)" }}
+          >
+            Dashboard
+          </span>
+        </nav>
 
         {/* Right cluster: connection + source badge + Aurora toggle */}
         <div className="flex items-center gap-2">
@@ -514,14 +517,6 @@ function KratosWorldPageInner({
 
         {/* Aurora content */}
         <AuroraPanelV2Content ctx={ctx} />
-
-        {/* Aurora chat dock — pinned at bottom */}
-        <AuroraChatDock
-          className="shrink-0"
-          style={{
-            borderTop: "1px solid var(--kr-glass-strong-border)",
-          }}
-        />
       </aside>
 
       {/* ════════════════════════════════════════
@@ -561,25 +556,6 @@ function KratosWorldPageInner({
           />
         </div>
       )}
-
-      {/* ════════════════════════════════════════
-        Layer: CurrentMissionBar (z-[89])
-        Just above StatusBarDock, shows mission pulse
-        ════════════════════════════════════════ */}
-      <div
-        className="fixed left-0 right-0 z-[89] px-4"
-        style={{
-          bottom: 48,
-          left: sidebarCollapsed ? 60 : 232,
-          transition: "left 200ms ease",
-        }}
-      >
-        <CurrentMissionBar
-          missionTitle={currentMission}
-          progress={ctx.checkpointProgress ?? 0}
-          timeRemaining={missionPhase}
-        />
-      </div>
 
       {/* ════════════════════════════════════════
         Layer: StatusBarDock (z-90)
