@@ -1,0 +1,28 @@
+{
+  "last_audit": {
+    "timestamp": null,
+    "build_pass": null,
+    "tests_pass": null,
+    "lint_pass": null,
+    "verdict": null
+  },
+  "last_preflight": {
+    "timestamp": null,
+    "verdict": null,
+    "files_changed": null
+  },
+  "last_ship_check": {
+    "timestamp": null,
+    "verdict": null,
+    "e2e_pass_rate": null
+  },
+  "last_status_check": {
+    "timestamp": "2026-05-18T00:00:00Z",
+    "branch": "main",
+    "clean": true
+  },
+  "constitution_amendments": {
+    "count": 0,
+    "last_amendment_date": null
+  }
+}

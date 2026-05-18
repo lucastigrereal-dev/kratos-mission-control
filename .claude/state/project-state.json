@@ -1,0 +1,50 @@
+{
+  "project": "KRATOS Mission Control",
+  "version": "2.0",
+  "last_updated": "2026-05-18T00:00:00Z",
+  "phase": {
+    "current": "project-os-install",
+    "description": "Instalação do KRATOS Project OS Pack V2 — governança operacional"
+  },
+  "branch": {
+    "current": "main",
+    "default": "main"
+  },
+  "build": {
+    "last_result": "pending",
+    "last_timestamp": null,
+    "last_duration_ms": null
+  },
+  "tests": {
+    "last_result": "pending",
+    "last_pass": null,
+    "last_fail": null,
+    "last_total": null
+  },
+  "e2e": {
+    "last_result": "partial",
+    "last_pass_rate": 63,
+    "last_pass": 29,
+    "last_fail": 14,
+    "last_total": 46
+  },
+  "sprints": {
+    "completed": [
+      "Sprint A — Worker Snapshots Real (A01-A36, 30 commits)",
+      "Sprint B — Frontend Snapshot Wiring (B01-B40, 11 commits)",
+      "Sprint C — Visual Polish + Playwright E2E (M01-M10, integrated)"
+    ],
+    "active": "E2E Stabilization (pending — 4 waves E01-E04)",
+    "next": "Staging deploy (requires Lucas authorization)"
+  },
+  "worktrees": {
+    "max_concurrent": 2,
+    "active": []
+  },
+  "health": {
+    "constitution_compliant": true,
+    "protected_components_intact": true,
+    "secrets_exposed": false
+  },
+  "next_action": "Completar instalação do Project OS Pack V2 e executar /audit"
+}

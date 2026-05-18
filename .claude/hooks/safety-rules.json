@@ -1,0 +1,66 @@
+{
+  "version": "2.0",
+  "rules": [
+    {
+      "id": "no-deploy",
+      "pattern": ["wrangler deploy", "bunx wrangler deploy", "cloudflare deploy"],
+      "action": "block",
+      "message": "Deploy requer autorização explícita do Lucas"
+    },
+    {
+      "id": "no-push",
+      "pattern": ["git push"],
+      "action": "block",
+      "message": "Push requer autorização explícita",
+      "exceptions": ["git push --dry-run"]
+    },
+    {
+      "id": "no-secrets",
+      "pattern": [".env", ".env.local", ".secret", "SECRET", "TOKEN", "PASSWORD"],
+      "action": "block",
+      "message": "Leitura de secrets bloqueada"
+    },
+    {
+      "id": "no-omnis-exec",
+      "pattern": ["mcp__publisher-os__produce_content", "mcp__publisher-os__run_crew", "mcp__publisher-os__enqueue_post"],
+      "action": "block",
+      "message": "Execução do OMNIS bloqueada no repo KRATOS"
+    },
+    {
+      "id": "no-bulk-staging",
+      "pattern": ["git add .", "git add -A", "git add --all"],
+      "action": "block",
+      "message": "Staging em massa proibido. Use staging seletivo"
+    },
+    {
+      "id": "no-force-push-main",
+      "pattern": ["git push --force origin main", "git push --force origin master", "git push -f origin main"],
+      "action": "block",
+      "message": "Force push para main/master é proibido"
+    },
+    {
+      "id": "no-route-tree-edit",
+      "pattern": ["src/routeTree.gen.ts"],
+      "action": "warn",
+      "message": "routeTree.gen.ts é auto-gerado — não editar manualmente"
+    },
+    {
+      "id": "no-protected-component-edit",
+      "files": [
+        "src/components/kratos/shell/AppShell.tsx",
+        "src/components/kratos/shell/Topbar.tsx",
+        "src/components/kratos/shell/Sidebar.tsx",
+        "src/components/kratos/shell/StatusBar.tsx",
+        "src/components/kratos/shell/AuroraPanel.tsx",
+        "src/styles.css"
+      ],
+      "action": "warn",
+      "message": "Componente protegido — requer autorização do Lucas"
+    }
+  ],
+  "active_hooks": [
+    "pre-commit-validation",
+    "safety-guard",
+    "worktree-limit"
+  ]
+}
