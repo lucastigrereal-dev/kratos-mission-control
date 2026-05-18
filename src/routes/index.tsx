@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DashboardView } from "@/components/kratos/views/DashboardView";
+import { KratosWorldPage } from "@/components/kratos/world/KratosWorldPage";
 import { getCheckpoints } from "@/lib/checkpoint-server-fns";
 import { getProjects } from "@/lib/project-server-fns";
 import { getAppointments } from "@/lib/appointment-server-fns";
@@ -84,5 +84,5 @@ export const Route = createFileRoute("/")({
 
 function DashboardPage() {
   const loaderData = Route.useLoaderData();
-  return <DashboardView ssrData={loaderData} />;
+  return <KratosWorldPage ssrData={loaderData} />;
 }
