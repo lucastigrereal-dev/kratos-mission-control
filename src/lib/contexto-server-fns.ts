@@ -11,7 +11,7 @@ import { createApiError, type ApiError } from "../../api-contract/error-taxonomy
 import { getLatest, refresh } from "../../backend/contexto/store";
 
 export const getContextSnapshot = createServerFn({ method: "GET" })
-  .validator((input: unknown) => {
+  .inputValidator((input: unknown) => {
     if (typeof input === "object" && input !== null && "refresh" in input) {
       return input as { refresh?: boolean };
     }
@@ -46,7 +46,7 @@ function inferMode(project: string, focusStatus: string): ContextoMode {
 }
 
 export const getContextoSnapshot = createServerFn({ method: "GET" })
-  .validator((input: unknown) => {
+  .inputValidator((input: unknown) => {
     if (typeof input === "object" && input !== null && "refresh" in input) {
       return input as { refresh?: boolean };
     }

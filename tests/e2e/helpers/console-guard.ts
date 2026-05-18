@@ -10,6 +10,13 @@ const ALLOWED_CONSOLE_ERRORS: RegExp[] = [
   // Vite HMR websocket reconnect noise in dev
   /hmr/i,
   /websocket/i,
+  // Vite dev server lifecycle (not errors)
+  /^\[vite\]/,
+  // React DevTools download suggestion (dev only)
+  /React DevTools/,
+  // React CatchBoundary warnings in dev mode (expected when mock data is empty)
+  /CatchBoundaryImpl/,
+  /route match/,
 ]
 
 export function isBlockedError(message: string): boolean {
