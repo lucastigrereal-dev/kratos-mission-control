@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import tokensCss from "../styles/kratos-tokens.css?url";
 import { AppShell } from "@/components/kratos/shell/AppShell";
 
 function NotFoundComponent() {
@@ -129,6 +130,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: tokensCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "preconnect",
