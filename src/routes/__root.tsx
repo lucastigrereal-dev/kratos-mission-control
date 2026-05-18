@@ -11,6 +11,7 @@ import {
 import appCss from "../styles.css?url";
 import tokensCss from "../styles/kratos-tokens.css?url";
 import { AppShell } from "@/components/kratos/shell/AppShell";
+import { ReducedMotionProvider } from "@/components/kratos/base/ReducedMotionProvider";
 
 function NotFoundComponent() {
   return (
@@ -168,9 +169,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppShell>
-        <Outlet />
-      </AppShell>
+      <ReducedMotionProvider>
+        <AppShell>
+          <Outlet />
+        </AppShell>
+      </ReducedMotionProvider>
     </QueryClientProvider>
   );
 }
