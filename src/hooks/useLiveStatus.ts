@@ -1,9 +1,11 @@
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "./useServices";
 import { useOmnisStatus } from "./useOmnis";
 import type { LiveState } from "@/components/kratos/base/LiveStatusIndicator";
 import type { SystemPulse } from "@/components/kratos/agora/SystemPulseStrip";
 import type { Severity } from "@/components/kratos/base/StatusDot";
+import type { DataSource } from "../../api-contract/source-badge.schema";
 
 function serviceHealthToSeverity(status: string): Severity {
   if (status === "healthy" || status === "up" || status === "ok") return "ok";
@@ -21,16 +23,76 @@ function deriveLiveState(krOk: number, krWarn: number, krCrit: number, omOk: num
   return "offline";
 }
 
+function useSSEConnection(): { isConnected: boolean } {
+  const [isConnected, setIsConnected] = useState(false);
+  const qc = useQueryClient();
+  const BASE_URL =
+    typeof window !== "undefined"
+      ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
+      : "http://localhost:5100";
+
+  useEffect(() => {
+    if (typeof EventSource === "undefined") return;
+
+    let es: EventSource | null = null;
+    let failTimer: ReturnType<typeof setTimeout> | null = null;
+
+    function connect() {
+      es = new EventSource(`${BASE_URL}/live/stream`);
+
+      failTimer = setTimeout(() => {
+        setIsConnected(false);
+      }, 3000);
+
+      es.onopen = () => {
+        if (failTimer) clearTimeout(failTimer);
+        setIsConnected(true);
+      };
+
+      es.onmessage = () => {
+        qc.invalidateQueries({ queryKey: ["services"] });
+      };
+
+      es.onerror = () => {
+        setIsConnected(false);
+        es?.close();
+        setTimeout(connect, 10_000);
+      };
+    }
+
+    connect();
+
+    return () => {
+      if (failTimer) clearTimeout(failTimer);
+      es?.close();
+    };
+  }, [BASE_URL, qc]); // isConnected excluded from deps to avoid reconnect loop
+
+  return { isConnected };
+}
+
 interface LiveStatus {
   liveState: LiveState;
   systems: SystemPulse[];
   lastUpdate: string;
   isLoading: boolean;
+  isSSEConnected: boolean;
+  sourceType: DataSource;
 }
 
 export function useLiveStatus(checkpointCount: number): LiveStatus {
-  const { services, isLoading: krLoading } = useServices();
-  const { data: omnis, isLoading: omLoading } = useOmnisStatus();
+  const { services, isLoading: krLoading, isError: krError } = useServices();
+  const { data: omnis, isLoading: omLoading, isError: omError } = useOmnisStatus();
+  const { isConnected } = useSSEConnection();
+
+  const isError = krError || omError;
+  const isLoading = krLoading || omLoading;
+
+  const sourceType: DataSource = isError
+    ? "error"
+    : isConnected && !isLoading
+      ? "live"
+      : "cache";
 
   return useMemo(() => {
     const systems: SystemPulse[] = [];
@@ -79,7 +141,9 @@ export function useLiveStatus(checkpointCount: number): LiveStatus {
       liveState,
       systems,
       lastUpdate,
-      isLoading: krLoading || omLoading,
+      isLoading,
+      isSSEConnected: isConnected,
+      sourceType,
     };
-  }, [services, omnis, checkpointCount, krLoading, omLoading]);
+  }, [services, omnis, checkpointCount, isLoading, isConnected, sourceType]);
 }
