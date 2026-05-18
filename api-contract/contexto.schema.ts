@@ -34,3 +34,16 @@ export type FocusStatus = z.infer<typeof FocusStatusSchema>;
 export type DriftLevel = z.infer<typeof DriftLevelSchema>;
 export type BrowserTab = z.infer<typeof BrowserTabSchema>;
 export type ContextSnapshot = z.infer<typeof ContextSnapshotSchema>;
+
+// ── /api/contexto/snapshot — high‑level mission snapshot ──
+export const ContextoModeSchema = z.enum(["execution", "planning", "review", "standby", "unknown"]);
+export type ContextoMode = z.infer<typeof ContextoModeSchema>;
+
+export const ContextoSnapshotDataSchema = z.object({
+  current_context: z.string(),
+  confidence: z.number().int().min(0).max(100),
+  mode: ContextoModeSchema,
+  next_action: z.string(),
+  origin: z.string(),
+});
+export type ContextoSnapshotData = z.infer<typeof ContextoSnapshotDataSchema>;
