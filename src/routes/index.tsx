@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
       PromiseSettledResult<Envelope<ContextSnapshot>>,
     ];
 
-    const extract = <T>(result: PromiseSettledResult<Envelope<T>>): T[] => {
+    const extract = <T,>(result: PromiseSettledResult<Envelope<T>>): T[] => {
       if (result.status === "fulfilled") return result.value.data ?? [];
       return [];
     };
