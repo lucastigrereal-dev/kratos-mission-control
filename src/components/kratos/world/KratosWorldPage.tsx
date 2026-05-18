@@ -186,6 +186,15 @@ function KratosWorldPageInner({
     }
   }, [ctx.pausedCheckpoints, ctx.resumeCheckpoint]);
 
+  // ── Derived values ────────────
+  const currentMission =
+    ctx.lens?.mission_lens?.current_mission ??
+    ssrData?.contexto?.project ??
+    undefined;
+
+  const missionPhase = ctx.lens?.mission_lens?.phase;
+  const nextAction = ctx.lens?.next_best_action?.action;
+
   const handleAuroraQuickCommand = useCallback((commandId: string) => {
     switch (commandId) {
       case "retomar": {
@@ -213,14 +222,6 @@ function KratosWorldPageInner({
     }
   }, [ctx.pausedCheckpoints, ctx.resumeCheckpoint, ctx.createCheckpoint, ctx.lensRefetch, ctx.dashboardRefetch, navigate, nextAction, currentMission, missionPhase]);
 
-  // ── Derived values ────────────
-  const currentMission =
-    ctx.lens?.mission_lens?.current_mission ??
-    ssrData?.contexto?.project ??
-    undefined;
-
-  const missionPhase = ctx.lens?.mission_lens?.phase;
-  const nextAction = ctx.lens?.next_best_action?.action;
   const missionStatus = deriveMissionStatus(ctx.checkpoints.data);
 
   const connectionState: LiveState = ctx.liveStatus.liveState;
