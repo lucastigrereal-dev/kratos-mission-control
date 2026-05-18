@@ -3,7 +3,7 @@ import {
   DashboardSnapshotDataSchema,
   type DashboardSnapshotData,
 } from "../../api-contract/dashboard.schema";
-import { SourceBadgeMetaSchema, type SourceBadgeMeta } from "../../api-contract/source-badge.schema";
+import { type SourceBadgeMeta } from "../../api-contract/source-badge.schema";
 import { createApiError, type ApiError } from "../../api-contract/error-taxonomy";
 import { getServicesHealthSummary } from "../../backend/services/store";
 import { getRepoStatus, listTrackedRepos } from "../../backend/github/store";

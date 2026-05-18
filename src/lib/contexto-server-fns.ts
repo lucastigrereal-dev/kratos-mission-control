@@ -6,7 +6,7 @@ import {
   type ContextoSnapshotData,
   type ContextoMode,
 } from "../../api-contract/contexto.schema";
-import { SourceBadgeMetaSchema, type SourceBadgeMeta } from "../../api-contract/source-badge.schema";
+import { type SourceBadgeMeta } from "../../api-contract/source-badge.schema";
 import { createApiError, type ApiError } from "../../api-contract/error-taxonomy";
 import { getLatest, refresh } from "../../backend/contexto/store";
 
