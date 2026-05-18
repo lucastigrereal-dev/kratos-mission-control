@@ -1,0 +1,521 @@
+/* ============================================================
+ * KRATOS 3D Mission Control — Design Tokens (PACK 1)
+ *
+ * This file DEFINES the 3D island world design system.
+ * It is ADDITIVE — loaded alongside src/styles.css.
+ *
+ * All tokens use the --kr- prefix.
+ * Based on: KRATOS_DESIGN_TOKENS.json + KRATOS_UI_BIBLE.md
+ * ============================================================ */
+
+/* -----------------------------------------------------------
+ * 1. COLORS — 49 custom properties
+ * ----------------------------------------------------------- */
+
+:root,
+.dark {
+  /* === Ocean & Sky (4) === */
+  --kr-ocean-deep: #051024;
+  --kr-ocean: #0A1E3F;
+  --kr-sky: #60A5FA;
+  --kr-sky-light: #93C5FD;
+
+  /* === Island Terrain (6) === */
+  --kr-grass: #22C55E;
+  --kr-grass-light: #4ADE80;
+  --kr-earth: #92400E;
+  --kr-earth-dark: #78350F;
+  --kr-wood: #A16207;
+  --kr-wood-light: #CA8A04;
+
+  /* === Castle / Central Spire (3) === */
+  --kr-castle-stone: #78716C;
+  --kr-castle-roof: #1E40AF;
+  --kr-castle-wall: #A8A29E;
+
+  /* === HUD Overlay (3) === */
+  --kr-hud-bg: rgba(11, 18, 32, 0.92);
+  --kr-hud-border: rgba(255, 255, 255, 0.10);
+  --kr-hud-text: #E5E7EB;
+
+  /* === Accent Palette (6) === */
+  --kr-azure: #1E90FF;
+  --kr-gold: #FFD700;
+  --kr-aurora: #8B5CF6;
+  --kr-success: #22C55E;
+  --kr-danger: #EF4444;
+  --kr-warning: #F59E0B;
+
+  /* === Per-Island Theme Colors (11) === */
+  --kr-island-omnis: #7C3AED;        /* Omnis Lab — IA, agents, automations */
+  --kr-island-agencia: #F97316;      /* Agencia / Studio — content, brand */
+  --kr-island-akasha: #059669;       /* Akasha / Gringotts — memory, knowledge */
+  --kr-island-filosofia: #D97706;    /* Filosofia e Sabedoria — learning, wisdom */
+  --kr-island-financas: #CA8A04;     /* Tesouro / Financas — treasury, wealth */
+  --kr-island-forja: #DC2626;        /* Forja / Corpo — forge, health, discipline */
+  --kr-island-observatorio: #4F46E5; /* Observatorio — ideas, vision, strategy */
+  --kr-island-vila: #16A34A;         /* Vila Viva — family, real life */
+  --kr-island-arena: #E11D48;        /* Arena Comercial — sales, negotiation */
+  --kr-island-nimbus: #0EA5E9;       /* Nimbus Academy — courage, learning */
+
+  /* === Surface & Base Layers (5) === */
+  --kr-surface-abyss: #020617;
+  --kr-surface-ocean: #0B1220;
+  --kr-surface-deep: #0F172A;
+  --kr-surface-mid: #1E293B;
+  --kr-surface-high: #334155;
+
+  /* === Text Hierarchy (3) === */
+  --kr-text-primary: #E5E7EB;
+  --kr-text-secondary: #9CA3AF;
+  --kr-text-muted: #6B7280;
+
+  /* === 3D World Additional Colors (5) === */
+  --kr-cloud: rgba(248, 250, 252, 0.08);
+  --kr-cloud-bright: rgba(248, 250, 252, 0.16);
+  --kr-bridge-glow-color: rgba(30, 144, 255, 0.18);
+  --kr-bridge-glow-strong: rgba(30, 144, 255, 0.35);
+  --kr-ocean-surface: rgba(14, 165, 233, 0.06);
+}
+
+
+/* -----------------------------------------------------------
+ * 2. GLASSMORPHISM SYSTEM
+ * ----------------------------------------------------------- */
+
+:root,
+.dark {
+  --kr-glass-bg: rgba(11, 18, 32, 0.78);
+  --kr-glass-border: rgba(255, 255, 255, 0.12);
+  --kr-glass-blur: 16px;
+  --kr-panel-blur: 24px;
+
+  /* Stronger glass for HUD overlays */
+  --kr-glass-strong-bg: rgba(15, 23, 42, 0.94);
+  --kr-glass-strong-border: rgba(255, 255, 255, 0.15);
+
+  /* Glass highlight — subtle top edge light catch */
+  --kr-glass-highlight: rgba(255, 255, 255, 0.04);
+}
+
+
+/* -----------------------------------------------------------
+ * 3. SHADOWS
+ * ----------------------------------------------------------- */
+
+:root,
+.dark {
+  /* === Card & Panel (2) === */
+  --kr-shadow-card: 0 16px 40px rgba(0, 0, 0, 0.28);
+  --kr-shadow-island: 0 24px 70px rgba(3, 7, 18, 0.35);
+
+  /* === Accent Glows (2) === */
+  --kr-shadow-glow-blue: 0 0 32px rgba(30, 144, 255, 0.35);
+  --kr-shadow-glow-gold: 0 0 28px rgba(255, 215, 0, 0.28);
+
+  /* === Per-Island Glow Shadows (11) === */
+  --kr-shadow-glow-omnis: 0 0 30px rgba(124, 58, 237, 0.4);
+  --kr-shadow-glow-agencia: 0 0 30px rgba(249, 115, 22, 0.4);
+  --kr-shadow-glow-akasha: 0 0 30px rgba(5, 150, 105, 0.4);
+  --kr-shadow-glow-filosofia: 0 0 30px rgba(217, 119, 6, 0.4);
+  --kr-shadow-glow-financas: 0 0 30px rgba(202, 138, 4, 0.4);
+  --kr-shadow-glow-forja: 0 0 30px rgba(220, 38, 38, 0.4);
+  --kr-shadow-glow-observatorio: 0 0 30px rgba(79, 70, 229, 0.4);
+  --kr-shadow-glow-vila: 0 0 30px rgba(22, 163, 74, 0.4);
+  --kr-shadow-glow-arena: 0 0 30px rgba(225, 29, 72, 0.4);
+  --kr-shadow-glow-nimbus: 0 0 30px rgba(14, 165, 233, 0.4);
+  --kr-shadow-glow-castle: 0 0 36px rgba(30, 64, 175, 0.45);
+
+  /* === Utility Shadows (2) === */
+  --kr-shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.32);
+  --kr-shadow-inner-glow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+
+/* -----------------------------------------------------------
+ * 4. Z-INDEX HIERARCHY (12 levels)
+ * ----------------------------------------------------------- */
+
+:root,
+.dark {
+  --kr-z-ocean-backdrop: 0;     /* OceanBackdrop */
+  --kr-z-sky-layer: 10;         /* SkyLayer */
+  --kr-z-ghost-islands: 15;     /* GhostIslands — distant silhouettes */
+  --kr-z-cloud-layer: 20;       /* CloudLayer */
+  --kr-z-bridge-system: 30;     /* BridgeSystem */
+  --kr-z-floating-island: 40;   /* FloatingIsland */
+  --kr-z-central-castle: 50;    /* CentralCastle */
+  --kr-z-island-label: 60;      /* IslandLabel */
+  --kr-z-mission-banner: 70;    /* MissionBanner */
+  --kr-z-bottom-dock: 90;       /* BottomDock */
+  --kr-z-topbar: 100;           /* TopBar */
+  --kr-z-sidebar: 100;          /* Sidebar */
+  --kr-z-right-rail: 100;       /* RightRail */
+}
+
+
+/* -----------------------------------------------------------
+ * 5. MOTION TOKENS
+ * ----------------------------------------------------------- */
+
+:root,
+.dark {
+  /* Durations */
+  --kr-duration-micro: 150ms;
+  --kr-duration-fast: 200ms;
+  --kr-duration-normal: 300ms;
+  --kr-duration-slow: 500ms;
+  --kr-duration-glacial: 1000ms;
+
+  /* Easings */
+  --kr-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --kr-ease-spring-fast: cubic-bezier(0.22, 1, 0.28, 1);
+  --kr-ease-drift: linear;
+
+  /* Hover */
+  --kr-hover-scale: 1.02;
+  --kr-hover-lift: translateY(-2px);
+}
+
+
+/* -----------------------------------------------------------
+ * 6. KEYFRAME ANIMATIONS
+ * ----------------------------------------------------------- */
+
+/* Slow vertical float — islands breathing in space */
+@keyframes kr-float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Medium vertical float — smaller islands, labels */
+@keyframes kr-float-medium {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Clouds drifting horizontally across the sky */
+@keyframes kr-cloud-drift {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100vw);
+  }
+}
+
+/* Pulse glow — ambient island aura breath */
+@keyframes kr-pulse-glow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Slow spin — rotating accent elements */
+@keyframes kr-spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Bridge connection glow — pulsing link between islands */
+@keyframes kr-bridge-glow {
+  0%, 100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
+/* Ocean shimmer — subtle light play on ocean surface */
+@keyframes kr-ocean-shimmer {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Island entrance — rising from ocean */
+@keyframes kr-island-rise {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+/* -----------------------------------------------------------
+ * 7. UTILITY CLASSES
+ * ----------------------------------------------------------- */
+
+/* === Glass Surfaces === */
+
+.kr-glass {
+  background: var(--kr-glass-bg);
+  border: 1px solid var(--kr-glass-border);
+  backdrop-filter: blur(var(--kr-glass-blur));
+  -webkit-backdrop-filter: blur(var(--kr-glass-blur));
+  box-shadow: var(--kr-shadow-inner-glow);
+}
+
+.kr-glass-strong {
+  background: var(--kr-glass-strong-bg);
+  border: 1px solid var(--kr-glass-strong-border);
+  backdrop-filter: blur(var(--kr-panel-blur));
+  -webkit-backdrop-filter: blur(var(--kr-panel-blur));
+  box-shadow: var(--kr-shadow-card);
+}
+
+/* === Cards === */
+
+.kr-card {
+  border-radius: 1rem;
+  background: var(--kr-surface-deep);
+  border: 1px solid var(--kr-glass-border);
+  box-shadow: var(--kr-shadow-card);
+  transition:
+    transform var(--kr-duration-fast) var(--kr-ease-spring),
+    box-shadow var(--kr-duration-fast) var(--kr-ease-spring),
+    border-color var(--kr-duration-fast) var(--kr-ease-spring);
+}
+
+.kr-card-hover:hover {
+  transform: var(--kr-hover-lift);
+  box-shadow:
+    var(--kr-shadow-card),
+    var(--kr-shadow-glow-blue);
+  border-color: var(--kr-glass-strong-border);
+}
+
+/* === Typography === */
+
+.kr-text-display {
+  font-family: "Poppins", "Inter", system-ui, -apple-system, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  color: var(--kr-text-primary);
+}
+
+.kr-text-heading {
+  font-family: "Poppins", "Inter", system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--kr-text-primary);
+}
+
+.kr-text-body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--kr-text-secondary);
+}
+
+.kr-text-caption {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--kr-text-muted);
+}
+
+/* === Scrollbar === */
+
+.kr-scrollbar-thin::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.kr-scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--kr-surface-high);
+  border-radius: 3px;
+}
+
+.kr-scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--kr-text-muted);
+}
+
+.kr-scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Firefox scrollbar */
+.kr-scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--kr-surface-high) transparent;
+}
+
+/* === 3D World Layout Utilities === */
+
+.kr-ocean-bg {
+  background: linear-gradient(
+    180deg,
+    var(--kr-ocean-deep) 0%,
+    var(--kr-ocean) 60%,
+    var(--kr-ocean-surface) 100%
+  );
+}
+
+.kr-sky-bg {
+  background: linear-gradient(
+    180deg,
+    var(--kr-surface-abyss) 0%,
+    var(--kr-ocean-deep) 40%,
+    var(--kr-sky) 100%
+  );
+}
+
+.kr-island-base {
+  background: linear-gradient(
+    180deg,
+    var(--kr-grass) 0%,
+    var(--kr-earth) 60%,
+    var(--kr-earth-dark) 100%
+  );
+}
+
+/* === Utility Animation Classes === */
+
+.kr-animate-float-slow {
+  animation: kr-float-slow 6s var(--kr-ease-spring) infinite;
+}
+
+.kr-animate-float-medium {
+  animation: kr-float-medium 5s var(--kr-ease-spring) infinite;
+}
+
+.kr-animate-cloud-drift {
+  animation: kr-cloud-drift 120s var(--kr-ease-drift) infinite;
+}
+
+.kr-animate-pulse-glow {
+  animation: kr-pulse-glow 4s var(--kr-ease-spring) infinite;
+}
+
+.kr-animate-spin-slow {
+  animation: kr-spin-slow 10s var(--kr-ease-drift) infinite;
+}
+
+.kr-animate-bridge-glow {
+  animation: kr-bridge-glow 3s var(--kr-ease-spring) infinite;
+}
+
+.kr-animate-ocean-shimmer {
+  animation: kr-ocean-shimmer 6s var(--kr-ease-spring) infinite;
+}
+
+.kr-animate-island-rise {
+  animation: kr-island-rise 600ms var(--kr-ease-spring) both;
+}
+
+/* === Island Glow Utility Mixes === */
+
+.kr-glow-omnis {
+  box-shadow: var(--kr-shadow-glow-omnis);
+}
+
+.kr-glow-agencia {
+  box-shadow: var(--kr-shadow-glow-agencia);
+}
+
+.kr-glow-akasha {
+  box-shadow: var(--kr-shadow-glow-akasha);
+}
+
+.kr-glow-filosofia {
+  box-shadow: var(--kr-shadow-glow-filosofia);
+}
+
+.kr-glow-financas {
+  box-shadow: var(--kr-shadow-glow-financas);
+}
+
+.kr-glow-forja {
+  box-shadow: var(--kr-shadow-glow-forja);
+}
+
+.kr-glow-observatorio {
+  box-shadow: var(--kr-shadow-glow-observatorio);
+}
+
+.kr-glow-vila {
+  box-shadow: var(--kr-shadow-glow-vila);
+}
+
+.kr-glow-arena {
+  box-shadow: var(--kr-shadow-glow-arena);
+}
+
+.kr-glow-nimbus {
+  box-shadow: var(--kr-shadow-glow-nimbus);
+}
+
+.kr-glow-castle {
+  box-shadow: var(--kr-shadow-glow-castle);
+}
+
+
+/* -----------------------------------------------------------
+ * 8. REDUCED MOTION SUPPORT
+ * ----------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Override all KRATOS 3D animation classes */
+  .kr-animate-float-slow,
+  .kr-animate-float-medium,
+  .kr-animate-cloud-drift,
+  .kr-animate-pulse-glow,
+  .kr-animate-spin-slow,
+  .kr-animate-bridge-glow,
+  .kr-animate-ocean-shimmer,
+  .kr-animate-island-rise {
+    animation: none;
+  }
+
+  /* Neutralize hover transforms */
+  .kr-card-hover:hover {
+    transform: none;
+  }
+
+  /* Set all motion durations to zero */
+  :root,
+  .dark {
+    --kr-duration-micro: 0ms;
+    --kr-duration-fast: 0ms;
+    --kr-duration-normal: 0ms;
+    --kr-duration-slow: 0ms;
+    --kr-duration-glacial: 0ms;
+  }
+}
