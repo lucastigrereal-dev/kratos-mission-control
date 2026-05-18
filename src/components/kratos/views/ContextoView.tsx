@@ -8,7 +8,8 @@ import { BrowserContextList } from "@/components/kratos/contexto/BrowserContextL
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
-import { useContextSnapshot } from "@/hooks/useContexto";
+import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
+import { useContextSnapshot, useContextoMissionSnapshot } from "@/hooks/useContexto";
 import type { BrowserTab } from "../../../api-contract/contexto.schema";
 
 type BrowserItemStatus = "active" | "stale" | "distraction" | "unknown";
@@ -32,6 +33,7 @@ function mapTabs(tabs: BrowserTab[]) {
 
 export function ContextoView() {
   const { snapshot, isLoading, isError, error, refetch } = useContextSnapshot();
+  const mission = useContextoMissionSnapshot();
 
   if (isLoading) {
     return (
@@ -82,6 +84,9 @@ export function ContextoView() {
         title="Onde você está, onde se perdeu e como voltar."
         description="Save game mental do KRATOS. Sem reconstruir do zero."
       />
+      <div className="mb-4">
+        <SourceBadgeIndicator meta={mission.meta} />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">

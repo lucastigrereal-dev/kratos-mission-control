@@ -13,8 +13,9 @@ import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { GithubRepoCard } from "@/components/kratos/sistema/GithubRepoCard";
-import { useDashboard } from "@/hooks/useDashboard";
-import { useTrackedRepos, useGithubRepo } from "@/hooks/useGithub";
+import { useDashboard, useDashboardSnapshot } from "@/hooks/useDashboard";
+import { useTrackedRepos, useGithubRepo, useGithubConfig } from "@/hooks/useGithub";
+import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
 
 function StatBlock({
   label,
@@ -98,6 +99,8 @@ function QuickLink({
 export function DashboardView() {
   const navigate = useNavigate();
   const d = useDashboard();
+  const snap = useDashboardSnapshot();
+  const ghConfig = useGithubConfig();
   const { data: trackedRepos, isLoading: reposLoading } = useTrackedRepos();
 
   if (d.isLoading) {
@@ -123,6 +126,21 @@ export function DashboardView() {
         title="KRATOS"
         description="Visão consolidada de projetos, checkpoints, agenda e contexto."
       />
+      <div className="mb-4 flex items-center gap-2">
+        <SourceBadgeIndicator meta={snap.meta} />
+        {ghConfig.data && !ghConfig.data.configured && (
+          <span
+            className="text-[0.65rem] rounded-full border px-2 py-0.5"
+            style={{
+              color: "var(--kr-color-text-muted)",
+              borderColor: "var(--kr-color-amber)",
+              background: "color-mix(in oklab, var(--kr-color-amber) 8%, transparent)",
+            }}
+          >
+            GitHub não configurado
+          </span>
+        )}
+      </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

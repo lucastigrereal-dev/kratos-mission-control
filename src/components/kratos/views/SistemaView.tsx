@@ -8,8 +8,10 @@ import { ServiceHealthCard } from "@/components/kratos/sistema/ServiceHealthCard
 import { OmnisServiceStatusCard } from "@/components/kratos/sistema/OmnisServiceStatusCard";
 import { OmnisCrewCard } from "@/components/kratos/sistema/OmnisCrewCard";
 import { OmnisJobItem } from "@/components/kratos/sistema/OmnisJobItem";
-import { useServices } from "@/hooks/useServices";
-import { useOmnisStatus, useOmnisCrews, useOmnisJobs } from "@/hooks/useOmnis";
+import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
+import { useServices, useWorkerHealth } from "@/hooks/useServices";
+import { useOmnisStatus, useOmnisCrews, useOmnisJobs, useOmnisConfig } from "@/hooks/useOmnis";
+import { useGithubConfig } from "@/hooks/useGithub";
 
 const STATES: LiveState[] = [
   "live",
@@ -25,6 +27,9 @@ const STATES: LiveState[] = [
 
 export function SistemaView() {
   const { services, isLoading: krLoading } = useServices();
+  const { health: workerHealth, isLoading: whLoading } = useWorkerHealth();
+  const omnisConfig = useOmnisConfig();
+  const ghConfig = useGithubConfig();
   const { data: omnis, isLoading: omLoading, isError: omError, error: omErr } = useOmnisStatus();
   const { data: crews, isLoading: crLoading, isError: crError, error: crErr } = useOmnisCrews();
   const { data: jobs, isLoading: jbLoading, isError: jbError, error: jbErr } = useOmnisJobs(5);
@@ -36,6 +41,61 @@ export function SistemaView() {
         title="Saúde dos serviços e referência visual"
         description="Serviços monitorados pelo KRATOS e OMNIS. Os estados abaixo servem de referência para o Claude Code mapear ao motor real."
       />
+
+      {/* Worker Health + Config badges */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        {!whLoading && workerHealth && (
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.65rem]"
+            style={{
+              color: "var(--kr-color-text-secondary)",
+              borderColor:
+                workerHealth.status === "ok"
+                  ? "var(--kr-color-mission)"
+                  : workerHealth.status === "degraded"
+                    ? "var(--kr-color-amber)"
+                    : "var(--kr-color-risk)",
+            }}
+          >
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full"
+              style={{
+                background:
+                  workerHealth.status === "ok"
+                    ? "var(--kr-color-mission)"
+                    : workerHealth.status === "degraded"
+                      ? "var(--kr-color-amber)"
+                      : "var(--kr-color-risk)",
+              }}
+            />
+            Worker: {workerHealth.status} · v{workerHealth.version}
+          </span>
+        )}
+        {omnisConfig.data && !omnisConfig.data.configured && (
+          <span
+            className="text-[0.65rem] rounded-full border px-2 py-0.5"
+            style={{
+              color: "var(--kr-color-text-muted)",
+              borderColor: "var(--kr-color-amber)",
+              background: "color-mix(in oklab, var(--kr-color-amber) 8%, transparent)",
+            }}
+          >
+            OMNIS não configurado
+          </span>
+        )}
+        {ghConfig.data && !ghConfig.data.configured && (
+          <span
+            className="text-[0.65rem] rounded-full border px-2 py-0.5"
+            style={{
+              color: "var(--kr-color-text-muted)",
+              borderColor: "var(--kr-color-amber)",
+              background: "color-mix(in oklab, var(--kr-color-amber) 8%, transparent)",
+            }}
+          >
+            GitHub não configurado
+          </span>
+        )}
+      </div>
 
       {/* KRATOS service health */}
       <section>
