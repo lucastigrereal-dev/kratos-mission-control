@@ -137,7 +137,7 @@ export function useResumeCheckpoint() {
   return useMutation<Checkpoint | null, Error, string>({
     mutationFn: async (id: string) => {
       const result = await updateCheckpoint({
-        data: { id, status: "in_progress", progresso: 0 },
+        data: { id, status: "in_progress" },
       });
       if (result.error) throw new Error(result.error);
       return result.data;
