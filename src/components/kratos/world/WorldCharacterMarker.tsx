@@ -4,12 +4,14 @@ interface WorldCharacterMarkerProps {
   position: { x: string; y: string };
   label?: string;
   isActive?: boolean;
+  hasCheckpoint?: boolean;
 }
 
 export function WorldCharacterMarker({
   position,
   label,
   isActive = false,
+  hasCheckpoint = false,
 }: WorldCharacterMarkerProps) {
   return (
     <div
@@ -22,6 +24,7 @@ export function WorldCharacterMarker({
       }}
     >
       {/* Pulsing ring */}
+      <div className="relative">
       <div
         className={cn(
           "absolute rounded-full",
@@ -35,6 +38,21 @@ export function WorldCharacterMarker({
           opacity: isActive ? 1 : 0.5,
         }}
       />
+      {/* Checkpoint pip */}
+      {hasCheckpoint && (
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: 4,
+            height: 4,
+            top: -1,
+            right: -1,
+            background: "var(--kr-gold)",
+            boxShadow: "0 0 4px var(--kr-gold)",
+          }}
+        />
+      )}
+      </div>
 
       {/* Central dot */}
       <div

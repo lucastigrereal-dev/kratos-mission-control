@@ -9,6 +9,7 @@ type Priority = "critical" | "high" | "medium" | "low";
 interface Props {
   action?: MissionLensData["next_best_action"];
   sourceType: DataSource;
+  updatedAt?: string | null;
   onStart?: () => void;
 }
 
@@ -27,16 +28,16 @@ function scoreToPriority(score?: number): Priority {
   return "low";
 }
 
-function makeSourceMeta(sourceType: DataSource) {
+function makeSourceMeta(sourceType: DataSource, updatedAt?: string | null) {
   return {
     source: sourceType,
     stale: sourceType === "stale",
-    updated_at: new Date().toISOString(),
+    updated_at: updatedAt ?? null,
     errors: sourceType === "error" ? ["Falha ao carregar próxima ação"] : [],
   };
 }
 
-export function NextActionBlock({ action, sourceType, onStart }: Props) {
+export function NextActionBlock({ action, sourceType, updatedAt, onStart }: Props) {
   if (sourceType === "error") {
     return (
       <div
@@ -91,7 +92,7 @@ export function NextActionBlock({ action, sourceType, onStart }: Props) {
         >
           Próxima ação
         </span>
-        <SourceBadgeIndicator meta={makeSourceMeta(sourceType)} size="sm" />
+        <SourceBadgeIndicator meta={makeSourceMeta(sourceType, updatedAt)} size="sm" />
       </div>
 
       {/* Texto principal — destaque máximo */}

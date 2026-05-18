@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
     title="KRATOS Mission Control",
     description="Local-first operational cockpit",
-    version="0.10.0",
+    version="0.11.0",
 )
 
 app.add_middleware(
@@ -46,6 +46,7 @@ from app.routes.execution import router as execution_router
 from app.routes.tabs import router as tabs_router
 from app.routes.approvals import router as approvals_router
 from app.routes.continuity import router as continuity_router
+from app.routes.operational_truth import router as operational_truth_router
 
 app.include_router(health_router)
 app.include_router(tasks_router)
@@ -76,14 +77,15 @@ app.include_router(execution_router)
 app.include_router(tabs_router)
 app.include_router(approvals_router)
 app.include_router(continuity_router)
+app.include_router(operational_truth_router)
 
 
 @app.get("/")
 def root():
     return {
         "name": "KRATOS Mission Control",
-        "version": "0.10.0",
-        "phase": "0.10 — Verdade Operacional",
+        "version": "0.11.0",
+        "phase": "0.11 — Operational Truth Verifier",
         "endpoints": [
             "/health", "/now",
             "/projects", "/projects/{id}",
@@ -111,6 +113,7 @@ def root():
             "/context/current", "/context/lost",
             "/context/project-guess", "/context/checkpoint",
             "/mentor/context-signals",
+            "/operational-truth",
             "/live/stream", "/live/snapshot",
             "/mission/current", "/mission/lens",
             "/mentor/mission-brief",

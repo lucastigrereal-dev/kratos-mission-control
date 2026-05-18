@@ -1,5 +1,7 @@
 import { RotateCcw } from "lucide-react";
 import type { DriftState } from "@/hooks/useDriftDetection";
+import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
+import type { DataSource } from "../../../../api-contract/source-badge.schema";
 
 interface Props {
   driftState: DriftState;
@@ -7,6 +9,7 @@ interface Props {
   nudgeMessage: string;
   originalMission?: string;
   onResume?: () => void;
+  sourceType?: DataSource;
 }
 
 const DRIFT_COLOR: Record<DriftState, string> = {
@@ -20,7 +23,7 @@ function barWidth(minutesOff: number): string {
   return `${Math.min(100, (minutesOff / 45) * 100)}%`;
 }
 
-export function DriftIndicator({ driftState, minutesOff, nudgeMessage, originalMission, onResume }: Props) {
+export function DriftIndicator({ driftState, minutesOff, nudgeMessage, originalMission, onResume, sourceType }: Props) {
   if (driftState === "on-mission") return null;
 
   const color = DRIFT_COLOR[driftState];
@@ -77,6 +80,19 @@ export function DriftIndicator({ driftState, minutesOff, nudgeMessage, originalM
           )}
         </div>
 
+        {sourceType && (
+          <SourceBadgeIndicator
+            meta={{
+              source: sourceType,
+              origin: "drift",
+              errors: [],
+              stale: sourceType === "error" || sourceType === "stale",
+              updated_at: null,
+              confidence: sourceType === "live" ? 95 : 60,
+            }}
+            size="sm"
+          />
+        )}
         {onResume && (
           <button
             type="button"

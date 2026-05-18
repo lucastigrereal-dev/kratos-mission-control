@@ -121,7 +121,7 @@ export function DashboardView({
   const { data: trackedRepos, isLoading: reposLoading } = useTrackedRepos();
 
   // Novos hooks
-  const { lens, sourceType: lensSourceType } = useMissionLens();
+  const { lens, sourceType: lensSourceType, lastUpdatedAt: lensUpdatedAt } = useMissionLens();
   const drift = useDriftDetection();
   const { data: pausedCheckpoints, isLoading: checkpointsLoading } = usePausedCheckpoints();
   const resumeCheckpoint = useResumeCheckpoint();
@@ -253,6 +253,7 @@ export function DashboardView({
           <NextActionBlock
             action={lens?.next_best_action}
             sourceType={lensSourceType}
+            updatedAt={lensUpdatedAt}
             onStart={() => {
               // Iniciar próxima ação
             }}

@@ -14,8 +14,10 @@ import { useCheckpoints, useCreateCheckpoint, useUpdateCheckpoint } from "@/hook
 import { useAppointments } from "@/hooks/useAppointments";
 import { useLiveStatus } from "@/hooks/useLiveStatus";
 import { useDriftDetection } from "@/hooks/useDriftDetection";
+import { useMissionLens } from "@/hooks/useMissionLens";
 import { DriftIndicator } from "@/components/kratos/shell/DriftIndicator";
 import { ZombieBadge } from "@/components/kratos/base/ZombieBadge";
+import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
 import type { Checkpoint } from "../../../../api-contract/checkpoint.schema";
 import type { Appointment } from "../../../../api-contract/appointment.schema";
 import type { CriticalAlert } from "@/components/kratos/agora/CriticalAlertCard";
@@ -108,6 +110,7 @@ export function AgoraView() {
   const liveStatus = useLiveStatus(items.length);
   const miniAgendaItems = deriveMiniAgenda(appointments ?? []);
   const drift = useDriftDetection();
+  const { sourceType: lensSourceType, lastUpdatedAt: lensUpdatedAt } = useMissionLens();
 
   if (isLoading) {
     return (
@@ -222,11 +225,24 @@ export function AgoraView() {
         title="Você está aqui."
         description="Uma tela, uma decisão. O resto espera."
         right={
-          <ZombieBadge
-            driftState={drift.driftState}
-            minutesOff={drift.minutesOff}
-            onResume={() => refetch()}
-          />
+          <div className="flex items-center gap-2">
+            <SourceBadgeIndicator
+              meta={{
+                source: lensSourceType,
+                origin: "mission-lens",
+                errors: [],
+                stale: lensSourceType === "error" || lensSourceType === "stale",
+                updated_at: lensUpdatedAt,
+                confidence: lensSourceType === "live" ? 95 : 60,
+              }}
+              size="sm"
+            />
+            <ZombieBadge
+              driftState={drift.driftState}
+              minutesOff={drift.minutesOff}
+              onResume={() => refetch()}
+            />
+          </div>
         }
       />
 

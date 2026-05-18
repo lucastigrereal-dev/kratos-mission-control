@@ -1,9 +1,12 @@
 import { cn } from "@/lib/utils";
+import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
+import type { DataSource } from "../../../../api-contract/source-badge.schema";
 
 interface CurrentMissionBarProps {
   missionTitle?: string;
   progress?: number;
   timeRemaining?: string;
+  sourceType?: DataSource;
   className?: string;
 }
 
@@ -11,6 +14,7 @@ export function CurrentMissionBar({
   missionTitle,
   progress = 0,
   timeRemaining,
+  sourceType,
   className,
 }: CurrentMissionBarProps) {
   const clamped = Math.max(0, Math.min(100, progress));
@@ -76,6 +80,21 @@ export function CurrentMissionBar({
           >
             {timeRemaining}
           </span>
+        )}
+
+        {/* Source badge */}
+        {sourceType && (
+          <SourceBadgeIndicator
+            meta={{
+              source: sourceType,
+              origin: "mission-lens",
+              errors: [],
+              stale: sourceType === "error" || sourceType === "stale",
+              updated_at: null,
+              confidence: sourceType === "live" ? 95 : 60,
+            }}
+            size="sm"
+          />
         )}
       </div>
     </div>

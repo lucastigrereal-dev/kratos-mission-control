@@ -1,6 +1,8 @@
-import { Play, Shield } from "lucide-react";
+import { Bookmark, Play, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useKratosContext } from "./KratosContext";
+import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
+import { useCreateCheckpoint } from "@/hooks/useCheckpoints";
 
 /* --------------------------------------------------*\
  * StatusBarDock — Bottom dock for the 3D world view.
@@ -28,6 +30,9 @@ export function StatusBarDock({
   nextAction,
   onContinue,
 }: StatusBarDockProps) {
+  const { lensSourceType, lensLastUpdatedAt, lens } = useKratosContext();
+  const createCheckpoint = useCreateCheckpoint();
+
   return (
     <div
       className={cn(
@@ -58,6 +63,7 @@ export function StatusBarDock({
             <span
               className="block truncate text-xs font-semibold"
               style={{ color: "var(--kr-text-primary, #E5E7EB)" }}
+              title={currentMission}
             >
               {currentMission}
             </span>
@@ -132,12 +138,53 @@ export function StatusBarDock({
             <span
               className="text-[11px] font-medium truncate max-w-[200px]"
               style={{ color: "var(--kr-text-primary, #E5E7EB)" }}
+              title={nextAction}
             >
               {nextAction}
             </span>
           </div>
         )}
       </div>
+
+      {/* Source badge */}
+      <SourceBadgeIndicator
+        meta={{
+          source: lensSourceType,
+          origin: "mission-lens",
+          errors: [],
+          stale: lensSourceType === "error" || lensSourceType === "stale",
+          updated_at: lensLastUpdatedAt,
+          confidence: lensSourceType === "live" ? 95 : 60,
+        }}
+        size="sm"
+      />
+
+      {/* Save checkpoint button */}
+      <button
+        type="button"
+        onClick={() => {
+          createCheckpoint.mutate({
+            titulo: lens?.mission_lens?.current_mission
+              ? `Checkpoint: ${lens.mission_lens.current_mission}`
+              : "Checkpoint rápido",
+            descricao: lens?.next_best_action?.action
+              ? `Próxima ação: ${lens.next_best_action.action}`
+              : undefined,
+          });
+        }}
+        disabled={createCheckpoint.isPending}
+        className="shrink-0 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:brightness-110 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{
+          background: "var(--kr-surface-2, rgba(255,255,255,0.04))",
+          border: "1px solid var(--kr-glass-strong-border, rgba(255,255,255,0.08))",
+          color: "var(--kr-text-secondary, #D1D5DB)",
+        }}
+        aria-label="Salvar checkpoint"
+        title="Salvar checkpoint do estado atual"
+      >
+        <Bookmark className="h-3 w-3" aria-hidden />
+        <span className="hidden sm:inline">Salvar</span>
+      </button>
 
       {/* Right: Continue button */}
       {onContinue && (

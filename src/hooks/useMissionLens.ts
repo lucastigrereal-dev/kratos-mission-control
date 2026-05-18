@@ -129,6 +129,7 @@ interface UseMissionLensResult {
   lens: MissionLensData | null;
   isLoading: boolean;
   sourceType: DataSource;
+  lastUpdatedAt: string | null;
   refetch: () => void;
 }
 
@@ -146,6 +147,9 @@ export function useMissionLens(): UseMissionLensResult {
     lens: query.data?.data ?? null,
     isLoading: query.isLoading,
     sourceType: query.data?.sourceType ?? (query.isError ? "error" : "cache"),
+    lastUpdatedAt: query.dataUpdatedAt
+      ? new Date(query.dataUpdatedAt).toISOString()
+      : null,
     refetch: () => qc.invalidateQueries({ queryKey: ["mission-lens"] }),
   };
 }

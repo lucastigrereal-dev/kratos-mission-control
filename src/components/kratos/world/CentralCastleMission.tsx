@@ -15,6 +15,8 @@ interface CentralCastleMissionProps {
   currentMission?: string;
   /** Mission execution status */
   missionStatus?: "active" | "paused" | "completed";
+  /** Drift risk level — controls Energy Portal glow color */
+  driftRisk?: "low" | "medium" | "high";
   /** Click handler for the entire castle region */
   onCastleClick?: () => void;
   className?: string;
@@ -23,9 +25,16 @@ interface CentralCastleMissionProps {
 export function CentralCastleMission({
   currentMission = "Definir foco do dia",
   missionStatus = "active",
+  driftRisk,
   onCastleClick,
   className,
 }: CentralCastleMissionProps) {
+  const portalColor =
+    driftRisk === "high"
+      ? "var(--kr-color-risk, #EF4444)"
+      : driftRisk === "medium"
+        ? "var(--kr-color-warn, #F59E0B)"
+        : "var(--kr-accent-purple, #A855F7)";
   return (
     <div
       role={onCastleClick ? "button" : undefined}
@@ -407,9 +416,8 @@ export function CentralCastleMission({
           width: "56px",
           height: "56px",
           borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(255,255,255,0.35) 0%, color-mix(in srgb, var(--kr-accent-purple, #A855F7) 25%, transparent) 25%, color-mix(in srgb, var(--kr-accent-purple, #A855F7) 6%, transparent) 55%, transparent 70%)",
-          boxShadow: "0 0 30px color-mix(in srgb, var(--kr-accent-purple, #A855F7) 20%, transparent)",
+          background: `radial-gradient(circle, rgba(255,255,255,0.35) 0%, color-mix(in srgb, ${portalColor} 25%, transparent) 25%, color-mix(in srgb, ${portalColor} 6%, transparent) 55%, transparent 70%)`,
+          boxShadow: `0 0 30px color-mix(in srgb, ${portalColor} 20%, transparent)`,
           zIndex: 3,
         }}
       />

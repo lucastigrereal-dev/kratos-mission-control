@@ -66,6 +66,12 @@ interface KratosWorldPageProps {
 const SIDEBAR_KEY = "kratos.sidebar.collapsed";
 const AURORA_KEY = "kratos.aurora.open";
 
+const AURORA_QUICK_COMMANDS = [
+  { id: "retomar", label: "/retomar", icon: "↩" },
+  { id: "salvar", label: "/salvar", icon: "💾" },
+  { id: "foco", label: "/foco-agora", icon: "🎯" },
+];
+
 const SECTION_LABELS: Record<string, string> = {
   operacao: "Operacao",
   memoria: "Memoria",
@@ -180,6 +186,33 @@ function KratosWorldPageInner({
     }
   }, [ctx.pausedCheckpoints, ctx.resumeCheckpoint]);
 
+  const handleAuroraQuickCommand = useCallback((commandId: string) => {
+    switch (commandId) {
+      case "retomar": {
+        const topPaused = ctx.pausedCheckpoints?.[0];
+        if (topPaused) ctx.resumeCheckpoint.mutate(topPaused.id);
+        ctx.lensRefetch();
+        ctx.dashboardRefetch();
+        break;
+      }
+      case "salvar": {
+        const titulo = nextAction ?? currentMission ?? "Checkpoint rapido";
+        const descricao = [currentMission, missionPhase].filter(Boolean).join(" — fase: ");
+        ctx.createCheckpoint.mutate({
+          titulo,
+          descricao: descricao || undefined,
+          projetoId: null,
+        });
+        break;
+      }
+      case "foco": {
+        navigate({ to: "/agora" });
+        ctx.lensRefetch();
+        break;
+      }
+    }
+  }, [ctx.pausedCheckpoints, ctx.resumeCheckpoint, ctx.createCheckpoint, ctx.lensRefetch, ctx.dashboardRefetch, navigate, nextAction, currentMission, missionPhase]);
+
   // ── Derived values ────────────
   const currentMission =
     ctx.lens?.mission_lens?.current_mission ??
@@ -192,6 +225,28 @@ function KratosWorldPageInner({
 
   const connectionState: LiveState = ctx.liveStatus.liveState;
   const isOffline = connectionState === "offline" || connectionState === "error";
+
+  // Drift contextual message for Aurora chat dock
+  const driftMessage = ctx.driftStatus.driftState !== "on-mission"
+    ? {
+        id: "drift-alert",
+        text: ctx.driftStatus.driftState === "zombie"
+          ? `Você está em modo zumbi há ${ctx.driftStatus.minutesOff} minutos. Quer retomar a missão original?`
+          : ctx.driftStatus.driftState === "lost"
+          ? `Você está perdido há ${ctx.driftStatus.minutesOff} minutos. ${ctx.driftStatus.originalMission ? `Missão original: ${ctx.driftStatus.originalMission}` : "Defina uma missão para voltar ao foco."}`
+          : `Você saiu da missão há ${ctx.driftStatus.minutesOff} minutos. Quer voltar, atualizar a missão ou salvar um checkpoint?`,
+        from: "aurora" as const,
+      }
+    : null;
+
+  const auroraMessages = [
+    ...(driftMessage ? [driftMessage] : []),
+    ...(ctx.lens?.mentor_signals ?? []).map((s, i) => ({
+      id: `signal-${i}`,
+      text: s.message ?? "",
+      from: "aurora" as const,
+    })),
+  ];
 
   const showFullLoading =
     ctx.lensLoading && ctx.dashboard.isLoading && !ssrData;
@@ -238,7 +293,7 @@ function KratosWorldPageInner({
           <div className="mt-4 text-center">
             <button
               type="button"
-              onClick={() => ctx.lensRefetch()}
+              onClick={() => { ctx.lensRefetch(); ctx.dashboardRefetch(); }}
               className="rounded-lg px-4 py-2 text-xs font-medium transition-colors hover:brightness-110"
               style={{
                 background: "var(--kr-color-mission, #22C55E)",
@@ -271,6 +326,7 @@ function KratosWorldPageInner({
           <CentralCastleMission
             currentMission={currentMission}
             missionStatus={missionStatus}
+            driftRisk={ctx.lens?.context?.drift_risk}
             onCastleClick={handleCastleClick}
           />
         }
@@ -285,6 +341,7 @@ function KratosWorldPageInner({
           position={{ x: "50%", y: "45%" }}
           label="Lucas"
           isActive={connectionState === "live"}
+          hasCheckpoint={(ctx.pausedCheckpoints?.length ?? 0) > 0}
         />
       </div>
 
@@ -516,9 +573,20 @@ function KratosWorldPageInner({
 
         {/* Aurora chat dock — pinned at bottom */}
         <AuroraChatDock
-          messages={[]}
-          onSend={(text) => console.log("[AuroraChatDock] send:", text)}
+          messages={auroraMessages}
+          onSend={(_text) => { ctx.lensRefetch(); }}
+          quickCommands={AURORA_QUICK_COMMANDS}
+          onQuickCommand={handleAuroraQuickCommand}
           className="shrink-0"
+          context={
+            ctx.driftStatus.driftState === "on-mission"
+              ? "normal"
+              : ctx.driftStatus.driftState === "drifting"
+                ? "drift"
+                : ctx.driftStatus.driftState === "lost"
+                  ? "lost"
+                  : "zombie"
+          }
         />
       </aside>
 
@@ -540,6 +608,7 @@ function KratosWorldPageInner({
           nudgeMessage={ctx.driftStatus.nudgeMessage}
           originalMission={ctx.driftStatus.originalMission}
           onResume={handleResume}
+          sourceType={ctx.lensSourceType}
         />
       </div>
 
@@ -556,6 +625,8 @@ function KratosWorldPageInner({
             driftState={ctx.driftStatus.driftState}
             minutesOff={ctx.driftStatus.minutesOff}
             onResume={handleResume}
+            sourceType={ctx.lensSourceType}
+            onRetryConnection={() => { ctx.lensRefetch(); ctx.dashboardRefetch(); }}
           />
         </div>
       )}
@@ -572,12 +643,50 @@ function KratosWorldPageInner({
           transition: "left 200ms ease",
         }}
       >
+        {/* Restore CTA — shows when paused checkpoint exists */}
+        {ctx.pausedCheckpoints && ctx.pausedCheckpoints.length > 0 && (
+          <div className="mb-2">
+            <button
+              type="button"
+              onClick={handleContinue}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-[11px] font-medium transition-all duration-150 hover:brightness-110 active:scale-[0.97] kratos-focus-ring"
+              style={{
+                background: "color-mix(in oklab, var(--kr-color-aurora, #6366F1) 10%, transparent)",
+                border: "1px solid color-mix(in oklab, var(--kr-color-aurora, #6366F1) 25%, transparent)",
+                color: "var(--kr-color-aurora, #6366F1)",
+              }}
+            >
+              <span>↩</span>
+              <span>Retomar: {ctx.pausedCheckpoints[0].titulo}</span>
+            </button>
+          </div>
+        )}
         <CurrentMissionBar
           missionTitle={currentMission}
           progress={ctx.checkpointProgress ?? 0}
           timeRemaining={missionPhase}
+          sourceType={ctx.lensSourceType}
         />
       </div>
+
+      {/* Alert count pill — shown above status bar when alerts exist */}
+      {(ctx.lens?.alerts?.length ?? 0) > 0 && (
+        <div
+          className="fixed right-5 z-[89]"
+          style={{ bottom: 52 }}
+        >
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold kratos-mono"
+            style={{
+              background: "color-mix(in oklab, var(--kr-color-risk, #EF4444) 12%, transparent)",
+              border: "1px solid color-mix(in oklab, var(--kr-color-risk, #EF4444) 30%, transparent)",
+              color: "var(--kr-color-risk, #EF4444)",
+            }}
+          >
+            ⚠ {ctx.lens?.alerts?.length ?? 0} alerta{(ctx.lens?.alerts?.length ?? 0) > 1 ? "s" : ""}
+          </span>
+        </div>
+      )}
 
       {/* ════════════════════════════════════════
         Layer: StatusBarDock (z-90)
@@ -667,7 +776,7 @@ interface AuroraPanelV2ContentProps {
 }
 
 function AuroraPanelV2Content({ ctx }: AuroraPanelV2ContentProps) {
-  const { lens, lensLoading, lensSourceType, driftStatus } = ctx;
+  const { lens, lensLoading, lensSourceType, lensLastUpdatedAt, driftStatus } = ctx;
 
   if (lensLoading) {
     return (
@@ -703,7 +812,7 @@ function AuroraPanelV2Content({ ctx }: AuroraPanelV2ContentProps) {
             origin: "mission-lens",
             errors: [],
             stale: lensSourceType === "error",
-            updated_at: new Date().toISOString(),
+            updated_at: lensLastUpdatedAt,
             confidence: lensSourceType === "live" ? 95 : 50,
           }}
           size="sm"
@@ -769,6 +878,27 @@ function AuroraPanelV2Content({ ctx }: AuroraPanelV2ContentProps) {
             >
               {missionLens.status === "on_mission" ? "EM MISSAO" : "FORA DE MISSAO"}
             </span>
+          )}
+          {/* Focus state + drift risk */}
+          {(lens.context?.focus_state || lens.context?.drift_risk) && (
+            <div className="flex items-center gap-2 flex-wrap mt-2">
+              {lens.context?.focus_state && (
+                <span className="text-[10px] kratos-mono rounded-full px-2 py-0.5"
+                  style={{ background: "var(--kr-surface-2, rgba(255,255,255,0.03))", color: "var(--kr-text-muted, #9CA3AF)", border: "1px solid var(--kr-glass-strong-border)" }}>
+                  {lens.context.focus_state}
+                </span>
+              )}
+              {lens.context?.drift_risk && lens.context.drift_risk !== "low" && (
+                <span className="text-[10px] kratos-mono rounded-full px-2 py-0.5 font-medium"
+                  style={{
+                    background: lens.context.drift_risk === "high" ? "color-mix(in oklab, var(--kr-color-risk, #EF4444) 12%, transparent)" : "color-mix(in oklab, var(--kr-color-warn, #F59E0B) 12%, transparent)",
+                    color: lens.context.drift_risk === "high" ? "var(--kr-color-risk, #EF4444)" : "var(--kr-color-warn, #F59E0B)",
+                    border: `1px solid ${lens.context.drift_risk === "high" ? "color-mix(in oklab, var(--kr-color-risk, #EF4444) 30%, transparent)" : "color-mix(in oklab, var(--kr-color-warn, #F59E0B) 30%, transparent)"}`,
+                  }}>
+                  risco {lens.context.drift_risk === "high" ? "ALTO" : "MÉDIO"}
+                </span>
+              )}
+            </div>
           )}
         </div>
       </section>

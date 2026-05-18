@@ -1,10 +1,13 @@
-import { AlertTriangle, RotateCcw } from "lucide-react";
+import { AlertTriangle, RotateCcw, RefreshCw } from "lucide-react";
 import type { DriftState } from "@/hooks/useDriftDetection";
+import type { DataSource } from "../../../../api-contract/source-badge.schema";
 
 interface ZombieBadgeProps {
   driftState: DriftState;
   minutesOff: number;
   onResume?: () => void;
+  onRetryConnection?: () => void;
+  sourceType?: DataSource;
   className?: string;
 }
 
@@ -41,6 +44,8 @@ export function ZombieBadge({
   driftState,
   minutesOff,
   onResume,
+  onRetryConnection,
+  sourceType,
   className = "",
 }: ZombieBadgeProps) {
   if (driftState === "on-mission") return null;
@@ -81,6 +86,23 @@ export function ZombieBadge({
       <span className="kratos-mono">
         {style.label} · {minutesOff}min
       </span>
+
+      {/* Botão Reconectar (quando sourceType === error) */}
+      {onRetryConnection && sourceType === "error" && (
+        <button
+          type="button"
+          onClick={onRetryConnection}
+          className="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] kratos-mono kratos-focus-ring transition-colors"
+          style={{
+            background: "color-mix(in oklab, var(--kratos-critical) 16%, transparent)",
+            border: `1px solid color-mix(in oklab, var(--kratos-critical) 36%, transparent)`,
+            color: "var(--kratos-critical)",
+          }}
+        >
+          <RefreshCw className="h-2.5 w-2.5" aria-hidden />
+          Reconectar
+        </button>
+      )}
 
       {/* Botão Retomar (zombie only) */}
       {isZombie && onResume && (

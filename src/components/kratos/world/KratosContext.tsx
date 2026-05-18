@@ -1,4 +1,5 @@
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   useMissionLens,
   type MissionLensData,
@@ -15,6 +16,7 @@ import {
 import { useSystemPulse, type SystemPulseData } from "@/hooks/useSystemPulse";
 import {
   useCheckpoints,
+  useCreateCheckpoint,
   usePausedCheckpoints,
   useResumeCheckpoint,
   type PausedCheckpoint,
@@ -35,7 +37,9 @@ interface KratosContextValue {
   lens: MissionLensData | null;
   lensLoading: boolean;
   lensSourceType: DataSource;
+  lensLastUpdatedAt: string | null;
   lensRefetch: () => void;
+  dashboardRefetch: () => void;
 
   /** Drift detection */
   driftStatus: DriftStatus;
@@ -69,6 +73,7 @@ interface KratosContextValue {
   pausedCheckpoints: PausedCheckpoint[] | undefined;
   checkpointsLoading: boolean;
   resumeCheckpoint: ReturnType<typeof useResumeCheckpoint>;
+  createCheckpoint: ReturnType<typeof useCreateCheckpoint>;
 
   /** Live status (connection state, SSE, services) */
   liveStatus: {
@@ -99,8 +104,18 @@ export function KratosContextProvider({
   ssrDashboard,
 }: KratosContextProviderProps) {
   // ── Hooks ────────────────────────
-  const { lens, isLoading: lensLoading, sourceType: lensSourceType, refetch: lensRefetch } =
-    useMissionLens();
+  const qc = useQueryClient();
+  const {
+    lens,
+    isLoading: lensLoading,
+    sourceType: lensSourceType,
+    lastUpdatedAt: lensLastUpdatedAt,
+    refetch: lensRefetch,
+  } = useMissionLens();
+  const dashboardRefetch = useCallback(
+    () => qc.invalidateQueries({ queryKey: ["dashboard"] }),
+    [qc],
+  );
 
   const driftStatus = useDriftDetection();
 
@@ -111,6 +126,7 @@ export function KratosContextProvider({
     useSystemPulse();
 
   const checkpoints = useCheckpoints();
+  const createCheckpoint = useCreateCheckpoint();
   const { data: pausedCheckpoints, isLoading: checkpointsLoading } =
     usePausedCheckpoints();
   const resumeCheckpoint = useResumeCheckpoint();
@@ -141,7 +157,9 @@ export function KratosContextProvider({
       lens,
       lensLoading,
       lensSourceType,
+      lensLastUpdatedAt,
       lensRefetch,
+      dashboardRefetch,
       driftStatus,
       dashboard: d,
       dashboardSnapshot: snap,
@@ -152,6 +170,7 @@ export function KratosContextProvider({
       pausedCheckpoints,
       checkpointsLoading,
       resumeCheckpoint,
+      createCheckpoint,
       liveStatus,
       checkpointProgress,
       activeCheckpointCount,
@@ -160,7 +179,9 @@ export function KratosContextProvider({
       lens,
       lensLoading,
       lensSourceType,
+      lensLastUpdatedAt,
       lensRefetch,
+      dashboardRefetch,
       driftStatus,
       d,
       snap,
@@ -171,6 +192,7 @@ export function KratosContextProvider({
       pausedCheckpoints,
       checkpointsLoading,
       resumeCheckpoint,
+      createCheckpoint,
       liveStatus,
       checkpointProgress,
       activeCheckpointCount,

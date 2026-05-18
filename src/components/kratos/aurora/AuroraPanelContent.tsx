@@ -9,7 +9,7 @@ import { useMissionLens } from "@/hooks/useMissionLens";
 import { useDriftDetection } from "@/hooks/useDriftDetection";
 
 export function AuroraPanelContent() {
-  const { lens, isLoading, sourceType, refetch } = useMissionLens();
+  const { lens, isLoading, sourceType, lastUpdatedAt, refetch } = useMissionLens();
   const { driftState, minutesOff, nudgeMessage, originalMission } =
     useDriftDetection();
 
@@ -74,6 +74,7 @@ export function AuroraPanelContent() {
             <NextActionBlock
               action={lens?.next_best_action}
               sourceType={sourceType}
+              updatedAt={lastUpdatedAt}
               onStart={() => {
                 // TODO: wire into mission execution when ready
               }}

@@ -117,6 +117,19 @@ export function SistemaView() {
         )}
       </div>
 
+      {/* Source badge */}
+      <SourceBadgeIndicator
+        meta={{
+          source: omError ? "error" : omLoading ? "cache" : "live",
+          origin: "omnis",
+          errors: omError ? [(omErr as Error)?.message ?? "Falha ao carregar status do OMNIS"] : [],
+          stale: omError,
+          updated_at: null,
+          confidence: omError ? 0 : 90,
+        }}
+        size="sm"
+      />
+
       {/* Next action summary */}
       <div
         className="mb-6 text-[12px]"
