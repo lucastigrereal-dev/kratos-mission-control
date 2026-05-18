@@ -94,3 +94,57 @@ export function useDeleteCheckpoint() {
     },
   });
 }
+
+// --- Checkpoints pausados + resume ---
+
+const PAUSED_STATUSES = ["pending", "in_progress"] as const;
+
+export interface PausedCheckpoint {
+  id: string;
+  titulo: string;
+  descricao?: string;
+  projetoId: string | null;
+  progresso: number;
+  atualizadoEm: string;
+}
+
+export function usePausedCheckpoints() {
+  return useQuery<PausedCheckpoint[], Error>({
+    queryKey: ["checkpoints", "paused"],
+    queryFn: async () => {
+      const result = await getCheckpoints();
+      if (result.error) throw new Error(result.error);
+      const all = result.data ?? [];
+      return all
+        .filter((c) => (PAUSED_STATUSES as readonly string[]).includes(c.status))
+        .slice(0, 5)
+        .map((c) => ({
+          id: c.id,
+          titulo: c.titulo,
+          descricao: c.descricao,
+          projetoId: c.projetoId,
+          progresso: c.progresso,
+          atualizadoEm: c.atualizadoEm,
+        }));
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useResumeCheckpoint() {
+  const queryClient = useQueryClient();
+
+  return useMutation<Checkpoint | null, Error, string>({
+    mutationFn: async (id: string) => {
+      const result = await updateCheckpoint({
+        data: { id, status: "in_progress", progresso: 0 },
+      });
+      if (result.error) throw new Error(result.error);
+      return result.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: checkpointKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["checkpoints", "paused"] });
+    },
+  });
+}
