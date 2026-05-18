@@ -56,3 +56,8 @@ _debug_*.py
 coverage/
 htmlcov/
 .planning/
+
+# KRATOS local quarantine / corrupted agent backups
+.claude/_quarantine_corrupted_agents_2026-05-16/
+.claude/quarantine/
+.backup_skills_antes_limpeza/
