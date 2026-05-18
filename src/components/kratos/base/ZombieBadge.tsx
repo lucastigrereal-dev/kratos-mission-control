@@ -8,12 +8,15 @@ interface ZombieBadgeProps {
   className?: string;
 }
 
-const BADGE_STYLE: Record<Exclude<DriftState, "on-mission">, {
-  color: string;
-  bg: string;
-  border: string;
-  label: string;
-}> = {
+const BADGE_STYLE: Record<
+  Exclude<DriftState, "on-mission">,
+  {
+    color: string;
+    bg: string;
+    border: string;
+    label: string;
+  }
+> = {
   drifting: {
     color: "var(--kratos-warn)",
     bg: "color-mix(in oklab, var(--kratos-warn) 8%, transparent)",
@@ -34,7 +37,12 @@ const BADGE_STYLE: Record<Exclude<DriftState, "on-mission">, {
   },
 };
 
-export function ZombieBadge({ driftState, minutesOff, onResume, className = "" }: ZombieBadgeProps) {
+export function ZombieBadge({
+  driftState,
+  minutesOff,
+  onResume,
+  className = "",
+}: ZombieBadgeProps) {
   if (driftState === "on-mission") return null;
 
   const style = BADGE_STYLE[driftState];
@@ -51,9 +59,11 @@ export function ZombieBadge({ driftState, minutesOff, onResume, className = "" }
         background: style.bg,
         border: `1px solid ${style.border}`,
         color: style.color,
-        ...(isZombie ? {
-          animation: "var(--kr-duration-slow) kratos-pulse 2s ease-in-out infinite",
-        } : {}),
+        ...(isZombie
+          ? {
+              animation: "var(--kr-duration-slow) kratos-pulse 2s ease-in-out infinite",
+            }
+          : {}),
       }}
     >
       {/* Ícone ou dot */}

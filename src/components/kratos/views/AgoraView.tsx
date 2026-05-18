@@ -13,6 +13,9 @@ import { MiniAgenda, type AgendaItem } from "@/components/kratos/agora/MiniAgend
 import { useCheckpoints, useCreateCheckpoint, useUpdateCheckpoint } from "@/hooks/useCheckpoints";
 import { useAppointments } from "@/hooks/useAppointments";
 import { useLiveStatus } from "@/hooks/useLiveStatus";
+import { useDriftDetection } from "@/hooks/useDriftDetection";
+import { DriftIndicator } from "@/components/kratos/shell/DriftIndicator";
+import { ZombieBadge } from "@/components/kratos/base/ZombieBadge";
 import type { Checkpoint } from "../../../../api-contract/checkpoint.schema";
 import type { Appointment } from "../../../../api-contract/appointment.schema";
 import type { CriticalAlert } from "@/components/kratos/agora/CriticalAlertCard";
@@ -104,6 +107,7 @@ export function AgoraView() {
   const items = checkpoints ?? [];
   const liveStatus = useLiveStatus(items.length);
   const miniAgendaItems = deriveMiniAgenda(appointments ?? []);
+  const drift = useDriftDetection();
 
   if (isLoading) {
     return (
@@ -187,6 +191,12 @@ export function AgoraView() {
     (a, b) => new Date(b.atualizadoEm).getTime() - new Date(a.atualizadoEm).getTime(),
   )[0];
 
+  // Drift-aware focus: qualquer drift desliga o foco visual
+  const focusState =
+    drift.driftState !== "on-mission" || !inProgress
+      ? ("off_focus" as const)
+      : ("on_focus" as const);
+
   const criticalAlert: CriticalAlert | undefined =
     blocked.length > 0
       ? {
@@ -198,17 +208,33 @@ export function AgoraView() {
 
   return (
     <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
+      {/* DriftIndicator: full-width alert bar when off-mission */}
+      <DriftIndicator
+        driftState={drift.driftState}
+        minutesOff={drift.minutesOff}
+        nudgeMessage={drift.nudgeMessage}
+        originalMission={drift.originalMission}
+        onResume={() => refetch()}
+      />
+
       <SectionHeader
         eyebrow={`Agora · ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })} BRT`}
         title="Você está aqui."
         description="Uma tela, uma decisão. O resto espera."
+        right={
+          <ZombieBadge
+            driftState={drift.driftState}
+            minutesOff={drift.minutesOff}
+            onResume={() => refetch()}
+          />
+        }
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         <div className="lg:col-span-3">
           <FocusCard
             project={inProgress?.titulo ?? "KRATOS · Mission Control"}
-            state={inProgress ? "on_focus" : "off_focus"}
+            state={focusState}
             headline={inProgress ? "Você está no foco certo." : "Nenhum checkpoint em progresso."}
             subline={
               inProgress
