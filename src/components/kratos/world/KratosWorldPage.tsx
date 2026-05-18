@@ -28,6 +28,7 @@ import {
 import type { DashboardLoaderData } from "@/hooks/useDashboard";
 import type { DriftState } from "@/hooks/useDriftDetection";
 import type { LiveState } from "@/components/kratos/base/LiveStatusIndicator";
+import type { useCheckpoints } from "@/hooks/useCheckpoints";
 import type { DataSource } from "../../../api-contract/source-badge.schema";
 
 /* --------------------------------------------------*\

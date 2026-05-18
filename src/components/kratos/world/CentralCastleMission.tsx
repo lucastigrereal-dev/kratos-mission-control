@@ -369,7 +369,7 @@ export function CentralCastleMission({
                 borderRight: "1.5px solid var(--kr-castle-stone)",
                 borderBottom: "1.5px solid var(--kr-castle-stone)",
                 boxShadow:
-                  "inset 0 0 12px rgba(255,215,0,0.12), inset 0 0 24px rgba(255,215,0,0.04)",
+                  "inset 0 0 12px color-mix(in srgb, var(--kr-gold, #FFD700) 12%, transparent), inset 0 0 24px color-mix(in srgb, var(--kr-gold, #FFD700) 4%, transparent)",
               }}
             >
               {/* Inner glow line */}
@@ -378,7 +378,7 @@ export function CentralCastleMission({
                   width: "14px",
                   height: "1px",
                   background:
-                    "linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent)",
+                    "linear-gradient(90deg, transparent, color-mix(in srgb, var(--kr-gold, #FFD700) 30%, transparent), transparent)",
                 }}
               />
             </div>
@@ -408,8 +408,8 @@ export function CentralCastleMission({
           height: "56px",
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(139,92,246,0.25) 25%, rgba(139,92,246,0.06) 55%, transparent 70%)",
-          boxShadow: "0 0 30px rgba(139,92,246,0.2)",
+            "radial-gradient(circle, rgba(255,255,255,0.35) 0%, color-mix(in srgb, var(--kr-accent-purple, #A855F7) 25%, transparent) 25%, color-mix(in srgb, var(--kr-accent-purple, #A855F7) 6%, transparent) 55%, transparent 70%)",
+          boxShadow: "0 0 30px color-mix(in srgb, var(--kr-accent-purple, #A855F7) 20%, transparent)",
           zIndex: 3,
         }}
       />

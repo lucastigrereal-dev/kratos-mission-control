@@ -94,7 +94,7 @@ export function FloatingIsland({
         style={{
           width: dims.width * 1.6,
           height: dims.height * 1.6,
-          background: `radial-gradient(ellipse at center, ${glowColor}22 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse at center, color-mix(in srgb, ${glowColor} 13%, transparent) 0%, transparent 70%)`,
           filter: "blur(24px)",
         }}
         aria-hidden="true"
