@@ -4,6 +4,7 @@ import { Topbar } from "./Topbar";
 import { AuroraPanel } from "./AuroraPanel";
 import { StatusBar } from "./StatusBar";
 import type { LiveState } from "../base/LiveStatusIndicator";
+import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
 
 const SIDEBAR_KEY = "kratos.sidebar.collapsed";
 const AURORA_KEY = "kratos.aurora.open";
@@ -17,6 +18,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [auroraOpen, setAuroraOpen] = useState(false);
 
+  useGlobalShortcuts();
+
   useEffect(() => {
     try {
       const s = localStorage.getItem(SIDEBAR_KEY);
@@ -26,6 +29,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     } catch {
       /* noop */
     }
+  }, []);
+
+  useEffect(() => {
+    const handler = () => toggleAurora();
+    window.addEventListener("kratos:toggle-aurora", handler);
+    return () => window.removeEventListener("kratos:toggle-aurora", handler);
   }, []);
 
   const toggleSidebar = () => {
