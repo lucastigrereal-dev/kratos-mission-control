@@ -64,6 +64,7 @@ export function ContextActionStrip() {
               background: "var(--kratos-surface-3)",
               border: "1px solid var(--kratos-border)",
             }}
+            aria-label={`${label}: ${hint}`}
           >
             <Icon
               className="h-3.5 w-3.5 shrink-0"
