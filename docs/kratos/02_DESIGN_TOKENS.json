@@ -1,0 +1,297 @@
+{
+  "$schema": "https://raw.githubusercontent.com/lucastigrereal-dev/kratos/main/docs/kratos/design-tokens-schema.json",
+  "name": "KRATOS Mission Control Design Tokens",
+  "version": "1.0.0",
+  "description": "Todos os tokens de design do KRATOS em JSON puro. Dark mode only.",
+
+  "colors": {
+    "ocean_and_sky": {
+      "ocean_deep": { "value": "#051024", "token": "--kr-ocean-deep" },
+      "ocean": { "value": "#0A1E3F", "token": "--kr-ocean" },
+      "ocean_surface": { "value": "rgba(14, 165, 233, 0.06)", "token": "--kr-ocean-surface" },
+      "sky": { "value": "#60A5FA", "token": "--kr-sky" },
+      "sky_light": { "value": "#93C5FD", "token": "--kr-sky-light" }
+    },
+    "island_terrain": {
+      "grass": { "value": "#22C55E", "token": "--kr-grass" },
+      "grass_light": { "value": "#4ADE80", "token": "--kr-grass-light" },
+      "earth": { "value": "#92400E", "token": "--kr-earth" },
+      "earth_dark": { "value": "#78350F", "token": "--kr-earth-dark" },
+      "wood": { "value": "#A16207", "token": "--kr-wood" },
+      "wood_light": { "value": "#CA8A04", "token": "--kr-wood-light" }
+    },
+    "castle": {
+      "stone": { "value": "#78716C", "token": "--kr-castle-stone" },
+      "roof": { "value": "#1E40AF", "token": "--kr-castle-roof" },
+      "wall": { "value": "#A8A29E", "token": "--kr-castle-wall" }
+    },
+    "semantic": {
+      "azure": { "value": "#1E90FF", "token": "--kr-azure", "usage": "links, info, celestial" },
+      "gold": { "value": "#FFD700", "token": "--kr-gold", "usage": "destaque, conquista" },
+      "aurora": { "value": "#8B5CF6", "token": "--kr-aurora", "usage": "Aurora AI, mentor" },
+      "success": { "value": "#22C55E", "token": "--kr-success", "usage": "missão ativa, ok" },
+      "danger": { "value": "#EF4444", "token": "--kr-danger", "usage": "alerta crítico, perigo" },
+      "warning": { "value": "#F59E0B", "token": "--kr-warning", "usage": "drift, aviso" }
+    },
+    "islands": {
+      "omnis": { "value": "#7C3AED", "token": "--kr-island-omnis", "label": "Omnis Lab — IA, agents" },
+      "agencia": { "value": "#F97316", "token": "--kr-island-agencia", "label": "Agência — conteúdo, brand" },
+      "akasha": { "value": "#059669", "token": "--kr-island-akasha", "label": "Akasha — memória, conhecimento" },
+      "nimbus": { "value": "#0EA5E9", "token": "--kr-island-nimbus", "label": "Nimbus — sonhos, viagens" },
+      "arena": { "value": "#E11D48", "token": "--kr-island-arena", "label": "Arena — vendas, negociação" },
+      "vila": { "value": "#16A34A", "token": "--kr-island-vila", "label": "Vila Viva — família" },
+      "forja": { "value": "#DC2626", "token": "--kr-island-forja", "label": "Forja — saúde, disciplina" },
+      "observatorio": { "value": "#4F46E5", "token": "--kr-island-observatorio", "label": "Observatório — visão, ideias" },
+      "filosofia": { "value": "#D97706", "token": "--kr-island-filosofia", "label": "Filosofia — sabedoria" },
+      "financas": { "value": "#CA8A04", "token": "--kr-island-financas", "label": "Tesouro — riqueza" }
+    },
+    "accents": {
+      "cyan": { "value": "#06B6D4", "token": "--kr-accent-cyan" },
+      "cyan_bright": { "value": "#22D3EE", "token": "--kr-accent-cyan-bright" },
+      "indigo": { "value": "#6366F1", "token": "--kr-accent-indigo" },
+      "emerald": { "value": "#10B981", "token": "--kr-accent-emerald" },
+      "green_light": { "value": "#6EE7B7", "token": "--kr-accent-green-light" },
+      "gold_light": { "value": "#FCD34D", "token": "--kr-accent-gold-light" },
+      "gold_pale": { "value": "#FDE68A", "token": "--kr-accent-gold-pale" },
+      "orange_light": { "value": "#FDBA74", "token": "--kr-accent-orange-light" },
+      "orange_lighter": { "value": "#FB923C", "token": "--kr-accent-orange-lighter" },
+      "amber_bright": { "value": "#FBBF24", "token": "--kr-accent-amber-bright" },
+      "purple": { "value": "#A855F7", "token": "--kr-accent-purple" },
+      "purple_light": { "value": "#C4B5FD", "token": "--kr-accent-purple-light" },
+      "purple_lighter": { "value": "#A78BFA", "token": "--kr-accent-purple-lighter" },
+      "blue_light": { "value": "#7DD3FC", "token": "--kr-accent-blue-light" },
+      "blue_cyan": { "value": "#67E8F9", "token": "--kr-accent-blue-cyan" }
+    },
+    "surfaces": {
+      "abyss": { "value": "#020617", "token": "--kr-surface-abyss", "usage": "fundo absoluto" },
+      "ocean": { "value": "#0B1220", "token": "--kr-surface-ocean", "usage": "fundo oceano" },
+      "deep": { "value": "#0F172A", "token": "--kr-surface-deep", "usage": "cards" },
+      "mid": { "value": "#1E293B", "token": "--kr-surface-mid", "usage": "hover" },
+      "high": { "value": "#334155", "token": "--kr-surface-high", "usage": "elevado" },
+      "surface_0": { "value": "#0c0c0e", "token": "--kratos-surface-0", "usage": "base shell" },
+      "surface_1": { "value": "#111114", "token": "--kratos-surface-1", "usage": "1 nivel acima" },
+      "surface_2": { "value": "#17171b", "token": "--kratos-surface-2", "usage": "cards" },
+      "surface_3": { "value": "#1e1e24", "token": "--kratos-surface-3", "usage": "hover" },
+      "surface_4": { "value": "#26262f", "token": "--kratos-surface-4", "usage": "elevado" }
+    },
+    "text": {
+      "primary": { "value": "#E5E7EB", "token": "--kr-text-primary" },
+      "secondary": { "value": "#9CA3AF", "token": "--kr-text-secondary" },
+      "muted": { "value": "#6B7280", "token": "--kr-text-muted" },
+      "hud": { "value": "#E5E7EB", "token": "--kr-hud-text" }
+    },
+    "3d_world": {
+      "cloud": { "value": "rgba(248, 250, 252, 0.08)", "token": "--kr-cloud" },
+      "cloud_bright": { "value": "rgba(248, 250, 252, 0.16)", "token": "--kr-cloud-bright" },
+      "bridge_glow": { "value": "rgba(30, 144, 255, 0.18)", "token": "--kr-bridge-glow-color" },
+      "bridge_glow_strong": { "value": "rgba(30, 144, 255, 0.35)", "token": "--kr-bridge-glow-strong" }
+    },
+    "borders": {
+      "border": { "value": "rgba(255, 255, 255, 0.12)", "token": "--kr-glass-border" },
+      "border_on_focus": { "value": "rgba(34, 197, 94, 0.15)", "token": "--kratos-border-on-focus" },
+      "border_off_focus": { "value": "rgba(239, 68, 68, 0.15)", "token": "--kratos-border-off-focus" },
+      "border_live": { "value": "rgba(99, 102, 241, 0.15)", "token": "--kratos-border-live" },
+      "hud_border": { "value": "rgba(255, 255, 255, 0.10)", "token": "--kr-hud-border" }
+    }
+  },
+
+  "glassmorphism": {
+    "standard": {
+      "background": "rgba(11, 18, 32, 0.78)",
+      "border": "rgba(255, 255, 255, 0.12)",
+      "blur": "16px",
+      "token_bg": "--kr-glass-bg",
+      "token_border": "--kr-glass-border",
+      "token_blur": "--kr-glass-blur"
+    },
+    "strong": {
+      "background": "rgba(15, 23, 42, 0.94)",
+      "border": "rgba(255, 255, 255, 0.15)",
+      "blur": "24px",
+      "token_bg": "--kr-glass-strong-bg",
+      "token_border": "--kr-glass-strong-border",
+      "token_blur": "--kr-panel-blur"
+    },
+    "aurora": {
+      "background": "linear-gradient(180deg, rgba(99,102,241,0.1), rgba(23,23,27,0.62) 36%, rgba(17,17,20,0.88))",
+      "blur": "22px",
+      "saturate": "150%"
+    },
+    "highlight": "rgba(255, 255, 255, 0.04)"
+  },
+
+  "shadows": {
+    "card": { "value": "0 16px 40px rgba(0, 0, 0, 0.28)", "token": "--kr-shadow-card" },
+    "island": { "value": "0 24px 70px rgba(3, 7, 18, 0.35)", "token": "--kr-shadow-island" },
+    "elevated": { "value": "0 8px 32px rgba(0, 0, 0, 0.32)", "token": "--kr-shadow-elevated" },
+    "inner_glow": { "value": "inset 0 1px 0 rgba(255, 255, 255, 0.06)", "token": "--kr-shadow-inner-glow" },
+    "glow_blue": { "value": "0 0 32px rgba(30, 144, 255, 0.35)", "token": "--kr-shadow-glow-blue" },
+    "glow_gold": { "value": "0 0 28px rgba(255, 215, 0, 0.28)", "token": "--kr-shadow-glow-gold" },
+    "glows": {
+      "omnis": { "value": "0 0 30px rgba(124, 58, 237, 0.4)", "token": "--kr-shadow-glow-omnis" },
+      "agencia": { "value": "0 0 30px rgba(249, 115, 22, 0.4)", "token": "--kr-shadow-glow-agencia" },
+      "akasha": { "value": "0 0 30px rgba(5, 150, 105, 0.4)", "token": "--kr-shadow-glow-akasha" },
+      "nimbus": { "value": "0 0 30px rgba(14, 165, 233, 0.4)", "token": "--kr-shadow-glow-nimbus" },
+      "arena": { "value": "0 0 30px rgba(225, 29, 72, 0.4)", "token": "--kr-shadow-glow-arena" },
+      "vila": { "value": "0 0 30px rgba(22, 163, 74, 0.4)", "token": "--kr-shadow-glow-vila" },
+      "forja": { "value": "0 0 30px rgba(220, 38, 38, 0.4)", "token": "--kr-shadow-glow-forja" },
+      "observatorio": { "value": "0 0 30px rgba(79, 70, 229, 0.4)", "token": "--kr-shadow-glow-observatorio" },
+      "filosofia": { "value": "0 0 30px rgba(217, 119, 6, 0.4)", "token": "--kr-shadow-glow-filosofia" },
+      "financas": { "value": "0 0 30px rgba(202, 138, 4, 0.4)", "token": "--kr-shadow-glow-financas" },
+      "castle": { "value": "0 0 36px rgba(30, 64, 175, 0.45)", "token": "--kr-shadow-glow-castle" }
+    }
+  },
+
+  "motion": {
+    "durations": {
+      "micro": { "value": "150ms", "token": "--kr-duration-micro" },
+      "fast": { "value": "200ms", "token": "--kr-duration-fast" },
+      "normal": { "value": "300ms", "token": "--kr-duration-normal" },
+      "slow": { "value": "500ms", "token": "--kr-duration-slow" },
+      "glacial": { "value": "1000ms", "token": "--kr-duration-glacial" }
+    },
+    "easings": {
+      "spring": { "value": "cubic-bezier(0.22, 1, 0.36, 1)", "token": "--kr-ease-spring" },
+      "spring_fast": { "value": "cubic-bezier(0.22, 1, 0.28, 1)", "token": "--kr-ease-spring-fast" },
+      "drift": { "value": "linear", "token": "--kr-ease-drift" },
+      "ease_out": { "value": "cubic-bezier(0.16, 1, 0.3, 1)", "token": "--kr-ease-out" },
+      "ease_in_out": { "value": "cubic-bezier(0.65, 0, 0.35, 1)", "token": "--kr-ease-in-out" }
+    },
+    "hover": {
+      "scale": { "value": "1.02", "token": "--kr-hover-scale" },
+      "lift": { "value": "translateY(-2px)", "token": "--kr-hover-lift" }
+    },
+    "animations": [
+      { "name": "kr-float-slow", "duration": "6s", "easing": "ease-spring", "usage": "ilhas flutuando" },
+      { "name": "kr-float-medium", "duration": "5s", "easing": "ease-spring", "usage": "labels" },
+      { "name": "kr-cloud-drift", "duration": "120s", "easing": "linear", "usage": "nuvens" },
+      { "name": "kr-pulse-glow", "duration": "4s", "easing": "ease-spring", "usage": "aura ilhas" },
+      { "name": "kr-spin-slow", "duration": "10s", "easing": "linear", "usage": "rotação" },
+      { "name": "kr-bridge-glow", "duration": "3s", "easing": "ease-spring", "usage": "pontes" },
+      { "name": "kr-ocean-shimmer", "duration": "6s", "easing": "ease-spring", "usage": "oceano" },
+      { "name": "kr-island-rise", "duration": "600ms", "easing": "ease-spring", "usage": "entrada ilha" },
+      { "name": "kratos-pulse", "duration": "2s", "easing": "ease-in-out", "usage": "indicadores" },
+      { "name": "kratos-blink", "duration": "1.2s", "easing": "ease-in-out", "usage": "piscar" },
+      { "name": "kratos-fade-in", "duration": "300ms", "easing": "ease-out", "usage": "entrada UI" },
+      { "name": "kratos-critical-glow", "duration": "2.4s", "easing": "ease-in-out", "usage": "alerta crítico" }
+    ]
+  },
+
+  "typography": {
+    "fonts": {
+      "sans": {
+        "stack": "\"Poppins\", \"Inter\", system-ui, -apple-system, sans-serif",
+        "token": "--kr-font-sans"
+      },
+      "mono": {
+        "stack": "\"JetBrains Mono\", ui-monospace, SFMono-Regular, monospace",
+        "token": "--kr-font-mono"
+      }
+    },
+    "classes": {
+      "display": { "family": "Poppins/Inter", "weight": 800, "spacing": "-0.02em", "lineHeight": 1.08 },
+      "heading": { "family": "Poppins/Inter", "weight": 700, "spacing": "-0.01em", "lineHeight": 1.2 },
+      "body": { "family": "Inter", "weight": 400, "spacing": "normal", "lineHeight": 1.55 },
+      "caption": { "family": "Inter", "weight": 500, "size": "0.75rem", "spacing": "0.01em", "lineHeight": 1.4 },
+      "eyebrow": { "family": "JetBrains Mono", "size": "10px", "spacing": "0.18em", "transform": "uppercase" },
+      "num": { "family": "JetBrains Mono", "spacing": "-0.01em", "features": "\"tnum\", \"ss01\"" }
+    }
+  },
+
+  "zIndex": {
+    "ocean_backdrop": { "value": 0, "token": "--kr-z-ocean-backdrop" },
+    "sky_layer": { "value": 10, "token": "--kr-z-sky-layer" },
+    "ghost_islands": { "value": 15, "token": "--kr-z-ghost-islands" },
+    "cloud_layer": { "value": 20, "token": "--kr-z-cloud-layer" },
+    "bridge_system": { "value": 30, "token": "--kr-z-bridge-system" },
+    "floating_island": { "value": 40, "token": "--kr-z-floating-island" },
+    "central_castle": { "value": 50, "token": "--kr-z-central-castle" },
+    "island_label": { "value": 60, "token": "--kr-z-island-label" },
+    "mission_banner": { "value": 70, "token": "--kr-z-mission-banner" },
+    "bottom_dock": { "value": 90, "token": "--kr-z-bottom-dock" },
+    "topbar": { "value": 100, "token": "--kr-z-topbar" },
+    "sidebar": { "value": 100, "token": "--kr-z-sidebar" },
+    "right_rail": { "value": 100, "token": "--kr-z-right-rail" }
+  },
+
+  "tailwindExtend": {
+    "theme": {
+      "extend": {
+        "colors": {
+          "kr-ocean-deep": "var(--kr-ocean-deep)",
+          "kr-ocean": "var(--kr-ocean)",
+          "kr-sky": "var(--kr-sky)",
+          "kr-grass": "var(--kr-grass)",
+          "kr-earth": "var(--kr-earth)",
+          "kr-azure": "var(--kr-azure)",
+          "kr-gold": "var(--kr-gold)",
+          "kr-aurora": "var(--kr-aurora)",
+          "kr-success": "var(--kr-success)",
+          "kr-danger": "var(--kr-danger)",
+          "kr-warning": "var(--kr-warning)",
+          "kr-text-primary": "var(--kr-text-primary)",
+          "kr-text-secondary": "var(--kr-text-secondary)",
+          "kr-text-muted": "var(--kr-text-muted)",
+          "kr-surface-abyss": "var(--kr-surface-abyss)",
+          "kr-surface-deep": "var(--kr-surface-deep)",
+          "kr-surface-mid": "var(--kr-surface-mid)",
+          "kr-surface-high": "var(--kr-surface-high)",
+          "kr-island-omnis": "var(--kr-island-omnis)",
+          "kr-island-agencia": "var(--kr-island-agencia)",
+          "kr-island-akasha": "var(--kr-island-akasha)",
+          "kr-island-nimbus": "var(--kr-island-nimbus)",
+          "kr-island-arena": "var(--kr-island-arena)",
+          "kr-island-vila": "var(--kr-island-vila)",
+          "kr-island-forja": "var(--kr-island-forja)",
+          "kr-island-observatorio": "var(--kr-island-observatorio)",
+          "kr-island-filosofia": "var(--kr-island-filosofia)",
+          "kr-island-financas": "var(--kr-island-financas)"
+        },
+        "backgroundColor": {
+          "kr-glass": "var(--kr-glass-bg)",
+          "kr-glass-strong": "var(--kr-glass-strong-bg)"
+        },
+        "backdropBlur": {
+          "kr-glass": "var(--kr-glass-blur)",
+          "kr-panel": "var(--kr-panel-blur)"
+        },
+        "boxShadow": {
+          "kr-card": "var(--kr-shadow-card)",
+          "kr-island": "var(--kr-shadow-island)",
+          "kr-elevated": "var(--kr-shadow-elevated)",
+          "kr-glow-omnis": "var(--kr-shadow-glow-omnis)",
+          "kr-glow-agencia": "var(--kr-shadow-glow-agencia)",
+          "kr-glow-akasha": "var(--kr-shadow-glow-akasha)",
+          "kr-glow-nimbus": "var(--kr-shadow-glow-nimbus)",
+          "kr-glow-arena": "var(--kr-shadow-glow-arena)",
+          "kr-glow-vila": "var(--kr-shadow-glow-vila)",
+          "kr-glow-forja": "var(--kr-shadow-glow-forja)",
+          "kr-glow-observatorio": "var(--kr-shadow-glow-observatorio)",
+          "kr-glow-filosofia": "var(--kr-shadow-glow-filosofia)",
+          "kr-glow-financas": "var(--kr-shadow-glow-financas)",
+          "kr-glow-castle": "var(--kr-shadow-glow-castle)"
+        },
+        "fontFamily": {
+          "kr-sans": ["Poppins", "Inter", "system-ui", "-apple-system", "sans-serif"],
+          "kr-mono": ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"]
+        },
+        "animation": {
+          "kr-float-slow": "kr-float-slow 6s var(--kr-ease-spring) infinite",
+          "kr-float-medium": "kr-float-medium 5s var(--kr-ease-spring) infinite",
+          "kr-cloud-drift": "kr-cloud-drift 120s linear infinite",
+          "kr-pulse-glow": "kr-pulse-glow 4s var(--kr-ease-spring) infinite",
+          "kr-spin-slow": "kr-spin-slow 10s linear infinite",
+          "kr-bridge-glow": "kr-bridge-glow 3s var(--kr-ease-spring) infinite",
+          "kr-ocean-shimmer": "kr-ocean-shimmer 6s var(--kr-ease-spring) infinite",
+          "kr-island-rise": "kr-island-rise 600ms var(--kr-ease-spring) both"
+        },
+        "transitionDuration": {
+          "kr-micro": "var(--kr-duration-micro)",
+          "kr-fast": "var(--kr-duration-fast)",
+          "kr-normal": "var(--kr-duration-normal)",
+          "kr-slow": "var(--kr-duration-slow)"
+        }
+      }
+    }
+  }
+}
