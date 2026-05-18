@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type ReactNode } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import {
   PanelLeftClose,
@@ -6,7 +6,6 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { KratosWorldMap } from "./KratosWorldMap";
 import { CentralCastleMission } from "./CentralCastleMission";
 import { StatusBarDock } from "./StatusBarDock";
@@ -23,7 +22,7 @@ import { CurrentMissionBar } from "@/components/kratos/hud/CurrentMissionBar";
 import { AuroraChatDock } from "@/components/kratos/aurora/AuroraChatDock";
 import { KratosLogo } from "@/components/kratos/icons/KratosLogo";
 import { SidebarItem } from "@/components/kratos/shell/SidebarItem";
-import { VISIBLE_ROUTES, KRATOS_ROUTES } from "@/lib/kratos-routes";
+import { VISIBLE_ROUTES } from "@/lib/kratos-routes";
 import {
   KratosContextProvider,
   useKratosContext,
@@ -32,7 +31,6 @@ import type { DashboardLoaderData } from "@/hooks/useDashboard";
 import type { DriftState } from "@/hooks/useDriftDetection";
 import type { LiveState } from "@/components/kratos/base/LiveStatusIndicator";
 import type { useCheckpoints } from "@/hooks/useCheckpoints";
-import type { DataSource } from "../../../api-contract/source-badge.schema";
 
 /* --------------------------------------------------*\
  * KratosWorldPage — Master 3D world page with live
