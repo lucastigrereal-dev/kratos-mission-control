@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchOmnisStatus, fetchOmnisHealth, fetchOmnisCrews, fetchOmnisJobs } from "@/lib/omnis-server-fns";
+import { checkOmnisConfig } from "@/lib/omnis-provider";
 import type { OmnisStatus, OmnisCrew, OmnisJob } from "../../api-contract/omnis.schema";
 
 export function useOmnisStatus() {
@@ -48,4 +49,23 @@ export function useOmnisJobs(limit = 5) {
     },
     staleTime: 30_000,
   });
+}
+
+// ── OMNIS config detection + read-only boundary (Sprint A) ──
+// KRATOS reads OMNIS status, NEVER executes jobs or sends commands.
+
+export function useOmnisConfig() {
+  return useQuery({
+    queryKey: ["omnis", "config"],
+    queryFn: () => checkOmnisConfig(),
+    staleTime: 120_000,
+  });
+}
+
+export function useOmnisReadOnlyGuard() {
+  return {
+    readOnly: true as const,
+    boundary: "KRATOS observes OMNIS — never executes jobs, never sends commands.",
+    source: "Sprint A omnis-provider.ts",
+  };
 }
