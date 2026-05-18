@@ -1,6 +1,9 @@
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
+import { LoadingState } from "@/components/kratos/base/LoadingState";
+import { ErrorState } from "@/components/kratos/base/ErrorState";
+import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { cn } from "@/lib/utils";
 import {
   MapPin,
@@ -19,21 +22,21 @@ const travels = [
     dates: "15-30 Out 2026",
     days: 15,
     thumbnail: "JP",
-    color: "#EF4444",
+    color: "var(--kr-danger)",
   },
   {
     destination: "Patagônia Argentina",
     dates: "5-12 Dez 2026",
     days: 8,
     thumbnail: "PA",
-    color: "#3B82F6",
+    color: "var(--kr-sky)",
   },
   {
     destination: "Nordeste Raiz — Rota das Emoções",
     dates: "Jan 2027",
     days: 12,
     thumbnail: "NE",
-    color: "#F59E0B",
+    color: "var(--kr-warning)",
   },
 ];
 
@@ -159,7 +162,7 @@ function TravelCards() {
           {/* Thumbnail */}
           <div
             className="h-12 w-12 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: `${t.color}20` }}
+            style={{ background: `color-mix(in srgb, ${t.color} 12%, transparent)` }}
           >
             <span
               className="text-[11px] font-bold kratos-mono"
@@ -321,45 +324,72 @@ function InspirationCard() {
 
 // ── Main Export ────────────────────────────────────────────────────────────
 
-export function NimbusScreen() {
+interface NimbusScreenProps {
+  isLoading?: boolean;
+  error?: string | null;
+  isEmpty?: boolean;
+}
+
+export function NimbusScreen({
+  isLoading = false,
+  error = null,
+  isEmpty = false,
+}: NimbusScreenProps) {
   return (
     <IslandPageFrame theme="nimbus">
-      <IslandPageHeader
-        title="NIMBUS ACADEMY"
-        subtitle="Sua vassoura mágica. Vá para onde precisar."
-        theme="nimbus"
-      />
+      {isLoading ? (
+        <LoadingState lines={6} />
+      ) : error ? (
+        <ErrorState
+          title="Erro ao carregar"
+          description={error}
+          variant="external_unavailable"
+        />
+      ) : isEmpty ? (
+        <EmptyState
+          title="Nada por aqui"
+          description="Nenhum dado disponível neste momento."
+        />
+      ) : (
+        <>
+          <IslandPageHeader
+            title="NIMBUS ACADEMY"
+            subtitle="Sua vassoura mágica. Vá para onde precisar."
+            theme="nimbus"
+          />
 
-      {/* Dream portal — centered hero */}
-      <DreamPortal />
+          {/* Dream portal — centered hero */}
+          <DreamPortal />
 
-      {/* Wooden sign */}
-      <div className="flex justify-center">
-        <WoodenSign />
-      </div>
+          {/* Wooden sign */}
+          <div className="flex justify-center">
+            <WoodenSign />
+          </div>
 
-      {/* Main layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
-          <GlassPanel padding="md">
-            <h3
-              className="kratos-eyebrow mb-3"
-              style={{ color: "var(--kratos-text-secondary)" }}
-            >
-              Próximas Viagens
-            </h3>
-            <TravelCards />
-          </GlassPanel>
-        </div>
-        <div className="space-y-4">
-          <AdventureTracker />
-          <InspirationCard />
-        </div>
-      </div>
+          {/* Main layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
+              <GlassPanel padding="md">
+                <h3
+                  className="kratos-eyebrow mb-3"
+                  style={{ color: "var(--kratos-text-secondary)" }}
+                >
+                  Próximas Viagens
+                </h3>
+                <TravelCards />
+              </GlassPanel>
+            </div>
+            <div className="space-y-4">
+              <AdventureTracker />
+              <InspirationCard />
+            </div>
+          </div>
 
-      <div className="mt-4">
-        <WishList />
-      </div>
+          <div className="mt-4">
+            <WishList />
+          </div>
+        </>
+      )}
     </IslandPageFrame>
   );
 }

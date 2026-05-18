@@ -1,6 +1,9 @@
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
+import { LoadingState } from "@/components/kratos/base/LoadingState";
+import { ErrorState } from "@/components/kratos/base/ErrorState";
+import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { cn } from "@/lib/utils";
 import {
   Eye,
@@ -366,39 +369,66 @@ function AuroraMiniChat() {
 
 // ── Main Export ────────────────────────────────────────────────────────────
 
-export function AgenciaScreen() {
+interface AgenciaScreenProps {
+  isLoading?: boolean;
+  error?: string | null;
+  isEmpty?: boolean;
+}
+
+export function AgenciaScreen({
+  isLoading = false,
+  error = null,
+  isEmpty = false,
+}: AgenciaScreenProps) {
   return (
     <IslandPageFrame theme="agencia">
-      <IslandPageHeader
-        title="AGÊNCIA / ESTÚDIO"
-        subtitle="Conteúdo, Marca e Comunicação que constroem autoridade"
-        theme="agencia"
-      />
+      {isLoading ? (
+        <LoadingState lines={6} />
+      ) : error ? (
+        <ErrorState
+          title="Erro ao carregar"
+          description={error}
+          variant="external_unavailable"
+        />
+      ) : isEmpty ? (
+        <EmptyState
+          title="Nada por aqui"
+          description="Nenhum dado disponível neste momento."
+        />
+      ) : (
+        <>
+          <IslandPageHeader
+            title="AGÊNCIA / ESTÚDIO"
+            subtitle="Conteúdo, Marca e Comunicação que constroem autoridade"
+            theme="agencia"
+          />
 
-      {/* KPI row */}
-      <KpiQuadPanel />
+          {/* KPI row */}
+          <KpiQuadPanel />
 
-      {/* Main grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-        <div className="lg:col-span-2 space-y-4">
-          <CampaignMainCard />
-          <ContentCalendar />
-        </div>
-        <div className="space-y-4">
-          <ContentPipeline />
-          <IdeaTracker />
-        </div>
-      </div>
+          {/* Main grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
+            <div className="lg:col-span-2 space-y-4">
+              <CampaignMainCard />
+              <ContentCalendar />
+            </div>
+            <div className="space-y-4">
+              <ContentPipeline />
+              <IdeaTracker />
+            </div>
+          </div>
 
-      {/* Bottom row */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-4">
-        <div className="lg:col-span-3">
-          <StudioSquads />
-        </div>
-        <div className="lg:col-span-2">
-          <AuroraMiniChat />
-        </div>
-      </div>
+          {/* Bottom row */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-4">
+            <div className="lg:col-span-3">
+              <StudioSquads />
+            </div>
+            <div className="lg:col-span-2">
+              <AuroraMiniChat />
+            </div>
+          </div>
+        </>
+      )}
     </IslandPageFrame>
   );
 }

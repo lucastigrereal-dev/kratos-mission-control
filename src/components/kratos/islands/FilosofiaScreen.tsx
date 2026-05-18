@@ -11,6 +11,9 @@ import {
 import { KratosCard } from "@/components/kratos/ui-primitives/KratosCard";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { SectionTitle } from "@/components/kratos/ui-primitives/SectionTitle";
+import { LoadingState } from "@/components/kratos/base/LoadingState";
+import { ErrorState } from "@/components/kratos/base/ErrorState";
+import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 
 const accent = "var(--kr-accent-indigo)";
@@ -92,104 +95,131 @@ const libCards = [
   },
 ];
 
-export function FilosofiaScreen() {
+interface FilosofiaScreenProps {
+  isLoading?: boolean;
+  error?: string | null;
+  isEmpty?: boolean;
+}
+
+export function FilosofiaScreen({
+  isLoading = false,
+  error = null,
+  isEmpty = false,
+}: FilosofiaScreenProps) {
   return (
-    <div className="space-y-5">
-      <IslandPageHeader
-        title="FILOSOFIA & SABEDORIA"
-        subtitle="Aprendizado, Filosofia e Evolução Pessoal"
-        theme="omnis"
-      />
+    <>
+      {isLoading ? (
+        <LoadingState lines={6} />
+      ) : error ? (
+        <ErrorState
+          title="Erro ao carregar"
+          description={error}
+          variant="external_unavailable"
+        />
+      ) : isEmpty ? (
+        <EmptyState
+          title="Nada por aqui"
+          description="Nenhum dado disponível neste momento."
+        />
+      ) : (
+        <div className="space-y-5">
+          <IslandPageHeader
+            title="FILOSOFIA & SABEDORIA"
+            subtitle="Aprendizado, Filosofia e Evolução Pessoal"
+            theme="omnis"
+          />
 
-      {/* Leitura Atual */}
-      <KratosCard header={<SectionTitle icon={BookOpen} title="Leitura Atual" />}>
-        <div className="flex items-center gap-4">
-          <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl"
-            style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}
-          >
-            {leituraAtual.capa}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate" style={{ color: "var(--kratos-text-primary)" }}>
-              {leituraAtual.titulo}
-            </p>
-            <p className="text-[11px]" style={{ color: "var(--kratos-text-muted)" }}>
-              {leituraAtual.autor}
-            </p>
-            <div className="flex items-center justify-between mt-1.5">
-              <div className="flex-1 h-1.5 rounded-full mr-3" style={{ background: "var(--kratos-surface-4)" }}>
-                <div
-                  className="h-full rounded-full"
-                  style={{ width: `${leituraAtual.progresso}%`, backgroundColor: accent }}
-                />
-              </div>
-              <span
-                className="text-[10px] font-semibold"
-                style={{ color: accent, fontFamily: "var(--kratos-font-mono)" }}
+          {/* Leitura Atual */}
+          <KratosCard header={<SectionTitle icon={BookOpen} title="Leitura Atual" />}>
+            <div className="flex items-center gap-4">
+              <div
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl"
+                style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}
               >
-                {leituraAtual.progresso}%
-              </span>
-            </div>
-          </div>
-        </div>
-      </KratosCard>
-
-      {/* Biblioteca */}
-      <KratosCard header={<SectionTitle icon={Library} title="Biblioteca" />}>
-        <div className="grid grid-cols-4 gap-2">
-          {libCards.map((s) => (
-            <GlassPanel key={s.label} padding="sm" className="!p-2 text-center">
-              <s.icon className="h-3.5 w-3.5 mx-auto mb-1" style={{ color: accent }} />
-              <p className="text-sm font-bold" style={{ color: "var(--kratos-text-primary)", fontFamily: "var(--kratos-font-mono)" }}>
-                {s.value}
-              </p>
-              <p className="text-[9px]" style={{ color: "var(--kratos-text-muted)" }}>
-                {s.label}
-              </p>
-            </GlassPanel>
-          ))}
-        </div>
-      </KratosCard>
-
-      {/* Insights Recentes */}
-      <KratosCard header={<SectionTitle icon={Lightbulb} title="Insights Recentes" />}>
-        <div className="space-y-2">
-          {insights.map((ins, i) => (
-            <GlassPanel key={i} padding="sm" className="!p-3 flex gap-2">
-              <Sparkles className="h-4 w-4 shrink-0 mt-0.5" style={{ color: accent }} />
+                {leituraAtual.capa}
+              </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[12px]" style={{ color: "var(--kratos-text-secondary)" }}>
-                  "{ins.texto}"
+                <p className="text-sm font-semibold truncate" style={{ color: "var(--kratos-text-primary)" }}>
+                  {leituraAtual.titulo}
                 </p>
-                <div className="flex justify-between mt-1">
-                  <p className="text-[10px]" style={{ color: accent }}>{ins.fonte}</p>
-                  <p className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>{ins.data}</p>
+                <p className="text-[11px]" style={{ color: "var(--kratos-text-muted)" }}>
+                  {leituraAtual.autor}
+                </p>
+                <div className="flex items-center justify-between mt-1.5">
+                  <div className="flex-1 h-1.5 rounded-full mr-3" style={{ background: "var(--kratos-surface-4)" }}>
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${leituraAtual.progresso}%`, backgroundColor: accent }}
+                    />
+                  </div>
+                  <span
+                    className="text-[10px] font-semibold"
+                    style={{ color: accent, fontFamily: "var(--kratos-font-mono)" }}
+                  >
+                    {leituraAtual.progresso}%
+                  </span>
                 </div>
               </div>
-            </GlassPanel>
-          ))}
-        </div>
-      </KratosCard>
-
-      {/* Aprendizados do Mês */}
-      <KratosCard header={<SectionTitle icon={GraduationCap} title="Aprendizados do Mês" />}>
-        <div className="space-y-2">
-          {aprendizados.map((a) => (
-            <div key={a.titulo} className="flex gap-2 rounded-lg px-2 py-1.5 -mx-2">
-              <div className="h-1.5 w-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: accent }} />
-              <div>
-                <p className="text-[12px] font-medium" style={{ color: "var(--kratos-text-primary)" }}>
-                  {a.titulo}
-                </p>
-                <p className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
-                  {a.resumo}
-                </p>
-              </div>
             </div>
-          ))}
+          </KratosCard>
+
+          {/* Biblioteca */}
+          <KratosCard header={<SectionTitle icon={Library} title="Biblioteca" />}>
+            <div className="grid grid-cols-4 gap-2">
+              {libCards.map((s) => (
+                <GlassPanel key={s.label} padding="sm" className="!p-2 text-center">
+                  <s.icon className="h-3.5 w-3.5 mx-auto mb-1" style={{ color: accent }} />
+                  <p className="text-sm font-bold" style={{ color: "var(--kratos-text-primary)", fontFamily: "var(--kratos-font-mono)" }}>
+                    {s.value}
+                  </p>
+                  <p className="text-[9px]" style={{ color: "var(--kratos-text-muted)" }}>
+                    {s.label}
+                  </p>
+                </GlassPanel>
+              ))}
+            </div>
+          </KratosCard>
+
+          {/* Insights Recentes */}
+          <KratosCard header={<SectionTitle icon={Lightbulb} title="Insights Recentes" />}>
+            <div className="space-y-2">
+              {insights.map((ins, i) => (
+                <GlassPanel key={i} padding="sm" className="!p-3 flex gap-2">
+                  <Sparkles className="h-4 w-4 shrink-0 mt-0.5" style={{ color: accent }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[12px]" style={{ color: "var(--kratos-text-secondary)" }}>
+                      "{ins.texto}"
+                    </p>
+                    <div className="flex justify-between mt-1">
+                      <p className="text-[10px]" style={{ color: accent }}>{ins.fonte}</p>
+                      <p className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>{ins.data}</p>
+                    </div>
+                  </div>
+                </GlassPanel>
+              ))}
+            </div>
+          </KratosCard>
+
+          {/* Aprendizados do Mês */}
+          <KratosCard header={<SectionTitle icon={GraduationCap} title="Aprendizados do Mês" />}>
+            <div className="space-y-2">
+              {aprendizados.map((a) => (
+                <div key={a.titulo} className="flex gap-2 rounded-lg px-2 py-1.5 -mx-2">
+                  <div className="h-1.5 w-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: accent }} />
+                  <div>
+                    <p className="text-[12px] font-medium" style={{ color: "var(--kratos-text-primary)" }}>
+                      {a.titulo}
+                    </p>
+                    <p className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
+                      {a.resumo}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </KratosCard>
         </div>
-      </KratosCard>
-    </div>
+      )}
+    </>
   );
 }

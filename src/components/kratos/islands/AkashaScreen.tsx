@@ -1,6 +1,9 @@
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
+import { LoadingState } from "@/components/kratos/base/LoadingState";
+import { ErrorState } from "@/components/kratos/base/ErrorState";
+import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { cn } from "@/lib/utils";
 import {
   ShieldCheck,
@@ -47,7 +50,7 @@ function KnowledgeStatPanel() {
     <GlassPanel padding="md">
       <h3
         className="kratos-eyebrow mb-4"
-        style={{ color: "#FCD34D" }}
+        style={{ color: "var(--kr-accent-gold-light)" }}
       >
         Estatísticas do Conhecimento
       </h3>
@@ -56,9 +59,9 @@ function KnowledgeStatPanel() {
           <div key={stat.label} className="flex items-center gap-3">
             <div
               className="h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(5, 150, 105, 0.15)" }}
+              style={{ background: "color-mix(in srgb, var(--kr-island-akasha) 15%, transparent)" }}
             >
-              <stat.icon className="h-4 w-4" style={{ color: "#6EE7B7" }} aria-hidden />
+              <stat.icon className="h-4 w-4" style={{ color: "var(--kr-accent-green-light)" }} aria-hidden />
             </div>
             <div className="flex-1 min-w-0">
               <p className="kratos-num text-lg">{stat.value}</p>
@@ -79,15 +82,15 @@ function GoldBorderCard({ title, type, ago }: { title: string; type: string; ago
       className="rounded-xl p-3 transition-colors kratos-card-hover"
       style={{
         background: "var(--kratos-surface-2)",
-        borderLeft: "3px solid #F59E0B",
+        borderLeft: "3px solid var(--kr-warning)",
       }}
     >
       <div className="flex items-center gap-3">
         <div
           className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0"
-          style={{ background: "rgba(245, 158, 11, 0.15)" }}
+          style={{ background: "color-mix(in srgb, var(--kr-warning) 15%, transparent)" }}
         >
-          <FileText className="h-4 w-4" style={{ color: "#FCD34D" }} aria-hidden />
+          <FileText className="h-4 w-4" style={{ color: "var(--kr-accent-gold-light)" }} aria-hidden />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-medium truncate" style={{ color: "var(--kratos-text-primary)" }}>
@@ -127,8 +130,8 @@ function VaultIntegrityBadge() {
         <div
           className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0"
           style={{
-            background: "linear-gradient(135deg, #059669, #10B981)",
-            boxShadow: "0 0 20px rgba(16, 185, 129, 0.4)",
+            background: "linear-gradient(135deg, var(--kr-island-akasha), var(--kr-accent-emerald))",
+            boxShadow: "0 0 20px color-mix(in srgb, var(--kr-accent-emerald) 40%, transparent)",
           }}
         >
           <ShieldCheck className="h-5 w-5 text-white" aria-hidden />
@@ -146,7 +149,7 @@ function VaultIntegrityBadge() {
       <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: "var(--kratos-surface-4)" }}>
         <div
           className="h-full rounded-full"
-          style={{ width: "100%", background: "#10B981" }}
+          style={{ width: "100%", background: "var(--kr-accent-emerald)" }}
           aria-hidden
         />
       </div>
@@ -166,7 +169,7 @@ function MemorySparkline() {
         </h3>
         <span
           className="kratos-mono text-[11px] font-medium"
-          style={{ color: "#4ADE80" }}
+          style={{ color: "var(--kr-success)" }}
         >
           +23.6% essa semana
         </span>
@@ -180,8 +183,8 @@ function MemorySparkline() {
       >
         <defs>
           <linearGradient id="memGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--kr-accent-emerald)" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="var(--kr-accent-emerald)" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path
@@ -191,7 +194,7 @@ function MemorySparkline() {
         <path
           d="M0,40 C20,35 40,28 60,30 C80,32 100,15 120,18 C140,21 160,8 180,5 C190,3 200,2"
           fill="none"
-          stroke="#10B981"
+          stroke="var(--kr-accent-emerald)"
           strokeWidth="2"
           strokeLinecap="round"
         />
@@ -222,8 +225,8 @@ function VaultCrystal() {
           className="h-16 w-16 relative"
           style={{
             clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
-            background: "linear-gradient(135deg, #10B981, #059669, #34D399)",
-            boxShadow: "0 0 30px rgba(34, 211, 238, 0.5), 0 0 60px rgba(6, 182, 212, 0.2)",
+            background: "linear-gradient(135deg, var(--kr-accent-emerald), var(--kr-island-akasha), #34D399)",
+            boxShadow: "0 0 30px color-mix(in srgb, var(--kr-accent-cyan-bright) 50%, transparent), 0 0 60px color-mix(in srgb, var(--kr-accent-cyan) 20%, transparent)",
           }}
           aria-hidden
         />
@@ -250,7 +253,7 @@ function PromptsSalvos() {
           >
             <Sparkles
               className="h-3.5 w-3.5 flex-shrink-0 mt-0.5"
-              style={{ color: "#FCD34D" }}
+              style={{ color: "var(--kr-accent-gold-light)" }}
               aria-hidden
             />
             <span className="text-[12px] leading-relaxed" style={{ color: "var(--kratos-text-secondary)" }}>
@@ -281,7 +284,7 @@ function PesquisasAtivas() {
           >
             <Search
               className="h-3.5 w-3.5 flex-shrink-0 mt-0.5"
-              style={{ color: "#6EE7B7" }}
+              style={{ color: "var(--kr-accent-green-light)" }}
               aria-hidden
             />
             <span className="text-[12px] leading-relaxed" style={{ color: "var(--kratos-text-secondary)" }}>
@@ -296,35 +299,62 @@ function PesquisasAtivas() {
 
 // ── Main Export ────────────────────────────────────────────────────────────
 
-export function AkashaScreen() {
+interface AkashaScreenProps {
+  isLoading?: boolean;
+  error?: string | null;
+  isEmpty?: boolean;
+}
+
+export function AkashaScreen({
+  isLoading = false,
+  error = null,
+  isEmpty = false,
+}: AkashaScreenProps) {
   return (
     <IslandPageFrame theme="akasha">
-      <IslandPageHeader
-        title="AKASHA / GRINGOTTS"
-        subtitle="Banco de Conhecimento, Memória e Arquivos"
-        theme="akasha"
-      />
+      {isLoading ? (
+        <LoadingState lines={6} />
+      ) : error ? (
+        <ErrorState
+          title="Erro ao carregar"
+          description={error}
+          variant="external_unavailable"
+        />
+      ) : isEmpty ? (
+        <EmptyState
+          title="Nada por aqui"
+          description="Nenhum dado disponível neste momento."
+        />
+      ) : (
+        <>
+          <IslandPageHeader
+            title="AKASHA / GRINGOTTS"
+            subtitle="Banco de Conhecimento, Memória e Arquivos"
+            theme="akasha"
+          />
 
-      {/* Crystal hero */}
-      <VaultCrystal />
+          {/* Crystal hero */}
+          <VaultCrystal />
 
-      {/* Stats + Integrity */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <KnowledgeStatPanel />
-        <div className="space-y-4">
-          <VaultIntegrityBadge />
-          <MemorySparkline />
-        </div>
-      </div>
+          {/* Stats + Integrity */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <KnowledgeStatPanel />
+            <div className="space-y-4">
+              <VaultIntegrityBadge />
+              <MemorySparkline />
+            </div>
+          </div>
 
-      {/* Recent docs — full width */}
-      <DocumentosRecentes />
+          {/* Recent docs — full width */}
+          <DocumentosRecentes />
 
-      {/* Bottom row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <PromptsSalvos />
-        <PesquisasAtivas />
-      </div>
+          {/* Bottom row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <PromptsSalvos />
+            <PesquisasAtivas />
+          </div>
+        </>
+      )}
     </IslandPageFrame>
   );
 }

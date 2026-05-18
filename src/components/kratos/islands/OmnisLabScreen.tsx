@@ -1,6 +1,9 @@
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
+import { LoadingState } from "@/components/kratos/base/LoadingState";
+import { ErrorState } from "@/components/kratos/base/ErrorState";
+import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { cn } from "@/lib/utils";
 import {
   Cpu,
@@ -29,11 +32,11 @@ const automations = [
 ];
 
 const agents = [
-  { name: "Omnis Core", role: "Orquestrador", color: "#4ADE80" },
-  { name: "Aurora AI", role: "Mentora", color: "#A855F7" },
-  { name: "Chrono Bot", role: "Documentação", color: "#3B82F6" },
-  { name: "Insight Bot", role: "Análises", color: "#06B6D4" },
-  { name: "Builder Bot", role: "Desenvolvimento", color: "#F97316" },
+  { name: "Omnis Core", role: "Orquestrador", color: "var(--kr-success)" },
+  { name: "Aurora AI", role: "Mentora", color: "var(--kr-accent-purple)" },
+  { name: "Chrono Bot", role: "Documentação", color: "var(--kr-sky)" },
+  { name: "Insight Bot", role: "Análises", color: "var(--kr-accent-cyan)" },
+  { name: "Builder Bot", role: "Desenvolvimento", color: "var(--kr-island-agencia)" },
 ];
 
 const executions = [
@@ -97,8 +100,8 @@ function HolographicCore() {
             />
             <defs>
               <linearGradient id="hcg1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#8B5CF6" />
-                <stop offset="100%" stopColor="#06B6D4" />
+                <stop offset="0%" stopColor="var(--kr-aurora)" />
+                <stop offset="100%" stopColor="var(--kr-accent-cyan)" />
               </linearGradient>
             </defs>
           </svg>
@@ -119,8 +122,8 @@ function HolographicCore() {
             />
             <defs>
               <linearGradient id="hcg2" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#22D3EE" />
-                <stop offset="100%" stopColor="#3B82F6" />
+                <stop offset="0%" stopColor="var(--kr-accent-cyan-bright)" />
+                <stop offset="100%" stopColor="var(--kr-sky)" />
               </linearGradient>
             </defs>
           </svg>
@@ -175,7 +178,7 @@ function HolographicCore() {
       >
         <span
           className="text-[10px] font-bold uppercase tracking-[0.2em]"
-          style={{ color: "#06B6D4" }}
+          style={{ color: "var(--kr-accent-cyan)" }}
         >
           OMNIS Core
         </span>
@@ -191,7 +194,7 @@ function OmnisSummaryCards() {
         <GlassPanel key={card.label} padding="md" className="text-center">
           <card.icon
             className="h-5 w-5 mx-auto mb-2"
-            style={{ color: "#A78BFA" }}
+            style={{ color: "var(--kr-accent-purple-lighter)" }}
             aria-hidden
           />
           <p className="kratos-num text-xl">{card.value}</p>
@@ -225,13 +228,13 @@ function AutomationBoard() {
             </span>
             <span className="text-[10px] kratos-mono uppercase tracking-[0.1em]">
               {a.status === "running" && (
-                <span style={{ color: "#06B6D4" }}>Executando</span>
+                <span style={{ color: "var(--kr-accent-cyan)" }}>Executando</span>
               )}
               {a.status === "idle" && (
                 <span style={{ color: "var(--kratos-text-muted)" }}>Parado</span>
               )}
               {a.status === "done" && (
-                <span style={{ color: "#4ADE80" }}>Concluído</span>
+                <span style={{ color: "var(--kr-success)" }}>Concluído</span>
               )}
             </span>
           </div>
@@ -257,9 +260,9 @@ function ActiveAgentsList() {
             <div
               className="flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center"
               style={{
-                background: `${agent.color}20`,
+                background: `color-mix(in srgb, ${agent.color} 12%, transparent)`,
                 border: `2px solid ${agent.color}`,
-                boxShadow: `0 0 10px ${agent.color}40`,
+                boxShadow: `0 0 10px color-mix(in srgb, ${agent.color} 25%, transparent)`,
               }}
             >
               <Activity className="h-4 w-4" style={{ color: agent.color }} aria-hidden />
@@ -304,13 +307,13 @@ function RecentExecutionsList() {
             {ex.status === "success" ? (
               <CheckCircle2
                 className="h-4 w-4 flex-shrink-0"
-                style={{ color: "#4ADE80" }}
+                style={{ color: "var(--kr-success)" }}
                 aria-label="Sucesso"
               />
             ) : (
               <Circle
                 className="h-4 w-4 flex-shrink-0"
-                style={{ color: "#F59E0B" }}
+                style={{ color: "var(--kr-warning)" }}
                 aria-label="Aviso"
               />
             )}
@@ -352,23 +355,23 @@ function RealtimeFlowStepper() {
                 )}
                 style={{
                   background: step.done
-                    ? "#7C3AED"
+                    ? "var(--kr-island-omnis)"
                     : step.active
-                      ? "rgba(124, 58, 237, 0.4)"
+                      ? "color-mix(in srgb, var(--kr-island-omnis) 40%, transparent)"
                       : "var(--kratos-surface-4)",
                   border: step.active
-                    ? "2px solid #A78BFA"
+                    ? "2px solid var(--kr-accent-purple-lighter)"
                     : step.done
-                      ? "2px solid #7C3AED"
+                      ? "2px solid var(--kr-island-omnis)"
                       : "2px solid var(--kratos-border)",
                 }}
               >
                 {step.done ? (
-                  <CheckCircle2 className="h-4 w-4" style={{ color: "#fff" }} aria-hidden />
+                  <CheckCircle2 className="h-4 w-4" style={{ color: "var(--kr-text-on-primary, white)" }} aria-hidden />
                 ) : (
                   <span
                     className="text-[11px] font-bold"
-                    style={{ color: step.active ? "#A78BFA" : "var(--kratos-text-muted)" }}
+                    style={{ color: step.active ? "var(--kr-accent-purple-lighter)" : "var(--kratos-text-muted)" }}
                   >
                     {i + 1}
                   </span>
@@ -377,7 +380,7 @@ function RealtimeFlowStepper() {
               <span
                 className="text-[10px] uppercase tracking-[0.08em] text-center"
                 style={{
-                  color: step.done ? "#C4B5FD" : step.active ? "#A78BFA" : "var(--kratos-text-muted)",
+                  color: step.done ? "var(--kr-accent-purple-light)" : step.active ? "var(--kr-accent-purple-lighter)" : "var(--kratos-text-muted)",
                 }}
               >
                 {step.label}
@@ -386,7 +389,7 @@ function RealtimeFlowStepper() {
 
             {/* Connector line */}
             {i < flowSteps.length - 1 && (
-              <div className="flex-1 h-[2px] mx-1 mb-5" style={{ background: step.done ? "#7C3AED" : "var(--kratos-surface-4)" }} aria-hidden />
+              <div className="flex-1 h-[2px] mx-1 mb-5" style={{ background: step.done ? "var(--kr-island-omnis)" : "var(--kratos-surface-4)" }} aria-hidden />
             )}
           </div>
         ))}
@@ -397,38 +400,65 @@ function RealtimeFlowStepper() {
 
 // ── Main Export ────────────────────────────────────────────────────────────
 
-export function OmnisLabScreen() {
+interface OmnisLabScreenProps {
+  isLoading?: boolean;
+  error?: string | null;
+  isEmpty?: boolean;
+}
+
+export function OmnisLabScreen({
+  isLoading = false,
+  error = null,
+  isEmpty = false,
+}: OmnisLabScreenProps) {
   return (
     <IslandPageFrame theme="omnis">
-      <IslandPageHeader
-        title="OMNIS LAB"
-        subtitle="Centro de IA, Automações e Inteligência de Execução"
-        theme="omnis"
-      />
+      {isLoading ? (
+        <LoadingState lines={6} />
+      ) : error ? (
+        <ErrorState
+          title="Erro ao carregar"
+          description={error}
+          variant="external_unavailable"
+        />
+      ) : isEmpty ? (
+        <EmptyState
+          title="Nada por aqui"
+          description="Nenhum dado disponível neste momento."
+        />
+      ) : (
+        <>
+          <IslandPageHeader
+            title="OMNIS LAB"
+            subtitle="Centro de IA, Automações e Inteligência de Execução"
+            theme="omnis"
+          />
 
-      {/* Holographic Core — centered hero */}
-      <div className="flex justify-center mb-10">
-        <HolographicCore />
-      </div>
+          {/* Holographic Core — centered hero */}
+          <div className="flex justify-center mb-10">
+            <HolographicCore />
+          </div>
 
-      {/* Summary cards */}
-      <OmnisSummaryCards />
+          {/* Summary cards */}
+          <OmnisSummaryCards />
 
-      {/* Two-column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-        <AutomationBoard />
-        <ActiveAgentsList />
-      </div>
+          {/* Two-column layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+            <AutomationBoard />
+            <ActiveAgentsList />
+          </div>
 
-      {/* Bottom row */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-4">
-        <div className="lg:col-span-2">
-          <RecentExecutionsList />
-        </div>
-        <div className="lg:col-span-3">
-          <RealtimeFlowStepper />
-        </div>
-      </div>
+          {/* Bottom row */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-4">
+            <div className="lg:col-span-2">
+              <RecentExecutionsList />
+            </div>
+            <div className="lg:col-span-3">
+              <RealtimeFlowStepper />
+            </div>
+          </div>
+        </>
+      )}
     </IslandPageFrame>
   );
 }
