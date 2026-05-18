@@ -10,6 +10,10 @@ import { getAll as getCheckpoints } from "../../backend/checkpoints/store";
 import { getAll as getProjects } from "../../backend/projects/store";
 import { getAll as getAppointments } from "../../backend/appointments/store";
 import { getLatest as getContextLatest } from "../../backend/contexto/store";
+import { getServicesHealthSummary } from "../../backend/services/store";
+import { getRepoStatus, listTrackedRepos } from "../../backend/github/store";
+import { DashboardSnapshotDataSchema } from "../../api-contract/dashboard.schema";
+import { SourceBadgeMetaSchema } from "../../api-contract/source-badge.schema";
 
 describe("Dashboard Snapshot Sources", () => {
 
@@ -140,6 +144,95 @@ describe("Dashboard Snapshot Sources", () => {
         threw = true;
       }
       expect(threw).toBe(false);
+    });
+  });
+
+  describe("Dashboard Snapshot Data contract", () => {
+    it("assembles valid DashboardSnapshotData from backend sources", async () => {
+      const svc = getServicesHealthSummary();
+      const ctx = getContextLatest();
+      const repoDigests = (await Promise.all(listTrackedRepos().map(async (r) => {
+        const gh = await getRepoStatus("lucastigrereal-dev", r);
+        if (!gh) return null;
+        return {
+          nome: gh.nome,
+          nomeCompleto: gh.nomeCompleto,
+          url: gh.url,
+          openPRs: gh.prs.filter((p) => p.status === "open").length,
+          openIssues: gh.openIssues,
+          ultimoPush: gh.ultimoPush,
+        };
+      }))).filter(Boolean);
+
+      const payload = {
+        summary_cards: [
+          { label: "Serviços", value: `${svc.live}/${svc.total}` },
+          { label: "Repos", value: `${repoDigests.length}` },
+        ],
+        services: { total: svc.total, live: svc.live, degraded: svc.degraded, offline: svc.offline, unknown: svc.unknown },
+        repos: repoDigests,
+        next_actions: [{ action: ctx.reasons[0], project: ctx.project, priority: "high" }],
+        health: svc.offline > 0 ? "offline" : svc.degraded > 0 ? "degraded" : "live",
+        updated_at: new Date().toISOString(),
+      };
+
+      const parsed = DashboardSnapshotDataSchema.safeParse(payload);
+      expect(parsed.success).toBe(true);
+    });
+
+    it("rejects payload missing summary_cards", () => {
+      const result = DashboardSnapshotDataSchema.safeParse({});
+      expect(result.success).toBe(false);
+    });
+
+    it("valid summary_cards with trend field passes", () => {
+      const card = { label: "Test", value: "100", trend: "up", detail: "detail" };
+      const result = DashboardSnapshotDataSchema.safeParse({
+        summary_cards: [card],
+        services: { total: 1, live: 1, degraded: 0, offline: 0, unknown: 0 },
+        repos: [],
+        next_actions: [],
+        health: "live",
+        updated_at: new Date().toISOString(),
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it("rejects invalid priority in next_action", () => {
+      const payload = {
+        summary_cards: [],
+        services: { total: 1, live: 1, degraded: 0, offline: 0, unknown: 0 },
+        repos: [],
+        next_actions: [{ action: "test", project: "test", priority: "urgent" }],
+        health: "live",
+        updated_at: new Date().toISOString(),
+      };
+      expect(DashboardSnapshotDataSchema.safeParse(payload).success).toBe(false);
+    });
+
+    it("rejects repos with missing nomeCompleto", () => {
+      const payload = {
+        summary_cards: [],
+        services: { total: 0, live: 0, degraded: 0, offline: 0, unknown: 0 },
+        repos: [{ nome: "test", url: "https://github.com/a/b", openPRs: 0, openIssues: 0, ultimoPush: new Date().toISOString() }],
+        next_actions: [],
+        health: "live",
+        updated_at: new Date().toISOString(),
+      };
+      expect(DashboardSnapshotDataSchema.safeParse(payload).success).toBe(false);
+    });
+  });
+
+  describe("Dashboard source metadata", () => {
+    it("meta with source=mock and origin=local is valid", () => {
+      const meta = {
+        source: "mock",
+        origin: "local",
+        stale: false,
+        updated_at: new Date().toISOString(),
+        errors: [],
+      };
+      expect(SourceBadgeMetaSchema.safeParse(meta).success).toBe(true);
     });
   });
 });
