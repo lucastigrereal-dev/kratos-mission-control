@@ -3,6 +3,9 @@ import { getCheckpoints } from "@/lib/checkpoint-server-fns";
 import { getProjects } from "@/lib/project-server-fns";
 import { getAppointments } from "@/lib/appointment-server-fns";
 import { getContextSnapshot } from "@/lib/contexto-server-fns";
+import { getDashboardSnapshot } from "@/lib/dashboard-server-fns";
+import type { DashboardSnapshotData } from "../../api-contract/dashboard.schema";
+import type { SourceBadgeMeta } from "../../api-contract/source-badge.schema";
 
 export interface DashboardSummary {
   checkpoints: {
@@ -88,5 +91,27 @@ export function useDashboard(): DashboardSummary {
         }
       : null,
     isLoading: cp.isLoading || pr.isLoading || ap.isLoading || cx.isLoading,
+  };
+}
+
+// ── Aggregated dashboard snapshot (Sprint A getDashboardSnapshot) ──
+
+export function useDashboardSnapshot() {
+  const query = useQuery<{
+    data: DashboardSnapshotData | null;
+    error: { code: string; message: string; detail?: string } | null;
+    meta: SourceBadgeMeta;
+  }>({
+    queryKey: ["dashboard", "snapshot"],
+    queryFn: () => getDashboardSnapshot(),
+    staleTime: 15_000,
+  });
+
+  return {
+    data: query.data?.data ?? null,
+    meta: query.data?.meta ?? null,
+    isLoading: query.isLoading,
+    isError: query.isError || query.data?.error !== null,
+    error: query.data?.error ?? null,
   };
 }
