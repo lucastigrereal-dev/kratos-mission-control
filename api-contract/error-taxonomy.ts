@@ -43,3 +43,51 @@ export const API_ERROR_MESSAGES: Record<ApiErrorCode, string> = {
   not_found: "Recurso não encontrado",
   rate_limited: "Limite de requisições atingido",
 };
+
+// ── Error classification ──
+const NETWORK_ERROR_PATTERNS = [
+  "fetch failed",
+  "network error",
+  "econnrefused",
+  "enotfound",
+  "etimedout",
+  "abort",
+  "timeout",
+];
+
+const RATE_LIMIT_PATTERNS = [
+  "429",
+  "rate limit",
+  "too many requests",
+];
+
+export function classifyError(error: unknown): ApiErrorCode {
+  if (!(error instanceof Error)) return "internal_error";
+  const msg = error.message.toLowerCase();
+
+  for (const p of RATE_LIMIT_PATTERNS) {
+    if (msg.includes(p)) return "rate_limited";
+  }
+  for (const p of NETWORK_ERROR_PATTERNS) {
+    if (msg.includes(p)) return "external_unavailable";
+  }
+
+  return "internal_error";
+}
+
+// ── Snapshot error wrapper ──
+export interface SnapshotErrorResult {
+  error: ApiError;
+  stale: boolean;
+}
+
+export function toSnapshotError(
+  code: ApiErrorCode,
+  message: string,
+  detail?: string,
+): SnapshotErrorResult {
+  return {
+    error: createApiError(code, message, detail),
+    stale: code === "stale_data" || code === "external_unavailable",
+  };
+}
