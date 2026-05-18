@@ -34,6 +34,23 @@ export function SistemaView() {
   const { data: crews, isLoading: crLoading, isError: crError, error: crErr } = useOmnisCrews();
   const { data: jobs, isLoading: jbLoading, isError: jbError, error: jbErr } = useOmnisJobs(5);
 
+  const omnisConfigured = omnisConfig.data?.configured;
+  const ghConfigured = ghConfig.data?.configured;
+  const hasMissingConfig = !omnisConfigured || !ghConfigured;
+  const degradedServices = services.filter((s) => s.health === "degraded" || s.health === "offline");
+  const hasIssues = degradedServices.length > 0 || omError || crError || jbError;
+
+  const nextAction = hasMissingConfig
+    ? [
+        !omnisConfigured && "configurar OMNIS",
+        !ghConfigured && "configurar GitHub",
+      ]
+        .filter(Boolean)
+        .join(" e ") + " para monitoramento completo"
+    : hasIssues
+      ? "Verifique os serviços com alerta abaixo"
+      : "Todos os serviços operacionais";
+
   return (
     <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
       <SectionHeader
@@ -98,6 +115,14 @@ export function SistemaView() {
             GitHub não configurado
           </span>
         )}
+      </div>
+
+      {/* Next action summary */}
+      <div
+        className="mb-6 text-[12px]"
+        style={{ color: hasMissingConfig ? "var(--kratos-warn)" : "var(--kratos-text-secondary)" }}
+      >
+        Próxima ação: {nextAction}
       </div>
 
       {/* KRATOS service health */}
