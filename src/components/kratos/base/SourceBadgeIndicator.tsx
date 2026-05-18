@@ -8,7 +8,9 @@ interface Props {
 }
 
 function relativeTime(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
+  const ts = new Date(iso).getTime();
+  if (isNaN(ts)) return "?";
+  const diff = Date.now() - ts;
   const sec = Math.floor(diff / 1000);
   if (sec < 60) return `${sec}s`;
   const min = Math.floor(sec / 60);
