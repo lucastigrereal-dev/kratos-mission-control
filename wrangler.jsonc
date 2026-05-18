@@ -1,9 +1,14 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-start-app",
+  "name": "kratos-mission-control",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+
+  // Cloudflare Workers Builds: roda bun run build antes de wrangler deploy
+  "build": {
+    "command": "bun run build"
+  },
 
   // D1 + KV — configurados via dashboard ou wrangler CLI.
   // Bindings são injetados em produção; local dev usa --local.
