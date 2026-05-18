@@ -16,51 +16,88 @@ function relativeTime(iso: string): string {
   return `${Math.floor(hr / 24)}d`;
 }
 
+const SOURCE_LABEL: Record<string, string> = {
+  live: "Ao vivo",
+  mock: "Simulado",
+  cache: "Cache",
+  stale: "Desatualizado",
+  partial: "Parcial",
+};
+
+const SOURCE_SEVERITY: Record<string, string> = {
+  live: "var(--kratos-ok)",
+  mock: "var(--kratos-warn)",
+  cache: "var(--kratos-info)",
+  stale: "var(--kratos-critical)",
+  partial: "var(--kratos-warn)",
+};
+
 export function SourceBadgeIndicator({ meta, className = "" }: Props) {
   if (!meta) return null;
 
-  const sourceSeverity =
-    meta.stale || meta.errors.length > 0
-      ? "var(--kr-color-risk)"
-      : meta.source === "mock"
-        ? "var(--kr-color-amber)"
-        : meta.source === "live"
-          ? "var(--kr-color-mission)"
-          : "var(--kr-color-text-muted)";
+  const isError = meta.stale || meta.errors.length > 0;
+  const colorVar = isError
+    ? "var(--kratos-critical)"
+    : (SOURCE_SEVERITY[meta.source] ?? "var(--kratos-text-muted)");
 
-  const label =
-    meta.source === "mock"
-      ? "Simulado"
-      : meta.source === "live"
-        ? "Ao vivo"
-        : meta.source === "partial"
-          ? "Parcial"
-          : meta.source === "stale"
-            ? "Desatualizado"
-            : meta.source;
-
+  const label = SOURCE_LABEL[meta.source] ?? meta.source;
   const timeAgo = `há ${relativeTime(meta.updated_at)}`;
+  const originSuffix = meta.origin ? ` · ${meta.origin}` : "";
+
+  const ariaParts: string[] = [`Fonte: ${label}`];
+  if (meta.origin) ariaParts.push(`origem: ${meta.origin}`);
+  ariaParts.push(`atualizado ${timeAgo}`);
+  if (meta.stale) ariaParts.push("dados desatualizados");
+  if (meta.errors.length > 0) ariaParts.push(`${meta.errors.length} erro(s)`);
+  if (meta.confidence != null) ariaParts.push(`confiança: ${meta.confidence}%`);
 
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.65rem] leading-none ${className}`}
       style={{
-        borderColor: sourceSeverity,
-        color: "var(--kr-color-text-secondary)",
-        background: `color-mix(in oklab, ${sourceSeverity} 10%, transparent)`,
+        borderColor: colorVar,
+        color: "var(--kratos-text-secondary)",
+        background: `color-mix(in oklab, ${colorVar} 10%, transparent)`,
       }}
-      title={`Fonte: ${label} · Atualizado ${timeAgo}${meta.errors.length > 0 ? ` · ${meta.errors.length} erro(s)` : ""}`}
+      role="status"
+      aria-label={ariaParts.join(", ")}
     >
       <span
-        className="inline-block h-1.5 w-1.5 rounded-full"
-        style={{ background: sourceSeverity }}
+        className="inline-block h-1.5 w-1.5 rounded-full shrink-0"
+        style={{ background: colorVar }}
         aria-hidden
       />
-      {label}
+      <span className="font-medium" style={{ color: "var(--kratos-text-primary)" }}>
+        {label}
+      </span>
+      {meta.origin && (
+        <span className="opacity-50 kratos-mono" style={{ fontSize: "0.6rem" }}>
+          {meta.origin}
+        </span>
+      )}
       <span className="opacity-60">{timeAgo}</span>
       {meta.stale && (
-        <span className="opacity-80" style={{ color: "var(--kr-color-risk)" }}>
+        <span
+          className="inline-flex items-center justify-center rounded-full h-3.5 w-3.5 text-[9px] font-bold"
+          style={{
+            background: "var(--kratos-critical)",
+            color: "var(--kratos-text-primary)",
+          }}
+          aria-hidden
+        >
           !
+        </span>
+      )}
+      {meta.errors.length > 0 && (
+        <span
+          className="inline-flex items-center justify-center rounded-full h-3.5 min-w-[14px] px-0.5 text-[9px] font-bold kratos-mono"
+          style={{
+            background: "var(--kratos-critical)",
+            color: "var(--kratos-text-primary)",
+          }}
+          aria-hidden
+        >
+          {meta.errors.length}
         </span>
       )}
     </span>

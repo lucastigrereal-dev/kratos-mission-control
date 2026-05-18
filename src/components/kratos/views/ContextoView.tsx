@@ -8,6 +8,7 @@ import { BrowserContextList } from "@/components/kratos/contexto/BrowserContextL
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
+import { StatusCard } from "@/components/kratos/base/StatusCard";
 import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
 import { useContextSnapshot, useContextoMissionSnapshot } from "@/hooks/useContexto";
 import type { BrowserTab } from "../../../api-contract/contexto.schema";
@@ -65,6 +66,7 @@ export function ContextoView() {
           type="button"
           onClick={() => refetch()}
           className="mt-4 inline-flex items-center gap-2 rounded-md px-3 py-2 text-[11px] kratos-mono uppercase tracking-[0.15em] kratos-focus-ring"
+          aria-label="Tentar carregar o contexto novamente"
           style={{
             background: "var(--kratos-surface-3)",
             border: "1px solid var(--kratos-border)",
@@ -84,8 +86,32 @@ export function ContextoView() {
         title="Onde você está, onde se perdeu e como voltar."
         description="Save game mental do KRATOS. Sem reconstruir do zero."
       />
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <SourceBadgeIndicator meta={mission.meta} />
+        {snapshot.confidence < 45 && (
+          <span
+            className="text-[0.65rem] rounded-full border px-2 py-0.5"
+            style={{
+              color: "var(--kratos-text-secondary)",
+              borderColor: "var(--kratos-warn)",
+              background: "color-mix(in oklab, var(--kratos-warn) 8%, transparent)",
+            }}
+          >
+            Baixa confiança — verifique manualmente
+          </span>
+        )}
+        {mission.meta?.stale && (
+          <span
+            className="text-[0.65rem] rounded-full border px-2 py-0.5"
+            style={{
+              color: "var(--kratos-text-muted)",
+              borderColor: "var(--kratos-critical)",
+              background: "color-mix(in oklab, var(--kratos-critical) 8%, transparent)",
+            }}
+          >
+            Dados desatualizados — recarregue
+          </span>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -120,12 +146,7 @@ export function ContextoView() {
       </div>
 
       <div className="mt-10">
-        <div
-          className="mb-3 text-[10px] kratos-mono uppercase tracking-[0.18em]"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
-          — Camada de detalhe —
-        </div>
+        <div className="kratos-eyebrow mb-3">— Camada de detalhe —</div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
             {snapshot.browserTabs.length > 0 ? (
@@ -137,10 +158,12 @@ export function ContextoView() {
               />
             )}
           </div>
-          <EmptyState
-            title="Sem outros sinais agora"
-            description="Detectores adicionais entram nos próximos créditos."
-          />
+          <StatusCard>
+            <EmptyState
+              title="Sem outros sinais agora"
+              description="Detectores adicionais entram nos próximos créditos."
+            />
+          </StatusCard>
         </div>
       </div>
     </div>

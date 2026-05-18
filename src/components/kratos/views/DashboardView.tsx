@@ -30,12 +30,7 @@ function StatBlock({
 }) {
   return (
     <div className="flex flex-col">
-      <span
-        className="text-[10px] kratos-mono uppercase tracking-[0.15em]"
-        style={{ color: "var(--kratos-text-muted)" }}
-      >
-        {label}
-      </span>
+      <span className="kratos-eyebrow">{label}</span>
       <span className="text-[28px] font-bold leading-none mt-1" style={{ color }}>
         {value}
       </span>
@@ -83,6 +78,7 @@ function QuickLink({
         background: "var(--kratos-surface-2)",
         border: "1px solid var(--kratos-border)",
       }}
+      aria-label={`Ir para ${label}`}
     >
       <Icon className="h-4 w-4 shrink-0" style={{ color: accent }} />
       <span
@@ -126,18 +122,30 @@ export function DashboardView() {
         title="KRATOS"
         description="Visão consolidada de projetos, checkpoints, agenda e contexto."
       />
-      <div className="mb-4 flex items-center gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         <SourceBadgeIndicator meta={snap.meta} />
         {ghConfig.data && !ghConfig.data.configured && (
           <span
             className="text-[0.65rem] rounded-full border px-2 py-0.5"
             style={{
-              color: "var(--kr-color-text-muted)",
-              borderColor: "var(--kr-color-amber)",
-              background: "color-mix(in oklab, var(--kr-color-amber) 8%, transparent)",
+              color: "var(--kratos-text-muted)",
+              borderColor: "var(--kratos-warn)",
+              background: "color-mix(in oklab, var(--kratos-warn) 8%, transparent)",
             }}
           >
             GitHub não configurado
+          </span>
+        )}
+        {snap.data?.degraded && (
+          <span
+            className="text-[0.65rem] rounded-full border px-2 py-0.5"
+            style={{
+              color: "var(--kratos-text-secondary)",
+              borderColor: "var(--kratos-warn)",
+              background: "color-mix(in oklab, var(--kratos-warn) 8%, transparent)",
+            }}
+          >
+            Serviços degradados
           </span>
         )}
       </div>
@@ -168,12 +176,18 @@ export function DashboardView() {
             color="var(--kratos-info)"
           />
         </StatusCard>
-        <StatusCard accent={isOnFocus ? "on_focus" : "none"}>
+        <StatusCard accent={isOnFocus ? "on_focus" : "off_focus"}>
           <StatBlock
             label="Foco"
             value={isOnFocus ? "ON" : "OFF"}
-            sub={d.contexto ? `${d.contexto.project} · ${d.contexto.focusStatus}` : "Sem dados"}
-            color={isOnFocus ? "var(--kratos-ok)" : "var(--kratos-warn)"}
+            sub={
+              d.contexto
+                ? isOnFocus
+                  ? `${d.contexto.project} · Mantenha o ritmo`
+                  : `${d.contexto.project} · Volte para a próxima ação`
+                : "Sem dados de contexto"
+            }
+            color={isOnFocus ? "var(--kratos-ok)" : "var(--kratos-critical)"}
           />
         </StatusCard>
       </div>
@@ -210,12 +224,7 @@ export function DashboardView() {
 
       {/* Quick navigation */}
       <div className="mt-6">
-        <div
-          className="mb-3 text-[10px] kratos-mono uppercase tracking-[0.18em]"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
-          — Acesso rápido —
-        </div>
+        <div className="kratos-eyebrow mb-3">— Acesso rápido —</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <QuickLink icon={Crosshair} label="Agora" to="/agora" accent="var(--kratos-accent)" />
           <QuickLink icon={CalendarClock} label="Agenda" to="/agenda" accent="var(--kratos-info)" />
@@ -237,23 +246,13 @@ export function DashboardView() {
       {/* GitHub tracked repos */}
       {reposLoading && (
         <div className="mt-8">
-          <div
-            className="mb-3 text-[10px] kratos-mono uppercase tracking-[0.18em]"
-            style={{ color: "var(--kratos-text-muted)" }}
-          >
-            — GitHub · Repositórios monitorados —
-          </div>
+          <div className="kratos-eyebrow mb-3">— GitHub · Repositórios monitorados —</div>
           <LoadingState lines={3} compact />
         </div>
       )}
       {trackedRepos && trackedRepos.length > 0 && (
         <div className="mt-8">
-          <div
-            className="mb-3 text-[10px] kratos-mono uppercase tracking-[0.18em]"
-            style={{ color: "var(--kratos-text-muted)" }}
-          >
-            — GitHub · Repositórios monitorados —
-          </div>
+          <div className="kratos-eyebrow mb-3">— GitHub · Repositórios monitorados —</div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {trackedRepos.map((name) => (
               <TrackedRepoCard key={name} owner={DEFAULT_OWNER} repo={name} />

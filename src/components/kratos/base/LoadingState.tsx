@@ -2,7 +2,7 @@ type Props = { lines?: number; compact?: boolean };
 
 export function LoadingState({ lines = 3, compact = false }: Props) {
   return (
-    <div className={compact ? "py-3" : "py-6"} aria-busy="true" aria-live="polite">
+    <div className={compact ? "py-3" : "py-6"} aria-busy="true" aria-live="polite" role="status">
       <div className="space-y-2">
         {Array.from({ length: lines }).map((_, i) => (
           <div

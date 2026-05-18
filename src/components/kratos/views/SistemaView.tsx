@@ -34,6 +34,23 @@ export function SistemaView() {
   const { data: crews, isLoading: crLoading, isError: crError, error: crErr } = useOmnisCrews();
   const { data: jobs, isLoading: jbLoading, isError: jbError, error: jbErr } = useOmnisJobs(5);
 
+  const omnisConfigured = omnisConfig.data?.configured;
+  const ghConfigured = ghConfig.data?.configured;
+  const hasMissingConfig = !omnisConfigured || !ghConfigured;
+  const degradedServices = services.filter((s) => s.health === "degraded" || s.health === "offline");
+  const hasIssues = degradedServices.length > 0 || omError || crError || jbError;
+
+  const nextAction = hasMissingConfig
+    ? [
+        !omnisConfigured && "configurar OMNIS",
+        !ghConfigured && "configurar GitHub",
+      ]
+        .filter(Boolean)
+        .join(" e ") + " para monitoramento completo"
+    : hasIssues
+      ? "Verifique os serviços com alerta abaixo"
+      : "Todos os serviços operacionais";
+
   return (
     <div className="mx-auto w-full max-w-[1280px] px-6 py-8 space-y-10">
       <SectionHeader
@@ -48,25 +65,28 @@ export function SistemaView() {
           <span
             className="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.65rem]"
             style={{
-              color: "var(--kr-color-text-secondary)",
+              color: "var(--kratos-text-secondary)",
               borderColor:
                 workerHealth.status === "ok"
-                  ? "var(--kr-color-mission)"
+                  ? "var(--kratos-ok)"
                   : workerHealth.status === "degraded"
-                    ? "var(--kr-color-amber)"
-                    : "var(--kr-color-risk)",
+                    ? "var(--kratos-warn)"
+                    : "var(--kratos-critical)",
             }}
+            role="status"
+            aria-label={`Worker status: ${workerHealth.status}, version ${workerHealth.version}`}
           >
             <span
               className="inline-block h-1.5 w-1.5 rounded-full"
               style={{
                 background:
                   workerHealth.status === "ok"
-                    ? "var(--kr-color-mission)"
+                    ? "var(--kratos-ok)"
                     : workerHealth.status === "degraded"
-                      ? "var(--kr-color-amber)"
-                      : "var(--kr-color-risk)",
+                      ? "var(--kratos-warn)"
+                      : "var(--kratos-critical)",
               }}
+              aria-hidden
             />
             Worker: {workerHealth.status} · v{workerHealth.version}
           </span>
@@ -75,9 +95,9 @@ export function SistemaView() {
           <span
             className="text-[0.65rem] rounded-full border px-2 py-0.5"
             style={{
-              color: "var(--kr-color-text-muted)",
-              borderColor: "var(--kr-color-amber)",
-              background: "color-mix(in oklab, var(--kr-color-amber) 8%, transparent)",
+              color: "var(--kratos-text-muted)",
+              borderColor: "var(--kratos-warn)",
+              background: "color-mix(in oklab, var(--kratos-warn) 8%, transparent)",
             }}
           >
             OMNIS não configurado
@@ -87,9 +107,9 @@ export function SistemaView() {
           <span
             className="text-[0.65rem] rounded-full border px-2 py-0.5"
             style={{
-              color: "var(--kr-color-text-muted)",
-              borderColor: "var(--kr-color-amber)",
-              background: "color-mix(in oklab, var(--kr-color-amber) 8%, transparent)",
+              color: "var(--kratos-text-muted)",
+              borderColor: "var(--kratos-warn)",
+              background: "color-mix(in oklab, var(--kratos-warn) 8%, transparent)",
             }}
           >
             GitHub não configurado
@@ -97,14 +117,17 @@ export function SistemaView() {
         )}
       </div>
 
+      {/* Next action summary */}
+      <div
+        className="mb-6 text-[12px]"
+        style={{ color: hasMissingConfig ? "var(--kratos-warn)" : "var(--kratos-text-secondary)" }}
+      >
+        Próxima ação: {nextAction}
+      </div>
+
       {/* KRATOS service health */}
       <section>
-        <div
-          className="text-[10px] kratos-mono uppercase tracking-[0.18em] mb-3"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
-          KRATOS — Serviços monitorados
-        </div>
+        <div className="kratos-eyebrow mb-3">KRATOS — Serviços monitorados</div>
         {krLoading ? (
           <LoadingState lines={4} />
         ) : (
@@ -118,12 +141,7 @@ export function SistemaView() {
 
       {/* OMNIS — services */}
       <section>
-        <div
-          className="text-[10px] kratos-mono uppercase tracking-[0.18em] mb-3"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
-          OMNIS — Serviços
-        </div>
+        <div className="kratos-eyebrow mb-3">OMNIS — Serviços</div>
         {omLoading ? (
           <LoadingState lines={4} />
         ) : omError ? (
@@ -145,12 +163,7 @@ export function SistemaView() {
 
       {/* OMNIS — crews */}
       <section>
-        <div
-          className="text-[10px] kratos-mono uppercase tracking-[0.18em] mb-3"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
-          OMNIS — Crews
-        </div>
+        <div className="kratos-eyebrow mb-3">OMNIS — Crews</div>
         {crLoading ? (
           <LoadingState lines={3} />
         ) : crError ? (
@@ -171,12 +184,7 @@ export function SistemaView() {
 
       {/* OMNIS — jobs */}
       <section>
-        <div
-          className="text-[10px] kratos-mono uppercase tracking-[0.18em] mb-3"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
-          OMNIS — Jobs recentes
-        </div>
+        <div className="kratos-eyebrow mb-3">OMNIS — Jobs recentes</div>
         {jbLoading ? (
           <LoadingState lines={4} />
         ) : jbError ? (
@@ -197,12 +205,7 @@ export function SistemaView() {
 
       {/* Reference gallery */}
       <section>
-        <div
-          className="text-[10px] kratos-mono uppercase tracking-[0.18em] mb-3"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
-          Referência — 9 estados de live status
-        </div>
+        <div className="kratos-eyebrow mb-3">Referência — 9 estados de live status</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {STATES.map((state) => (
             <StatusCard key={state}>
@@ -221,20 +224,10 @@ export function SistemaView() {
       </section>
 
       <section>
-        <div
-          className="text-[10px] kratos-mono uppercase tracking-[0.18em] mb-3"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
-          Referência — estados de painel
-        </div>
+        <div className="kratos-eyebrow mb-3">Referência — estados de painel</div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           <StatusCard>
-            <div
-              className="text-[10px] kratos-mono uppercase tracking-[0.15em] mb-3"
-              style={{ color: "var(--kratos-text-muted)" }}
-            >
-              empty
-            </div>
+            <div className="kratos-eyebrow mb-3">empty</div>
             <EmptyState
               title="Sem dados"
               description="Nenhum sinal capturado ainda."
@@ -242,21 +235,11 @@ export function SistemaView() {
             />
           </StatusCard>
           <StatusCard>
-            <div
-              className="text-[10px] kratos-mono uppercase tracking-[0.15em] mb-3"
-              style={{ color: "var(--kratos-text-muted)" }}
-            >
-              loading
-            </div>
+            <div className="kratos-eyebrow mb-3">loading</div>
             <LoadingState lines={4} compact />
           </StatusCard>
           <StatusCard>
-            <div
-              className="text-[10px] kratos-mono uppercase tracking-[0.15em] mb-3"
-              style={{ color: "var(--kratos-text-muted)" }}
-            >
-              error
-            </div>
+            <div className="kratos-eyebrow mb-3">error</div>
             <ErrorState
               title="Coletor indisponível"
               description="Falha ao consultar /live/stream."

@@ -162,6 +162,12 @@
 
   --kratos-font-sans: "Inter", "Inter Variable", system-ui, -apple-system, sans-serif;
   --kratos-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --kr-duration-fast: 150ms;
+  --kr-duration-normal: 250ms;
+  --kr-duration-slow: 500ms;
+  --kr-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --kr-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @layer base {
