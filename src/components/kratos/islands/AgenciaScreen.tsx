@@ -51,11 +51,11 @@ const postDays = [0, 2, 3, 5]; // index of days with posts this week
 const todayIdx = 1; // Tuesday (index 1)
 
 const contentPipeline = [
-  { stage: "Ideias", count: 24, color: "#F97316" },
-  { stage: "Roteiros", count: 8, color: "#FB923C" },
-  { stage: "Produção", count: 5, color: "#FBBF24" },
-  { stage: "Edição", count: 3, color: "#FCD34D" },
-  { stage: "Publicação", count: 2, color: "#4ADE80" },
+  { stage: "Ideias", count: 24, color: "var(--kr-island-agencia)" },
+  { stage: "Roteiros", count: 8, color: "var(--kr-accent-orange-lighter)" },
+  { stage: "Produção", count: 5, color: "var(--kr-accent-amber-bright)" },
+  { stage: "Edição", count: 3, color: "var(--kr-accent-gold-light)" },
+  { stage: "Publicação", count: 2, color: "var(--kr-success)" },
 ];
 
 const ideas = [
@@ -81,7 +81,7 @@ function KpiQuadPanel() {
         <GlassPanel key={kpi.label} padding="sm" className="text-center">
           <kpi.icon
             className="h-5 w-5 mx-auto mb-1.5"
-            style={{ color: "#FB923C" }}
+            style={{ color: "var(--kr-accent-orange-lighter)" }}
             aria-hidden
           />
           <p className="kratos-num text-xl">{kpi.value}</p>
@@ -94,7 +94,7 @@ function KpiQuadPanel() {
               kpi.deltaPositive ? "" : "",
             )}
             style={{
-              color: kpi.deltaPositive ? "#4ADE80" : "#EF4444",
+              color: kpi.deltaPositive ? "var(--kr-success)" : "var(--kr-danger)",
             }}
           >
             {kpi.delta}
@@ -128,20 +128,20 @@ function ContentCalendar() {
               style={{
                 background:
                   i === todayIdx
-                    ? "#F97316"
+                    ? "var(--kr-island-agencia)"
                     : postDays.includes(i)
                       ? "var(--kratos-surface-3)"
                       : "var(--kratos-surface-2)",
                 border:
                   i === todayIdx
-                    ? "2px solid #FDBA74"
+                    ? "2px solid var(--kr-accent-orange-light)"
                     : "1px solid var(--kratos-border)",
               }}
             >
               {postDays.includes(i) && (
                 <div
                   className="h-2 w-2 rounded-full"
-                  style={{ background: i === todayIdx ? "#fff" : "#F97316" }}
+                  style={{ background: i === todayIdx ? "#fff" : "var(--kr-island-agencia)" }}
                   aria-label="Post agendado"
                 />
               )}
@@ -168,7 +168,7 @@ function CampaignMainCard() {
         <div>
           <span
             className="kratos-eyebrow block mb-1"
-            style={{ color: "#FDBA74" }}
+            style={{ color: "var(--kr-accent-orange-light)" }}
           >
             Campanha Principal
           </span>
@@ -178,7 +178,7 @@ function CampaignMainCard() {
         </div>
         <span
           className="kratos-chip"
-          style={{ color: "#FDBA74", borderColor: "rgba(249, 115, 22, 0.3)" }}
+          style={{ color: "var(--kr-accent-orange-light)", borderColor: "rgba(249, 115, 22, 0.3)" }}
         >
           68%
         </span>
@@ -191,7 +191,7 @@ function CampaignMainCard() {
             className="h-full rounded-full transition-all duration-700"
             style={{
               width: "68%",
-              background: "linear-gradient(90deg, #F97316, #FB923C)",
+              background: "linear-gradient(90deg, var(--kr-island-agencia), var(--kr-accent-orange-lighter))",
             }}
             aria-hidden
           />
@@ -206,7 +206,7 @@ function CampaignMainCard() {
             className="text-[10px] px-2 py-0.5 rounded-full"
             style={{
               background: i === 1 ? "rgba(249, 115, 22, 0.2)" : "var(--kratos-surface-3)",
-              color: i === 1 ? "#FDBA74" : "var(--kratos-text-muted)",
+              color: i === 1 ? "var(--kr-accent-orange-light)" : "var(--kratos-text-muted)",
             }}
           >
             {phase}
@@ -287,10 +287,10 @@ function IdeaTracker() {
                   width: `${idea.progress}%`,
                   background:
                     idea.progress >= 70
-                      ? "#4ADE80"
+                      ? "var(--kr-success)"
                       : idea.progress >= 30
-                        ? "#FBBF24"
-                        : "#F97316",
+                        ? "var(--kr-accent-amber-bright)"
+                        : "var(--kr-island-agencia)",
                 }}
                 aria-hidden
               />
@@ -322,7 +322,7 @@ function StudioSquads() {
               className="h-8 w-8 rounded-full flex items-center justify-center"
               style={{ background: "rgba(249, 115, 22, 0.15)" }}
             >
-              <Users className="h-4 w-4" style={{ color: "#FB923C" }} aria-hidden />
+              <Users className="h-4 w-4" style={{ color: "var(--kr-accent-orange-lighter)" }} aria-hidden />
             </div>
             <span className="text-[10px] leading-tight" style={{ color: "var(--kratos-text-primary)" }}>
               {sq.name}
@@ -351,7 +351,7 @@ function AuroraMiniChat() {
           <MessageCircle className="h-4 w-4 text-white" aria-hidden />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-[0.08em] mb-1" style={{ color: "#C4B5FD" }}>
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] mb-1" style={{ color: "var(--kr-accent-purple-light)" }}>
             Aurora
           </p>
           <p className="text-[13px]" style={{ color: "var(--kratos-text-primary)" }}>

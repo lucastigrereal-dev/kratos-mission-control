@@ -100,9 +100,9 @@ function DreamPortal() {
               />
               <defs>
                 <linearGradient id="portalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#67E8F9" />
-                  <stop offset="50%" stopColor="#0EA5E9" />
-                  <stop offset="100%" stopColor="#1E40AF" />
+                  <stop offset="0%" stopColor="var(--kr-accent-blue-cyan)" />
+                  <stop offset="50%" stopColor="var(--kr-island-nimbus)" />
+                  <stop offset="100%" stopColor="var(--kr-castle-roof)" />
                 </linearGradient>
               </defs>
             </svg>
@@ -112,7 +112,7 @@ function DreamPortal() {
           <div
             className="z-20 h-14 w-14 rounded-full"
             style={{
-              background: "radial-gradient(circle, #22D3EE, #0EA5E9)",
+              background: "radial-gradient(circle, #22D3EE, var(--kr-island-nimbus))",
               boxShadow: "0 0 30px rgba(103, 232, 249, 0.8)",
               animation: "kratos-pulse 3s ease-in-out infinite",
             }}
@@ -136,7 +136,7 @@ function WoodenSign() {
     >
       <span
         className="text-[14px] font-bold uppercase tracking-[0.15em]"
-        style={{ color: "#FDE68A" }}
+        style={{ color: "var(--kr-accent-gold-pale)" }}
       >
         ESCOLHA SEU DESTINO
       </span>
@@ -182,7 +182,7 @@ function TravelCards() {
           {/* Day count badge */}
           <span
             className="kratos-chip flex-shrink-0"
-            style={{ color: "#7DD3FC" }}
+            style={{ color: "var(--kr-accent-blue-light)" }}
           >
             {t.days} dias
           </span>
@@ -206,7 +206,7 @@ function AdventureTracker() {
           <div key={a.name} className="space-y-1.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 min-w-0">
-                <Compass className="h-4 w-4 flex-shrink-0" style={{ color: "#7DD3FC" }} aria-hidden />
+                <Compass className="h-4 w-4 flex-shrink-0" style={{ color: "var(--kr-accent-blue-light)" }} aria-hidden />
                 <span className="text-[13px] truncate" style={{ color: "var(--kratos-text-primary)" }}>
                   {a.name}
                 </span>
@@ -222,9 +222,9 @@ function AdventureTracker() {
                   width: `${a.progress}%`,
                   background:
                     a.progress >= 70
-                      ? "linear-gradient(90deg, #0EA5E9, #22D3EE)"
+                      ? "linear-gradient(90deg, var(--kr-island-nimbus), #22D3EE)"
                       : a.progress >= 30
-                        ? "#0EA5E9"
+                        ? "var(--kr-island-nimbus)"
                         : "var(--kratos-surface-4)",
                 }}
                 aria-hidden
@@ -254,7 +254,7 @@ function WishList() {
             style={{ background: "var(--kratos-surface-2)" }}
           >
             {item.done ? (
-              <CheckCircle2 className="h-4 w-4 flex-shrink-0" style={{ color: "#4ADE80" }} aria-label="Concluído" />
+              <CheckCircle2 className="h-4 w-4 flex-shrink-0" style={{ color: "var(--kr-success)" }} aria-label="Concluído" />
             ) : (
               <Circle className="h-4 w-4 flex-shrink-0" style={{ color: "var(--kratos-text-muted)" }} aria-label="Pendente" />
             )}
@@ -271,7 +271,7 @@ function WishList() {
               {item.text}
             </span>
             {item.done && (
-              <span className="ml-auto text-[10px] kratos-mono" style={{ color: "#4ADE80" }}>
+              <span className="ml-auto text-[10px] kratos-mono" style={{ color: "var(--kr-success)" }}>
                 FEITO
               </span>
             )}
@@ -294,10 +294,10 @@ function InspirationCard() {
         }}
       >
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="h-4 w-4" style={{ color: "#7DD3FC" }} aria-hidden />
+          <Sparkles className="h-4 w-4" style={{ color: "var(--kr-accent-blue-light)" }} aria-hidden />
           <span
             className="text-[10px] font-bold uppercase tracking-[0.12em]"
-            style={{ color: "#7DD3FC" }}
+            style={{ color: "var(--kr-accent-blue-light)" }}
           >
             Inspiração
           </span>
