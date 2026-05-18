@@ -11,8 +11,8 @@ const MissionLensDataSchema = z.object({
       status: z.string().optional(),
     })
     .optional(),
-  today_agenda: z.array(z.unknown()).optional(),
-  recent_checkpoints: z.array(z.unknown()).optional(),
+  today_agenda: z.array(z.record(z.unknown())).optional(),
+  recent_checkpoints: z.array(z.record(z.unknown())).optional(),
   mentor_signals: z
     .array(
       z.object({
@@ -22,7 +22,7 @@ const MissionLensDataSchema = z.object({
       })
     )
     .optional(),
-  alerts: z.array(z.unknown()).optional(),
+  alerts: z.array(z.record(z.unknown())).optional(),
   context: z
     .object({
       project: z.string().optional(),
@@ -91,11 +91,13 @@ async function fetchMissionLens(): Promise<{
             ? "live"
             : src === "cached"
               ? "cache"
-              : src === "mock"
-                ? "mock"
-                : src === "error"
-                  ? "error"
-                  : "live";
+              : src === "fallback"
+                ? "cache"
+                : src === "mock"
+                  ? "mock"
+                  : src === "error"
+                    ? "error"
+                    : "live";
         return { data: parsed.data.data, sourceType };
       }
     }
