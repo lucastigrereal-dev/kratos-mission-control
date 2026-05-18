@@ -11,6 +11,7 @@ export function useContextSnapshot() {
     queryFn: () => getContextSnapshot({ refresh: false }),
     staleTime: 15_000,
     refetchInterval: 30_000,
+    retry: false,
   });
 
   return {
@@ -37,6 +38,7 @@ export function useContextoMissionSnapshot(opts?: { refresh?: boolean }) {
     queryFn: () => getContextoSnapshot({ refresh }),
     staleTime: 15_000,
     refetchInterval: 30_000,
+    retry: false,
   });
 
   return {

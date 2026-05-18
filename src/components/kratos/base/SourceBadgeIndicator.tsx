@@ -60,6 +60,7 @@ export function SourceBadgeIndicator({ meta, className = "" }: Props) {
         background: `color-mix(in oklab, ${colorVar} 10%, transparent)`,
       }}
       role="status"
+      title={`Fonte: ${label}${meta.origin ? ` · ${meta.origin}` : ""} · ${timeAgo}`}
       aria-label={ariaParts.join(", ")}
     >
       <span

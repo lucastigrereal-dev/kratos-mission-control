@@ -11,6 +11,7 @@ export function useServices() {
     queryFn: () => getServicesHealth(),
     staleTime: 15_000,
     refetchInterval: 30_000,
+    retry: false,
   });
 
   return {
@@ -40,6 +41,7 @@ export function useWorkerHealth() {
     queryFn: () => getWorkerHealth(),
     staleTime: 15_000,
     refetchInterval: 30_000,
+    retry: false,
   });
 
   return {

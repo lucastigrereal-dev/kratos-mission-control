@@ -19,7 +19,8 @@ test.describe("Dashboard page", () => {
 
     // SourceBadgeIndicator renders an inline indicator with a rounded-full border.
     // It may show "Simulado" (mock), "Ao vivo" (live), "Parcial" (partial), etc.
-    const badge = page.locator("span[title*='Fonte:']")
+    // Uses role="status" with aria-label containing "Fonte:"
+    const badge = page.locator("span[role='status']").filter({ hasText: /Ao vivo|Simulado|Cache|Parcial|Desatualizado/ })
     await expect(badge.first()).toBeVisible({ timeout: 10_000 })
   })
 

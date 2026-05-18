@@ -37,8 +37,8 @@ export function SystemPulseStrip({ systems, liveState, lastUpdate }: Props) {
         />
 
         <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          {systems.map((s) => (
-            <li key={s.name} className="flex items-center gap-2">
+          {systems.map((s, i) => (
+            <li key={`${s.name}-${i}`} className="flex items-center gap-2">
               <StatusDot severity={s.severity} size="xs" />
               <span
                 className="text-[11px] kratos-mono uppercase tracking-[0.12em]"

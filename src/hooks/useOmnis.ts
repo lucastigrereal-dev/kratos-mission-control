@@ -12,6 +12,7 @@ export function useOmnisStatus() {
       return result.data;
     },
     staleTime: 30_000,
+    retry: false,
   });
 }
 
@@ -24,6 +25,7 @@ export function useOmnisHealth() {
       return result.data;
     },
     staleTime: 30_000,
+    retry: false,
   });
 }
 
@@ -36,6 +38,7 @@ export function useOmnisCrews() {
       return result.data;
     },
     staleTime: 30_000,
+    retry: false,
   });
 }
 
@@ -48,6 +51,7 @@ export function useOmnisJobs(limit = 5) {
       return result.data;
     },
     staleTime: 30_000,
+    retry: false,
   });
 }
 

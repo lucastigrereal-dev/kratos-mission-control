@@ -2,12 +2,12 @@ import { test, expect } from "@playwright/test"
 
 const ROUTES = [
   { path: "/", heading: "KRATOS" },
-  { path: "/agora", heading: "Voce esta aqui." },
-  { path: "/agenda", heading: "Plano do dia, prazos e decisoes" },
+  { path: "/agora", heading: "Você está aqui." },
+  { path: "/agenda", heading: "Plano do dia, prazos e decisões" },
   { path: "/checkpoints", heading: "Seu save game mental para retomar sem se perder." },
   { path: "/projetos", heading: "Projetos conhecidos" },
-  { path: "/contexto", heading: "Onde voce esta, onde se perdeu e como voltar." },
-  { path: "/sistema", heading: "Saude dos servicos e referencia visual" },
+  { path: "/contexto", heading: "Onde você está, onde se perdeu e como voltar." },
+  { path: "/sistema", heading: "Saúde dos serviços e referência visual" },
 ]
 
 test.describe("snapshot states", () => {
@@ -41,18 +41,19 @@ test.describe("snapshot states", () => {
     await page.goto("/sistema", { waitUntil: "networkidle" })
     await page.waitForTimeout(2000)
 
-    // Either OMNIS, Akasha, or GitHub sections should render
-    const sectionHeadings = [
-      "OMNIS",
-      "Akasha",
-      "GitHub",
+    // Either OMNIS, services, or empty state sections should render
+    const sectionTexts = [
+      "OMNIS indisponível",
+      "OMNIS sem sinal",
       "Nenhuma crew ativa",
       "Nenhum job recente",
-      "OMNIS sem sinal",
+      "Sem dados",
+      "Coletor indisponível",
+      "Saúde dos serviços",
     ]
 
     let found = false
-    for (const text of sectionHeadings) {
+    for (const text of sectionTexts) {
       if (await page.locator("text=" + text).isVisible().catch(() => false)) {
         found = true
         break

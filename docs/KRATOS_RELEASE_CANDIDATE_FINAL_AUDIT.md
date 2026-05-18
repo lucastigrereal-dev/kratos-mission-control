@@ -128,3 +128,54 @@ Failures fall into 2 buckets:
 2. Atualizar E2E selectors para headings reais (manutenção de teste)
 3. Configurar Cloudflare secrets antes do deploy
 4. Executar `wrangler deploy` com Lucas presente
+
+---
+
+## Sprint C FINAL — E2E Stabilization (2026-05-18)
+
+### Correções aplicadas
+
+| Arquivo | Mudança |
+|---|---|
+| `src/components/kratos/agora/SystemPulseStrip.tsx` | `key={s.name}` → `key={s.name}-${i}` — elimina duplicate key warning |
+| `src/components/kratos/base/SourceBadgeIndicator.tsx` | Adicionado `title="Fonte: ..."` — compatível com `span[title*='Fonte:']` |
+| `src/hooks/useServices.ts` | `retry: false` em useServices e useWorkerHealth |
+| `src/hooks/useOmnis.ts` | `retry: false` em useOmnisStatus, useOmnisHealth, useOmnisCrews, useOmnisJobs |
+| `src/hooks/useContexto.ts` | `retry: false` em useContextSnapshot e useContextoMissionSnapshot |
+| `src/lib/resolve-with-fallback.ts` | Criado — `resolveWithFallback<T>()` com timeout |
+| `src/hooks/useSafeQuery.ts` | Criado — wrapper React Query com fallback e timeout |
+| `scripts/validate-kratos-rc.ps1` | Criado — script de validação local completo |
+| `docs/KRATOS_E2E_FAILURE_MATRIX.md` | Criado — matriz de falhas com correções |
+
+### Resultado esperado pós-correção
+
+- `bun run build` — PASS
+- `bun run test` — 270 pass, 0 fail
+- `bun run test:e2e` — ≥ 40/46 PASS (de 29/46)
+
+### Comandos de validação local
+
+```powershell
+cd C:\Users\lucas\kratos-mission-control
+bun run build
+bun run test
+$env:PLAYWRIGHT_BASE_URL="http://localhost:8081"; bun run test:e2e
+powershell -ExecutionPolicy Bypass -File scripts\validate-kratos-rc.ps1
+```
+
+### Commit seletivo
+
+```powershell
+git add src/components/kratos/agora/SystemPulseStrip.tsx
+git add src/components/kratos/base/SourceBadgeIndicator.tsx
+git add src/hooks/useServices.ts
+git add src/hooks/useOmnis.ts
+git add src/hooks/useContexto.ts
+git add src/lib/resolve-with-fallback.ts
+git add src/hooks/useSafeQuery.ts
+git add scripts/validate-kratos-rc.ps1
+git add docs/KRATOS_E2E_FAILURE_MATRIX.md
+git add docs/KRATOS_RELEASE_CANDIDATE_FINAL_AUDIT.md
+git add tests/e2e/
+git commit -m "fix(kratos): stabilize e2e — duplicate keys, retry false, source badge title"
+```
