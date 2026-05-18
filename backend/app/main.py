@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
     title="KRATOS Mission Control",
     description="Local-first operational cockpit",
-    version="0.8.0",
+    version="0.10.0",
 )
 
 app.add_middleware(
@@ -82,8 +82,8 @@ app.include_router(continuity_router)
 def root():
     return {
         "name": "KRATOS Mission Control",
-        "version": "0.8.0",
-        "phase": "0.8C",
+        "version": "0.10.0",
+        "phase": "0.10 — Verdade Operacional",
         "endpoints": [
             "/health", "/now",
             "/projects", "/projects/{id}",
