@@ -81,7 +81,7 @@ export function SourceBadgeIndicator({ meta, className = "" }: Props) {
           className="inline-flex items-center justify-center rounded-full h-3.5 w-3.5 text-[9px] font-bold"
           style={{
             background: "var(--kratos-critical)",
-            color: "#fff",
+            color: "var(--kratos-text-primary)",
           }}
           aria-hidden
         >
@@ -93,7 +93,7 @@ export function SourceBadgeIndicator({ meta, className = "" }: Props) {
           className="inline-flex items-center justify-center rounded-full h-3.5 min-w-[14px] px-0.5 text-[9px] font-bold kratos-mono"
           style={{
             background: "var(--kratos-critical)",
-            color: "#fff",
+            color: "var(--kratos-text-primary)",
           }}
           aria-hidden
         >

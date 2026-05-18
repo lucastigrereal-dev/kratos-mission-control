@@ -78,6 +78,7 @@ function QuickLink({
         background: "var(--kratos-surface-2)",
         border: "1px solid var(--kratos-border)",
       }}
+      aria-label={`Ir para ${label}`}
     >
       <Icon className="h-4 w-4 shrink-0" style={{ color: accent }} />
       <span
