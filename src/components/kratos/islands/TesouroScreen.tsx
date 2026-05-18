@@ -13,7 +13,7 @@ import { ProgressRing } from "@/components/kratos/ui-primitives/ProgressRing";
 import { SectionTitle } from "@/components/kratos/ui-primitives/SectionTitle";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 
-const accent = "#CA8A04";
+const accent = "var(--kr-island-financas)";
 
 interface Investimento {
   categoria: string;
@@ -45,8 +45,8 @@ interface MetaFinanceira {
 }
 
 const metas: MetaFinanceira[] = [
-  { label: "Reserva 6 meses", atual: 24000, meta: 36000, cor: "#22C55E" },
-  { label: "Viagem Internacional", atual: 4200, meta: 15000, cor: "#3B82F6" },
+  { label: "Reserva 6 meses", atual: 24000, meta: 36000, cor: "var(--kr-success)" },
+  { label: "Viagem Internacional", atual: 4200, meta: 15000, cor: "var(--kr-sky)" },
   { label: "Apartamento (entrada)", atual: 18500, meta: 80000, cor: accent },
 ];
 
@@ -74,7 +74,7 @@ export function TesouroScreen() {
               {patrimonio.total}
             </p>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-[11px] font-semibold" style={{ color: "#22C55E" }}>
+              <span className="text-[11px] font-semibold" style={{ color: "var(--kr-success)" }}>
                 {patrimonio.variacao}
               </span>
               <span className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
@@ -84,7 +84,7 @@ export function TesouroScreen() {
           </div>
           <GlassPanel padding="sm" className="!px-3 !py-2 text-center">
             <p className="text-[10px] mb-0.5" style={{ color: "var(--kratos-text-muted)" }}>Este mês</p>
-            <p className="text-sm font-bold" style={{ color: "#22C55E", fontFamily: "var(--kratos-font-mono)" }}>
+            <p className="text-sm font-bold" style={{ color: "var(--kr-success)", fontFamily: "var(--kratos-font-mono)" }}>
               {patrimonio.mes}
             </p>
           </GlassPanel>
@@ -102,7 +102,7 @@ export function TesouroScreen() {
               </span>
             </div>
             <div className="h-2 rounded-full" style={{ background: "var(--kratos-surface-4)" }}>
-              <div className="h-full rounded-full" style={{ width: "100%", backgroundColor: "#22C55E" }} />
+              <div className="h-full rounded-full" style={{ width: "100%", backgroundColor: "var(--kr-success)" }} />
             </div>
           </div>
           <div>
@@ -115,7 +115,7 @@ export function TesouroScreen() {
             <div className="h-2 rounded-full" style={{ background: "var(--kratos-surface-4)" }}>
               <div
                 className="h-full rounded-full"
-                style={{ width: `${(orcamento.gasto / orcamento.ganho) * 100}%`, backgroundColor: "#EF4444" }}
+                style={{ width: `${(orcamento.gasto / orcamento.ganho) * 100}%`, backgroundColor: "var(--kr-danger)" }}
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ export function TesouroScreen() {
                   </p>
                   <span
                     className="text-[10px] font-semibold flex items-center gap-0.5"
-                    style={{ color: inv.positivo ? "#22C55E" : "#EF4444" }}
+                    style={{ color: inv.positivo ? "var(--kr-success)" : "var(--kr-danger)" }}
                   >
                     <ArrowUpRight className="h-3 w-3" />
                     {inv.retorno}

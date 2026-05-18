@@ -13,7 +13,7 @@ import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { SectionTitle } from "@/components/kratos/ui-primitives/SectionTitle";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 
-const accent = "#6366F1";
+const accent = "var(--kr-accent-indigo)";
 
 interface Insight {
   texto: string;

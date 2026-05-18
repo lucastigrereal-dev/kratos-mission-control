@@ -12,7 +12,7 @@ import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { SectionTitle } from "@/components/kratos/ui-primitives/SectionTitle";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 
-const accent = "#3B82F6";
+const accent = "var(--kr-sky)";
 
 interface Ideia {
   titulo: string;
