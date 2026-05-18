@@ -155,10 +155,7 @@ function KratosWorldPageInner({
   // ── Interaction handlers ──────
   const handleIslandClick = useCallback(
     (islandId: string) => {
-      const route = KRATOS_ROUTES.find((r) => r.path === `/${islandId}`);
-      if (route) {
-        navigate({ to: route.path as "/" | "/agora" | "/agenda" | "/projetos" | "/contexto" | "/checkpoints" | "/sistema" });
-      }
+      navigate({ to: "/ilhas/$islandId", params: { islandId } });
     },
     [navigate],
   );

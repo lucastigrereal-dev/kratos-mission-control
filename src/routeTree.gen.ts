@@ -16,6 +16,7 @@ import { Route as CheckpointsRouteImport } from './routes/checkpoints'
 import { Route as AgoraRouteImport } from './routes/agora'
 import { Route as AgendaRouteImport } from './routes/agenda'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as IlhasIslandIdRouteImport } from './routes/ilhas.$islandId'
 
 const SistemaRoute = SistemaRouteImport.update({
   id: '/sistema',
@@ -52,6 +53,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IlhasIslandIdRoute = IlhasIslandIdRouteImport.update({
+  id: '/ilhas/$islandId',
+  path: '/ilhas/$islandId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/contexto': typeof ContextoRoute
   '/projetos': typeof ProjetosRoute
   '/sistema': typeof SistemaRoute
+  '/ilhas/$islandId': typeof IlhasIslandIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/contexto': typeof ContextoRoute
   '/projetos': typeof ProjetosRoute
   '/sistema': typeof SistemaRoute
+  '/ilhas/$islandId': typeof IlhasIslandIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/contexto': typeof ContextoRoute
   '/projetos': typeof ProjetosRoute
   '/sistema': typeof SistemaRoute
+  '/ilhas/$islandId': typeof IlhasIslandIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/contexto'
     | '/projetos'
     | '/sistema'
+    | '/ilhas/$islandId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/contexto'
     | '/projetos'
     | '/sistema'
+    | '/ilhas/$islandId'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/contexto'
     | '/projetos'
     | '/sistema'
+    | '/ilhas/$islandId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +131,7 @@ export interface RootRouteChildren {
   ContextoRoute: typeof ContextoRoute
   ProjetosRoute: typeof ProjetosRoute
   SistemaRoute: typeof SistemaRoute
+  IlhasIslandIdRoute: typeof IlhasIslandIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ilhas/$islandId': {
+      id: '/ilhas/$islandId'
+      path: '/ilhas/$islandId'
+      fullPath: '/ilhas/$islandId'
+      preLoaderRoute: typeof IlhasIslandIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -183,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContextoRoute: ContextoRoute,
   ProjetosRoute: ProjetosRoute,
   SistemaRoute: SistemaRoute,
+  IlhasIslandIdRoute: IlhasIslandIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
