@@ -76,6 +76,23 @@
   --kr-bridge-glow-color: rgba(30, 144, 255, 0.18);
   --kr-bridge-glow-strong: rgba(30, 144, 255, 0.35);
   --kr-ocean-surface: rgba(14, 165, 233, 0.06);
+
+  /* === Island UI Accent Variants — lighter/darker tones (15) === */
+  --kr-accent-cyan: #06B6D4;
+  --kr-accent-cyan-bright: #22D3EE;
+  --kr-accent-indigo: #6366F1;
+  --kr-accent-emerald: #10B981;
+  --kr-accent-green-light: #6EE7B7;
+  --kr-accent-gold-light: #FCD34D;
+  --kr-accent-gold-pale: #FDE68A;
+  --kr-accent-orange-light: #FDBA74;
+  --kr-accent-orange-lighter: #FB923C;
+  --kr-accent-amber-bright: #FBBF24;
+  --kr-accent-purple: #A855F7;
+  --kr-accent-purple-light: #C4B5FD;
+  --kr-accent-purple-lighter: #A78BFA;
+  --kr-accent-blue-light: #7DD3FC;
+  --kr-accent-blue-cyan: #67E8F9;
 }
 
 
