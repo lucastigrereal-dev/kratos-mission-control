@@ -6,7 +6,8 @@
 
 import { describe, it, expect } from "bun:test";
 import { getLatest, refresh } from "../../backend/contexto/store";
-import { ContextSnapshotSchema } from "../../api-contract/contexto.schema";
+import { ContextSnapshotSchema, ContextoSnapshotDataSchema } from "../../api-contract/contexto.schema";
+import { SourceBadgeMetaSchema } from "../../api-contract/source-badge.schema";
 
 describe("Contexto Snapshot Store", () => {
   describe("Success path", () => {
@@ -130,6 +131,82 @@ describe("Contexto Snapshot Store", () => {
         threw = true;
       }
       expect(threw).toBe(false);
+    });
+  });
+
+  describe("High-level snapshot (ContextoSnapshotData)", () => {
+    it("maps store data to ContextoSnapshotData shape", () => {
+      const raw = getLatest();
+      const snapshot = {
+        current_context: raw.project ? `${raw.project} — ${raw.mission}` : "Sem contexto ativo",
+        confidence: raw.confidence,
+        mode: raw.project ? (raw.focusStatus === "on_focus" ? "execution" : "standby") : "unknown",
+        next_action: raw.reasons[0] ?? "Definir próxima ação",
+        origin: "local",
+      };
+      const parsed = ContextoSnapshotDataSchema.safeParse(snapshot);
+      expect(parsed.success).toBe(true);
+    });
+
+    it("valid ContextoSnapshotData passes schema validation", () => {
+      const valid = {
+        current_context: "KRATOS — Sprint A em execução",
+        confidence: 85,
+        mode: "execution",
+        next_action: "Implementar A04",
+        origin: "local",
+      };
+      expect(ContextoSnapshotDataSchema.safeParse(valid).success).toBe(true);
+    });
+
+    it("rejects snapshot with missing fields", () => {
+      expect(ContextoSnapshotDataSchema.safeParse({}).success).toBe(false);
+      expect(ContextoSnapshotDataSchema.safeParse({ current_context: "test" }).success).toBe(false);
+    });
+
+    it("rejects invalid mode", () => {
+      const invalid = {
+        current_context: "test",
+        confidence: 50,
+        mode: "invalid_mode",
+        next_action: "do something",
+        origin: "local",
+      };
+      expect(ContextoSnapshotDataSchema.safeParse(invalid).success).toBe(false);
+    });
+
+    it("rejects confidence outside 0-100", () => {
+      const invalid = {
+        current_context: "test",
+        confidence: 150,
+        mode: "execution",
+        next_action: "do something",
+        origin: "local",
+      };
+      expect(ContextoSnapshotDataSchema.safeParse(invalid).success).toBe(false);
+    });
+  });
+
+  describe("Source badge metadata", () => {
+    it("valid SourceBadgeMeta passes schema", () => {
+      const meta = {
+        source: "mock",
+        origin: "local",
+        stale: false,
+        updated_at: new Date().toISOString(),
+        errors: [],
+      };
+      expect(SourceBadgeMetaSchema.safeParse(meta).success).toBe(true);
+    });
+
+    it("SourceBadgeMeta with errors passes schema", () => {
+      const meta = {
+        source: "partial",
+        stale: true,
+        updated_at: new Date().toISOString(),
+        errors: ["Serviço externo indisponível"],
+      };
+      expect(SourceBadgeMetaSchema.safeParse(meta).success).toBe(true);
     });
   });
 });
