@@ -13,8 +13,12 @@ export type DataOrigin = z.infer<typeof DataOriginSchema>;
 export const SourceBadgeMetaSchema = z.object({
   source: DataSourceSchema,
   origin: DataOriginSchema.optional(),
+  source_kind: z.string().optional(),
   stale: z.boolean(),
   updated_at: z.string().datetime(),
+  confidence: z.number().int().min(0).max(100).optional(),
+  error_code: z.string().optional(),
+  generated_by: z.string().optional(),
   errors: z.array(z.string()).default([]),
 });
 export type SourceBadgeMeta = z.infer<typeof SourceBadgeMetaSchema>;
