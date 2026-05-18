@@ -60,6 +60,7 @@ htmlcov/
 # Playwright
 playwright-report/
 test-results/
+screenshots/
 
 # KRATOS local quarantine / corrupted agent backups
 .claude/_quarantine_corrupted_agents_2026-05-16/
