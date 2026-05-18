@@ -5,3 +5,4 @@ export { FloatingIsland } from "./FloatingIsland";
 export { BridgeSystem } from "./BridgeSystem";
 export { IslandLabel } from "./IslandLabel";
 export { KratosWorldMap } from "./KratosWorldMap";
+export { WorldCharacterMarker } from "./WorldCharacterMarker";

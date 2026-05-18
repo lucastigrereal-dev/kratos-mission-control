@@ -8,3 +8,4 @@ export { ErrorState } from "./ErrorState";
 export { ProgressRing } from "./ProgressRing";
 export { MetricBadge } from "./MetricBadge";
 export { IslandMiniCard } from "./IslandMiniCard";
+export { IconTile } from "./IconTile";

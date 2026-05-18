@@ -10,3 +10,5 @@ export { AudioPlayer } from "./AudioPlayer";
 export { SquadDock } from "./SquadDock";
 export { MissionStep } from "./MissionStep";
 export { WorldNavDock } from "./WorldNavDock";
+export { OperatorWelcomeCard } from "./OperatorWelcomeCard";
+export { CurrentMissionBar } from "./CurrentMissionBar";
