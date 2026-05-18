@@ -10,17 +10,17 @@ interface IslandPageHeaderProps {
 }
 
 const themeAccentMap: Record<IslandPageHeaderProps["theme"], string> = {
-  omnis: "#7C3AED",
-  agencia: "#F97316",
-  akasha: "#059669",
-  nimbus: "#0EA5E9",
+  omnis: "var(--kr-island-omnis)",
+  agencia: "var(--kr-island-agencia)",
+  akasha: "var(--kr-island-akasha)",
+  nimbus: "var(--kr-island-nimbus)",
 };
 
 const themeGlowMap: Record<IslandPageHeaderProps["theme"], string> = {
-  omnis: "#8B5CF6",
-  agencia: "#FB923C",
-  akasha: "#10B981",
-  nimbus: "#7DD3FC",
+  omnis: "var(--kr-aurora)",
+  agencia: "var(--kr-accent-orange-lighter)",
+  akasha: "var(--kr-accent-emerald)",
+  nimbus: "var(--kr-accent-blue-light)",
 };
 
 export function IslandPageHeader({

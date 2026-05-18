@@ -5,16 +5,16 @@ import { IslandPageFrame } from "@/components/kratos/islands/shared/IslandPageFr
 import { IslandPageHeader } from "@/components/kratos/islands/shared/IslandPageHeader";
 
 const ISLAND_THEMES: Record<string, string> = {
-  omnis: "#7C3AED",
-  agencia: "#F97316",
-  akasha: "#059669",
-  nimbus: "#0EA5E9",
-  arena: "#EF4444",
-  vila: "#16A34A",
-  forja: "#F59E0B",
-  observatorio: "#3B82F6",
-  filosofia: "#6366F1",
-  tesouro: "#F59E0B",
+  omnis: "var(--kr-island-omnis)",
+  agencia: "var(--kr-island-agencia)",
+  akasha: "var(--kr-island-akasha)",
+  nimbus: "var(--kr-island-nimbus)",
+  arena: "var(--kr-island-arena)",
+  vila: "var(--kr-island-vila)",
+  forja: "var(--kr-warning)",
+  observatorio: "var(--kr-sky)",
+  filosofia: "var(--kr-accent-indigo)",
+  tesouro: "var(--kr-warning)",
 };
 
 const ISLAND_TITLES: Record<string, { title: string; subtitle: string }> = {
