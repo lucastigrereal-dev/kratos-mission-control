@@ -1,8 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { KratosWorldMap } from "./KratosWorldMap";
-import { CentralCastleMission } from "./CentralCastleMission";
-import { WorldCharacterMarker } from "./WorldCharacterMarker";
 import { WorldSidebar } from "./WorldSidebar";
 import { WorldTopHud } from "./WorldTopHud";
 import { WorldRightPanel } from "./WorldRightPanel";
@@ -15,8 +13,6 @@ import {
   useKratosContext,
 } from "./KratosContext";
 import type { DashboardLoaderData } from "@/hooks/useDashboard";
-import type { LiveState } from "@/components/kratos/base/LiveStatusIndicator";
-import type { useCheckpoints } from "@/hooks/useCheckpoints";
 
 /* --------------------------------------------------*\
  * KratosWorldPage — Gamified World Map Dashboard
@@ -64,24 +60,6 @@ function KratosWorldPageInner({
   const handleCastleClick = useCallback(() => {
     navigate({ to: "/agora" });
   }, [navigate]);
-
-  const handleContinue = useCallback(() => {
-    const topPaused = ctx.pausedCheckpoints?.[0];
-    if (topPaused) {
-      ctx.resumeCheckpoint.mutate(topPaused.id);
-    }
-  }, [ctx.pausedCheckpoints, ctx.resumeCheckpoint]);
-
-  const currentMission =
-    ctx.lens?.mission_lens?.current_mission ??
-    ssrData?.contexto?.project ??
-    undefined;
-
-  const missionPhase = ctx.lens?.mission_lens?.phase;
-  const nextAction = ctx.lens?.next_best_action?.action;
-
-  const missionStatus = deriveMissionStatus(ctx.checkpoints.data);
-  const connectionState: LiveState = ctx.liveStatus.liveState;
 
   const showFullLoading =
     ctx.dashboard.isLoading && !ssrData;
@@ -169,27 +147,9 @@ function KratosWorldPageInner({
       {/* ── World Map (center column, middle row) ── */}
       <div className="col-start-2 row-start-2 relative" style={{ zIndex: 10 }}>
         <KratosWorldMap
-          currentMission={currentMission}
           onIslandClick={handleIslandClick}
-          castleComponent={
-            <CentralCastleMission
-              currentMission={currentMission}
-              missionStatus={missionStatus}
-              driftRisk={ctx.lens?.context?.drift_risk}
-              onCastleClick={handleCastleClick}
-            />
-          }
+          onCastleClick={handleCastleClick}
         />
-
-        {/* Character marker — Lucas facing castle */}
-        <div className="pointer-events-none absolute inset-0" style={{ zIndex: 60 }}>
-          <WorldCharacterMarker
-            position={{ x: "50%", y: "55%" }}
-            label="Lucas"
-            isActive={connectionState === "live"}
-            hasCheckpoint={(ctx.pausedCheckpoints?.length ?? 0) > 0}
-          />
-        </div>
       </div>
 
       {/* ── Bottom Dock (center column, bottom row) ── */}
@@ -205,19 +165,3 @@ function KratosWorldPageInner({
   );
 }
 
-/* --------------------------------------------------*\
- * deriveMissionStatus
-\* --------------------------------------------------*/
-
-function deriveMissionStatus(
-  checkpoints: ReturnType<typeof useCheckpoints>["data"],
-): "active" | "paused" | "completed" {
-  if (!Array.isArray(checkpoints) || checkpoints.length === 0) return "paused";
-  const hasInProgress = checkpoints.some((c) => c.status === "in_progress");
-  if (hasInProgress) return "active";
-  const hasPending = checkpoints.some((c) => c.status === "pending");
-  if (hasPending) return "paused";
-  const allComplete = checkpoints.every((c) => c.status === "completed");
-  if (allComplete) return "completed";
-  return "paused";
-}
