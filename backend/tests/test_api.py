@@ -16,11 +16,13 @@ def setup_module():
 def test_health():
     response = client.get("/health")
     assert response.status_code == 200
-    data = response.json()
+    envelope = response.json()
+    assert envelope["source"] == "real"
+    assert envelope["collector_status"] == "ok"
+    data = envelope["data"]
     assert data["status"] == "ok"
-    assert data["version"] == "0.8.0"
-    assert data["phase"] == "0.8C"
-    assert data["data_source"] == "live"
+    assert data["version"] == "0.11.0"
+    assert data["phase"] == "0.11 — Operational Truth Verifier"
 
 
 def test_now():
@@ -141,6 +143,18 @@ def test_alerts():
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
+
+
+def test_akasha_status():
+    response = client.get("/akasha/status")
+    assert response.status_code == 200
+    envelope = response.json()
+    assert envelope["source"] in ("real", "fallback")
+    assert "collector_status" in envelope
+    data = envelope["data"]
+    assert "status" in data
+    assert "source_badge" in data
+    assert data["source_badge"] in ("confirmed", "partial", "offline", "unknown")
 
 
 def test_omnis_status():
