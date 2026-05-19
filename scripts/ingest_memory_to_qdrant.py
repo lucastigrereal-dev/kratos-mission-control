@@ -355,6 +355,203 @@ def embed_and_ingest_high_priority(
     return {"stage": "high_priority", "total_upserted": total_upserted}
 
 
+def embed_and_ingest_bulk(
+    dry_run: bool = False, max_chunks: int = 2100
+) -> dict:
+    """Embed a large batch of chunks via nomic-embed-text and upsert to Qdrant.
+
+    FASE 14 M1 — Qdrant Expansion. Embeds chunks without existing nomic embeddings,
+    with domain-diverse selection and checkpoint support.
+    """
+    conn = psycopg2.connect(AKASHA_DSN)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    # Fetch chunks without nomic embeddings, diverse domains
+    cur.execute("""
+        SELECT dc.id AS chunk_id, dc.document_id AS doc_id, dc.chunk_text,
+               dc.chunk_index, dc.section_title,
+               d.title, d.domain, d.source_type, d.file_name
+        FROM document_chunks dc
+        JOIN documents d ON dc.document_id = d.id
+        LEFT JOIN chunk_embeddings ce ON dc.id = ce.chunk_id
+        WHERE ce.embedding_nomic IS NULL OR ce.id IS NULL
+        ORDER BY d.domain, dc.chunk_index
+        LIMIT %s
+    """, (max_chunks,))
+    chunks = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    print(f"Bulk embedding: {len(chunks)} chunks fetched (target: {max_chunks})")
+
+    # Domain distribution
+    domains: dict = {}
+    for ch in chunks:
+        d = ch.get("domain") or "unknown"
+        domains[d] = domains.get(d, 0) + 1
+    print(f"Domain distribution: {json.dumps(domains, indent=2)}")
+
+    if dry_run:
+        eta_batches = len(chunks) // EMBED_BATCH_SIZE + 1
+        print(f"[DRY RUN] Would embed {len(chunks)} chunks in {eta_batches} batches via nomic-embed-text.")
+        return {"dry_run": True, "chunks": len(chunks), "domains": domains}
+
+    # Resume from checkpoint
+    checkpoint = {}
+    if CHECKPOINT_FILE.exists():
+        try:
+            checkpoint = json.loads(CHECKPOINT_FILE.read_text())
+            if checkpoint.get("stage") == "bulk_embed":
+                print(f"Resuming bulk embed from checkpoint: offset={checkpoint.get('offset', 0)}")
+        except Exception:
+            pass
+
+    start_offset = checkpoint.get("offset", 0)
+    if start_offset > 0:
+        chunks = chunks[start_offset:]
+
+    client = QdrantClient(url=QDRANT_URL, timeout=10)
+    total_upserted = checkpoint.get("total_upserted", 0)
+    total_embedded = checkpoint.get("total_embedded", 0)
+    failed_batches = []
+    dead_letter_embeds = []
+
+    # Reconnect to DB for saving embeddings back
+    db_conn = psycopg2.connect(AKASHA_DSN)
+    db_cur = db_conn.cursor()
+
+    for i in range(0, len(chunks), EMBED_BATCH_SIZE):
+        batch = chunks[i : i + EMBED_BATCH_SIZE]
+        batch_num = start_offset + i // EMBED_BATCH_SIZE
+
+        # Truncate very long texts for embedding (nomic-embed-text max ~8192 tokens)
+        max_text_len = 8000  # characters, conservative
+        texts = []
+        for ch in batch:
+            t = ch["chunk_text"] or ""
+            if len(t) > max_text_len:
+                t = t[:max_text_len]
+            texts.append(t)
+
+        # Embed via Ollama
+        try:
+            resp = requests.post(
+                f"{OLLAMA_URL}/api/embed",
+                json={"model": "nomic-embed-text", "input": texts},
+                timeout=120,
+            )
+            resp.raise_for_status()
+            result = resp.json()
+            embeddings = result.get("embeddings", [])
+        except Exception as e:
+            print(f"Embedding failed for batch {batch_num}: {e}")
+            dead_letter_embeds.append({
+                "batch": batch_num,
+                "offset": start_offset + i,
+                "count": len(batch),
+                "error": str(e),
+            })
+            continue
+
+        if len(embeddings) != len(batch):
+            print(f"  Mismatch batch {batch_num}: got {len(embeddings)} embeddings for {len(batch)} texts")
+            continue
+
+        # Save embeddings back to Akasha + prepare Qdrant points
+        points = []
+        saved_to_db = 0
+        for ch, emb in zip(batch, embeddings):
+            if len(emb) != VECTOR_DIM:
+                continue
+
+            # Save embedding back to chunk_embeddings
+            try:
+                emb_str = f"[{','.join(str(x) for x in emb)}]"
+                db_cur.execute("""
+                    INSERT INTO chunk_embeddings (chunk_id, model_name, embedding_nomic)
+                    VALUES (%s, 'nomic-embed-text', %s::vector)
+                    ON CONFLICT (chunk_id) DO UPDATE SET embedding_nomic = EXCLUDED.embedding_nomic
+                """, (ch["chunk_id"], emb_str))
+                saved_to_db += 1
+            except Exception as e:
+                # Non-fatal: embedding wasn't saved to DB but we still have it in memory
+                pass
+
+            # Prepare Qdrant point
+            ch_id = ch["chunk_id"]
+            # Ensure integer ID within safe range
+            try:
+                point_id = int(ch_id)
+            except (ValueError, TypeError):
+                point_id = abs(hash(str(ch_id))) % (10**15)
+
+            payload = {
+                "chunk_id": ch_id,
+                "doc_id": ch["doc_id"],
+                "domain": ch["domain"] or "",
+                "source_type": ch["source_type"] or "",
+                "title": ch["title"] or "",
+                "chunk_text": (ch["chunk_text"] or "")[:1000],
+                "section_title": ch["section_title"] or "",
+                "file_name": ch["file_name"] or "",
+                "batch_id": f"bulk_{batch_num}",
+                "ingested_at": datetime.now(timezone.utc).isoformat(),
+            }
+            points.append(PointStruct(id=point_id, vector=emb, payload=payload))
+
+        # Commit DB changes for this batch
+        db_conn.commit()
+
+        # Upsert to Qdrant in sub-batches of BATCH_SIZE
+        upserted_this_batch = 0
+        for j in range(0, len(points), BATCH_SIZE):
+            sub = points[j : j + BATCH_SIZE]
+            sub_id = f"bulk_{batch_num}_{j // BATCH_SIZE}"
+            result = upsert_batch(client, sub, sub_id)
+            if result["ok"]:
+                upserted_this_batch += result["count"]
+            else:
+                failed_batches.append(result)
+                print(f"  Upsert failed batch {sub_id}: {result.get('error', 'unknown')}")
+
+        total_upserted += upserted_this_batch
+        total_embedded += len(batch)
+        current_total = start_offset + total_upserted
+
+        print(f"  Batch {batch_num}: embedded {len(batch)} chunks, "
+              f"upserted {upserted_this_batch} points, "
+              f"saved {saved_to_db}/DB, "
+              f"total: {current_total}")
+
+        # Checkpoint after each embed batch
+        save_checkpoint("bulk_embed", {
+            "offset": start_offset + i + EMBED_BATCH_SIZE,
+            "total_upserted": total_upserted,
+            "total_embedded": total_embedded,
+            "current_total": current_total,
+        })
+
+        # Small delay between batches for rate limiting
+        time.sleep(0.5)
+
+    db_cur.close()
+    db_conn.close()
+
+    # Save dead letters
+    if dead_letter_embeds:
+        dl_path = REPORTS_DIR / "dead_letter_embed.json"
+        dl_path.write_text(json.dumps(dead_letter_embeds, indent=2, default=str))
+
+    return {
+        "stage": "bulk_embed",
+        "total_chunks": len(chunks),
+        "total_embedded": total_embedded,
+        "total_upserted": total_upserted,
+        "failed_batches": len(failed_batches),
+        "domains": domains,
+    }
+
+
 def validate_ingestion() -> dict:
     """Validate Qdrant collection after ingestion."""
     client = QdrantClient(url=QDRANT_URL, timeout=10)
