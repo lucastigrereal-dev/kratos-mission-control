@@ -144,14 +144,14 @@ function ContentCalendar() {
               {postDays.includes(i) && (
                 <div
                   className="h-2 w-2 rounded-full"
-                  style={{ background: i === todayIdx ? "#fff" : "var(--kr-island-agencia)" }}
+                  style={{ background: i === todayIdx ? "var(--kratos-text-primary)" : "var(--kr-island-agencia)" }}
                   aria-label="Post agendado"
                 />
               )}
               {!postDays.includes(i) && (
                 <span
                   className="text-[11px] kratos-mono"
-                  style={{ color: i === todayIdx ? "#fff" : "var(--kratos-text-muted)" }}
+                  style={{ color: i === todayIdx ? "var(--kratos-text-primary)" : "var(--kratos-text-muted)" }}
                 >
                   {i + 1}
                 </span>
@@ -181,7 +181,7 @@ function CampaignMainCard() {
         </div>
         <span
           className="kratos-chip"
-          style={{ color: "var(--kr-accent-orange-light)", borderColor: "rgba(249, 115, 22, 0.3)" }}
+          style={{ color: "var(--kr-accent-orange-light)", borderColor: "color-mix(in oklab, var(--kr-island-agencia, #F97316) 30%, transparent)" }}
         >
           68%
         </span>
@@ -208,7 +208,7 @@ function CampaignMainCard() {
             key={phase}
             className="text-[10px] px-2 py-0.5 rounded-full"
             style={{
-              background: i === 1 ? "rgba(249, 115, 22, 0.2)" : "var(--kratos-surface-3)",
+              background: i === 1 ? "color-mix(in oklab, var(--kr-island-agencia, #F97316) 20%, transparent)" : "var(--kratos-surface-3)",
               color: i === 1 ? "var(--kr-accent-orange-light)" : "var(--kratos-text-muted)",
             }}
           >
@@ -323,7 +323,7 @@ function StudioSquads() {
           >
             <div
               className="h-8 w-8 rounded-full flex items-center justify-center"
-              style={{ background: "rgba(249, 115, 22, 0.15)" }}
+              style={{ background: "color-mix(in oklab, var(--kr-island-agencia, #F97316) 15%, transparent)" }}
             >
               <Users className="h-4 w-4" style={{ color: "var(--kr-accent-orange-lighter)" }} aria-hidden />
             </div>
@@ -347,8 +347,8 @@ function AuroraMiniChat() {
         <div
           className="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center"
           style={{
-            background: "linear-gradient(135deg, #A855F7, #06B6D4)",
-            boxShadow: "0 0 12px rgba(168, 85, 247, 0.4)",
+            background: "linear-gradient(135deg, var(--kr-accent-purple, #A855F7), var(--kr-accent-cyan, #06B6D4))",
+            boxShadow: "0 0 12px color-mix(in oklab, var(--kr-accent-purple, #A855F7) 40%, transparent)",
           }}
         >
           <MessageCircle className="h-4 w-4 text-white" aria-hidden />

@@ -30,23 +30,24 @@ interface KratosWorldMapProps {
 
 /**
  * Island definitions — positioned as % of viewport.
- * Coordinates from KRATOS Visual Spec Fase 3, Section 4.2.
+ * Circular layout around central castle (50%, 45%).
+ * Coordinates tuned to match kratos-overview-reference.png mockup.
  */
 const ISLANDS: IslandDef[] = [
   {
     id: "omnis",
     label: "OMNIS Lab",
-    subtitle: "IA & Agentes",
+    subtitle: "IA, Agentes, Controle",
     theme: "omnis",
-    left: "10%",
-    top: "8%",
+    left: "12%",
+    top: "18%",
     size: "lg",
     status: "idle",
   },
   {
     id: "agencia",
-    label: "Agencia",
-    subtitle: "Conteudo & Marca",
+    label: "AGÊNCIA / REDES SOCIAIS",
+    subtitle: "Conteúdo, Criatividade & Marketing",
     theme: "agencia",
     left: "8%",
     top: "38%",
@@ -55,112 +56,117 @@ const ISLANDS: IslandDef[] = [
   },
   {
     id: "vila",
-    label: "Vila Viva",
-    subtitle: "Familia & Lar",
+    label: "VILA VIVA",
+    subtitle: "Família, Filhos & Vida Social",
     theme: "vila",
-    left: "12%",
-    top: "62%",
+    left: "10%",
+    top: "58%",
     size: "lg",
     status: "idle",
   },
   {
     id: "arena",
-    label: "Arena",
-    subtitle: "Vendas & Negocios",
+    label: "ARENA COMERCIAL",
+    subtitle: "Vendas, Negócios & Competição",
     theme: "arena",
-    left: "22%",
-    top: "78%",
+    left: "20%",
+    top: "76%",
+    size: "lg",
+    status: "idle",
+  },
+  {
+    id: "forja",
+    label: "FORJA / CORPO",
+    subtitle: "Corpo, Saúde & Disciplina",
+    theme: "forja",
+    left: "38%",
+    top: "82%",
     size: "lg",
     status: "idle",
   },
   {
     id: "akasha",
-    label: "Akasha",
-    subtitle: "Memoria & Conhecimento",
+    label: "GRINGOTTS / AKASHA",
+    subtitle: "Memória & Arquivos",
     theme: "akasha",
-    left: "75%",
-    top: "10%",
+    left: "88%",
+    top: "18%",
     size: "lg",
     status: "idle",
   },
   {
     id: "filosofia",
-    label: "Filosofia",
-    subtitle: "Sabedoria & Estudos",
+    label: "FILOSOFIA & SABEDORIA",
+    subtitle: "Sabedoria, Estudos & Evolução Pessoal",
     theme: "filosofia",
-    left: "82%",
+    left: "92%",
     top: "38%",
     size: "lg",
     status: "idle",
   },
   {
     id: "financas",
-    label: "Financas",
-    subtitle: "Tesouro & Metricas",
+    label: "TESOURO / FINANÇAS",
+    subtitle: "Finanças, Patrimônio & Investimentos",
     theme: "financas",
-    left: "78%",
-    top: "65%",
-    size: "lg",
-    status: "idle",
-  },
-  {
-    id: "forja",
-    label: "Forja",
-    subtitle: "Corpo & Disciplina",
-    theme: "forja",
-    left: "45%",
-    top: "72%",
+    left: "90%",
+    top: "58%",
     size: "lg",
     status: "idle",
   },
   {
     id: "observatorio",
-    label: "Observatorio",
-    subtitle: "Visao & Estrategia",
+    label: "OBSERVATÓRIO",
+    subtitle: "Visão, Estratégia & Inspirações",
     theme: "observatorio",
-    left: "65%",
-    top: "82%",
+    left: "80%",
+    top: "76%",
     size: "lg",
     status: "idle",
   },
   {
     id: "nimbus",
-    label: "Nimbus",
-    subtitle: "Sonhos & Viagens",
+    label: "NIMBUS",
+    subtitle: "Sonhos, Viagens, Vida na Névoa Preciosa",
     theme: "nimbus",
-    left: "48%",
-    top: "92%",
+    left: "50%",
+    top: "94%",
     size: "md",
     status: "idle",
   },
 ];
 
 /**
- * Bridge connections between nearby islands.
+ * Bridge connections between nearby islands and castle.
  * Each connection has from/to positions as % of viewport.
+ * Castle center is at (50, 45).
  */
 const BRIDGES = [
-  // Left cluster
-  { from: { x: 10, y: 8 }, to: { x: 8, y: 38 } },     // OMNIS -> Agencia
-  { from: { x: 8, y: 38 }, to: { x: 12, y: 62 } },     // Agencia -> Vila Viva
-  { from: { x: 12, y: 62 }, to: { x: 22, y: 78 } },    // Vila Viva -> Arena
-  { from: { x: 22, y: 78 }, to: { x: 45, y: 72 } },    // Arena -> Forja
-  // Right cluster
-  { from: { x: 75, y: 10 }, to: { x: 82, y: 38 } },    // Akasha -> Filosofia
-  { from: { x: 82, y: 38 }, to: { x: 78, y: 65 } },    // Filosofia -> Financas
-  { from: { x: 78, y: 65 }, to: { x: 65, y: 82 } },    // Financas -> Observatorio
-  { from: { x: 65, y: 82 }, to: { x: 48, y: 92 } },    // Observatorio -> Nimbus
-  // Cross connections — left to right
-  { from: { x: 8, y: 38 }, to: { x: 82, y: 38 } },     // Agencia -> Filosofia
-  { from: { x: 10, y: 8 }, to: { x: 75, y: 10 } },     // OMNIS -> Akasha
-  { from: { x: 45, y: 72 }, to: { x: 65, y: 82 } },    // Forja -> Observatorio
-  // Central spokes (connect to castle position at 50, 45)
-  { from: { x: 8, y: 38 }, to: { x: 50, y: 45 } },     // Agencia -> Castle
-  { from: { x: 82, y: 38 }, to: { x: 50, y: 45 } },    // Filosofia -> Castle
-  { from: { x: 10, y: 8 }, to: { x: 50, y: 45 } },     // OMNIS -> Castle
-  { from: { x: 75, y: 10 }, to: { x: 50, y: 45 } },    // Akasha -> Castle
-  { from: { x: 45, y: 72 }, to: { x: 50, y: 45 } },    // Forja -> Castle
-  { from: { x: 48, y: 92 }, to: { x: 50, y: 45 } },    // Nimbus -> Castle
+  // Left arc
+  { from: { x: 12, y: 18 }, to: { x: 8, y: 38 } },    // OMNIS -> Agencia
+  { from: { x: 8, y: 38 }, to: { x: 10, y: 58 } },     // Agencia -> Vila
+  { from: { x: 10, y: 58 }, to: { x: 20, y: 76 } },    // Vila -> Arena
+  { from: { x: 20, y: 76 }, to: { x: 38, y: 82 } },    // Arena -> Forja
+  { from: { x: 38, y: 82 }, to: { x: 50, y: 94 } },     // Forja -> Nimbus
+  // Right arc
+  { from: { x: 88, y: 18 }, to: { x: 92, y: 38 } },    // Akasha -> Filosofia
+  { from: { x: 92, y: 38 }, to: { x: 90, y: 58 } },    // Filosofia -> Financas
+  { from: { x: 90, y: 58 }, to: { x: 80, y: 76 } },     // Financas -> Observatorio
+  { from: { x: 80, y: 76 }, to: { x: 50, y: 94 } },     // Observatorio -> Nimbus
+  // Cross bridges
+  { from: { x: 8, y: 38 }, to: { x: 92, y: 38 } },      // Agencia -> Filosofia
+  { from: { x: 12, y: 18 }, to: { x: 88, y: 18 } },     // OMNIS -> Akasha
+  // Radial spokes to castle (50,45)
+  { from: { x: 12, y: 18 }, to: { x: 50, y: 45 } },
+  { from: { x: 8, y: 38 }, to: { x: 50, y: 45 } },
+  { from: { x: 10, y: 58 }, to: { x: 50, y: 45 } },
+  { from: { x: 20, y: 76 }, to: { x: 50, y: 45 } },
+  { from: { x: 38, y: 82 }, to: { x: 50, y: 45 } },
+  { from: { x: 88, y: 18 }, to: { x: 50, y: 45 } },
+  { from: { x: 92, y: 38 }, to: { x: 50, y: 45 } },
+  { from: { x: 90, y: 58 }, to: { x: 50, y: 45 } },
+  { from: { x: 80, y: 76 }, to: { x: 50, y: 45 } },
+  { from: { x: 50, y: 94 }, to: { x: 50, y: 45 } },
 ];
 
 /**
@@ -188,11 +194,11 @@ export function KratosWorldMap({
   return (
     <div
       className={cn(
-        "relative h-screen w-screen overflow-hidden",
+        "absolute inset-0 overflow-hidden",
         className,
       )}
       style={{
-        background: "var(--kr-ocean-deep, #051024)",
+        background: "transparent",
       }}
     >
       {/* z-0: Ocean backdrop */}
@@ -207,7 +213,7 @@ export function KratosWorldMap({
       {/* z-30: Bridge system — behind islands, above clouds */}
       <BridgeSystem
         connections={BRIDGES}
-        className="fixed inset-0 z-[30]"
+        className="absolute inset-0 z-[30]"
       />
 
       {/* z-40: Floating islands */}
@@ -223,7 +229,6 @@ export function KratosWorldMap({
         >
           <FloatingIsland
             size={island.size}
-            label={island.label}
             theme={island.theme}
             status={island.status}
             onClick={onIslandClick ? () => onIslandClick(island.id) : undefined}
@@ -250,7 +255,7 @@ export function KratosWorldMap({
                 height: 120,
                 background: "linear-gradient(180deg, var(--kr-castle-wall, #A8A29E) 0%, var(--kr-castle-stone, #78716C) 100%)",
                 clipPath: "polygon(20% 0%, 80% 0%, 100% 40%, 100% 100%, 0% 100%, 0% 40%)",
-                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5)",
+                boxShadow: "0 20px 60px color-mix(in oklab, black 50%, transparent)",
               }}
             >
               {/* Battlements */}
@@ -334,7 +339,7 @@ export function KratosWorldMap({
                 width: 220,
                 height: 36,
                 background: "linear-gradient(180deg, var(--kr-earth, #92400E) 0%, var(--kr-earth-dark, #78350F) 100%)",
-                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
+                boxShadow: "0 8px 24px color-mix(in oklab, black 40%, transparent)",
               }}
             />
           </div>
@@ -360,34 +365,7 @@ export function KratosWorldMap({
         </div>
       ))}
 
-      {/* Mission banner — current mission display */}
-      {currentMission && (
-        <div className="absolute bottom-32 left-1/2 z-[70] -translate-x-1/2">
-          <div
-            className="rounded-2xl px-8 py-3"
-            style={{
-              background: "var(--kr-glass-strong-bg, rgba(15, 23, 42, 0.94))",
-              border: "1px solid var(--kr-glass-strong-border, rgba(255, 255, 255, 0.15))",
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5)",
-            }}
-          >
-            <span
-              className="block text-[10px] font-bold uppercase tracking-[0.2em]"
-              style={{ color: "var(--kr-gold, #FFD700)" }}
-            >
-              MISSAO ATUAL
-            </span>
-            <span
-              className="block text-lg font-bold"
-              style={{ color: "var(--kr-text-primary, #E5E7EB)" }}
-            >
-              {currentMission}
-            </span>
-          </div>
-        </div>
-      )}
+      {/* Central mission banner is now rendered inside CentralCastleMission */}
     </div>
   );
 }

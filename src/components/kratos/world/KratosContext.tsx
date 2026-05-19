@@ -138,14 +138,14 @@ export function KratosContextProvider({
   // ── Derived values ──────────────
   const checkpointProgress = useMemo(() => {
     const list = checkpoints.data;
-    if (!list || list.length === 0) return 0;
+    if (!Array.isArray(list) || list.length === 0) return 0;
     const completed = list.filter((c) => c.status === "completed").length;
     return Math.round((completed / list.length) * 100);
   }, [checkpoints.data]);
 
   const activeCheckpointCount = useMemo(() => {
     const list = checkpoints.data;
-    if (!list) return 0;
+    if (!Array.isArray(list)) return 0;
     return list.filter(
       (c) => c.status === "pending" || c.status === "in_progress",
     ).length;

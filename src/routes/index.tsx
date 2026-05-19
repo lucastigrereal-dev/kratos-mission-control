@@ -12,6 +12,23 @@ import type { DashboardLoaderData } from "@/hooks/useDashboard";
 
 type Envelope<T> = { data: T | null; error: string | null };
 
+function RouteError({ error }: { error: Error }) {
+  return (
+    <div className="flex h-screen w-screen items-center justify-center" style={{ background: "#051024" }}>
+      <div className="max-w-lg px-6 text-center">
+        <h1 className="text-red-400 text-lg font-bold mb-2">Erro no mapa</h1>
+        <p className="text-red-300 text-sm mb-4 font-mono">{error.message}</p>
+        <pre className="text-left text-[11px] text-gray-400 bg-black/40 rounded-lg p-3 overflow-auto max-h-60">
+          {error.stack}
+        </pre>
+        <a href="/agora" className="inline-block mt-4 px-4 py-2 rounded bg-white/10 text-white text-sm hover:bg-white/20">
+          Voltar para Agora
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/")({
   loader: async (): Promise<DashboardLoaderData> => {
     const results = await Promise.allSettled([
@@ -80,6 +97,7 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: DashboardPage,
+  errorComponent: RouteError,
 });
 
 function DashboardPage() {

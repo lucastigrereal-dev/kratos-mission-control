@@ -65,7 +65,7 @@ function DreamPortal() {
           className="absolute inset-0 rounded-full kratos-pulse"
           style={{
             background:
-              "radial-gradient(circle, rgba(14, 165, 233, 0.5) 0%, transparent 70%)",
+              "radial-gradient(circle, color-mix(in oklab, var(--kr-island-nimbus, #0EA5E9) 50%, transparent) 0%, transparent 70%)",
           }}
           aria-hidden
         />
@@ -74,9 +74,9 @@ function DreamPortal() {
         <div
           className="relative z-10 flex h-48 w-48 items-center justify-center rounded-full"
           style={{
-            border: "4px solid rgba(14, 165, 233, 0.2)",
-            background: "rgba(15, 23, 42, 0.4)",
-            boxShadow: "0 0 60px rgba(14, 165, 233, 0.15)",
+            border: "4px solid color-mix(in oklab, var(--kr-island-nimbus, #0EA5E9) 20%, transparent)",
+            background: "color-mix(in oklab, var(--kr-surface-deep, #0F172A) 40%, transparent)",
+            boxShadow: "0 0 60px color-mix(in oklab, var(--kr-island-nimbus, #0EA5E9) 15%, transparent)",
           }}
         >
           {/* SVG concentric rings */}
@@ -115,8 +115,8 @@ function DreamPortal() {
           <div
             className="z-20 h-14 w-14 rounded-full"
             style={{
-              background: "radial-gradient(circle, #22D3EE, var(--kr-island-nimbus))",
-              boxShadow: "0 0 30px rgba(103, 232, 249, 0.8)",
+              background: "radial-gradient(circle, var(--kr-accent-cyan-bright, #22D3EE), var(--kr-island-nimbus))",
+              boxShadow: "0 0 30px color-mix(in oklab, var(--kr-accent-cyan-bright, #67E8F9) 80%, transparent)",
               animation: "kratos-pulse 3s ease-in-out infinite",
             }}
             aria-hidden
@@ -132,9 +132,9 @@ function WoodenSign() {
     <div
       className="inline-block px-6 py-2 rounded-md mx-auto mb-4"
       style={{
-        background: "linear-gradient(135deg, #78350F, #92400E)",
-        border: "2px solid #451A03",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)",
+        background: "linear-gradient(135deg, var(--kr-earth-dark, #78350F), var(--kr-earth, #92400E))",
+        border: "2px solid var(--kr-earth-dark, #451A03)",
+        boxShadow: "0 4px 12px color-mix(in oklab, black 50%, transparent), inset 0 1px 0 color-mix(in oklab, white 8%, transparent)",
       }}
     >
       <span
@@ -225,7 +225,7 @@ function AdventureTracker() {
                   width: `${a.progress}%`,
                   background:
                     a.progress >= 70
-                      ? "linear-gradient(90deg, var(--kr-island-nimbus), #22D3EE)"
+                      ? "linear-gradient(90deg, var(--kr-island-nimbus), var(--kr-accent-cyan-bright, #22D3EE))"
                       : a.progress >= 30
                         ? "var(--kr-island-nimbus)"
                         : "var(--kratos-surface-4)",
@@ -292,8 +292,8 @@ function InspirationCard() {
         className="rounded-xl p-4"
         style={{
           background:
-            "linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(34, 211, 238, 0.05))",
-          border: "1px solid rgba(14, 165, 233, 0.15)",
+            "linear-gradient(135deg, color-mix(in oklab, var(--kr-island-nimbus, #0EA5E9) 10%, transparent), color-mix(in oklab, var(--kr-accent-cyan-bright, #22D3EE) 5%, transparent))",
+          border: "1px solid color-mix(in oklab, var(--kr-island-nimbus, #0EA5E9) 15%, transparent)",
         }}
       >
         <div className="flex items-center gap-2 mb-3">

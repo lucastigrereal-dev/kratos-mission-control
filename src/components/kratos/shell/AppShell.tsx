@@ -1,18 +1,12 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Sidebar } from "./Sidebar";
-import { Topbar } from "./Topbar";
-import { AuroraPanel } from "./AuroraPanel";
-import { StatusBar } from "./StatusBar";
-import type { LiveState } from "../base/LiveStatusIndicator";
+import { SidebarV2 } from "./SidebarV2";
+import { TopBarV2 } from "./TopBarV2";
+import { RightRailV2 } from "./RightRailV2";
+import { BottomDockV2 } from "./BottomDockV2";
 import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
 
 const SIDEBAR_KEY = "kratos.sidebar.collapsed";
 const AURORA_KEY = "kratos.aurora.open";
-
-// Sandbox-only static signals. Replaced by real hooks in the KRATOS repo.
-const LIVE_STATE: LiveState = "live";
-const LAST_UPDATE = "12s ago";
-const BUILD_TIME = "2026.05.08";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -61,14 +55,16 @@ export function AppShell({ children }: { children: ReactNode }) {
     });
   };
 
+  const sidebarWidth = sidebarCollapsed ? 60 : 232;
+
   return (
     <div
-      className="flex h-screen w-screen overflow-hidden"
-      style={{ background: "var(--kratos-surface-0)" }}
+      className="h-screen w-screen overflow-hidden"
+      style={{ background: "var(--kr-ocean-deep, #051024)" }}
     >
       <a
         href="#kratos-main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:px-4 focus:py-2.5 focus:text-[13px] focus:font-medium focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-md focus:px-4 focus:py-2.5 focus:text-[13px] focus:font-medium focus:outline-none"
         style={{
           background: "var(--kratos-surface-3)",
           color: "var(--kratos-text-primary)",
@@ -78,32 +74,44 @@ export function AppShell({ children }: { children: ReactNode }) {
         Pular para conteúdo principal
       </a>
 
-      <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+      <SidebarV2 collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar
-          liveState={LIVE_STATE}
-          lastUpdate={LAST_UPDATE}
-          auroraOpen={auroraOpen}
-          onToggleAurora={toggleAurora}
-        />
+      <TopBarV2
+        operatorName="Lucas"
+        energy={87}
+        level={47}
+        xp={32780}
+        auroraOnline={true}
+        onToggleAurora={toggleAurora}
+        auroraOpen={auroraOpen}
+        leftOffset={sidebarWidth}
+      />
 
-        <div className="flex flex-1 overflow-hidden">
-          <main id="kratos-main-content" className="flex-1 overflow-y-auto kratos-scrollbar">
-            <div className="mx-auto w-full max-w-[1320px] px-6 py-10 lg:px-12 lg:py-12">
-              {children}
-            </div>
-          </main>
+      <RightRailV2 topOffset={90} />
 
-          <AuroraPanel open={auroraOpen} onClose={toggleAurora} />
-        </div>
+      <main
+        id="kratos-main-content"
+        className="overflow-y-auto kratos-scrollbar fixed"
+        style={{
+          top: 90,
+          left: sidebarWidth,
+          right: 300,
+          bottom: 72,
+          padding: "24px 32px",
+          background: "var(--kr-ocean-deep, #051024)",
+        }}
+      >
+        {children}
+      </main>
 
-        <StatusBar
-          liveState={LIVE_STATE}
-          lastUpdate={LAST_UPDATE}
-          buildTime={BUILD_TIME}
-        />
-      </div>
+      <BottomDockV2
+        currentMission="Construir o Futuro"
+        missionProgress={62}
+        focusOfDay="Foco principal"
+        nextAction="Próxima dedicação"
+        onContinue={() => {}}
+        onSaveCheckpoint={() => {}}
+      />
     </div>
   );
 }

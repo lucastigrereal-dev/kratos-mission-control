@@ -48,38 +48,38 @@ export function BridgeSystem({ className, connections }: BridgeSystemProps) {
       <defs>
         {/* Drop shadow filter for bridge depth */}
         <filter id="bridge-shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="rgba(0,0,0,0.5)" />
+          <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="color-mix(in oklab, black 50%, transparent)" />
         </filter>
       </defs>
 
       {connections.map((conn, index) => (
         <g key={index}>
-          {/* Shadow layer — slightly offset and thicker */}
+          {/* Shadow layer */}
           <path
             d={buildPath(conn)}
             fill="none"
-            stroke="rgba(0, 0, 0, 0.35)"
-            strokeWidth={4}
+            stroke="color-mix(in oklab, black 30%, transparent)"
+            strokeWidth={2}
             strokeLinecap="round"
             filter="url(#bridge-shadow)"
           />
-          {/* Main bridge stroke */}
+          {/* Main bridge stroke — thinner, more subtle */}
           <path
             d={buildPath(conn)}
             fill="none"
-            stroke="var(--kr-wood, #8B7355)"
-            strokeWidth={3}
+            stroke="#A0522D"
+            strokeWidth={1.5}
             strokeLinecap="round"
-            opacity={0.8}
+            opacity={0.65}
           />
-          {/* Highlight — thinner, lighter line on top */}
+          {/* Highlight */}
           <path
             d={buildPath(conn)}
             fill="none"
-            stroke="var(--kr-wood-light, #CA8A04)"
-            strokeWidth={1}
+            stroke="#CD853F"
+            strokeWidth={0.75}
             strokeLinecap="round"
-            opacity={0.4}
+            opacity={0.35}
           />
         </g>
       ))}

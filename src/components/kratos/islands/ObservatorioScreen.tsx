@@ -14,8 +14,9 @@ import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
+import { IslandPageFrame } from "./shared/IslandPageFrame";
 
-const accent = "var(--kr-sky)";
+const accent = "var(--kr-island-observatorio)";
 
 interface Ideia {
   titulo: string;
@@ -87,7 +88,7 @@ export function ObservatorioScreen({
   isEmpty = false,
 }: ObservatorioScreenProps) {
   return (
-    <>
+    <IslandPageFrame theme="observatorio">
       {isLoading ? (
         <LoadingState lines={6} />
       ) : error ? (
@@ -106,7 +107,7 @@ export function ObservatorioScreen({
           <IslandPageHeader
             title="OBSERVATÓRIO"
             subtitle="Ideias, Visão e Estratégia"
-            theme="nimbus"
+            theme="observatorio"
           />
 
           {/* Mural da Visão */}
@@ -123,7 +124,7 @@ export function ObservatorioScreen({
                   </p>
                   <span
                     className="inline-block mt-2 rounded-md px-2 py-0.5 text-[9px] font-semibold"
-                    style={{ background: `${accent}18`, color: accent }}
+                    style={{ background: `color-mix(in oklab, ${accent} 10%, transparent)`, color: accent }}
                   >
                     {v.horizonte}
                   </span>
@@ -187,7 +188,7 @@ export function ObservatorioScreen({
               {projetosFuturos.map((p) => (
                 <div
                   key={p.nome}
-                  className="flex items-center gap-3 rounded-lg px-2 py-2 -mx-2 transition-colors hover:bg-white/[0.02]"
+                  className="flex items-center gap-3 rounded-lg px-2 py-2 -mx-2 transition-colors kratos-card-hover"
                 >
                   <div
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold"
@@ -209,6 +210,6 @@ export function ObservatorioScreen({
           </KratosCard>
         </div>
       )}
-    </>
+    </IslandPageFrame>
   );
 }

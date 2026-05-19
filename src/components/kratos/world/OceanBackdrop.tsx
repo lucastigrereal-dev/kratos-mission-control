@@ -5,84 +5,68 @@ interface OceanBackdropProps {
 }
 
 /**
- * OceanBackdrop — Full viewport background layer.
+ * OceanBackdrop — Vibrant gamified world background.
  *
- * Layers (bottom to top):
- * 1. Deep ocean gradient (fills viewport)
- * 2. Sky gradient (top 55%, light blue)
- * 3. Sun bloom (radial gradient near top-center)
- * 4. Ocean surface shimmer (subtle light play)
- *
- * Pure CSS — zero images, zero canvas.
+ * Mockup match: bright sky blue (#87CEEB), turquoise ocean (#20B2AA),
+ * warm sun bloom, no dark mode — the map IS the interface.
  */
 export function OceanBackdrop({ className }: OceanBackdropProps) {
   return (
     <div
-      className={cn("pointer-events-none fixed inset-0 overflow-hidden", className)}
+      className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
       aria-hidden="true"
     >
-      {/* Deep ocean base — fills entire viewport */}
+      {/* Base sky — bright blue */}
       <div
         className="absolute inset-0"
         style={{
-          background: "var(--kr-ocean-deep)",
+          background: "linear-gradient(180deg, #87CEEB 0%, #60A5FA 25%, #38BDF8 50%, #0EA5E9 75%, #0284C7 100%)",
         }}
       />
 
-      {/* Sky gradient — top 55% with light blue blend */}
-      <div
-        className="absolute inset-x-0 top-0 h-[55%]"
-        style={{
-          background: `linear-gradient(
-            180deg,
-            var(--kr-sky-light, #DBEAFE) 0%,
-            var(--kr-sky, #60A5FA) 28%,
-            var(--kr-ocean, #0A1E3F) 100%
-          )`,
-        }}
-      />
-
-      {/* Ocean layer — bottom 55% with deep blue gradient */}
+      {/* Ocean layer — turquoise blend at bottom 55% */}
       <div
         className="absolute inset-x-0 bottom-0 h-[55%]"
         style={{
           background: `linear-gradient(
             180deg,
             transparent 0%,
-            var(--kr-ocean, #0A1E3F) 18%,
-            var(--kr-ocean-deep, #051024) 100%
+            #0EA5E9 10%,
+            #0891B2 35%,
+            #0E7490 60%,
+            #155E75 100%
           )`,
         }}
       />
 
-      {/* Sun bloom — radial glow near top-center */}
+      {/* Sun bloom — warm yellow-white glow top-center */}
       <div
-        className="absolute left-1/2 top-[15%] -translate-x-1/2"
+        className="absolute left-1/2 top-[10%] -translate-x-1/2"
         style={{
-          width: "60vw",
-          height: "60vw",
-          maxWidth: "800px",
-          maxHeight: "800px",
+          width: "70vw",
+          height: "70vw",
+          maxWidth: "900px",
+          maxHeight: "900px",
           background: `radial-gradient(
             ellipse at center,
-            rgba(255, 255, 255, 0.45) 0%,
-            rgba(219, 234, 254, 0.25) 15%,
-            rgba(147, 197, 253, 0.10) 35%,
-            transparent 70%
+            color-mix(in oklab, #FFF7ED 55%, transparent) 0%,
+            color-mix(in oklab, #FDBA74 30%, transparent) 12%,
+            color-mix(in oklab, #60A5FA 12%, transparent) 35%,
+            transparent 65%
           )`,
           borderRadius: "50%",
-          filter: "blur(4px)",
+          filter: "blur(2px)",
         }}
       />
 
-      {/* Ocean surface shimmer — subtle light play */}
+      {/* Ocean shimmer — subtle light reflections */}
       <div
-        className="kr-animate-ocean-shimmer absolute inset-x-0 bottom-0 h-[35%]"
+        className="kr-animate-ocean-shimmer absolute inset-x-0 bottom-0 h-[30%]"
         style={{
           background: `linear-gradient(
             0deg,
             transparent 0%,
-            var(--kr-ocean-surface, rgba(14, 165, 233, 0.06)) 50%,
+            color-mix(in oklab, #22D3EE 10%, transparent) 40%,
             transparent 100%
           )`,
         }}

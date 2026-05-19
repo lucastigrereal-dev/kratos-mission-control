@@ -17,8 +17,9 @@ import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
+import { IslandPageFrame } from "./shared/IslandPageFrame";
 
-const accent = "var(--kr-island-filosofia)";
+const accent = "var(--kr-island-forja)";
 
 interface MetricCard {
   icon: typeof Dumbbell;
@@ -67,7 +68,7 @@ export function ForjaScreen({
   isEmpty = false,
 }: ForjaScreenProps) {
   return (
-    <>
+    <IslandPageFrame theme="forja">
       {isLoading ? (
         <LoadingState lines={6} />
       ) : error ? (
@@ -86,7 +87,7 @@ export function ForjaScreen({
           <IslandPageHeader
             title="FORJA / CORPO"
             subtitle="Treino, Saúde e Disciplina"
-            theme="agencia"
+            theme="forja"
           />
 
           {/* Streak + Disciplina */}
@@ -95,7 +96,10 @@ export function ForjaScreen({
               <div className="flex items-center gap-3">
                 <div
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-                  style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}
+                  style={{
+                    background: `color-mix(in oklab, ${accent} 10%, transparent)`,
+                    border: `1px solid color-mix(in oklab, ${accent} 20%, transparent)`,
+                  }}
                 >
                   <Flame className="h-5 w-5" style={{ color: "var(--kr-danger)" }} />
                 </div>
@@ -133,7 +137,7 @@ export function ForjaScreen({
                 </div>
                 <span
                   className="rounded-md px-2 py-0.5 text-[10px] font-semibold"
-                  style={{ background: `${accent}20`, color: accent }}
+                  style={{ background: `color-mix(in oklab, ${accent} 12%, transparent)`, color: accent }}
                 >
                   Alta Intensidade
                 </span>
@@ -204,6 +208,6 @@ export function ForjaScreen({
           </KratosCard>
         </div>
       )}
-    </>
+    </IslandPageFrame>
   );
 }

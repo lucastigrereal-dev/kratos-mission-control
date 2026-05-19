@@ -1,4 +1,17 @@
 import { type CSSProperties, useMemo } from "react";
+import {
+  Cpu,
+  Palette,
+  Database,
+  BookOpen,
+  Wallet,
+  Flame,
+  Telescope,
+  Home,
+  Target,
+  Cloud,
+  type LucideIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FloatingIslandProps {
@@ -15,11 +28,11 @@ interface FloatingIslandProps {
   className?: string;
 }
 
-const sizeMap: Record<"sm" | "md" | "lg" | "xl", { width: number; height: number; fontSize: string }> = {
-  sm: { width: 80, height: 48, fontSize: "1.6rem" },
-  md: { width: 120, height: 72, fontSize: "2.4rem" },
-  lg: { width: 160, height: 96, fontSize: "3.2rem" },
-  xl: { width: 220, height: 132, fontSize: "4.4rem" },
+const sizeMap: Record<"sm" | "md" | "lg" | "xl", { width: number; height: number; iconSize: number }> = {
+  sm: { width: 80, height: 48, iconSize: 20 },
+  md: { width: 120, height: 72, iconSize: 28 },
+  lg: { width: 160, height: 96, iconSize: 36 },
+  xl: { width: 220, height: 132, iconSize: 44 },
 };
 
 const islandThemes: Record<string, { var: string; name: string }> = {
@@ -35,10 +48,23 @@ const islandThemes: Record<string, { var: string; name: string }> = {
   nimbus: { var: "--kr-island-nimbus", name: "nimbus" },
 };
 
+const iconMap: Record<string, LucideIcon> = {
+  omnis: Cpu,
+  agencia: Palette,
+  akasha: Database,
+  filosofia: BookOpen,
+  financas: Wallet,
+  forja: Flame,
+  observatorio: Telescope,
+  vila: Home,
+  arena: Target,
+  nimbus: Cloud,
+};
+
 const statusBorder: Record<"active" | "idle" | "alert", string> = {
-  active: "2px solid rgba(34, 197, 94, 0.6)",
-  idle: "1px solid rgba(255, 255, 255, 0.08)",
-  alert: "2px solid rgba(239, 68, 68, 0.5)",
+  active: "2px solid color-mix(in oklab, var(--kr-success, #22C55E) 60%, transparent)",
+  idle: "1px solid color-mix(in oklab, var(--kr-text-primary, #E5E7EB) 8%, transparent)",
+  alert: "2px solid color-mix(in oklab, var(--kr-danger, #EF4444) 50%, transparent)",
 };
 
 /**
@@ -49,7 +75,7 @@ const statusBorder: Record<"active" | "idle" | "alert", string> = {
  * - Green grass top with organic border-radius
  * - Earth/rock base extrusion
  * - Dark shadow beneath (ground-level depth cue)
- * - Mini structure icon on top
+ * - Lucide icon on top (no emojis)
  *
  * Float animation via kr-float-slow (6s ease-in-out infinite).
  */
@@ -68,20 +94,9 @@ export function FloatingIsland({
     ? `var(${themeToken.var})`
     : "var(--kr-azure, #1E90FF)";
 
-  const islandEmoji = useMemo(() => {
-    const map: Record<string, string> = {
-      omnis: "\u{1F9E0}",
-      agencia: "\u{1F3A8}",
-      akasha: "\u{1F48E}",
-      filosofia: "\u{1F4DA}",
-      financas: "\u{1F4B0}",
-      forja: "\u{2694}\u{FE0F}",
-      observatorio: "\u{1F52D}",
-      vila: "\u{1F3E1}",
-      arena: "\u{1F3AF}",
-      nimbus: "\u{2601}\u{FE0F}",
-    };
-    return theme ? (map[theme] ?? "\u{1F3DD}\u{FE0F}") : "\u{1F3DD}\u{FE0F}";
+  const IslandIcon = useMemo(() => {
+    if (!theme) return Cloud;
+    return iconMap[theme] ?? Cloud;
   }, [theme]);
 
   const Component = onClick ? "button" : "div";
@@ -94,7 +109,7 @@ export function FloatingIsland({
         style={{
           width: dims.width * 1.6,
           height: dims.height * 1.6,
-          background: `radial-gradient(ellipse at center, color-mix(in srgb, ${glowColor} 13%, transparent) 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse at center, color-mix(in oklab, ${glowColor} 13%, transparent) 0%, transparent 70%)`,
           filter: "blur(24px)",
         }}
         aria-hidden="true"
@@ -124,8 +139,8 @@ export function FloatingIsland({
             )`,
             borderRadius: "44% 56% 50% 50% / 52% 48% 54% 46%",
             border: statusBorder[status],
-            boxShadow: `var(--kr-shadow-island, 0 24px 70px rgba(3, 7, 18, 0.35)),
-              ${themeToken ? `var(--kr-shadow-glow-${themeToken.name})` : ""}`,
+            boxShadow: `var(--kr-shadow-island, 0 24px 70px color-mix(in oklab, black 35%, transparent)),
+              ${themeToken ? `0 0 30px color-mix(in oklab, ${glowColor} 25%, transparent)` : ""}`,
             willChange: "transform",
           } as CSSProperties}
         >
@@ -143,17 +158,13 @@ export function FloatingIsland({
             aria-hidden="true"
           />
 
-          {/* Mini structure on top */}
-          <span
+          {/* Lucide icon on top */}
+          <IslandIcon
             className="relative z-10 mb-2 drop-shadow-lg"
-            style={{
-              fontSize: dims.fontSize,
-              lineHeight: 1,
-            }}
+            size={dims.iconSize}
+            style={{ color: "var(--kr-text-primary, #E5E7EB)" }}
             aria-hidden="true"
-          >
-            {islandEmoji}
-          </span>
+          />
         </Component>
 
         {/* Earth base — bottom extrusion for 3D depth */}
@@ -179,7 +190,7 @@ export function FloatingIsland({
           style={{
             width: dims.width * 0.75,
             height: dims.height * 0.15,
-            background: "rgba(0, 0, 0, 0.35)",
+            background: "color-mix(in oklab, black 35%, transparent)",
             filter: "blur(8px)",
             marginTop: dims.height * 0.05,
           }}

@@ -215,7 +215,7 @@ function VaultCrystal() {
           className="absolute -inset-6 rounded-full"
           style={{
             background:
-              "radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%)",
+              "radial-gradient(circle, color-mix(in oklab, var(--kr-accent-emerald, #10B981) 30%, transparent) 0%, transparent 70%)",
           }}
           aria-hidden
         />
@@ -225,7 +225,7 @@ function VaultCrystal() {
           className="h-16 w-16 relative"
           style={{
             clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
-            background: "linear-gradient(135deg, var(--kr-accent-emerald), var(--kr-island-akasha), #34D399)",
+            background: "linear-gradient(135deg, var(--kr-accent-emerald), var(--kr-island-akasha), var(--kr-accent-green-light, #34D399))",
             boxShadow: "0 0 30px color-mix(in srgb, var(--kr-accent-cyan-bright) 50%, transparent), 0 0 60px color-mix(in srgb, var(--kr-accent-cyan) 20%, transparent)",
           }}
           aria-hidden

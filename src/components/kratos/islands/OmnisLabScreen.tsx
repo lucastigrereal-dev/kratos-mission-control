@@ -68,7 +68,7 @@ function HolographicCore() {
           className="absolute -inset-8 rounded-full"
           style={{
             background:
-              "radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%)",
+              "radial-gradient(circle, color-mix(in oklab, var(--kr-aurora, #8B5CF6) 25%, transparent) 0%, transparent 70%)",
           }}
           aria-hidden
         />
@@ -77,9 +77,9 @@ function HolographicCore() {
         <div
           className="relative flex h-full w-full items-center justify-center rounded-full"
           style={{
-            border: "2px solid rgba(124, 58, 237, 0.3)",
-            background: "rgba(15, 15, 20, 0.6)",
-            boxShadow: "0 0 60px rgba(139, 92, 246, 0.4)",
+            border: "2px solid color-mix(in oklab, var(--kr-island-omnis, #7C3AED) 30%, transparent)",
+            background: "color-mix(in oklab, var(--kr-surface-abyss, #020617) 60%, transparent)",
+            boxShadow: "0 0 60px color-mix(in oklab, var(--kr-aurora, #8B5CF6) 40%, transparent)",
           }}
         >
           {/* SVG Rings — spinning */}
@@ -138,9 +138,9 @@ function HolographicCore() {
                 key={i}
                 className="absolute inset-0"
                 style={{
-                  border: "1px solid rgba(6, 182, 212, 0.6)",
-                  background: "rgba(6, 182, 212, 0.1)",
-                  boxShadow: "0 0 15px rgba(6, 182, 212, 0.5)",
+                  border: "1px solid color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 60%, transparent)",
+                  background: "color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 10%, transparent)",
+                  boxShadow: "0 0 15px color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 50%, transparent)",
                   transform:
                     i < 2
                       ? `rotateY(${deg}deg) translateZ(24px)`
@@ -151,16 +151,16 @@ function HolographicCore() {
             <div
               className="absolute inset-0"
               style={{
-                border: "1px solid rgba(6, 182, 212, 0.6)",
-                background: "rgba(6, 182, 212, 0.1)",
+                border: "1px solid color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 60%, transparent)",
+                background: "color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 10%, transparent)",
                 transform: "rotateX(90deg) translateZ(24px)",
               }}
             />
             <div
               className="absolute inset-0"
               style={{
-                border: "1px solid rgba(6, 182, 212, 0.6)",
-                background: "rgba(6, 182, 212, 0.1)",
+                border: "1px solid color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 60%, transparent)",
+                background: "color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 10%, transparent)",
                 transform: "rotateX(-90deg) translateZ(24px)",
               }}
             />
@@ -172,8 +172,8 @@ function HolographicCore() {
       <div
         className="relative z-10 -mt-4 rounded-lg px-6 py-1.5"
         style={{
-          background: "rgba(15, 15, 20, 0.9)",
-          border: "1px solid rgba(124, 58, 237, 0.4)",
+          background: "color-mix(in oklab, var(--kr-surface-abyss, #020617) 90%, transparent)",
+          border: "1px solid color-mix(in oklab, var(--kr-island-omnis, #7C3AED) 40%, transparent)",
         }}
       >
         <span

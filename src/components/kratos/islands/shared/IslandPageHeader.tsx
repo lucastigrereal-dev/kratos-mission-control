@@ -4,23 +4,22 @@ import { cn } from "@/lib/utils";
 interface IslandPageHeaderProps {
   title: string;
   subtitle: string;
-  theme: "omnis" | "agencia" | "akasha" | "nimbus";
+  theme: string;
   onBack?: () => void;
   className?: string;
 }
 
-const themeAccentMap: Record<IslandPageHeaderProps["theme"], string> = {
-  omnis: "var(--kr-island-omnis)",
-  agencia: "var(--kr-island-agencia)",
-  akasha: "var(--kr-island-akasha)",
-  nimbus: "var(--kr-island-nimbus)",
-};
-
-const themeGlowMap: Record<IslandPageHeaderProps["theme"], string> = {
+const themeGlowMap: Record<string, string> = {
   omnis: "var(--kr-aurora)",
   agencia: "var(--kr-accent-orange-lighter)",
   akasha: "var(--kr-accent-emerald)",
   nimbus: "var(--kr-accent-blue-light)",
+  arena: "var(--kr-accent-amber-bright)",
+  vila: "var(--kr-success)",
+  forja: "var(--kr-danger)",
+  observatorio: "var(--kr-azure)",
+  filosofia: "var(--kr-accent-indigo)",
+  tesouro: "var(--kr-accent-gold-light)",
 };
 
 export function IslandPageHeader({
@@ -30,8 +29,8 @@ export function IslandPageHeader({
   onBack,
   className,
 }: IslandPageHeaderProps) {
-  const accent = themeAccentMap[theme];
-  const glow = themeGlowMap[theme];
+  const accent = `var(--kr-island-${theme}, var(--kratos-accent))`;
+  const glow = themeGlowMap[theme] ?? accent;
 
   return (
     <header className={cn("relative mb-8", className)}>

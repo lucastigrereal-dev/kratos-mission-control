@@ -19,39 +19,38 @@ const timeConfig: Record<
   morning: {
     sunTop: "18%",
     sunLeft: "35%",
-    colorStart: "rgba(255, 220, 160, 0.40)",
-    colorMid: "rgba(251, 191, 36, 0.18)",
+    colorStart: "color-mix(in oklab, #FFDC9E 40%, transparent)",
+    colorMid: "color-mix(in oklab, #FBBF24 18%, transparent)",
     intensity: 0.35,
   },
   noon: {
     sunTop: "8%",
     sunLeft: "50%",
-    colorStart: "rgba(255, 255, 255, 0.48)",
-    colorMid: "rgba(219, 234, 254, 0.22)",
-    intensity: 0.5,
+    colorStart: "color-mix(in oklab, #FFFFFF 55%, transparent)",
+    colorMid: "color-mix(in oklab, #DBEAFE 28%, transparent)",
+    intensity: 0.6,
   },
   evening: {
     sunTop: "20%",
     sunLeft: "68%",
-    colorStart: "rgba(251, 146, 60, 0.38)",
-    colorMid: "rgba(234, 88, 12, 0.16)",
+    colorStart: "color-mix(in oklab, #FB923C 38%, transparent)",
+    colorMid: "color-mix(in oklab, #EA580C 16%, transparent)",
     intensity: 0.3,
   },
 };
 
 /**
- * SkyLayer — Semi-transparent overlay with radial sun glow.
+ * SkyLayer — Vibrant sun bloom overlay.
  *
- * Renders a positioned sun bloom that adjusts based on timeOfDay.
- * Overlays OceanBackdrop for atmospheric depth.
- * pointer-events-none so it doesn't block island clicks.
+ * Hardcoded bright colors so the sky stays vibrant regardless
+ * of dark-mode token values.
  */
 export function SkyLayer({ className, timeOfDay = "noon" }: SkyLayerProps) {
   const config = timeConfig[timeOfDay];
 
   return (
     <div
-      className={cn("pointer-events-none fixed inset-0", className)}
+      className={cn("pointer-events-none absolute inset-0", className)}
       aria-hidden="true"
     >
       {/* Sun orb */}
@@ -75,13 +74,13 @@ export function SkyLayer({ className, timeOfDay = "noon" }: SkyLayerProps) {
         }}
       />
 
-      {/* Atmosphere gradient — subtle warm/cool tint across the sky */}
+      {/* Atmosphere gradient — very subtle warm/cool tint */}
       <div
-        className="absolute inset-x-0 top-0 h-[45%]"
+        className="absolute inset-x-0 top-0 h-[35%]"
         style={{
           background: `linear-gradient(
             180deg,
-            ${config.colorStart.replace("0.40", "0.12").replace("0.38", "0.10").replace("0.48", "0.14")} 0%,
+            ${config.colorStart.replace("0.55", "0.08").replace("0.40", "0.06").replace("0.38", "0.05")} 0%,
             transparent 100%
           )`,
         }}

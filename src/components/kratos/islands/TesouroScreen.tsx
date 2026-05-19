@@ -15,6 +15,7 @@ import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
+import { IslandPageFrame } from "./shared/IslandPageFrame";
 
 const accent = "var(--kr-island-financas)";
 
@@ -72,7 +73,7 @@ export function TesouroScreen({
   isEmpty = false,
 }: TesouroScreenProps) {
   return (
-    <>
+    <IslandPageFrame theme="tesouro">
       {isLoading ? (
         <LoadingState lines={6} />
       ) : error ? (
@@ -91,7 +92,7 @@ export function TesouroScreen({
           <IslandPageHeader
             title="TESOURO / FINANÇAS"
             subtitle="Finanças Pessoais e Investimentos"
-            theme="akasha"
+            theme="tesouro"
           />
 
           {/* Patrimônio */}
@@ -166,7 +167,7 @@ export function TesouroScreen({
                 <div key={inv.categoria} className="flex items-center gap-3 rounded px-2 py-1.5 -mx-2">
                   <div
                     className="h-8 w-8 rounded-lg shrink-0 flex items-center justify-center text-[10px] font-bold"
-                    style={{ background: `${accent}18`, color: accent }}
+                    style={{ background: `color-mix(in oklab, ${accent} 10%, transparent)`, color: accent }}
                   >
                     {inv.pct}%
                   </div>
@@ -218,6 +219,6 @@ export function TesouroScreen({
           </KratosCard>
         </div>
       )}
-    </>
+    </IslandPageFrame>
   );
 }

@@ -57,7 +57,7 @@ export function CloudLayer({ className, count = 4 }: CloudLayerProps) {
 
   return (
     <div
-      className={cn("pointer-events-none fixed inset-0 overflow-hidden", className)}
+      className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
       aria-hidden="true"
     >
       {clouds.map((cloud, index) => (
@@ -75,9 +75,9 @@ export function CloudLayer({ className, count = 4 }: CloudLayerProps) {
               opacity: cloud.opacity,
               background: `linear-gradient(
                 180deg,
-                rgba(248, 250, 252, 0.9) 0%,
-                rgba(248, 250, 252, 0.4) 60%,
-                rgba(248, 250, 252, 0.05) 100%
+                color-mix(in oklab, var(--kr-cloud, #F8FAFC) 90%, transparent) 0%,
+                color-mix(in oklab, var(--kr-cloud, #F8FAFC) 40%, transparent) 60%,
+                color-mix(in oklab, var(--kr-cloud, #F8FAFC) 5%, transparent) 100%
               )`,
               borderRadius: "9999px",
               filter: `blur(${cloud.blur === "blur-3xl" ? "48px" : "32px"})`,

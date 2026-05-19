@@ -3,21 +3,14 @@ import { cn } from "@/lib/utils";
 import { MissionBanner } from "./MissionBanner";
 
 /* --------------------------------------------------*\
- * CentralCastleMission — CSS-only 3D castle
- *
- * The emotional anchor and mission center of the
- * KRATOS world map. Built purely with CSS shapes
- * and design tokens. No images, no canvas.
+ * CentralCastleMission — Dominant castle scaled to
+ * match mockup proportions.
 \* --------------------------------------------------*/
 
 interface CentralCastleMissionProps {
-  /** The current mission text shown in the banner overlay */
   currentMission?: string;
-  /** Mission execution status */
   missionStatus?: "active" | "paused" | "completed";
-  /** Drift risk level — controls Energy Portal glow color */
   driftRisk?: "low" | "medium" | "high";
-  /** Click handler for the entire castle region */
   onCastleClick?: () => void;
   className?: string;
 }
@@ -31,10 +24,11 @@ export function CentralCastleMission({
 }: CentralCastleMissionProps) {
   const portalColor =
     driftRisk === "high"
-      ? "var(--kr-color-risk, #EF4444)"
+      ? "#EF4444"
       : driftRisk === "medium"
-        ? "var(--kr-color-warn, #F59E0B)"
-        : "var(--kr-accent-purple, #A855F7)";
+        ? "#F59E0B"
+        : "#A855F7";
+
   return (
     <div
       role={onCastleClick ? "button" : undefined}
@@ -52,36 +46,30 @@ export function CentralCastleMission({
         "kr-animate-float-slow select-none",
         className,
       )}
-      style={{
-        zIndex: "var(--kr-z-central-castle)",
-      }}
+      style={{ zIndex: 50 }}
     >
-      {/* --------------------------------------------------
-       * GOLDEN PERIMETER GLOW
-       * -------------------------------------------------- */}
+      {/* Golden perimeter glow */}
       <div
         className="pointer-events-none absolute inset-0 rounded-[50%]"
         style={{
-          boxShadow: "0 0 60px rgba(255,215,0,0.12), 0 0 120px rgba(255,215,0,0.06)",
+          boxShadow:
+            "0 0 100px color-mix(in oklab, #FFD700 16%, transparent), 0 0 200px color-mix(in oklab, #FFD700 8%, transparent)",
         }}
       />
 
-      {/* --------------------------------------------------
-       * BASE ISLAND PLATFORM
-       * Organic shape, largest variant
-       * -------------------------------------------------- */}
+      {/* Base island platform — 520x200 */}
       <div
         className="relative flex items-center justify-center"
         style={{
-          width: "240px",
-          height: "90px",
+          width: "520px",
+          height: "200px",
           borderRadius: "42% 58% 52% 48% / 46% 44% 56% 54%",
           background:
-            "linear-gradient(180deg, var(--kr-grass) 0%, var(--kr-grass-light) 18%, var(--kr-earth) 55%, var(--kr-earth-dark) 100%)",
-          boxShadow: "0 28px 72px rgba(3,7,18,0.4)",
+            "linear-gradient(180deg, #22C55E 0%, #4ADE80 18%, #92400E 55%, #78350F 100%)",
+          boxShadow:
+            "0 32px 80px color-mix(in oklab, #020617 45%, transparent)",
         }}
       >
-        {/* Grass highlight stripe */}
         <div
           className="absolute left-[12%] right-[12%]"
           style={{
@@ -89,354 +77,322 @@ export function CentralCastleMission({
             height: "6px",
             borderRadius: "999px",
             background:
-              "linear-gradient(90deg, transparent, var(--kr-grass-light) 20%, var(--kr-grass-light) 80%, transparent)",
+              "linear-gradient(90deg, transparent, #4ADE80 20%, #4ADE80 80%, transparent)",
             opacity: 0.5,
           }}
         />
       </div>
 
-      {/* --------------------------------------------------
-       * CASTLE STRUCTURE — towers + body + gate
-       * Built on top of the island platform
-       * -------------------------------------------------- */}
+      {/* Castle structure — scaled 2.0x */}
       <div
         className="absolute flex items-end gap-0"
-        style={{ bottom: "30px" }}
+        style={{ bottom: "64px" }}
       >
-        {/* ---- LEFT TOWER (medium, 90px) ---- */}
+        {/* Left tower */}
         <div className="relative flex flex-col items-center" style={{ marginRight: "-2px" }}>
-          {/* Roof triangle */}
           <div
             style={{
               width: 0,
               height: 0,
-              borderLeft: "22px solid transparent",
-              borderRight: "22px solid transparent",
-              borderBottom: "28px solid var(--kr-castle-roof)",
-              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.4))",
+              borderLeft: "48px solid transparent",
+              borderRight: "48px solid transparent",
+              borderBottom: "60px solid #DC2626",
+              filter: "drop-shadow(0 2px 4px color-mix(in oklab, black 40%, transparent))",
             }}
           />
-          {/* Tower body */}
           <div
             className="relative flex flex-col items-center justify-center"
             style={{
-              width: "36px",
-              height: "62px",
+              width: "76px",
+              height: "130px",
               background:
-                "linear-gradient(180deg, var(--kr-castle-stone), var(--kr-castle-wall) 30%, var(--kr-castle-stone))",
+                "linear-gradient(180deg, #D6D3D1, #E7E5E4 30%, #D6D3D1)",
               borderRadius: "4px 4px 2px 2px",
             }}
           >
-            {/* Window slot */}
             <div
               style={{
-                width: "6px",
-                height: "14px",
-                borderRadius: "3px",
-                background: "var(--kr-azure)",
-                boxShadow: "0 0 8px var(--kr-azure)",
+                width: "14px",
+                height: "30px",
+                borderRadius: "7px",
+                background: "#1E90FF",
+                boxShadow: "0 0 14px #1E90FF",
                 opacity: 0.7,
               }}
             />
-            {/* Brick line detail */}
             <div
               className="absolute"
               style={{
-                left: "4px",
-                right: "4px",
+                left: "10px",
+                right: "10px",
                 top: "50%",
                 height: "1px",
-                background: "rgba(0,0,0,0.25)",
+                background: "color-mix(in oklab, black 25%, transparent)",
               }}
             />
           </div>
         </div>
 
-        {/* ---- CENTER TOWER (tallest, 120px) ---- */}
+        {/* Center tower — tallest */}
         <div className="relative flex flex-col items-center" style={{ zIndex: 2 }}>
-          {/* Roof triangle — center is taller */}
           <div
             style={{
               width: 0,
               height: 0,
-              borderLeft: "26px solid transparent",
-              borderRight: "26px solid transparent",
-              borderBottom: "34px solid var(--kr-castle-roof)",
-              filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.45))",
+              borderLeft: "56px solid transparent",
+              borderRight: "56px solid transparent",
+              borderBottom: "70px solid #DC2626",
+              filter: "drop-shadow(0 3px 6px color-mix(in oklab, black 45%, transparent))",
             }}
           />
-          {/* Tower body */}
           <div
             className="relative flex flex-col items-center justify-center"
             style={{
-              width: "44px",
-              height: "86px",
+              width: "92px",
+              height: "180px",
               background:
-                "linear-gradient(180deg, var(--kr-castle-stone), var(--kr-castle-wall) 30%, var(--kr-castle-stone))",
+                "linear-gradient(180deg, #D6D3D1, #E7E5E4 30%, #D6D3D1)",
               borderRadius: "4px 4px 2px 2px",
             }}
           >
-            {/* Upper window */}
             <div
               style={{
-                width: "7px",
-                height: "16px",
-                borderRadius: "3.5px",
-                background: "var(--kr-azure)",
-                boxShadow: "0 0 10px var(--kr-azure)",
+                width: "15px",
+                height: "32px",
+                borderRadius: "7.5px",
+                background: "#1E90FF",
+                boxShadow: "0 0 16px #1E90FF",
                 opacity: 0.8,
               }}
             />
-            {/* Brick line */}
             <div
               className="absolute"
               style={{
-                left: "5px",
-                right: "5px",
+                left: "10px",
+                right: "10px",
                 top: "55%",
                 height: "1px",
-                background: "rgba(0,0,0,0.25)",
+                background: "color-mix(in oklab, black 25%, transparent)",
               }}
             />
-            {/* Lower window */}
             <div
-              className="mt-2"
+              className="mt-3"
               style={{
-                width: "7px",
-                height: "16px",
-                borderRadius: "3.5px",
-                background: "var(--kr-azure)",
-                boxShadow: "0 0 10px var(--kr-azure)",
+                width: "15px",
+                height: "32px",
+                borderRadius: "7.5px",
+                background: "#1E90FF",
+                boxShadow: "0 0 16px #1E90FF",
                 opacity: 0.8,
               }}
             />
           </div>
 
-          {/* ---- K SHIELD (above gate, on center tower) ---- */}
+          {/* K Shield */}
           <div
             className="absolute flex items-center justify-center"
             style={{
-              bottom: "34px",
-              width: "34px",
-              height: "34px",
+              bottom: "68px",
+              width: "68px",
+              height: "68px",
               borderRadius: "50%",
-              background: "rgba(255,215,0,0.08)",
+              background: "color-mix(in oklab, #FFD700 12%, transparent)",
               boxShadow:
-                "0 0 20px rgba(255,215,0,0.2), inset 0 0 12px rgba(255,215,0,0.06)",
+                "0 0 32px color-mix(in oklab, #FFD700 25%, transparent), inset 0 0 20px color-mix(in oklab, #FFD700 8%, transparent)",
             }}
           >
             <Shield
-              size={18}
+              size={34}
               style={{
-                color: "var(--kr-gold)",
-                filter: "drop-shadow(0 0 6px rgba(255,215,0,0.5))",
+                color: "#FFD700",
+                filter: "drop-shadow(0 0 8px color-mix(in oklab, #FFD700 50%, transparent))",
               }}
               strokeWidth={2}
             />
           </div>
         </div>
 
-        {/* ---- RIGHT TOWER (medium, 90px) ---- */}
+        {/* Right tower */}
         <div className="relative flex flex-col items-center" style={{ marginLeft: "-2px" }}>
-          {/* Roof triangle */}
           <div
             style={{
               width: 0,
               height: 0,
-              borderLeft: "22px solid transparent",
-              borderRight: "22px solid transparent",
-              borderBottom: "28px solid var(--kr-castle-roof)",
-              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.4))",
+              borderLeft: "48px solid transparent",
+              borderRight: "48px solid transparent",
+              borderBottom: "60px solid #DC2626",
+              filter: "drop-shadow(0 2px 4px color-mix(in oklab, black 40%, transparent))",
             }}
           />
-          {/* Tower body */}
           <div
             className="relative flex flex-col items-center justify-center"
             style={{
-              width: "36px",
-              height: "62px",
+              width: "76px",
+              height: "130px",
               background:
-                "linear-gradient(180deg, var(--kr-castle-stone), var(--kr-castle-wall) 30%, var(--kr-castle-stone))",
+                "linear-gradient(180deg, #D6D3D1, #E7E5E4 30%, #D6D3D1)",
               borderRadius: "4px 4px 2px 2px",
             }}
           >
-            {/* Window slot */}
             <div
               style={{
-                width: "6px",
-                height: "14px",
-                borderRadius: "3px",
-                background: "var(--kr-azure)",
-                boxShadow: "0 0 8px var(--kr-azure)",
+                width: "14px",
+                height: "30px",
+                borderRadius: "7px",
+                background: "#1E90FF",
+                boxShadow: "0 0 14px #1E90FF",
                 opacity: 0.7,
               }}
             />
-            {/* Brick line detail */}
             <div
               className="absolute"
               style={{
-                left: "4px",
-                right: "4px",
+                left: "10px",
+                right: "10px",
                 top: "50%",
                 height: "1px",
-                background: "rgba(0,0,0,0.25)",
+                background: "color-mix(in oklab, black 25%, transparent)",
               }}
             />
           </div>
         </div>
       </div>
 
-      {/* --------------------------------------------------
-       * MAIN CASTLE WALL (behind towers)
-       * -------------------------------------------------- */}
+      {/* Main castle wall */}
       <div
         className="absolute flex items-end gap-0"
-        style={{ bottom: "40px", zIndex: 1 }}
+        style={{ bottom: "80px", zIndex: 1 }}
       >
-        {/* Left wall wing */}
+        {/* Left wing */}
         <div
           style={{
-            width: "30px",
-            height: "44px",
-            background: "var(--kr-castle-stone)",
+            width: "60px",
+            height: "86px",
+            background: "#D6D3D1",
             borderRadius: "3px 0 0 3px",
-            borderRight: "1px solid rgba(0,0,0,0.15)",
+            borderRight: "1px solid color-mix(in oklab, black 15%, transparent)",
           }}
         />
 
-        {/* Center wall — contains 3 windows + gate */}
+        {/* Center wall */}
         <div
-          className="relative flex items-end justify-center gap-4"
+          className="relative flex items-end justify-center gap-8"
           style={{
-            width: "90px",
-            height: "54px",
+            width: "190px",
+            height: "108px",
             background:
-              "linear-gradient(180deg, var(--kr-castle-stone), var(--kr-castle-wall) 40%, var(--kr-castle-stone))",
+              "linear-gradient(180deg, #D6D3D1, #E7E5E4 40%, #D6D3D1)",
           }}
         >
-          {/* Left window */}
           <div
             style={{
-              width: "8px",
-              height: "18px",
-              borderRadius: "4px 4px 0 0",
-              background: "var(--kr-azure)",
-              boxShadow: "0 0 10px rgba(30,144,255,0.5)",
+              width: "16px",
+              height: "34px",
+              borderRadius: "8px 8px 0 0",
+              background: "#1E90FF",
+              boxShadow: "0 0 16px color-mix(in oklab, #1E90FF 50%, transparent)",
               opacity: 0.65,
-              marginBottom: "16px",
+              marginBottom: "28px",
             }}
           />
-          {/* Center window (over gate) */}
           <div
             style={{
-              width: "8px",
-              height: "18px",
-              borderRadius: "4px 4px 0 0",
-              background: "var(--kr-azure)",
-              boxShadow: "0 0 10px rgba(30,144,255,0.5)",
+              width: "16px",
+              height: "34px",
+              borderRadius: "8px 8px 0 0",
+              background: "#1E90FF",
+              boxShadow: "0 0 16px color-mix(in oklab, #1E90FF 50%, transparent)",
               opacity: 0.65,
-              marginBottom: "20px",
+              marginBottom: "36px",
             }}
           />
-          {/* Right window */}
           <div
             style={{
-              width: "8px",
-              height: "18px",
-              borderRadius: "4px 4px 0 0",
-              background: "var(--kr-azure)",
-              boxShadow: "0 0 10px rgba(30,144,255,0.5)",
+              width: "16px",
+              height: "34px",
+              borderRadius: "8px 8px 0 0",
+              background: "#1E90FF",
+              boxShadow: "0 0 16px color-mix(in oklab, #1E90FF 50%, transparent)",
               opacity: 0.65,
-              marginBottom: "16px",
+              marginBottom: "28px",
             }}
           />
 
-          {/* ---- ARCHED GATE ---- */}
-          <div
-            className="absolute flex flex-col items-center"
-            style={{ bottom: 0 }}
-          >
-            {/* Arch top */}
+          {/* Arched gate */}
+          <div className="absolute flex flex-col items-center" style={{ bottom: 0 }}>
             <div
               style={{
-                width: "28px",
-                height: "16px",
-                borderRadius: "14px 14px 0 0",
-                background: "rgba(0,0,0,0.5)",
-                border: "1.5px solid var(--kr-castle-stone)",
+                width: "52px",
+                height: "32px",
+                borderRadius: "26px 26px 0 0",
+                background: "color-mix(in oklab, black 50%, transparent)",
+                border: "1.5px solid #A8A29E",
                 borderBottom: "none",
               }}
             />
-            {/* Gate opening — dark with gold inner glow */}
             <div
               className="flex items-center justify-center"
               style={{
-                width: "28px",
-                height: "18px",
-                background: "rgba(2,6,23,0.85)",
-                borderLeft: "1.5px solid var(--kr-castle-stone)",
-                borderRight: "1.5px solid var(--kr-castle-stone)",
-                borderBottom: "1.5px solid var(--kr-castle-stone)",
+                width: "52px",
+                height: "34px",
+                background: "color-mix(in oklab, #020617 85%, transparent)",
+                borderLeft: "1.5px solid #A8A29E",
+                borderRight: "1.5px solid #A8A29E",
+                borderBottom: "1.5px solid #A8A29E",
                 boxShadow:
-                  "inset 0 0 12px color-mix(in srgb, var(--kr-gold, #FFD700) 12%, transparent), inset 0 0 24px color-mix(in srgb, var(--kr-gold, #FFD700) 4%, transparent)",
+                  "inset 0 0 20px color-mix(in srgb, #FFD700 12%, transparent), inset 0 0 40px color-mix(in srgb, #FFD700 4%, transparent)",
               }}
             >
-              {/* Inner glow line */}
               <div
                 style={{
-                  width: "14px",
+                  width: "24px",
                   height: "1px",
                   background:
-                    "linear-gradient(90deg, transparent, color-mix(in srgb, var(--kr-gold, #FFD700) 30%, transparent), transparent)",
+                    "linear-gradient(90deg, transparent, color-mix(in srgb, #FFD700 30%, transparent), transparent)",
                 }}
               />
             </div>
           </div>
         </div>
 
-        {/* Right wall wing */}
+        {/* Right wing */}
         <div
           style={{
-            width: "30px",
-            height: "44px",
-            background: "var(--kr-castle-stone)",
+            width: "60px",
+            height: "86px",
+            background: "#D6D3D1",
             borderRadius: "0 3px 3px 0",
-            borderLeft: "1px solid rgba(0,0,0,0.15)",
+            borderLeft: "1px solid color-mix(in oklab, black 15%, transparent)",
           }}
         />
       </div>
 
-      {/* --------------------------------------------------
-       * ENERGY PORTAL — pulsing circle at gate base
-       * -------------------------------------------------- */}
+      {/* Energy portal */}
       <div
         className="absolute kr-animate-pulse-glow"
         style={{
-          bottom: "16px",
-          width: "56px",
-          height: "56px",
+          bottom: "32px",
+          width: "110px",
+          height: "110px",
           borderRadius: "50%",
-          background: `radial-gradient(circle, rgba(255,255,255,0.35) 0%, color-mix(in srgb, ${portalColor} 25%, transparent) 25%, color-mix(in srgb, ${portalColor} 6%, transparent) 55%, transparent 70%)`,
-          boxShadow: `0 0 30px color-mix(in srgb, ${portalColor} 20%, transparent)`,
+          background: `radial-gradient(circle, color-mix(in oklab, white 35%, transparent) 0%, color-mix(in srgb, ${portalColor} 25%, transparent) 25%, color-mix(in srgb, ${portalColor} 6%, transparent) 55%, transparent 70%)`,
+          boxShadow: `0 0 56px color-mix(in srgb, ${portalColor} 22%, transparent)`,
           zIndex: 3,
         }}
       />
 
-      {/* --------------------------------------------------
-       * MISSION BANNER OVERLAY
-       * -------------------------------------------------- */}
+      {/* Mission banner */}
       <div
         className="absolute"
         style={{
-          bottom: "-18px",
-          zIndex: "var(--kr-z-mission-banner)",
-          width: "200px",
+          bottom: "-36px",
+          zIndex: 60,
+          width: "360px",
         }}
       >
         <MissionBanner
           mission={currentMission}
           status={missionStatus}
-          className="shadow-lg"
         />
       </div>
     </div>

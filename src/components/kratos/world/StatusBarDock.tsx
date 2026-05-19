@@ -43,8 +43,8 @@ export function StatusBarDock({
       )}
       style={{
         height: "48px",
-        background: "var(--kr-glass-strong-bg, rgba(15, 23, 42, 0.94))",
-        borderTop: "1px solid var(--kr-glass-strong-border, rgba(255, 255, 255, 0.10))",
+        background: "var(--kr-glass-strong-bg, color-mix(in oklab, var(--kr-surface-deep, #0F172A) 94%, transparent))",
+        borderTop: "1px solid var(--kr-glass-strong-border, color-mix(in oklab, white 10%, transparent))",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
       }}
@@ -80,7 +80,7 @@ export function StatusBarDock({
             <div className="mt-1 flex items-center gap-2">
               <div
                 className="h-0.5 flex-1 rounded-full overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.08)" }}
+                style={{ background: "color-mix(in oklab, white 8%, transparent)" }}
               >
                 <div
                   className="h-full rounded-full transition-all duration-500"
@@ -88,7 +88,7 @@ export function StatusBarDock({
                     width: `${Math.min(100, missionProgress)}%`,
                     background:
                       "linear-gradient(90deg, var(--kr-color-aurora, #6366F1), var(--kr-gold, #FFD700))",
-                    boxShadow: "0 0 8px rgba(99,102,241,0.3)",
+                    boxShadow: "0 0 8px color-mix(in oklab, var(--kr-color-aurora, #6366F1) 30%, transparent)",
                   }}
                 />
               </div>
@@ -175,8 +175,8 @@ export function StatusBarDock({
         disabled={createCheckpoint.isPending}
         className="shrink-0 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 hover:brightness-110 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
         style={{
-          background: "var(--kr-surface-2, rgba(255,255,255,0.04))",
-          border: "1px solid var(--kr-glass-strong-border, rgba(255,255,255,0.08))",
+          background: "var(--kr-surface-2, color-mix(in oklab, white 4%, transparent))",
+          border: "1px solid var(--kr-glass-strong-border, color-mix(in oklab, white 8%, transparent))",
           color: "var(--kr-text-secondary, #D1D5DB)",
         }}
         aria-label="Salvar checkpoint"
@@ -195,7 +195,7 @@ export function StatusBarDock({
           style={{
             background: "var(--kr-color-mission, #22C55E)",
             color: "#000",
-            boxShadow: "0 0 12px rgba(34,197,94,0.3)",
+            boxShadow: "0 0 12px color-mix(in oklab, var(--kr-color-mission, #22C55E) 30%, transparent)",
           }}
         >
           <Play className="h-3 w-3" aria-hidden />

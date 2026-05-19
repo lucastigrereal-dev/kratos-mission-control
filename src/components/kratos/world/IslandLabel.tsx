@@ -1,38 +1,30 @@
 import { cn } from "@/lib/utils";
 
 interface IslandLabelProps {
-  /** Island display name */
   title: string;
-  /** Optional one-line description */
   subtitle?: string;
-  /** Island theme for accent coloring */
   theme?: string;
-  /** Position relative to island: above or below */
   position?: "top" | "bottom";
   className?: string;
 }
 
-const themeAccentMap: Record<string, string> = {
-  omnis: "--kr-island-omnis",
-  agencia: "--kr-island-agencia",
-  akasha: "--kr-island-akasha",
-  filosofia: "--kr-island-filosofia",
-  financas: "--kr-island-financas",
-  forja: "--kr-island-forja",
-  observatorio: "--kr-island-observatorio",
-  vila: "--kr-island-vila",
-  arena: "--kr-island-arena",
-  nimbus: "--kr-island-nimbus",
+const themeAccentMap: Record<string, { color: string; bg: string }> = {
+  omnis: { color: "#60A5FA", bg: "#1E3A8A" },
+  agencia: { color: "#F87171", bg: "#7F1D1D" },
+  akasha: { color: "#34D399", bg: "#064E3B" },
+  filosofia: { color: "#A78BFA", bg: "#4C1D95" },
+  financas: { color: "#34D399", bg: "#064E3B" },
+  forja: { color: "#FB923C", bg: "#7C2D12" },
+  observatorio: { color: "#60A5FA", bg: "#1E3A8A" },
+  vila: { color: "#34D399", bg: "#064E3B" },
+  arena: { color: "#F87171", bg: "#7F1D1D" },
+  nimbus: { color: "#5EEAD4", bg: "#0F766E" },
 };
 
 /**
- * IslandLabel — Glass floating label positioned above/below an island.
+ * IslandLabel — Colorful opaque plaque label matching mockup style.
  *
- * Features:
- * - GlassPanel surface with reduced padding for compactness
- * - Themed left-border accent matching the island color
- * - Small dot indicator connecting to the island
- * - kr-animate-float-medium for subtle drift
+ * No glass, no blur — solid themed colors with clear typography.
  */
 export function IslandLabel({
   title,
@@ -41,54 +33,49 @@ export function IslandLabel({
   position = "bottom",
   className,
 }: IslandLabelProps) {
-  const accentColor = theme ? themeAccentMap[theme] ?? null : null;
+  const accent = theme ? themeAccentMap[theme] ?? null : null;
 
   return (
     <div
       className={cn(
         "kr-animate-float-medium flex flex-col items-center",
+        position === "top" && "flex-col-reverse",
         className,
       )}
       style={{ willChange: "transform" }}
     >
-      {/* Connection dot — visual link to island */}
+      {/* Connection dot */}
       <div
         className="mb-1 rounded-full"
         style={{
           width: 6,
           height: 6,
-          background: accentColor
-            ? `var(${accentColor})`
-            : "var(--kr-text-muted, #6B7280)",
-          opacity: 0.6,
+          background: accent?.color ?? "#9CA3AF",
+          opacity: 0.8,
         }}
         aria-hidden="true"
       />
 
-      {/* Label panel */}
+      {/* Plaque */}
       <div
-        className="flex flex-col items-center rounded-xl px-3 py-1.5"
+        className="flex flex-col items-center rounded-lg px-3 py-1"
         style={{
-          background: "var(--kr-glass-bg, rgba(11, 18, 32, 0.78))",
-          border: `1px solid var(--kr-glass-border, rgba(255, 255, 255, 0.12))`,
-          borderLeft: accentColor
-            ? `2px solid var(${accentColor})`
-            : undefined,
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.3)",
+          background: accent?.bg ?? "#1E293B",
+          border: `1.5px solid ${accent?.color ?? "#475569"}`,
+          boxShadow: `0 4px 12px color-mix(in oklab, black 35%, transparent), 0 0 8px color-mix(in oklab, ${accent?.color ?? "#475569"} 20%, transparent)`,
+          minWidth: 100,
         }}
       >
         <span
-          className="text-xs font-bold uppercase tracking-wider whitespace-nowrap"
-          style={{ color: "var(--kr-text-primary, #E5E7EB)" }}
+          className="text-[10px] font-black uppercase tracking-wider whitespace-nowrap"
+          style={{ color: "#FFFFFF" }}
         >
           {title}
         </span>
         {subtitle && (
           <span
-            className="mt-0.5 text-[10px] whitespace-nowrap"
-            style={{ color: "var(--kr-text-muted, #6B7280)" }}
+            className="mt-0.5 text-[9px] whitespace-nowrap"
+            style={{ color: accent?.color ?? "#94A3B8" }}
           >
             {subtitle}
           </span>

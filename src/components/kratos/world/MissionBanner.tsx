@@ -13,19 +13,25 @@ const statusConfig: Record<
   { dot: string; label: string }
 > = {
   active: {
-    dot: "var(--kr-success)",
+    dot: "#22C55E",
     label: "EM ANDAMENTO",
   },
   paused: {
-    dot: "var(--kr-warning)",
+    dot: "#F59E0B",
     label: "PAUSADA",
   },
   completed: {
-    dot: "var(--kr-success)",
-    label: "CONCLUIDA",
+    dot: "#22C55E",
+    label: "CONCLUÍDA",
   },
 };
 
+/**
+ * MissionBanner — Vibrant blue-gold plaque for castle overlay.
+ *
+ * Mockup match: blue panel with gold "MISSÃO ATUAL" header
+ * and white mission text.
+ */
 export function MissionBanner({
   mission,
   status,
@@ -37,58 +43,56 @@ export function MissionBanner({
   return (
     <div
       className={cn(
-        "relative flex items-center gap-3 rounded-2xl border px-4 py-3",
+        "relative flex flex-col items-center gap-1 rounded-xl border px-5 py-2.5",
         className,
       )}
       style={{
-        background: "var(--kratos-surface-2)",
-        borderColor: "var(--kratos-border)",
-        backdropFilter: "blur(24px)",
-        WebkitBackdropFilter: "blur(24px)",
+        background: "linear-gradient(135deg, #1E3A8A 0%, #172554 100%)",
+        borderColor: "#F59E0B",
         boxShadow:
-          "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
+          "0 8px 32px color-mix(in oklab, black 40%, transparent), 0 0 16px color-mix(in oklab, #F59E0B 15%, transparent)",
       }}
     >
-      {/* Status dot */}
+      {/* Gold header */}
       <span
-        className="block h-2.5 w-2.5 shrink-0 rounded-full"
-        style={{
-          backgroundColor: cfg.dot,
-          boxShadow: `0 0 8px ${cfg.dot}`,
-        }}
-      />
+        className="text-[9px] font-black uppercase tracking-[0.2em]"
+        style={{ color: "#FFD700" }}
+      >
+        MISSÃO ATUAL
+      </span>
 
-      {/* Content */}
-      <div className="min-w-0 flex-1">
+      {/* Mission text */}
+      <span
+        className="mt-0.5 block max-w-[200px] truncate text-center text-sm font-bold leading-tight"
+        style={{ color: "#FFFFFF" }}
+      >
+        {mission}
+      </span>
+
+      {/* Subtitle from mockup */}
+      <span
+        className="mt-0.5 block text-center text-[10px] font-medium"
+        style={{ color: "#93C5FD" }}
+      >
+        ENQUANTO VIVO O PRESENTE
+      </span>
+
+      {/* Status dot + label */}
+      <div className="mt-1.5 flex items-center gap-1.5">
         <span
-          className="block text-[10px] font-medium uppercase tracking-[0.18em]"
+          className="block h-2 w-2 shrink-0 rounded-full"
           style={{
-            fontFamily: "var(--kratos-font-mono)",
-            color: "var(--kratos-text-muted)",
+            backgroundColor: cfg.dot,
+            boxShadow: `0 0 6px ${cfg.dot}`,
           }}
-        >
-          MISSÃO ATUAL
-        </span>
+        />
         <span
-          className="mt-0.5 block truncate text-sm font-semibold leading-tight"
-          style={{ color: "var(--kratos-text-primary)" }}
+          className="text-[9px] font-bold uppercase tracking-wider"
+          style={{ color: cfg.dot }}
         >
-          {mission}
+          {cfg.label}
         </span>
       </div>
-
-      {/* Status label */}
-      <span
-        className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em]"
-        style={{
-          backgroundColor: "var(--kratos-surface-3)",
-          color: "var(--kratos-text-secondary)",
-          border: "1px solid var(--kratos-border)",
-          fontFamily: "var(--kratos-font-mono)",
-        }}
-      >
-        {cfg.label}
-      </span>
 
       {children}
     </div>

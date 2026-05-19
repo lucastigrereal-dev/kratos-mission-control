@@ -6,6 +6,8 @@ import {
   CheckCircle2,
   Circle,
   Smile,
+  Meh,
+  Frown,
 } from "lucide-react";
 import { KratosCard } from "@/components/kratos/ui-primitives/KratosCard";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
@@ -14,6 +16,7 @@ import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
+import { IslandPageFrame } from "./shared/IslandPageFrame";
 
 const accent = "var(--kr-island-vila)";
 
@@ -75,16 +78,17 @@ const eventos: Evento[] = [
 ];
 
 interface Humor {
-  emoji: string;
+  icon: typeof Smile;
   label: string;
   value: number;
+  color: string;
 }
 
 const humorFamilia: Humor[] = [
-  { emoji: "😊", label: "Lucas", value: 78 },
-  { emoji: "😊", label: "Parceira", value: 82 },
-  { emoji: "😐", label: "Miguel", value: 55 },
-  { emoji: "😊", label: "Helena", value: 90 },
+  { icon: Smile, label: "Lucas", value: 78, color: "var(--kr-success)" },
+  { icon: Smile, label: "Parceira", value: 82, color: "var(--kr-success)" },
+  { icon: Meh, label: "Miguel", value: 55, color: "var(--kr-warning)" },
+  { icon: Smile, label: "Helena", value: 90, color: "var(--kr-success)" },
 ];
 
 interface VilaScreenProps {
@@ -99,7 +103,7 @@ export function VilaScreen({
   isEmpty = false,
 }: VilaScreenProps) {
   return (
-    <>
+    <IslandPageFrame theme="vila">
       {isLoading ? (
         <LoadingState lines={6} />
       ) : error ? (
@@ -118,7 +122,7 @@ export function VilaScreen({
           <IslandPageHeader
             title="VILA VIVA"
             subtitle="Família, Filhos e Vida Real"
-            theme="akasha"
+            theme="vila"
           />
 
           {/* Humor Familiar */}
@@ -130,7 +134,7 @@ export function VilaScreen({
                   className="flex flex-col items-center gap-1 rounded-xl p-2"
                   style={{ background: "var(--kratos-surface-3)" }}
                 >
-                  <span className="text-xl">{h.emoji}</span>
+                  <h.icon className="h-5 w-5" style={{ color: h.color }} aria-hidden />
                   <p className="text-[10px] font-medium" style={{ color: "var(--kratos-text-secondary)" }}>
                     {h.label}
                   </p>
@@ -214,7 +218,11 @@ export function VilaScreen({
                   <GlassPanel key={e.titulo} padding="sm" className="!p-2 flex items-center gap-3">
                     <div
                       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[9px] font-bold"
-                      style={{ background: `${accent}18`, color: accent, fontFamily: "var(--kratos-font-mono)" }}
+                      style={{
+                        background: `color-mix(in oklab, ${accent} 10%, transparent)`,
+                        color: accent,
+                        fontFamily: "var(--kratos-font-mono)",
+                      }}
                     >
                       {dia}
                       <span className="text-[7px]">/{mes}</span>
@@ -234,6 +242,6 @@ export function VilaScreen({
           </KratosCard>
         </div>
       )}
-    </>
+    </IslandPageFrame>
   );
 }

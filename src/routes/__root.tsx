@@ -10,9 +10,9 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import tokensCss from "../styles/kratos-tokens.css?url";
 import { AppShell } from "@/components/kratos/shell/AppShell";
 import { ReducedMotionProvider } from "@/components/kratos/base/ReducedMotionProvider";
+import { IslandDockProvider } from "@/components/kratos/islands/shared/IslandDockContext";
 
 function NotFoundComponent() {
   return (
@@ -132,7 +132,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "stylesheet", href: tokensCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "preconnect",
@@ -173,13 +172,15 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ReducedMotionProvider>
-        {isWorld ? (
-          <Outlet />
-        ) : (
-          <AppShell>
+        <IslandDockProvider>
+          {isWorld ? (
             <Outlet />
-          </AppShell>
-        )}
+          ) : (
+            <AppShell>
+              <Outlet />
+            </AppShell>
+          )}
+        </IslandDockProvider>
       </ReducedMotionProvider>
     </QueryClientProvider>
   );

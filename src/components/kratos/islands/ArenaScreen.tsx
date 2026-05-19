@@ -106,7 +106,7 @@ export function ArenaScreen({
           <IslandPageHeader
             title="ARENA COMERCIAL"
             subtitle="Vendas, Negociação e Conquistas"
-            theme="agencia"
+            theme="arena"
           />
 
           {/* Meta Mensal */}
@@ -149,7 +149,7 @@ export function ArenaScreen({
               {leads.map((lead) => (
                 <div
                   key={lead.hotel}
-                  className="flex items-center gap-3 rounded-lg px-2 py-2 -mx-2 transition-colors hover:bg-white/[0.02]"
+                  className="flex items-center gap-3 rounded-lg px-2 py-2 -mx-2 transition-colors kratos-card-hover"
                 >
                   <div
                     className="h-2 w-2 rounded-full shrink-0"
@@ -182,7 +182,7 @@ export function ArenaScreen({
               {conquistas.map((c) => (
                 <div
                   key={c.cliente}
-                  className="flex items-center gap-3 rounded-lg px-2 py-2 -mx-2 transition-colors hover:bg-white/[0.02]"
+                  className="flex items-center gap-3 rounded-lg px-2 py-2 -mx-2 transition-colors kratos-card-hover"
                 >
                   <DollarSign className="h-4 w-4 shrink-0" style={{ color: "var(--kr-success)" }} />
                   <div className="flex-1 min-w-0">

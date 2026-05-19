@@ -15,8 +15,9 @@ import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
+import { IslandPageFrame } from "./shared/IslandPageFrame";
 
-const accent = "var(--kr-accent-indigo)";
+const accent = "var(--kr-island-filosofia)";
 
 interface Insight {
   texto: string;
@@ -46,14 +47,12 @@ interface Livro {
   titulo: string;
   autor: string;
   progresso: number;
-  capa: string;
 }
 
 const leituraAtual: Livro = {
   titulo: "The Almanack of Naval Ravikant",
   autor: "Eric Jorgenson",
   progresso: 64,
-  capa: "📘",
 };
 
 const bibliotecaStats = {
@@ -107,7 +106,7 @@ export function FilosofiaScreen({
   isEmpty = false,
 }: FilosofiaScreenProps) {
   return (
-    <>
+    <IslandPageFrame theme="filosofia">
       {isLoading ? (
         <LoadingState lines={6} />
       ) : error ? (
@@ -126,7 +125,7 @@ export function FilosofiaScreen({
           <IslandPageHeader
             title="FILOSOFIA & SABEDORIA"
             subtitle="Aprendizado, Filosofia e Evolução Pessoal"
-            theme="omnis"
+            theme="filosofia"
           />
 
           {/* Leitura Atual */}
@@ -134,9 +133,12 @@ export function FilosofiaScreen({
             <div className="flex items-center gap-4">
               <div
                 className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl"
-                style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}
+                style={{
+                  background: `color-mix(in oklab, ${accent} 10%, transparent)`,
+                  border: `1px solid color-mix(in oklab, ${accent} 20%, transparent)`,
+                }}
               >
-                {leituraAtual.capa}
+                <BookOpen className="h-6 w-6" style={{ color: accent }} aria-hidden />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate" style={{ color: "var(--kratos-text-primary)" }}>
@@ -220,6 +222,6 @@ export function FilosofiaScreen({
           </KratosCard>
         </div>
       )}
-    </>
+    </IslandPageFrame>
   );
 }
