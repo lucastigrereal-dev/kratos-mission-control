@@ -46,7 +46,12 @@ from app.routes.execution import router as execution_router
 from app.routes.tabs import router as tabs_router
 from app.routes.approvals import router as approvals_router
 from app.routes.continuity import router as continuity_router
+from app.routes.akasha import router as akasha_router
+from app.routes.qdrant import router as qdrant_router
+from app.routes.events import router as events_router
 from app.routes.operational_truth import router as operational_truth_router
+from app.routes.cost import router as cost_router
+from app.routes.crm import router as crm_router
 
 app.include_router(health_router)
 app.include_router(tasks_router)
@@ -77,7 +82,12 @@ app.include_router(execution_router)
 app.include_router(tabs_router)
 app.include_router(approvals_router)
 app.include_router(continuity_router)
+app.include_router(akasha_router)
+app.include_router(qdrant_router)
+app.include_router(events_router)
 app.include_router(operational_truth_router)
+app.include_router(cost_router)
+app.include_router(crm_router)
 
 
 @app.get("/")
@@ -117,5 +127,9 @@ def root():
             "/live/stream", "/live/snapshot",
             "/mission/current", "/mission/lens",
             "/mentor/mission-brief",
+            "/akasha/status",
+            "/qdrant/status",
+            "/cost/status",
+            "/crm/status",
         ],
     }

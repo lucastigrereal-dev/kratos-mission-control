@@ -312,11 +312,14 @@ def _check_data_freshness() -> dict:
         try:
             result = fn()
             src = result.get("source", "unknown")
-            freshness[name] = {"source": src}
+            data = result.get("data", {})
+            badge = data.get("source_badge", src) if isinstance(data, dict) else src
+            freshness[name] = {"source": src, "source_badge": badge}
             if src != "real":
                 stale_sources.append({
                     "source": name,
                     "reason": f"usando {src}, nao dados reais",
+                    "source_badge": badge,
                 })
         except Exception as e:
             freshness[name] = {"source": "error", "error": str(e)}

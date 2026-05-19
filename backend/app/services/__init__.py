@@ -152,6 +152,34 @@ def get_omnis_summary():
     return _collector_wrapper(collect_summary, lambda: _load_json("omnis_summary.json"))
 
 
+# ── AKASHA (real + fallback) ─────────────────────────────────────────────────
+
+def get_akasha_status():
+    from app.collectors.akasha_collector import collect_status
+    return _collector_wrapper(collect_status, lambda: {"status": "unknown", "source_badge": "unknown"})
+
+
+# ── Qdrant (real + fallback) ─────────────────────────────────────────────────
+
+def get_qdrant_status():
+    from app.collectors.qdrant_collector import collect_status
+    return _collector_wrapper(collect_status, lambda: {"status": "unknown", "source_badge": "unknown"})
+
+
+# ── Cost (estimated — no real counters yet) ────────────────────────────────────
+
+def get_cost_status():
+    from app.collectors.cost_collector import collect_status
+    return _collector_wrapper(collect_status, lambda: {"status": "unknown", "source_badge": "unknown"})
+
+
+# ── CRM (doc_only — vendas_crm has zero implemented skills) ────────────────────────
+
+def get_crm_status():
+    from app.collectors.crm_collector import collect_status
+    return _collector_wrapper(collect_status, lambda: {"status": "unknown", "source_badge": "unknown"})
+
+
 # ── Outputs (real + fallback) ────────────────────────────────────────────────
 
 def get_outputs():

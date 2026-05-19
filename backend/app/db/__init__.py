@@ -410,4 +410,23 @@ CREATE TABLE IF NOT EXISTS context_switches (
     environment TEXT DEFAULT 'dev',
     created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS cost_ledger (
+    id TEXT PRIMARY KEY,
+    execution_id TEXT NOT NULL,
+    mission_id TEXT DEFAULT 'unknown',
+    model TEXT NOT NULL,
+    provider TEXT NOT NULL,
+    input_tokens INTEGER DEFAULT 0,
+    output_tokens INTEGER DEFAULT 0,
+    estimated_cost_usd REAL DEFAULT 0.0,
+    local_or_cloud TEXT DEFAULT 'cloud',
+    endpoint TEXT DEFAULT '',
+    timestamp TEXT NOT NULL,
+    notes TEXT DEFAULT ''
+);
+
+CREATE INDEX IF NOT EXISTS idx_cost_ledger_timestamp ON cost_ledger(timestamp);
+CREATE INDEX IF NOT EXISTS idx_cost_ledger_model ON cost_ledger(model);
+CREATE INDEX IF NOT EXISTS idx_cost_ledger_mission ON cost_ledger(mission_id);
 """
