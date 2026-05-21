@@ -52,6 +52,7 @@ from app.routes.events import router as events_router
 from app.routes.operational_truth import router as operational_truth_router
 from app.routes.cost import router as cost_router
 from app.routes.crm import router as crm_router
+from app.routes.mission_control import router as mission_control_router
 
 app.include_router(health_router)
 app.include_router(tasks_router)
@@ -88,6 +89,7 @@ app.include_router(events_router)
 app.include_router(operational_truth_router)
 app.include_router(cost_router)
 app.include_router(crm_router)
+app.include_router(mission_control_router)
 
 
 @app.get("/")
