@@ -5,8 +5,10 @@ M5B: POST /cost/litellm-callback, GET /cost/provider-usage
 M5C: GET /cost/budget-status, GET /cost/mission/{id}, POST /cost/mission/{id}/roi
 """
 from typing import Optional
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
+
+from app.auth import require_api_key
 
 router = APIRouter(tags=["cost"])
 
@@ -95,7 +97,7 @@ def mission_cost(mission_id: str):
 # ── POST Endpoints ────────────────────────────────────────────────────────────
 
 @router.post("/cost/record")
-def cost_record(body: CostRecordRequest):
+def cost_record(body: CostRecordRequest, _auth: str = Depends(require_api_key)):
     """Record a new cost entry in the ledger."""
     from app.services.cost_service import record_cost
     return record_cost(
@@ -113,6 +115,7 @@ def cost_record(body: CostRecordRequest):
 def cost_litellm_callback(
     body: LiteLLMCallbackRequest,
     dry_run: bool = Query(default=False),
+    _auth: str = Depends(require_api_key),
 ):
     """Receive LiteLLM spend webhook or internal OMNIS callback.
 
@@ -128,7 +131,7 @@ def cost_litellm_callback(
 
 
 @router.post("/cost/mission/{mission_id}/roi")
-def mission_roi(mission_id: str, body: MissionROIRequest):
+def mission_roi(mission_id: str, body: MissionROIRequest, _auth: str = Depends(require_api_key)):
     """Set estimated business value for a mission (current period)."""
     from app.services.cost_service import set_mission_roi
     return set_mission_roi(
