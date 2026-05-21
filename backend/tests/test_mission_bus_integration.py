@@ -1,9 +1,18 @@
-"""Mission Bus Redis integration tests — publish=True against real Redis :6382."""
+"""Mission Bus Redis integration tests — publish=True against real Redis.
+
+Target: aurora_redis container on :6381 (port 6382 not available).
+Uses test/autopilot:* key prefix — safe, self-cleaning.
+"""
 import json
+import os
 import pytest
 from datetime import datetime, timezone
 
 pytestmark = pytest.mark.integration
+
+# Real Redis port from Docker — aurora_redis container
+REDIS_HOST = os.environ.get("KRATOS_REDIS_HOST", "127.0.0.1")
+REDIS_PORT = int(os.environ.get("KRATOS_REDIS_PORT", "6381"))
 
 
 def make_mission_package(mission_id="test-autopilot-001", **overrides):
@@ -34,19 +43,19 @@ def make_mission_package(mission_id="test-autopilot-001", **overrides):
 
 
 class TestRedisIntegration:
-    """Real Redis :6382 integration — uses test/autopilot prefix."""
+    """Real Redis integration — uses test/autopilot prefix, self-cleaning."""
 
     @pytest.fixture(autouse=True)
     def redis_client(self):
         import redis
-        client = redis.Redis(host="127.0.0.1", port=6382, db=0, decode_responses=True)
+        client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True)
         yield client
         # Cleanup: remove all test/autopilot keys
         for key in client.scan_iter("test/autopilot:*"):
             client.delete(key)
 
     def test_redis_ping(self, redis_client):
-        assert redis_client.ping(), "Redis :6382 must respond to PING"
+        assert redis_client.ping(), f"Redis {REDIS_HOST}:{REDIS_PORT} must respond to PING"
 
     def test_publish_mission_planned_to_redis(self, redis_client):
         from app.services.mission_bus_service import publish_mission_event
