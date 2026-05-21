@@ -9,6 +9,15 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
 from app.auth import require_api_key
+from app.schemas.cost_schemas import (
+    CostEntryResponse,
+    CostLedgerResponse,
+    CostStatusResponse,
+    BudgetStatusResponse,
+    LiteLLMCallbackResponse,
+    MissionCostResponse,
+    ProviderUsageResponse,
+)
 
 router = APIRouter(tags=["cost"])
 
@@ -54,14 +63,14 @@ class MissionROIRequest(BaseModel):
 
 # ── GET Endpoints ─────────────────────────────────────────────────────────────
 
-@router.get("/cost/status")
+@router.get("/cost/status", response_model=CostStatusResponse)
 def cost_status(days: int = Query(default=30, ge=1, le=365)):
     """Current cost summary: totals, by-model, by-mission, local-vs-cloud."""
     from app.services.cost_service import get_cost_status
     return get_cost_status(days=days)
 
 
-@router.get("/cost/ledger")
+@router.get("/cost/ledger", response_model=CostLedgerResponse)
 def cost_ledger(
     mission_id: str = Query(default=None),
     model: str = Query(default=None),
@@ -73,21 +82,21 @@ def cost_ledger(
     return get_ledger(mission_id=mission_id, model=model, days=days, limit=limit)
 
 
-@router.get("/cost/provider-usage")
+@router.get("/cost/provider-usage", response_model=ProviderUsageResponse)
 def provider_usage(period: str = Query(default=None)):
     """Aggregate provider/model usage, optionally filtered by period (YYYY-MM)."""
     from app.services.cost_service import get_provider_usage
     return get_provider_usage(period=period)
 
 
-@router.get("/cost/budget-status")
+@router.get("/cost/budget-status", response_model=BudgetStatusResponse)
 def budget_status():
     """Full budget evaluation: all rules, overall OK/WARNING/CRITICAL/UNKNOWN."""
     from app.services.cost_service import get_budget_status
     return get_budget_status()
 
 
-@router.get("/cost/mission/{mission_id}")
+@router.get("/cost/mission/{mission_id}", response_model=MissionCostResponse)
 def mission_cost(mission_id: str):
     """Total cost + ROI for a mission across all periods."""
     from app.services.cost_service import get_mission_cost
@@ -96,7 +105,7 @@ def mission_cost(mission_id: str):
 
 # ── POST Endpoints ────────────────────────────────────────────────────────────
 
-@router.post("/cost/record")
+@router.post("/cost/record", response_model=CostEntryResponse)
 def cost_record(body: CostRecordRequest, _auth: str = Depends(require_api_key)):
     """Record a new cost entry in the ledger."""
     from app.services.cost_service import record_cost
@@ -111,7 +120,7 @@ def cost_record(body: CostRecordRequest, _auth: str = Depends(require_api_key)):
     )
 
 
-@router.post("/cost/litellm-callback")
+@router.post("/cost/litellm-callback", response_model=LiteLLMCallbackResponse)
 def cost_litellm_callback(
     body: LiteLLMCallbackRequest,
     dry_run: bool = Query(default=False),
@@ -130,7 +139,7 @@ def cost_litellm_callback(
     return handle_litellm_callback(payload, dry_run=dry_run)
 
 
-@router.post("/cost/mission/{mission_id}/roi")
+@router.post("/cost/mission/{mission_id}/roi", response_model=MissionCostResponse)
 def mission_roi(mission_id: str, body: MissionROIRequest, _auth: str = Depends(require_api_key)):
     """Set estimated business value for a mission (current period)."""
     from app.services.cost_service import set_mission_roi

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Query
+from app.schemas.event_schemas import EventBridgeStatusResponse, EventBridgeEventsResponse, EventBridgeStartResponse
 
 router = APIRouter(prefix="/events", tags=["events"])
 
 
-@router.get("/bridge")
+@router.get("/bridge", response_model=EventBridgeEventsResponse)
 def event_bridge(
     n: int = Query(default=50, ge=1, le=100),
     type: str | None = Query(default=None, alias="type"),
@@ -15,14 +16,14 @@ def event_bridge(
     return {"count": len(events), "events": events}
 
 
-@router.get("/bridge/status")
+@router.get("/bridge/status", response_model=EventBridgeStatusResponse)
 def event_bridge_status():
     """Cross-container event bridge diagnostic status."""
     from app.services.event_bridge import get_status
     return get_status()
 
 
-@router.post("/bridge/start")
+@router.post("/bridge/start", response_model=EventBridgeStartResponse)
 def event_bridge_start():
     """Start the event bridge heartbeat + listener threads."""
     from app.services.event_bridge import start
