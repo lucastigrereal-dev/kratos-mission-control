@@ -11,7 +11,7 @@ import redis
 
 import os
 REDIS_HOST = os.environ.get("KRATOS_REDIS_HOST", "127.0.0.1")
-REDIS_PORT = int(os.environ.get("KRATOS_REDIS_PORT", "6382"))
+REDIS_PORT = int(os.environ.get("KRATOS_REDIS_PORT", "6381"))
 
 VALID_MISSION_EVENT_TYPES = {"mission.planned", "mission.completed", "mission.failed"}
 VALID_ASSIGNMENT_EVENT_TYPE = "agent.assignment.requested"
@@ -19,7 +19,8 @@ VALID_ASSIGNMENT_EVENT_TYPE = "agent.assignment.requested"
 
 def _make_envelope(event_type: str, mission_id: str, payload: dict,
                    severity: str = "info", status: str = "ok",
-                   correlation_id: str | None = None) -> dict:
+                   correlation_id: str | None = None,
+                   trace_id: str | None = None) -> dict:
     """Create a V2 envelope following the same contract as event_bridge.py."""
     return {
         "event_id": f"evt-{uuid.uuid4().hex[:8]}",
@@ -34,7 +35,7 @@ def _make_envelope(event_type: str, mission_id: str, payload: dict,
         "mission_id": mission_id,
         "severity": severity,
         "status": status,
-        "trace_id": None,
+        "trace_id": trace_id,
         "payload": payload,
     }
 

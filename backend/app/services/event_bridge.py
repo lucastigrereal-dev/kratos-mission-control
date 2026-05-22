@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 import redis
 
 REDIS_HOST = "127.0.0.1"
-REDIS_PORT = 6382
+REDIS_PORT = int(os.environ.get("KRATOS_REDIS_PORT", "6381"))
 RING_SIZE = 100
 HEARTBEAT_INTERVAL = 30
 
@@ -133,6 +133,40 @@ def get_recent_events(n: int = 50, event_type: str | None = None, source: str | 
     if source:
         events = [e for e in events if e.get("source", {}).get("service") == source]
     return events[-n:]
+
+
+def replay(n: int = 10, event_type: str | None = None, source: str | None = None,
+           re_emit: bool = False) -> list[dict]:
+    """Replay the last N events from the ring buffer, optionally filtered.
+
+    Args:
+        n: Number of events to replay (most recent).
+        event_type: Optional filter by event_type field.
+        source: Optional filter by source.service field.
+        re_emit: If True, re-publish matching events to omnis:events so active
+                 listeners re-process them through their handler pipelines.
+
+    Returns:
+        List of matching event dicts (most recent last).
+    """
+    events = list(_ring)
+    if event_type:
+        events = [e for e in events if e.get("event_type") == event_type]
+    if source:
+        events = [e for e in events if e.get("source", {}).get("service") == source]
+    result = events[-n:]
+
+    if re_emit and result:
+        try:
+            r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, socket_connect_timeout=3)
+            for event in result:
+                clean = {k: v for k, v in event.items()
+                         if k not in ("_received_at", "_channel")}
+                r.publish("omnis:events", json.dumps(clean, ensure_ascii=False, default=str))
+        except Exception:
+            pass
+
+    return result
 
 
 def get_status() -> dict:
