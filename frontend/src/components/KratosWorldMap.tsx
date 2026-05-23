@@ -16,6 +16,7 @@ interface IslandDef {
   x: number;
   y: number;
   route: string;
+  status?: "live" | "active" | "degraded" | "critical";
 }
 
 interface BridgeDef {
@@ -27,7 +28,7 @@ interface BridgeDef {
 const ISLANDS: IslandDef[] = [
   {
     id: "tarefas",
-    label: "Tarefas",
+    label: "Ações",
     icon: "☰",
     color: "var(--kr-ocean-teal)",
     glowColor: "color-mix(in srgb, var(--kr-ocean-teal) 15%, transparent)",
@@ -35,10 +36,11 @@ const ISLANDS: IslandDef[] = [
     x: 28,
     y: 62,
     route: "/tarefas",
+    status: "active" as const,
   },
   {
     id: "projetos",
-    label: "Projetos",
+    label: "Iniciativas",
     icon: "⬡",
     color: "var(--kr-azure-400)",
     glowColor: "color-mix(in srgb, var(--kr-azure-400) 15%, transparent)",
@@ -46,6 +48,7 @@ const ISLANDS: IslandDef[] = [
     x: 72,
     y: 62,
     route: "/projetos",
+    status: "active" as const,
   },
   {
     id: "contexto",
@@ -57,10 +60,11 @@ const ISLANDS: IslandDef[] = [
     x: 22,
     y: 28,
     route: "/contexto",
+    status: "live" as const,
   },
   {
     id: "sistema",
-    label: "Sistema",
+    label: "Sistemas",
     icon: "⚙",
     color: "var(--kr-arena-ember)",
     glowColor: "color-mix(in srgb, var(--kr-arena-ember) 12%, transparent)",
@@ -68,6 +72,7 @@ const ISLANDS: IslandDef[] = [
     x: 78,
     y: 28,
     route: "/sistema",
+    status: "active" as const,
   },
   {
     id: "checkpoints",
@@ -82,7 +87,7 @@ const ISLANDS: IslandDef[] = [
   },
   {
     id: "omnis",
-    label: "OMNIS",
+    label: "OMNIS Lab",
     icon: "◬",
     color: "var(--kr-aurora-400)",
     glowColor: "color-mix(in srgb, var(--kr-aurora-400) 12%, transparent)",
@@ -90,10 +95,11 @@ const ISLANDS: IslandDef[] = [
     x: 14,
     y: 52,
     route: "/omnis",
+    status: "live" as const,
   },
   {
     id: "visao",
-    label: "Visão",
+    label: "Observatório",
     icon: "◉",
     color: "var(--kr-ocean-cyan)",
     glowColor: "color-mix(in srgb, var(--kr-ocean-cyan) 12%, transparent)",
@@ -157,6 +163,8 @@ export default function KratosWorldMap({ currentMission }: KratosWorldMapProps) 
           x={island.x}
           y={island.y}
           onClick={() => navigate(island.route)}
+          pulse={island.status === "live"}
+          status={island.status}
         />
       ))}
 

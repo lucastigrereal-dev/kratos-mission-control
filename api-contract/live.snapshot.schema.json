@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KRATOS Live Snapshot",
+  "description": "Aggregated operational snapshot from all collectors",
+  "type": "object",
+  "required": ["source", "data", "meta"],
+  "properties": {
+    "source": {
+      "type": "string",
+      "enum": ["real", "fallback", "cached", "mock", "error"]
+    },
+    "data": {
+      "type": "object",
+      "required": ["mission_lens", "collector_status"],
+      "properties": {
+        "mission_lens": {
+          "type": "object",
+          "properties": {
+            "current_mission": { "type": "string" },
+            "phase": { "type": "string" },
+            "status": { "type": "string" }
+          }
+        },
+        "today_agenda": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "recent_checkpoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "label": { "type": "string" }
+            }
+          }
+        },
+        "mentor_signals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tone": { "type": "string", "enum": ["critical", "warning", "info", "neutral"] },
+              "message": { "type": "string" },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "alerts": { "type": "array" },
+        "context": {
+          "type": "object",
+          "properties": {
+            "project": { "type": "string" },
+            "focus_state": { "type": "string" },
+            "drift_risk": { "type": "string", "enum": ["low", "medium", "high"] }
+          }
+        },
+        "next_best_action": {
+          "type": "object",
+          "properties": {
+            "action": { "type": "string" },
+            "rationale": { "type": "string" },
+            "score": { "type": "number" }
+          }
+        },
+        "today_execution": { "type": "object" },
+        "collector_status": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["collector", "status"],
+            "properties": {
+              "collector": { "type": "string" },
+              "status": { "type": "string", "enum": ["healthy", "degraded", "offline", "error"] },
+              "source": { "type": "string" },
+              "last_check": { "type": "string", "format": "date-time" },
+              "error": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "latency_ms": { "type": "number" },
+        "build_time_ms": { "type": "number" },
+        "cached": { "type": "boolean" }
+      }
+    }
+  }
+}

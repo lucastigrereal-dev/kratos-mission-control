@@ -13,17 +13,19 @@ interface NavItem {
 }
 
 const TOP_NAV: NavItem[] = [
-  { to: "/visao-geral", label: "Visão Geral", icon: "◈" },
-  { to: "/mission-lens", label: "Mission Lens", icon: "◉" },
-  { to: "/tarefas", label: "Tarefas", icon: "☰" },
-  { to: "/projetos", label: "Projetos", icon: "⬡" },
+  { to: "/visao-geral", label: "Mundo", icon: "◈" },
+  { to: "/mission-lens", label: "Missão", icon: "◉" },
+  { to: "/tarefas", label: "Ações", icon: "☰" },
+  { to: "/projetos", label: "Iniciativas", icon: "⬡" },
   { to: "/contexto", label: "Contexto", icon: "◎" },
-  { to: "/sistema", label: "Sistema", icon: "⚙" },
+  { to: "/sistema", label: "Sistemas", icon: "⚙" },
   { to: "/checkpoints", label: "Checkpoints", icon: "◆" },
 ];
 
 const BOTTOM_NAV: NavItem[] = [
-  { to: "/omnis", label: "OMNIS", icon: "◬" },
+  { to: "/omnis", label: "OMNIS Lab", icon: "◬" },
+  { to: "/approvals", label: "Approvals", icon: "◷" },
+  { to: "/aurora", label: "Aurora FS", icon: "✦" },
 ];
 
 interface KratosSidebarProps {

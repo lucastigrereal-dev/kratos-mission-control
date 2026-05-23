@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KRATOS Collector Envelope",
+  "description": "Standard envelope for all collector responses",
+  "type": "object",
+  "required": ["source", "data"],
+  "properties": {
+    "source": {
+      "type": "string",
+      "enum": ["real", "fallback", "cached", "mock", "error"],
+      "description": "Data provenance"
+    },
+    "data": {
+      "description": "Collector-specific payload. Null on error."
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "collector": {
+          "type": "string",
+          "description": "Collector name"
+        },
+        "latency_ms": {
+          "type": "number",
+          "description": "Collection time in milliseconds"
+        },
+        "cached_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When this data was cached, null if live"
+        },
+        "error": {
+          "type": ["string", "null"],
+          "description": "Error message, null if no error"
+        }
+      }
+    }
+  }
+}

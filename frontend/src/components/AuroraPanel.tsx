@@ -1,13 +1,37 @@
 interface AuroraSignal {
   text: string;
   tone: "critical" | "warning" | "info" | "neutral";
+  action?: string;
 }
 
 interface AuroraPanelProps {
   signals: AuroraSignal[];
   focusState?: string;
   driftRisk?: "low" | "medium" | "high";
+  nextAction?: string;
+  missionSummary?: string;
+  blocker?: string;
+  recommendation?: string;
+  doNotDo?: string;
 }
+
+const DECISION_STYLES = {
+  blocker: {
+    label: "BLOQUEIO",
+    icon: "⊘",
+    className: "kr-aurora-decision kr-aurora-decision--blocker",
+  },
+  recommendation: {
+    label: "RECOMENDAÇÃO",
+    icon: "◈",
+    className: "kr-aurora-decision kr-aurora-decision--recommendation",
+  },
+  doNotDo: {
+    label: "NÃO FAZER AGORA",
+    icon: "⏸",
+    className: "kr-aurora-decision kr-aurora-decision--donotdo",
+  },
+};
 
 const TONE_STYLES: Record<string, { border: string; bg: string; dot: string }> = {
   critical: {
@@ -42,17 +66,71 @@ export default function AuroraPanel({
   signals,
   focusState,
   driftRisk = "low",
+  nextAction,
+  missionSummary,
+  blocker,
+  recommendation,
+  doNotDo,
 }: AuroraPanelProps) {
   return (
     <div className="kr-aurora-panel">
-      <div className="kr-section-title">AURORA · Inteligência</div>
+      <div className="kr-section-title">AURORA · Sentinel</div>
 
-      {/* Holographic orb */}
+      {/* Mission summary — what matters now */}
+      {missionSummary && (
+        <div className="kr-aurora-mission-summary">
+          <span className="kr-aurora-mission-summary-icon">◈</span>
+          <span className="kr-aurora-mission-summary-text">{missionSummary}</span>
+        </div>
+      )}
+
+      {/* Holographic orb — presence indicator */}
       <div className="kr-aurora-orb">
         <div className="kr-aurora-orb-inner" />
         <div className="kr-aurora-orb-ring--outer" />
         <div className="kr-aurora-orb-ring--inner" />
       </div>
+
+      {/* Decision cards — blocker, recommendation, do-not-do */}
+      {(blocker || recommendation || doNotDo) && (
+        <div className="kr-aurora-decisions">
+          {blocker && (
+            <div className={DECISION_STYLES.blocker.className}>
+              <span className="kr-aurora-decision-icon">{DECISION_STYLES.blocker.icon}</span>
+              <div className="kr-aurora-decision-body">
+                <span className="kr-aurora-decision-label">{DECISION_STYLES.blocker.label}</span>
+                <span className="kr-aurora-decision-text">{blocker}</span>
+              </div>
+            </div>
+          )}
+          {recommendation && (
+            <div className={DECISION_STYLES.recommendation.className}>
+              <span className="kr-aurora-decision-icon">{DECISION_STYLES.recommendation.icon}</span>
+              <div className="kr-aurora-decision-body">
+                <span className="kr-aurora-decision-label">{DECISION_STYLES.recommendation.label}</span>
+                <span className="kr-aurora-decision-text">{recommendation}</span>
+              </div>
+            </div>
+          )}
+          {doNotDo && (
+            <div className={DECISION_STYLES.doNotDo.className}>
+              <span className="kr-aurora-decision-icon">{DECISION_STYLES.doNotDo.icon}</span>
+              <div className="kr-aurora-decision-body">
+                <span className="kr-aurora-decision-label">{DECISION_STYLES.doNotDo.label}</span>
+                <span className="kr-aurora-decision-text">{doNotDo}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Next action — impossible to ignore */}
+      {nextAction && (
+        <div className="kr-aurora-next-action">
+          <div className="kr-aurora-next-action-label">PRÓXIMA AÇÃO</div>
+          <div className="kr-aurora-next-action-text">{nextAction}</div>
+        </div>
+      )}
 
       {focusState && (
         <div className="kr-aurora-focus">
@@ -70,7 +148,7 @@ export default function AuroraPanel({
         {signals.length === 0 && (
           <div className="kr-aurora-signals-empty">
             <span className="kr-aurora-signals-empty-icon" />
-            Mente clara. Nenhum sinal ativo.
+            Sinais limpos. Nada requer atenção agora.
           </div>
         )}
         {signals.map((signal, i) => {
@@ -82,7 +160,10 @@ export default function AuroraPanel({
               style={{ borderLeftColor: s.border, background: s.bg }}
             >
               <span className={s.dot} />
-              <span style={{ fontSize: "var(--kr-text-xs)" }}>{signal.text}</span>
+              <span style={{ fontSize: "var(--kr-text-xs)", flex: 1 }}>{signal.text}</span>
+              {signal.action && (
+                <span className="kr-aurora-signal-action">{signal.action}</span>
+              )}
             </div>
           );
         })}
