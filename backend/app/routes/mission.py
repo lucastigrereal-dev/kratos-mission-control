@@ -3,6 +3,16 @@ from app.schemas.mission_schemas import MissionLensResponse, MissionCurrentRespo
 
 router = APIRouter(prefix="/mission", tags=["mission"])
 
+
+@router.get("/feed")
+def mission_feed():
+    """Real mission feed — SQLite missions + event bridge ring buffer."""
+    try:
+        from app.services.mission_feed_service import get_mission_feed
+        return get_mission_feed()
+    except Exception as e:
+        return {"error": str(e), "source": "error"}
+
 # In-memory store for mission status (MVP — resets on server restart)
 _mission_store: dict = {}
 

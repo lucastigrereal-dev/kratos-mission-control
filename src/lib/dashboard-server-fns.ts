@@ -20,7 +20,7 @@ export const getDashboardSnapshot = createServerFn({ method: "GET" })
   .handler(async (): Promise<DashboardSnapshotEnvelope> => {
     const now = new Date().toISOString();
     const meta: SourceBadgeMeta = {
-      source: "mock",
+      source: "live",
       origin: "local",
       stale: false,
       updated_at: now,
@@ -29,7 +29,7 @@ export const getDashboardSnapshot = createServerFn({ method: "GET" })
 
     try {
       // Services
-      const svc = getServicesHealthSummary();
+      const svc = await getServicesHealthSummary();
 
       // Repos
       const repoDigests = (await Promise.all(listTrackedRepos().map(async (r) => {

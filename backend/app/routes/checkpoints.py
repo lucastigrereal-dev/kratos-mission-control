@@ -1,17 +1,18 @@
 from fastapi import APIRouter, Request, status
 from app.services import get_checkpoints
 from app.db import get_db, generate_id, now_iso
+from app.schemas.checkpoint_schemas import CheckpointResponse
 import json
 
 router = APIRouter(prefix="/checkpoints", tags=["checkpoints"])
 
 
-@router.get("")
+@router.get("", response_model=list[CheckpointResponse])
 def list_checkpoints():
     return get_checkpoints()
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=CheckpointResponse)
 async def create_checkpoint(request: Request):
     body = await request.json()
     db = get_db()

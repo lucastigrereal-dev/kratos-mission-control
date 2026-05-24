@@ -11,6 +11,21 @@ interface WorldTopHudProps {
   sourceType?: "live" | "cache" | "mock" | "stale" | "error" | "fallback";
 }
 
+function MockBadge() {
+  return (
+    <span
+      className="inline-flex items-center rounded px-1 py-px text-[7px] font-bold uppercase tracking-wider"
+      style={{
+        background: "rgba(251,191,36,0.15)",
+        color: "#FBBF24",
+        border: "1px solid rgba(251,191,36,0.3)",
+      }}
+    >
+      MOCK
+    </span>
+  );
+}
+
 export function WorldTopHud({
   className,
   operatorName = "Lucas",
@@ -23,6 +38,8 @@ export function WorldTopHud({
   const timeStr = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
   const dateStr = now.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" });
 
+  const isHardcoded = sourceType !== "live";
+
   return (
     <div
       className={cn(
@@ -30,10 +47,13 @@ export function WorldTopHud({
         className,
       )}
       style={{
-        background: "linear-gradient(180deg, color-mix(in oklab, #02265D 80%, transparent) 0%, color-mix(in oklab, #02265D 40%, transparent) 60%, transparent 100%)",
+        background: "rgba(2,38,93,0.96)",
+        borderBottom: "1px solid rgba(255,255,255,0.10)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
       }}
     >
-      {/* Left: Greeting + Title */}
+      {/* Esquerda: Saudação */}
       <div className="flex items-center gap-3">
         <div className="leading-tight">
           <p className="text-[11px] font-bold" style={{ color: "#FFD700" }}>
@@ -45,7 +65,7 @@ export function WorldTopHud({
         </div>
       </div>
 
-      {/* Center: Crest + Title + Status */}
+      {/* Centro: Crest + Título */}
       <div className="hidden md:flex items-center gap-2">
         <div
           className="flex items-center justify-center rounded-lg"
@@ -56,14 +76,10 @@ export function WorldTopHud({
             boxShadow: "0 0 12px color-mix(in oklab, #FFD700 30%, transparent)",
           }}
         >
-          <span className="text-lg font-black" style={{ color: "#02265D" }}>
-            K
-          </span>
+          <span className="text-lg font-black" style={{ color: "#02265D" }}>K</span>
         </div>
         <div className="leading-tight">
-          <p className="text-sm font-bold tracking-wider" style={{ color: "#FFD700" }}>
-            KRATOS
-          </p>
+          <p className="text-sm font-bold tracking-wider" style={{ color: "#FFD700" }}>KRATOS</p>
           <p className="text-[9px] font-medium uppercase tracking-widest" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
             Mission Control
           </p>
@@ -83,54 +99,55 @@ export function WorldTopHud({
         )}
       </div>
 
-      {/* Right: Stats */}
+      {/* Direita: Stats com badges MOCK */}
       <div className="flex items-center gap-4">
-        {/* Energy */}
-        <div className="flex items-center gap-1.5">
-          <Zap className="h-4 w-4" style={{ color: "#FACC15" }} />
+        {/* Energia */}
+        <div className="flex items-start gap-1.5">
+          <Zap className="h-4 w-4 mt-0.5" style={{ color: "#FACC15" }} />
           <div className="leading-tight">
-            <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
-              Energia
-            </p>
-            <p className="text-xs font-bold" style={{ color: "#FACC15" }}>
-              {energy}%
-            </p>
+            <div className="flex items-center gap-1">
+              <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
+                Energia
+              </p>
+              <MockBadge />
+            </div>
+            <p className="text-xs font-bold" style={{ color: "#FACC15" }}>{energy}%</p>
           </div>
         </div>
 
-        {/* Level */}
-        <div className="flex items-center gap-1.5">
-          <Star className="h-4 w-4" style={{ color: "#60A5FA" }} />
+        {/* Nível */}
+        <div className="flex items-start gap-1.5">
+          <Star className="h-4 w-4 mt-0.5" style={{ color: "#60A5FA" }} />
           <div className="leading-tight">
-            <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
-              Nível
-            </p>
-            <p className="text-xs font-bold" style={{ color: "#60A5FA" }}>
-              {level}
-            </p>
+            <div className="flex items-center gap-1">
+              <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
+                Nível
+              </p>
+              <MockBadge />
+            </div>
+            <p className="text-xs font-bold" style={{ color: "#60A5FA" }}>{level}</p>
           </div>
         </div>
 
         {/* XP */}
-        <div className="flex items-center gap-1.5">
-          <Gem className="h-4 w-4" style={{ color: "#A78BFA" }} />
+        <div className="flex items-start gap-1.5">
+          <Gem className="h-4 w-4 mt-0.5" style={{ color: "#A78BFA" }} />
           <div className="leading-tight">
-            <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
-              XP
-            </p>
-            <p className="text-xs font-bold" style={{ color: "#A78BFA" }}>
-              {xp.toLocaleString("pt-BR")}
-            </p>
+            <div className="flex items-center gap-1">
+              <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
+                XP
+              </p>
+              <MockBadge />
+            </div>
+            <p className="text-xs font-bold" style={{ color: "#A78BFA" }}>{xp.toLocaleString("pt-BR")}</p>
           </div>
         </div>
 
-        {/* Time */}
+        {/* Hora — LIVE (tempo real do sistema) */}
         <div className="flex items-center gap-1.5">
           <Clock className="h-4 w-4" style={{ color: "#34D399" }} />
           <div className="leading-tight">
-            <p className="text-xs font-bold tabular-nums" style={{ color: "#E5E7EB" }}>
-              {timeStr}
-            </p>
+            <p className="text-xs font-bold tabular-nums" style={{ color: "#E5E7EB" }}>{timeStr}</p>
             <p className="text-[9px] font-medium capitalize" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
               {dateStr}
             </p>

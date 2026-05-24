@@ -1,7 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { SidebarV2 } from "./SidebarV2";
 import { TopBarV2 } from "./TopBarV2";
-import { RightRailV2 } from "./RightRailV2";
+import { AuroraDrawer } from "./AuroraDrawer";
+import { AuroraOrb } from "./AuroraOrb";
 import { BottomDockV2 } from "./BottomDockV2";
 import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
 
@@ -87,7 +88,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         leftOffset={sidebarWidth}
       />
 
-      <RightRailV2 topOffset={90} />
+      <AuroraDrawer
+        open={auroraOpen}
+        onClose={() => setAuroraOpen(false)}
+        topOffset={90}
+      />
+
+      <AuroraOrb open={auroraOpen} onClick={toggleAurora} />
 
       <main
         id="kratos-main-content"
@@ -95,7 +102,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         style={{
           top: 90,
           left: sidebarWidth,
-          right: 300,
+          right: 0,
           bottom: 72,
           padding: "24px 32px",
           background: "var(--kr-ocean-deep, #051024)",

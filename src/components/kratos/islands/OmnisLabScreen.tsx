@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { useIslandDock } from "./shared/IslandDockContext";
@@ -11,7 +12,6 @@ import { useOmnisStatus, useOmnisCrews, useOmnisJobs } from "@/hooks/useOmnis";
 import type { OmnisCrew, OmnisJob } from "../../../../api-contract/omnis.schema";
 import {
   Cpu,
-  Zap,
   Workflow,
   Play,
   CheckCircle2,
@@ -19,9 +19,13 @@ import {
   Circle,
   Activity,
   FlaskConical,
+  Sparkles,
+  Target,
+  ShieldAlert,
+  XCircle,
 } from "lucide-react";
 
-// ── Color palette for crews ─────────────────────────────────────────────────
+// ── Paleta de cores para crews ───────────────────────────────────────────────
 
 const CREW_COLORS = [
   "var(--kr-success)",
@@ -31,7 +35,7 @@ const CREW_COLORS = [
   "var(--kr-island-agencia)",
 ];
 
-// ── Helpers ─────────────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function jobStatusLabel(status: OmnisJob["status"]): string {
   const MAP: Record<OmnisJob["status"], string> = {
@@ -60,7 +64,7 @@ function relativeTimeShort(iso: string): string {
   return `${Math.floor(hr / 24)}d`;
 }
 
-// ── Static flow steps — no real data equivalent ─────────────────────────────
+// ── Passos de fluxo — dados estáticos/hardcoded ──────────────────────────────
 
 const FLOW_STEPS = [
   { label: "Coleta", done: true },
@@ -70,7 +74,153 @@ const FLOW_STEPS = [
   { label: "Resultado", done: false },
 ];
 
-// ── Sub-components ─────────────────────────────────────────────────────────
+// ── Badge MOCK ────────────────────────────────────────────────────────────────
+
+function MockBadge() {
+  return (
+    <span
+      className="inline-flex items-center rounded px-1 py-px text-[7px] font-bold uppercase tracking-wider"
+      style={{
+        background: "rgba(251,191,36,0.15)",
+        color: "#FBBF24",
+        border: "1px solid rgba(251,191,36,0.3)",
+      }}
+    >
+      MOCK
+    </span>
+  );
+}
+
+// ── Cartão Aurora — mensagem contextual ──────────────────────────────────────
+
+function AuroraCard() {
+  return (
+    <div
+      className="rounded-xl p-4 mb-6"
+      style={{
+        background: "color-mix(in oklab, var(--kr-aurora, #8B5CF6) 8%, var(--kratos-surface-2))",
+        border: "1px solid color-mix(in oklab, var(--kr-aurora, #8B5CF6) 25%, transparent)",
+      }}
+    >
+      <div className="flex items-start gap-3">
+        <div
+          className="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center"
+          style={{ background: "color-mix(in oklab, var(--kr-aurora, #8B5CF6) 20%, transparent)" }}
+        >
+          <Sparkles
+            className="h-4 w-4"
+            style={{ color: "var(--kr-aurora, #8B5CF6)" }}
+            aria-hidden
+          />
+        </div>
+        <div>
+          <p
+            className="text-[10px] font-bold uppercase tracking-[0.15em] mb-1"
+            style={{ color: "var(--kr-aurora, #8B5CF6)" }}
+          >
+            Aurora · Modo Visual Seguro
+          </p>
+          <p
+            className="text-[13px] leading-relaxed"
+            style={{ color: "var(--kratos-text-secondary)" }}
+          >
+            Tigrão, aqui é onde intenção vira execução. Por enquanto, estamos no modo visual
+            seguro — nenhuma automação real está ativa. Defina o contrato KRATOS ↔ OMNIS antes
+            de ligar o motor.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Cartão Próxima Ação ───────────────────────────────────────────────────────
+
+function ProximaAcaoCard() {
+  return (
+    <GlassPanel padding="md">
+      <div
+        className="h-1 -mx-4 -mt-4 mb-4 rounded-t-xl"
+        style={{
+          background: "linear-gradient(90deg, var(--kr-island-omnis, #7C3AED), var(--kr-aurora, #8B5CF6))",
+        }}
+        aria-hidden
+      />
+      <div className="flex items-center gap-2 mb-3">
+        <Target
+          className="h-4 w-4"
+          style={{ color: "var(--kr-island-omnis, #7C3AED)" }}
+          aria-hidden
+        />
+        <h3
+          className="text-[10px] font-bold uppercase tracking-[0.15em]"
+          style={{ color: "var(--kr-island-omnis, #7C3AED)" }}
+        >
+          Próxima Ação
+        </h3>
+      </div>
+      <p
+        className="text-[15px] font-semibold leading-snug mb-2"
+        style={{ color: "var(--kratos-text-primary)" }}
+      >
+        Definir contrato KRATOS ↔ OMNIS antes de permitir execução real.
+      </p>
+      <p
+        className="text-[12px] leading-relaxed"
+        style={{ color: "var(--kratos-text-secondary)" }}
+      >
+        Especificar quais ações o OMNIS pode executar autonomamente, quais precisam de
+        aprovação explícita e quais são sempre bloqueadas.
+      </p>
+    </GlassPanel>
+  );
+}
+
+// ── Cartão Guardrail — "Não Fazer Agora" ─────────────────────────────────────
+
+const GUARDRAIL_ITEMS = [
+  "Executar automação real",
+  "Apagar arquivo ou dado",
+  "Publicar conteúdo",
+  "Commitar no repositório",
+  "Conectar API sensível",
+];
+
+function GuardrailCard() {
+  return (
+    <GlassPanel padding="md">
+      <div className="flex items-center gap-2 mb-3">
+        <ShieldAlert
+          className="h-4 w-4"
+          style={{ color: "var(--kr-warning, #F59E0B)" }}
+          aria-hidden
+        />
+        <h3
+          className="text-[10px] font-bold uppercase tracking-[0.15em]"
+          style={{ color: "var(--kr-warning, #F59E0B)" }}
+        >
+          Não Fazer Agora
+        </h3>
+      </div>
+      <div className="space-y-2">
+        {GUARDRAIL_ITEMS.map((item) => (
+          <div key={item} className="flex items-center gap-2">
+            <XCircle
+              className="h-3.5 w-3.5 flex-shrink-0"
+              style={{ color: "var(--kratos-critical, #EF4444)" }}
+              aria-hidden
+            />
+            <span className="text-[12px]" style={{ color: "var(--kratos-text-secondary)" }}>
+              {item}
+            </span>
+          </div>
+        ))}
+      </div>
+    </GlassPanel>
+  );
+}
+
+// ── Núcleo Holográfico ────────────────────────────────────────────────────────
 
 function HolographicCore() {
   return (
@@ -79,7 +229,7 @@ function HolographicCore() {
         className="relative flex h-40 w-40 items-center justify-center"
         style={{ perspective: "600px" }}
       >
-        {/* Outer glow */}
+        {/* Brilho externo */}
         <div
           className="absolute -inset-8 rounded-full"
           style={{
@@ -89,7 +239,7 @@ function HolographicCore() {
           aria-hidden
         />
 
-        {/* Ring container */}
+        {/* Container de anéis */}
         <div
           className="relative flex h-full w-full items-center justify-center rounded-full"
           style={{
@@ -98,7 +248,7 @@ function HolographicCore() {
             boxShadow: "0 0 60px color-mix(in oklab, var(--kr-aurora, #8B5CF6) 40%, transparent)",
           }}
         >
-          {/* SVG Rings — spinning */}
+          {/* Anéis SVG — girando */}
           <svg
             className="absolute inset-0 h-full w-full"
             style={{ animation: "spin 10s linear infinite" }}
@@ -144,7 +294,7 @@ function HolographicCore() {
             </defs>
           </svg>
 
-          {/* CSS 3D Cube */}
+          {/* Cubo 3D CSS */}
           <div
             className="relative h-12 w-12"
             style={{ transformStyle: "preserve-3d" }}
@@ -203,6 +353,8 @@ function HolographicCore() {
   );
 }
 
+// ── Cards de resumo — dados reais com badge MOCK ──────────────────────────────
+
 interface SummaryCard {
   label: string;
   value: string;
@@ -219,8 +371,14 @@ function OmnisSummaryCards({ cards }: { cards: SummaryCard[] }) {
             style={{ color: "var(--kr-accent-purple-lighter)" }}
             aria-hidden
           />
-          <p className="kratos-num text-xl">{card.value}</p>
-          <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5" style={{ color: "var(--kratos-text-muted)" }}>
+          <div className="flex items-center justify-center gap-1.5 mb-0.5">
+            <p className="kratos-num text-xl">{card.value}</p>
+            <MockBadge />
+          </div>
+          <p
+            className="text-[10px] uppercase tracking-[0.1em]"
+            style={{ color: "var(--kratos-text-muted)" }}
+          >
             {card.label}
           </p>
         </GlassPanel>
@@ -228,6 +386,8 @@ function OmnisSummaryCards({ cards }: { cards: SummaryCard[] }) {
     </div>
   );
 }
+
+// ── Board de automações ───────────────────────────────────────────────────────
 
 function AutomationBoard({ jobs }: { jobs: OmnisJob[] }) {
   return (
@@ -248,7 +408,10 @@ function AutomationBoard({ jobs }: { jobs: OmnisJob[] }) {
               className="flex items-center justify-between rounded-lg px-3 py-2 transition-colors kratos-card-hover"
               style={{ background: "var(--kratos-surface-2)" }}
             >
-              <span className="text-[13px] kratos-mono truncate max-w-[140px]" style={{ color: "var(--kratos-text-primary)" }}>
+              <span
+                className="text-[13px] kratos-mono truncate max-w-[140px]"
+                style={{ color: "var(--kratos-text-primary)" }}
+              >
                 {job.tipo}
               </span>
               <span className="text-[10px] kratos-mono uppercase tracking-[0.1em] flex-shrink-0">
@@ -272,6 +435,8 @@ function AutomationBoard({ jobs }: { jobs: OmnisJob[] }) {
     </GlassPanel>
   );
 }
+
+// ── Lista de agentes ativos ───────────────────────────────────────────────────
 
 function ActiveAgentsList({ crews }: { crews: OmnisCrew[] }) {
   return (
@@ -301,7 +466,10 @@ function ActiveAgentsList({ crews }: { crews: OmnisCrew[] }) {
                   <Activity className="h-4 w-4" style={{ color }} aria-hidden />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13px] font-medium truncate kratos-mono" style={{ color: "var(--kratos-text-primary)" }}>
+                  <p
+                    className="text-[13px] font-medium truncate kratos-mono"
+                    style={{ color: "var(--kratos-text-primary)" }}
+                  >
                     {crew.nome}
                   </p>
                   <p className="text-[11px] truncate" style={{ color: "var(--kratos-text-muted)" }}>
@@ -321,6 +489,8 @@ function ActiveAgentsList({ crews }: { crews: OmnisCrew[] }) {
     </GlassPanel>
   );
 }
+
+// ── Últimas execuções ─────────────────────────────────────────────────────────
 
 function RecentExecutionsList({ jobs }: { jobs: OmnisJob[] }) {
   return (
@@ -350,11 +520,17 @@ function RecentExecutionsList({ jobs }: { jobs: OmnisJob[] }) {
               ) : (
                 <Circle
                   className="h-4 w-4 flex-shrink-0"
-                  style={{ color: job.status === "failed" ? "var(--kratos-critical)" : "var(--kr-warning)" }}
+                  style={{
+                    color:
+                      job.status === "failed" ? "var(--kratos-critical)" : "var(--kr-warning)",
+                  }}
                   aria-label={job.status}
                 />
               )}
-              <span className="flex-1 text-[13px] kratos-mono truncate" style={{ color: "var(--kratos-text-primary)" }}>
+              <span
+                className="flex-1 text-[13px] kratos-mono truncate"
+                style={{ color: "var(--kratos-text-primary)" }}
+              >
                 {job.tipo}
               </span>
               <span
@@ -372,19 +548,24 @@ function RecentExecutionsList({ jobs }: { jobs: OmnisJob[] }) {
   );
 }
 
+// ── Stepper de fluxo em tempo real — dados HARDCODED ─────────────────────────
+
 function RealtimeFlowStepper() {
   return (
     <GlassPanel padding="md">
-      <h3
-        className="kratos-eyebrow mb-4"
-        style={{ color: "var(--kratos-text-secondary)" }}
-      >
-        Fluxo em Tempo Real
-      </h3>
+      <div className="flex items-center gap-2 mb-4">
+        <h3
+          className="kratos-eyebrow"
+          style={{ color: "var(--kratos-text-secondary)" }}
+        >
+          Fluxo em Tempo Real
+        </h3>
+        <MockBadge />
+      </div>
       <div className="flex items-center justify-between">
         {FLOW_STEPS.map((step, i) => (
           <div key={step.label} className="flex items-center gap-0 flex-1">
-            {/* Step node */}
+            {/* Nó do passo */}
             <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
               <div
                 className={cn(
@@ -405,11 +586,19 @@ function RealtimeFlowStepper() {
                 }}
               >
                 {step.done ? (
-                  <CheckCircle2 className="h-4 w-4" style={{ color: "var(--kr-text-on-primary, white)" }} aria-hidden />
+                  <CheckCircle2
+                    className="h-4 w-4"
+                    style={{ color: "var(--kr-text-on-primary, white)" }}
+                    aria-hidden
+                  />
                 ) : (
                   <span
                     className="text-[11px] font-bold"
-                    style={{ color: step.active ? "var(--kr-accent-purple-lighter)" : "var(--kratos-text-muted)" }}
+                    style={{
+                      color: step.active
+                        ? "var(--kr-accent-purple-lighter)"
+                        : "var(--kratos-text-muted)",
+                    }}
                   >
                     {i + 1}
                   </span>
@@ -418,16 +607,26 @@ function RealtimeFlowStepper() {
               <span
                 className="text-[10px] uppercase tracking-[0.08em] text-center"
                 style={{
-                  color: step.done ? "var(--kr-accent-purple-light)" : step.active ? "var(--kr-accent-purple-lighter)" : "var(--kratos-text-muted)",
+                  color: step.done
+                    ? "var(--kr-accent-purple-light)"
+                    : step.active
+                      ? "var(--kr-accent-purple-lighter)"
+                      : "var(--kratos-text-muted)",
                 }}
               >
                 {step.label}
               </span>
             </div>
 
-            {/* Connector line */}
+            {/* Linha conectora */}
             {i < FLOW_STEPS.length - 1 && (
-              <div className="flex-1 h-[2px] mx-1 mb-5" style={{ background: step.done ? "var(--kr-island-omnis)" : "var(--kratos-surface-4)" }} aria-hidden />
+              <div
+                className="flex-1 h-[2px] mx-1 mb-5"
+                style={{
+                  background: step.done ? "var(--kr-island-omnis)" : "var(--kratos-surface-4)",
+                }}
+                aria-hidden
+              />
             )}
           </div>
         ))}
@@ -436,7 +635,7 @@ function RealtimeFlowStepper() {
   );
 }
 
-// ── Main Export ────────────────────────────────────────────────────────────
+// ── Export principal ──────────────────────────────────────────────────────────
 
 interface OmnisLabScreenProps {
   isLoading?: boolean;
@@ -449,6 +648,7 @@ export function OmnisLabScreen({
   error: propError = null,
   isEmpty = false,
 }: OmnisLabScreenProps) {
+  const navigate = useNavigate();
   const { data: omnis, isLoading: omLoading, isError: omError } = useOmnisStatus();
   const { data: crews, isLoading: crLoading } = useOmnisCrews();
   const { data: jobs, isLoading: jbLoading } = useOmnisJobs(5);
@@ -456,7 +656,7 @@ export function OmnisLabScreen({
 
   const anyLoading = propLoading || omLoading || crLoading || jbLoading;
 
-  // Update dock badge with real data once loaded
+  // Atualiza badge do dock com dados reais
   useEffect(() => {
     if (!omLoading && omnis != null) {
       setData({
@@ -470,7 +670,7 @@ export function OmnisLabScreen({
     }
   }, [omLoading, omnis, setData]);
 
-  // Build real summary cards from live data
+  // Cards de resumo construídos com dados da API
   const summaryCards: SummaryCard[] = [
     {
       label: "Testes OMNIS",
@@ -518,23 +718,33 @@ export function OmnisLabScreen({
             title="OMNIS LAB"
             subtitle="Centro de IA, Automações e Inteligência de Execução"
             theme="omnis"
+            onBack={() => navigate({ to: "/" })}
           />
 
-          {/* Holographic Core — centered hero */}
+          {/* Cartão Aurora — mensagem contextual */}
+          <AuroraCard />
+
+          {/* Núcleo holográfico — hero centralizado */}
           <div className="flex justify-center mb-10">
             <HolographicCore />
           </div>
 
-          {/* Summary cards — real data */}
+          {/* Cards de resumo — com badges MOCK */}
           <OmnisSummaryCards cards={summaryCards} />
 
-          {/* Two-column layout */}
+          {/* Próxima Ação + Guardrail */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
+            <ProximaAcaoCard />
+            <GuardrailCard />
+          </div>
+
+          {/* Automações + Agentes */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
             <AutomationBoard jobs={jobList} />
             <ActiveAgentsList crews={crewList} />
           </div>
 
-          {/* Bottom row */}
+          {/* Execuções + Fluxo */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-4">
             <div className="lg:col-span-2">
               <RecentExecutionsList jobs={jobList} />

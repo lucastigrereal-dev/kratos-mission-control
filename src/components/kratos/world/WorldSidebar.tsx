@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -17,34 +17,32 @@ import { useNavigate } from "@tanstack/react-router";
 
 interface WorldSidebarProps {
   className?: string;
+  collapsed: boolean;
+  onToggle: () => void;
 }
 
 const MENU_ITEMS = [
-  { id: "visao", label: "VISÃO GERAL", icon: LayoutDashboard, path: "/" as const },
-  { id: "missoes", label: "MISSÕES", icon: Target, path: "/agora" as const },
-  { id: "projetos", label: "PROJETOS", icon: FolderKanban, path: "/projetos" as const },
-  { id: "agenda", label: "AGENDA", icon: CalendarDays, path: "/agenda" as const },
-  { id: "pessoas", label: "PESSOAS", icon: Users, path: "/contexto" as const },
-  { id: "recursos", label: "RECURSOS", icon: Library, path: "/sistema" as const },
-  { id: "analises", label: "ANÁLISES", icon: BarChart3, path: "/sistema" as const },
-  { id: "academy", label: "ACADEMY", icon: GraduationCap, path: "/sistema" as const },
-  { id: "config", label: "CONFIGURAÇÕES", icon: Settings, path: "/sistema" as const },
+  { id: "visao",     label: "VISÃO GERAL",    icon: LayoutDashboard, path: "/" as const },
+  { id: "missoes",   label: "MISSÕES",         icon: Target,          path: "/agora" as const },
+  { id: "projetos",  label: "PROJETOS",        icon: FolderKanban,    path: "/projetos" as const },
+  { id: "agenda",    label: "AGENDA",          icon: CalendarDays,    path: "/agenda" as const },
+  { id: "pessoas",   label: "PESSOAS",         icon: Users,           path: "/contexto" as const },
+  { id: "recursos",  label: "RECURSOS",        icon: Library,         path: "/sistema" as const },
+  { id: "analises",  label: "ANÁLISES",        icon: BarChart3,       path: "/sistema" as const },
+  { id: "academy",   label: "ACADEMY",         icon: GraduationCap,   path: "/sistema" as const },
+  { id: "config",    label: "CONFIGURAÇÕES",   icon: Settings,        path: "/sistema" as const },
 ];
 
-export function WorldSidebar({ className }: WorldSidebarProps) {
+export function WorldSidebar({ className, collapsed, onToggle }: WorldSidebarProps) {
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
-
-  const toggle = useCallback(() => setCollapsed((p) => !p), []);
 
   return (
     <div
       className={cn(
-        "flex flex-col h-full select-none transition-all duration-300",
+        "flex flex-col h-full w-full select-none transition-all duration-300",
         className,
       )}
       style={{
-        width: collapsed ? 64 : 240,
         background: "linear-gradient(180deg, #043C8F 0%, #02265D 100%)",
         borderRight: "1px solid color-mix(in oklab, white 10%, transparent)",
       }}
@@ -54,21 +52,17 @@ export function WorldSidebar({ className }: WorldSidebarProps) {
         {!collapsed && (
           <div className="flex items-center gap-2">
             <div
-              className="flex items-center justify-center rounded-lg"
+              className="flex items-center justify-center rounded-lg shrink-0"
               style={{
                 width: 36,
                 height: 36,
                 background: "linear-gradient(135deg, #FFD700 0%, #F59E0B 100%)",
               }}
             >
-              <span className="text-sm font-black" style={{ color: "#02265D" }}>
-                K
-              </span>
+              <span className="text-sm font-black" style={{ color: "#02265D" }}>K</span>
             </div>
-            <div className="leading-tight">
-              <p className="text-xs font-bold" style={{ color: "#FFD700" }}>
-                KRATOS
-              </p>
+            <div className="leading-tight min-w-0">
+              <p className="text-xs font-bold" style={{ color: "#FFD700" }}>KRATOS</p>
               <p className="text-[10px] font-medium" style={{ color: "color-mix(in oklab, white 60%, transparent)" }}>
                 CONTROL
               </p>
@@ -77,7 +71,7 @@ export function WorldSidebar({ className }: WorldSidebarProps) {
         )}
         <button
           type="button"
-          onClick={toggle}
+          onClick={onToggle}
           className="ml-auto inline-flex items-center justify-center rounded-md p-1 transition-colors hover:bg-white/10"
           aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
         >
@@ -113,10 +107,7 @@ export function WorldSidebar({ className }: WorldSidebarProps) {
                 strokeWidth={2}
               />
               {!collapsed && (
-                <span
-                  className="text-xs font-semibold tracking-wide"
-                  style={{ color: "#DBEAFE" }}
-                >
+                <span className="text-xs font-semibold tracking-wide truncate" style={{ color: "#DBEAFE" }}>
                   {item.label}
                 </span>
               )}
@@ -129,18 +120,12 @@ export function WorldSidebar({ className }: WorldSidebarProps) {
       {!collapsed && (
         <div className="flex items-center gap-2 px-4 py-4">
           <div
-            className="flex items-center justify-center rounded-full"
-            style={{
-              width: 28,
-              height: 28,
-              background: "linear-gradient(135deg, #F97316 0%, #EA580C 100%)",
-            }}
+            className="flex items-center justify-center rounded-full shrink-0"
+            style={{ width: 28, height: 28, background: "linear-gradient(135deg, #F97316 0%, #EA580C 100%)" }}
           >
             <span className="text-[10px] font-bold text-white">L</span>
           </div>
-          <span className="text-xs font-medium" style={{ color: "#93C5FD" }}>
-            Lucas
-          </span>
+          <span className="text-xs font-medium" style={{ color: "#93C5FD" }}>Lucas</span>
         </div>
       )}
     </div>

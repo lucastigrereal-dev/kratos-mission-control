@@ -53,6 +53,9 @@ from app.routes.operational_truth import router as operational_truth_router
 from app.routes.cost import router as cost_router
 from app.routes.crm import router as crm_router
 from app.routes.mission_control import router as mission_control_router
+from app.routes.runtime_bridge import router as runtime_bridge_router
+from app.routes.observability import router as observability_router
+from app.routes.replay import router as replay_router
 
 app.include_router(health_router)
 app.include_router(tasks_router)
@@ -90,6 +93,9 @@ app.include_router(operational_truth_router)
 app.include_router(cost_router)
 app.include_router(crm_router)
 app.include_router(mission_control_router)
+app.include_router(runtime_bridge_router)
+app.include_router(observability_router)
+app.include_router(replay_router)
 
 
 @app.get("/")
