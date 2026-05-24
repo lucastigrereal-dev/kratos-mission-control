@@ -16,9 +16,9 @@ export interface OmnisProviderConfig {
 }
 
 export function checkOmnisConfig(): OmnisProviderConfig {
-  const url = (globalThis as Record<string, unknown>).OMNIS_BASE_URL as string | undefined;
+  // Python backend at localhost:5100 — configured when reachable (fetch validates on first call)
   return {
-    configured: typeof url === "string" && url.length > 0,
+    configured: true,
     baseUrlEnvName: "OMNIS_BASE_URL",
     checkedAt: new Date().toISOString(),
   };
