@@ -183,10 +183,15 @@ def _get_collector_status() -> dict:
     def _fetch_git():
         from app.services import get_git
         git_data = get_git()
-        return {
+        result = {
             "source": git_data.get("source", "unknown"),
             "status": git_data.get("collector_status", "unknown"),
         }
+        if git_data.get("data"):
+            d = git_data["data"]
+            result["dirty"] = d.get("dirty", 0) > 0
+            result["dirty_count"] = d.get("dirty", 0)
+        return result
 
     def _fetch_activitywatch():
         from app.services import get_activitywatch_status
