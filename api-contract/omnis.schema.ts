@@ -38,6 +38,10 @@ export const OmnisStatusSchema = z.object({
   memoria: OmnisMemoryStatsSchema,
   atualizadoEm: z.string().datetime(),
   test_count: z.number().int().min(0).optional(),
+  workflows_registered: z.number().int().min(0).optional(),
+  active_mission_title: z.string().nullable().optional(),
+  last_run_id: z.string().nullable().optional(),
+  last_run_status: z.string().nullable().optional(),
 });
 
 export type OmnisServiceStatus = z.infer<typeof OmnisServiceStatusSchema>;

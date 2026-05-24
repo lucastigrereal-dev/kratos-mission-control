@@ -458,17 +458,17 @@ export function OmnisLabScreen({
 
   // Update dock badge with real data once loaded
   useEffect(() => {
-    if (!omLoading && crews != null) {
+    if (!omLoading && omnis != null) {
       setData({
         islandId: "omnis",
-        label: "Crews Ativas",
-        value: `${crews.length} crews · ${omnis?.test_count?.toLocaleString("pt-BR") ?? "—"} testes`,
-        progress: omnis?.test_count != null ? Math.min(100, Math.round((omnis.test_count / 10000) * 100)) : 72,
+        label: "OMNIS",
+        value: `${omnis.workflows_registered ?? "—"} workflows · ${omnis.test_count?.toLocaleString("pt-BR") ?? "—"} testes`,
+        progress: omnis.test_count != null ? Math.min(100, Math.round((omnis.test_count / 10000) * 100)) : 72,
         progressColor: "var(--kr-island-omnis)",
         quickActions: [{ label: "Ver Sistema" }],
       });
     }
-  }, [omLoading, crews, omnis, setData]);
+  }, [omLoading, omnis, setData]);
 
   // Build real summary cards from live data
   const summaryCards: SummaryCard[] = [
@@ -478,8 +478,8 @@ export function OmnisLabScreen({
       icon: FlaskConical,
     },
     {
-      label: "Crews Ativas",
-      value: crews != null ? String(crews.length) : crLoading ? "…" : "—",
+      label: "Workflows",
+      value: omnis?.workflows_registered != null ? String(omnis.workflows_registered) : omLoading ? "…" : "—",
       icon: Cpu,
     },
     {
@@ -488,8 +488,8 @@ export function OmnisLabScreen({
       icon: Workflow,
     },
     {
-      label: "Jobs Recentes",
-      value: jobs != null ? String(jobs.length) : jbLoading ? "…" : "—",
+      label: "Último Run",
+      value: omnis?.last_run_status ?? (omLoading ? "…" : "—"),
       icon: Play,
     },
   ];

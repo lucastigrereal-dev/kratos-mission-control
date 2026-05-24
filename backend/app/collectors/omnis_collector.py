@@ -75,9 +75,9 @@ def _scan_filesystem(state: dict | None = None) -> dict:
         result["last_wave"] = state.get("last_wave")
         result["last_run_id"] = state.get("last_run_id")
         result["last_run_status"] = state.get("last_run_status")
-        result["workflows_available"] = state.get("workflows_available")
-        result["cost_accumulated_usd"] = state.get("cost_accumulated_usd")
-        result["state_updated_at"] = state.get("updated_at")
+        result["active_mission_title"] = state.get("active_mission_title")
+        result["workflows_available"] = state.get("workflows_registered")  # state.json key
+        result["state_updated_at"] = state.get("timestamp")  # state.json key
     else:
         # state.json not written yet — honest unknown, never invent a number
         result["test_count"] = None
