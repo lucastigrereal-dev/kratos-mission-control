@@ -7,11 +7,17 @@ from app.services import (
 router = APIRouter(tags=["health"])
 
 
+_CORE_COLLECTORS = {"system", "docker", "git", "akasha", "qdrant", "omnis"}
+_EXTERNAL_COLLECTORS = {"ollama", "publisher_os", "supabase", "redis", "n8n"}
+
+
 @router.get("/health")
 def health():
     collectors = {}
-    degraded = []
-    errors = []
+    core_degraded = []
+    core_errors = []
+    external_degraded = []
+    external_errors = []
 
     for name, fn in [
         ("system", get_system),
@@ -33,15 +39,26 @@ def health():
                 "status": status,
                 "source": result.get("source", "unknown"),
             }
+            is_external = name in _EXTERNAL_COLLECTORS
             if status == "degraded":
-                degraded.append(name)
+                (external_degraded if is_external else core_degraded).append(name)
             elif status == "error":
-                errors.append(name)
+                (external_errors if is_external else core_errors).append(name)
         except Exception as e:
             collectors[name] = {"status": "error", "source": "exception", "error": str(e)}
-            errors.append(name)
+            is_external = name in _EXTERNAL_COLLECTORS
+            (external_errors if is_external else core_errors).append(name)
 
-    overall = "error" if errors else ("degraded" if degraded else "ok")
+    # Core errors/degraded affect overall status; external errors cap at "degraded"
+    if core_errors:
+        overall = "error"
+    elif core_degraded or external_errors:
+        overall = "degraded"
+    else:
+        overall = "ok"
+
+    degraded = core_degraded + external_degraded
+    errors = core_errors + external_errors
 
     return {
         "source": "real",
