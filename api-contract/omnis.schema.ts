@@ -36,7 +36,7 @@ export const OmnisStatusSchema = z.object({
   crews: z.array(OmnisCrewSchema),
   jobsRecentes: z.array(OmnisJobSchema),
   memoria: OmnisMemoryStatsSchema,
-  atualizadoEm: z.string().datetime(),
+  atualizadoEm: z.string().datetime({ offset: true, precision: null }),
   test_count: z.number().int().min(0).optional(),
   workflows_registered: z.number().int().min(0).optional(),
   active_mission_title: z.string().nullable().optional(),

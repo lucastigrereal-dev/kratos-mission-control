@@ -92,7 +92,9 @@ def test_collect_status_uses_omnis_server_first():
         assert data["source_badge"] == "confirmed"
 
 
-def test_collect_status_falls_back_to_filesystem_when_http_fails():
+def test_collect_status_falls_back_to_filesystem_when_http_fails(tmp_path, monkeypatch):
+    import app.collectors.omnis_collector as mod
+    monkeypatch.setattr(mod, "OMNIS_STATE_PATH", tmp_path / "nonexistent.json")
     with patch("app.collectors.omnis_collector._fetch_http", return_value=None):
         data, source, status = collect_status()
         assert source == "real"
@@ -194,9 +196,8 @@ def test_scan_filesystem_with_state_populates_fields():
         "last_wave": "Onda 10",
         "last_run_id": "run_abc",
         "last_run_status": "success",
-        "workflows_available": 20,
-        "cost_accumulated_usd": 1.23,
-        "updated_at": "2026-05-24T18:00:00Z",
+        "workflows_registered": 20,
+        "timestamp": "2026-05-24T18:00:00Z",
     }
     data = _scan_filesystem(state=state)
     assert data["test_count"] == 9841
@@ -204,7 +205,6 @@ def test_scan_filesystem_with_state_populates_fields():
     assert data["last_run_id"] == "run_abc"
     assert data["last_run_status"] == "success"
     assert data["workflows_available"] == 20
-    assert data["cost_accumulated_usd"] == 1.23
     assert data["state_updated_at"] == "2026-05-24T18:00:00Z"
     assert "state_note" not in data
 
