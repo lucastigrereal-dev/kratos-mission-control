@@ -14,9 +14,13 @@ def snapshot():
 
 @router.get("/live/stream")
 async def stream():
+    loop = asyncio.get_event_loop()
+
     async def event_stream():
         while True:
-            payload = build_live_payload()
+            # build_live_payload is sync + uses ThreadPoolExecutor internally.
+            # run_in_executor prevents it from blocking the async event loop.
+            payload = await loop.run_in_executor(None, build_live_payload)
             yield f"data: {json.dumps(payload)}\n\n"
             await asyncio.sleep(5.0)
 
