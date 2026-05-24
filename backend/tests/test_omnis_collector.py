@@ -1,4 +1,4 @@
-"""Tests for omnis_collector — HTTP + filesystem fallback with source badges."""
+"""Tests for omnis_collector — HTTP + filesystem fallback + state.json bridge."""
 import json
 import os
 import sys
@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app.collectors.omnis_collector import (
     _fetch_http,
+    _read_state_file,
     _scan_filesystem,
     collect_status,
     collect_summary,
@@ -133,7 +134,43 @@ def test_collect_summary_falls_back_when_http_fails():
         assert data["source_badge"] == "partial"
 
 
-# ── _scan_filesystem (sanity) ───────────────────────────────────────────────
+# ── _read_state_file ────────────────────────────────────────────────────────
+
+def test_read_state_file_returns_none_when_missing(tmp_path, monkeypatch):
+    import app.collectors.omnis_collector as mod
+    monkeypatch.setattr(mod, "OMNIS_STATE_PATH", tmp_path / "nonexistent.json")
+    assert _read_state_file() is None
+
+
+def test_read_state_file_returns_dict_when_valid(tmp_path, monkeypatch):
+    import app.collectors.omnis_collector as mod
+    state = {"test_count": 9841, "last_wave": "Onda 10", "updated_at": "2026-05-24T18:00:00Z"}
+    p = tmp_path / "state.json"
+    p.write_text(json.dumps(state), encoding="utf-8")
+    monkeypatch.setattr(mod, "OMNIS_STATE_PATH", p)
+    result = _read_state_file()
+    assert result is not None
+    assert result["test_count"] == 9841
+    assert result["last_wave"] == "Onda 10"
+
+
+def test_read_state_file_returns_none_on_invalid_json(tmp_path, monkeypatch):
+    import app.collectors.omnis_collector as mod
+    p = tmp_path / "state.json"
+    p.write_text("not json{{{", encoding="utf-8")
+    monkeypatch.setattr(mod, "OMNIS_STATE_PATH", p)
+    assert _read_state_file() is None
+
+
+def test_read_state_file_returns_none_when_not_dict(tmp_path, monkeypatch):
+    import app.collectors.omnis_collector as mod
+    p = tmp_path / "state.json"
+    p.write_text(json.dumps([1, 2, 3]), encoding="utf-8")
+    monkeypatch.setattr(mod, "OMNIS_STATE_PATH", p)
+    assert _read_state_file() is None
+
+
+# ── _scan_filesystem ─────────────────────────────────────────────────────────
 
 def test_scan_filesystem_returns_expected_keys():
     data = _scan_filesystem()
@@ -142,3 +179,63 @@ def test_scan_filesystem_returns_expected_keys():
     assert "checkers" in data
     assert "skills_count" in data
     assert "mode" in data
+
+
+def test_scan_filesystem_without_state_has_no_hardcoded_test_count():
+    data = _scan_filesystem(state=None)
+    # test_count must be None (honest) — never 201 hardcoded
+    assert data.get("test_count") is None
+    assert "state_note" in data
+
+
+def test_scan_filesystem_with_state_populates_fields():
+    state = {
+        "test_count": 9841,
+        "last_wave": "Onda 10",
+        "last_run_id": "run_abc",
+        "last_run_status": "success",
+        "workflows_available": 20,
+        "cost_accumulated_usd": 1.23,
+        "updated_at": "2026-05-24T18:00:00Z",
+    }
+    data = _scan_filesystem(state=state)
+    assert data["test_count"] == 9841
+    assert data["last_wave"] == "Onda 10"
+    assert data["last_run_id"] == "run_abc"
+    assert data["last_run_status"] == "success"
+    assert data["workflows_available"] == 20
+    assert data["cost_accumulated_usd"] == 1.23
+    assert data["state_updated_at"] == "2026-05-24T18:00:00Z"
+    assert "state_note" not in data
+
+
+# ── collect_status + state.json bridge ──────────────────────────────────────
+
+def test_collect_status_reads_state_file_when_http_fails(tmp_path, monkeypatch):
+    import app.collectors.omnis_collector as mod
+    state = {"test_count": 9841, "last_wave": "Onda 10", "updated_at": "2026-05-24T18:00:00Z"}
+    p = tmp_path / "state.json"
+    p.write_text(json.dumps(state), encoding="utf-8")
+    monkeypatch.setattr(mod, "OMNIS_STATE_PATH", p)
+
+    with patch("app.collectors.omnis_collector._fetch_http", return_value=None):
+        data, source, status = collect_status()
+
+    assert source == "real"
+    assert status == "ok"
+    assert data["test_count"] == 9841
+    assert data["last_wave"] == "Onda 10"
+    assert data["source_badge"] == "confirmed"  # state.json found
+
+
+def test_collect_status_source_badge_partial_when_no_state_file(tmp_path, monkeypatch):
+    import app.collectors.omnis_collector as mod
+    monkeypatch.setattr(mod, "OMNIS_STATE_PATH", tmp_path / "nonexistent.json")
+
+    with patch("app.collectors.omnis_collector._fetch_http", return_value=None):
+        data, source, status = collect_status()
+
+    assert source == "real"
+    assert status == "ok"
+    assert data["source_badge"] == "partial"
+    assert data.get("test_count") is None  # honest: unknown

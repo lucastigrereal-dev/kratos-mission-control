@@ -5,9 +5,10 @@ import os
 import urllib.request
 import urllib.error
 
-OMNIS_DIR = Path("C:\\Users\\lucas\\omnis-control")
+OMNIS_DIR = Path(os.environ.get("OMNIS_DIR", "C:\\Users\\lucas\\omnis-control"))
 OMNIS_SERVER_URL = os.environ.get("OMNIS_SERVER_URL", "http://127.0.0.1:3333")
 OMNIS_HEALTH_URL = os.environ.get("OMNIS_HEALTH_URL", "")
+OMNIS_STATE_PATH = Path(os.environ.get("OMNIS_STATE_PATH", str(OMNIS_DIR / "data" / "state.json")))
 
 
 def _fetch_http(url: str, timeout: float = 3.0) -> dict | None:
@@ -27,8 +28,23 @@ def _fetch_http(url: str, timeout: float = 3.0) -> dict | None:
         return None
 
 
-def _scan_filesystem():
-    """Filesystem scan of omnis-control. Returns data dict."""
+def _read_state_file() -> dict | None:
+    """Read OMNIS state.json written by the CLI after each run.
+
+    Returns the parsed dict on success, None if file missing or unreadable.
+    """
+    try:
+        if not OMNIS_STATE_PATH.exists():
+            return None
+        with OMNIS_STATE_PATH.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else None
+    except Exception:
+        return None
+
+
+def _scan_filesystem(state: dict | None = None) -> dict:
+    """Filesystem scan of omnis-control. Enriched with state.json when available."""
     sectors_file = OMNIS_DIR / "config" / "sectors.yaml"
     skills_dir = OMNIS_DIR / "skills"
     briefings_dir = OMNIS_DIR / "data" / "briefings"
@@ -41,7 +57,7 @@ def _scan_filesystem():
     data_files_count = len(list(data_dir.rglob("*"))) if data_dir.exists() else 0
     logs_count = len(list(logs_dir.rglob("*"))) if logs_dir.exists() else 0
 
-    return {
+    result = {
         "status": "operational" if sectors_file.exists() else "degraded",
         "sectors_file": str(sectors_file),
         "sectors_file_exists": sectors_file.exists(),
@@ -51,8 +67,23 @@ def _scan_filesystem():
         "data_files_count": data_files_count,
         "logs_count": logs_count,
         "mode": "cli-bridge-read-only",
-        "test_count": 201,
     }
+
+    if state:
+        # Real values from OMNIS CLI state file
+        result["test_count"] = state.get("test_count")
+        result["last_wave"] = state.get("last_wave")
+        result["last_run_id"] = state.get("last_run_id")
+        result["last_run_status"] = state.get("last_run_status")
+        result["workflows_available"] = state.get("workflows_available")
+        result["cost_accumulated_usd"] = state.get("cost_accumulated_usd")
+        result["state_updated_at"] = state.get("updated_at")
+    else:
+        # state.json not written yet — honest unknown, never invent a number
+        result["test_count"] = None
+        result["state_note"] = "state.json not found — write OMNIS_STATE_PATH to populate"
+
+    return result
 
 
 def collect_status():
@@ -104,10 +135,12 @@ def collect_status():
         }
         return normalized, "real", "ok"
 
-    # Tier 3: filesystem scan
+    # Tier 3: filesystem scan + state.json enrichment
     try:
-        data = _scan_filesystem()
-        data["source_badge"] = "partial"
+        state = _read_state_file()
+        data = _scan_filesystem(state)
+        # Confirm badge when state.json is fresh; partial when only filesystem
+        data["source_badge"] = "confirmed" if state else "partial"
         return data, "real", "ok"
     except Exception:
         pass
