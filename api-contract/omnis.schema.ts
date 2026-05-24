@@ -37,6 +37,7 @@ export const OmnisStatusSchema = z.object({
   jobsRecentes: z.array(OmnisJobSchema),
   memoria: OmnisMemoryStatsSchema,
   atualizadoEm: z.string().datetime(),
+  test_count: z.number().int().min(0).optional(),
 });
 
 export type OmnisServiceStatus = z.infer<typeof OmnisServiceStatusSchema>;

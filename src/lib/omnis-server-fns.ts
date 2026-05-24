@@ -5,11 +5,34 @@ import { getOmnisStatus, getOmnisServiceHealth, getOmnisCrewStatus, getOmnisRece
 
 type Envelope<T> = { data: T | null; error: string | null };
 
+const OMNIS_PYTHON_URL = "http://localhost:5100";
+
+async function fetchOmnisPythonStatus(): Promise<{ test_count?: number; atualizadoEm?: string }> {
+  const res = await fetch(`${OMNIS_PYTHON_URL}/omnis/status`);
+  if (!res.ok) throw new Error(`OMNIS Python backend ${res.status}`);
+  const json = await res.json() as { data?: { test_count?: number; state_updated_at?: string } };
+  return {
+    test_count: typeof json?.data?.test_count === "number" ? json.data.test_count : undefined,
+    atualizadoEm: json?.data?.state_updated_at ?? undefined,
+  };
+}
+
 export const fetchOmnisStatus = createServerFn({ method: "GET" }).handler(
   async (): Promise<Envelope<OmnisStatus>> => {
     try {
-      const raw = getOmnisStatus();
-      const parsed = OmnisStatusSchema.safeParse(raw);
+      const mock = getOmnisStatus();
+      let live: { test_count?: number; atualizadoEm?: string } = {};
+      try {
+        live = await fetchOmnisPythonStatus();
+      } catch {
+        // Python backend unavailable — mock fallback serves data
+      }
+      const merged = {
+        ...mock,
+        ...(live.test_count != null ? { test_count: live.test_count } : {}),
+        ...(live.atualizadoEm ? { atualizadoEm: live.atualizadoEm } : {}),
+      };
+      const parsed = OmnisStatusSchema.safeParse(merged);
       if (!parsed.success) {
         return { data: null, error: parsed.error.message };
       }
