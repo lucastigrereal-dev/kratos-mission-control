@@ -166,6 +166,33 @@ def get_qdrant_status():
     return _collector_wrapper(collect_status, lambda: {"status": "unknown", "source_badge": "unknown"})
 
 
+# ── External services (Publisher OS, Supabase, Redis, Ollama, n8n) ─────────────
+
+def get_ollama_status():
+    from app.collectors.external_services_collector import collect_ollama
+    return _collector_wrapper(collect_ollama, lambda: {"status": "unknown", "source_badge": "offline"})
+
+
+def get_publisher_os_status():
+    from app.collectors.external_services_collector import collect_publisher_os
+    return _collector_wrapper(collect_publisher_os, lambda: {"status": "unknown", "source_badge": "offline"})
+
+
+def get_supabase_status():
+    from app.collectors.external_services_collector import collect_supabase
+    return _collector_wrapper(collect_supabase, lambda: {"status": "unknown", "source_badge": "offline"})
+
+
+def get_redis_status():
+    from app.collectors.external_services_collector import collect_redis
+    return _collector_wrapper(collect_redis, lambda: {"status": "unknown", "source_badge": "offline"})
+
+
+def get_n8n_status():
+    from app.collectors.external_services_collector import collect_n8n
+    return _collector_wrapper(collect_n8n, lambda: {"status": "unknown", "source_badge": "offline"})
+
+
 # ── Cost (estimated — no real counters yet) ────────────────────────────────────
 
 def get_cost_status():
