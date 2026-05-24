@@ -8,6 +8,7 @@ interface Props {
 }
 
 function relativeTime(iso: string): string {
+  if (!iso) return "?";
   const ts = new Date(iso).getTime();
   if (isNaN(ts)) return "?";
   const diff = Date.now() - ts;
