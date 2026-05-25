@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
+import { useIslandDock } from "./shared/IslandDockContext";
 import { useAkashaStatus } from "@/hooks/useAkasha";
 import type { AkashaStatusData } from "@/lib/akasha-server-fns";
 import {
@@ -210,6 +212,21 @@ function SourcePanel({ data }: { data: AkashaStatusData }) {
 
 export function AkashaScreen() {
   const { data, isLoading, isError, error } = useAkashaStatus();
+  const { setData } = useIslandDock();
+
+  useEffect(() => {
+    if (!data) return;
+    const isHealthy = data.vault_status === "healthy";
+    const isDegraded = data.vault_status === "degraded";
+    setData({
+      islandId: "akasha",
+      label: "Vault",
+      value: isHealthy ? "Saudável" : isDegraded ? "Degradado" : "Offline",
+      progress: isHealthy ? 100 : isDegraded ? 50 : 0,
+      progressColor: "var(--kr-island-akasha)",
+      quickActions: [{ label: "Buscar" }, { label: "Sync" }],
+    });
+  }, [data, setData]);
 
   return (
     <IslandPageFrame theme="akasha">

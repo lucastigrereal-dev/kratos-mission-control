@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Telescope,
   Layers,
@@ -16,6 +17,7 @@ import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
+import { useIslandDock } from "./shared/IslandDockContext";
 import { useProjects } from "@/hooks/useProjects";
 import type { Project, ProjectStatus } from "../../../../api-contract/project.schema";
 
@@ -126,9 +128,24 @@ function ProjectCard({ project }: { project: Project }) {
 
 export function ObservatorioScreen() {
   const { data: projects, isLoading, isError, error } = useProjects();
+  const { setData } = useIslandDock();
 
   const activeProjects = projects?.filter((p) => p.status === "active") ?? [];
   const otherProjects = projects?.filter((p) => p.status !== "active") ?? [];
+
+  useEffect(() => {
+    if (!projects) return;
+    const activeCount = activeProjects.length;
+    const total = projects.length;
+    setData({
+      islandId: "observatorio",
+      label: "Projetos",
+      value: total > 0 ? `${activeCount} ativo${activeCount !== 1 ? "s" : ""} de ${total}` : "—",
+      progress: total > 0 ? Math.round((activeCount / total) * 100) : 0,
+      progressColor: "var(--kr-island-observatorio)",
+      quickActions: [{ label: "Ver Todos" }],
+    });
+  }, [projects, activeProjects.length, setData]);
 
   return (
     <IslandPageFrame theme="observatorio">
