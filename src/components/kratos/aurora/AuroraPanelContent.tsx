@@ -4,14 +4,22 @@ import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { DriftIndicator } from "@/components/kratos/shell/DriftIndicator";
 import { NextActionBlock } from "@/components/kratos/shell/NextActionBlock";
 import { AuroraQuickActions } from "./AuroraQuickActions";
+import { AuroraInsightCard } from "./AuroraInsightCard";
 import { AuroraInputMock } from "./AuroraInputMock";
 import { useMissionLens } from "@/hooks/useMissionLens";
 import { useDriftDetection } from "@/hooks/useDriftDetection";
+import { useAuroraInsight } from "@/hooks/useAuroraInsight";
 
 export function AuroraPanelContent() {
   const { lens, isLoading, sourceType, lastUpdatedAt, refetch } = useMissionLens();
   const { driftState, minutesOff, nudgeMessage, originalMission } =
     useDriftDetection();
+  const {
+    insight,
+    isLoading: insightLoading,
+    isError: insightError,
+    refetch: refetchInsight,
+  } = useAuroraInsight();
 
   const statusText =
     lens?.mission_lens?.status ?? "Observando contexto";
@@ -69,6 +77,14 @@ export function AuroraPanelContent() {
                 </span>
               </div>
             </div>
+
+            {/* Aurora Insight — do OMNIS via state.json. Opção A da arquitetura. */}
+            <AuroraInsightCard
+              insight={insight}
+              isLoading={insightLoading}
+              isError={insightError}
+              onRefetch={refetchInsight}
+            />
 
             {/* Next best action — replaces static AuroraMessagePreview */}
             <NextActionBlock
