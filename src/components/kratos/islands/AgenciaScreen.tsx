@@ -1,3 +1,4 @@
+import type React from "react";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
@@ -15,9 +16,17 @@ import {
   MessageCircle,
 } from "lucide-react";
 
-// ── Mock Data ──────────────────────────────────────────────────────────────
+// ── Mock Data — SEM FONTE REAL. hasData=false → EmptyState honesto. ─────────
+// Quando Publisher OS expuser endpoint de métricas, remover hasData=false
+// e ligar via hook. Não inventar número.
 
-const kpiCards = [
+const kpiCards: {
+  label: string;
+  value: string;
+  delta: string;
+  deltaPositive: boolean;
+  icon: React.ElementType;
+}[] = [
   {
     label: "Alcance",
     value: "128K",
@@ -367,6 +376,9 @@ function AuroraMiniChat() {
   );
 }
 
+// Sem fonte real = sem número inventado. Auto-detecta estado vazio.
+const hasData = false; // ligar quando Publisher OS expuser endpoint de métricas
+
 // ── Main Export ────────────────────────────────────────────────────────────
 
 interface AgenciaScreenProps {
@@ -390,10 +402,10 @@ export function AgenciaScreen({
           description={error}
           variant="external_unavailable"
         />
-      ) : isEmpty ? (
+      ) : isEmpty || !hasData ? (
         <EmptyState
-          title="Nada por aqui"
-          description="Nenhum dado disponível neste momento."
+          title="Agência sem dados"
+          description="Métricas de conteúdo não disponíveis. Conecte o Publisher OS para ver alcance, engajamento e pipeline."
         />
       ) : (
         <>
