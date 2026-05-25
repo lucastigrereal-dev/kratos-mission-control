@@ -3,6 +3,7 @@
 Read-only listener. Ring buffer of last 100 events. Zero write operations from events.
 """
 import json
+import os
 import threading
 import time
 import uuid
