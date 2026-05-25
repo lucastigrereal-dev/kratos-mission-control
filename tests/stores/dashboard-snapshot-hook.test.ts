@@ -7,8 +7,8 @@ import { listTrackedRepos } from "../../backend/github/store";
 
 describe("Dashboard Snapshot Hook Contract", () => {
   describe("DashboardSnapshotDataSchema", () => {
-    it("validates snapshot from services + contexto + repos", () => {
-      const svc = getServicesHealthSummary();
+    it("validates snapshot from services + contexto + repos", async () => {
+      const svc = await getServicesHealthSummary();
       const ctx = getLatest();
       const repos = listTrackedRepos();
 

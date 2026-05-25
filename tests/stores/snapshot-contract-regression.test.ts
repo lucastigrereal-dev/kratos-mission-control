@@ -24,8 +24,8 @@ describe("Snapshot Contract Regression", () => {
   });
 
   describe("Dashboard Snapshot — success", () => {
-    it("produces valid DashboardSnapshotData from all sources", () => {
-      const svc = getServicesHealthSummary();
+    it("produces valid DashboardSnapshotData from all sources", async () => {
+      const svc = await getServicesHealthSummary();
       const repos = fetchTrackedRepos();
       const payload = { summary_cards: [{ label: "Serviços", value: `${svc.live}/${svc.total}` }], services: { total: svc.total, live: svc.live, degraded: svc.degraded, offline: svc.offline, unknown: svc.unknown }, repos: repos.map((r) => ({ nome: r, nomeCompleto: `lucastigrereal-dev/${r}`, url: `https://github.com/lucastigrereal-dev/${r}`, openPRs: 0, openIssues: 0, ultimoPush: new Date().toISOString() })), next_actions: [], health: "live", updated_at: new Date().toISOString() };
       expect(DashboardSnapshotDataSchema.safeParse(payload).success).toBe(true);

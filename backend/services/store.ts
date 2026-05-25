@@ -7,7 +7,7 @@ const _cacheTtl = 15_000; // 15s cache
 function seedFallback(): void {
   const now = new Date().toISOString();
   const items: Service[] = [
-    { id: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01", nome: "KRATOS", descricao: "Mission Control — este cockpit.", health: "unknown", ultimoPing: now, versao: "0.12.0" },
+    { id: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a01", nome: "KRATOS", descricao: "Mission Control — este cockpit.", health: "live", ultimoPing: now, versao: "0.12.0" },
     { id: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a02", nome: "Akasha", descricao: "Memória vetorial pgvector.", url: "localhost:5432", health: "unknown", ultimoPing: now, versao: "3.1.0" },
     { id: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a03", nome: "OMNIS", descricao: "Motor de execução de skills e crews.", health: "unknown", ultimoPing: now, versao: "2.5.0" },
     { id: "c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a04", nome: "Publisher OS", descricao: "Pipeline de produção de conteúdo Instagram.", url: "localhost:3200", health: "unknown", ultimoPing: now, versao: "4.0.0" },
@@ -68,10 +68,10 @@ async function refreshStore(): Promise<void> {
   if (real.length > 0) {
     store.clear();
     for (const s of real) store.set(s.id, s);
-    _lastFetch = now;
   } else if (store.size === 0) {
     seedFallback();
   }
+  _lastFetch = now;
 }
 
 export async function getServices(): Promise<Service[]> {
