@@ -27,18 +27,12 @@ interface Investimento {
   positivo: boolean;
 }
 
-const investimentos: Investimento[] = [
-  { categoria: "Reserva Emergência", valor: "R$ 24.000", pct: 40, retorno: "+11.2%", positivo: true },
-  { categoria: "Ações BR", valor: "R$ 15.600", pct: 26, retorno: "+8.7%", positivo: true },
-  { categoria: "Fundos Imobiliários", valor: "R$ 10.200", pct: 17, retorno: "+6.4%", positivo: true },
-  { categoria: "Cripto", valor: "R$ 9.000", pct: 15, retorno: "+14.3%", positivo: true },
-  { categoria: "Cash Livre", valor: "R$ 1.200", pct: 2, retorno: "+0%", positivo: true },
-];
+const investimentos: Investimento[] = [];
 
 const patrimonio = {
-  total: "R$ 60.000",
-  variacao: "+12.4%",
-  mes: "+R$ 2.400",
+  total: undefined,
+  variacao: undefined,
+  mes: undefined,
 };
 
 interface MetaFinanceira {
@@ -48,17 +42,13 @@ interface MetaFinanceira {
   cor: string;
 }
 
-const metas: MetaFinanceira[] = [
-  { label: "Reserva 6 meses", atual: 24000, meta: 36000, cor: "var(--kr-success)" },
-  { label: "Viagem Internacional", atual: 4200, meta: 15000, cor: "var(--kr-sky)" },
-  { label: "Apartamento (entrada)", atual: 18500, meta: 80000, cor: accent },
-];
+const metas: MetaFinanceira[] = [];
 
 const orcamento = {
-  ganho: 12500,
-  gasto: 9800,
-  economia: 2700,
-  pctEconomia: 21.6,
+  ganho: undefined,
+  gasto: undefined,
+  economia: undefined,
+  pctEconomia: undefined,
 };
 
 interface TesouroScreenProps {

@@ -24,12 +24,7 @@ interface DealStage {
   value: string;
 }
 
-const pipeline: DealStage[] = [
-  { label: "Prospecção", count: 12, value: "R$ 24.500" },
-  { label: "Negociação", count: 5, value: "R$ 18.200" },
-  { label: "Fechamento", count: 3, value: "R$ 9.800" },
-  { label: "Ganhos", count: 8, value: "R$ 8.700" },
-];
+const pipeline: DealStage[] = [];
 
 interface Lead {
   nome: string;
@@ -38,13 +33,7 @@ interface Lead {
   status: "quente" | "morno" | "frio";
 }
 
-const leads: Lead[] = [
-  { nome: "Carlos Mendes", hotel: "Serhs Natal Grand", valor: "R$ 4.200", status: "quente" },
-  { nome: "Ana Ribeiro", hotel: "Ponta Negra Beach", valor: "R$ 3.150", status: "quente" },
-  { nome: "Paulo Torres", hotel: "Majestic Ponta Negra", valor: "R$ 2.800", status: "morno" },
-  { nome: "Julia Costa", hotel: "D Beach Resort", valor: "R$ 2.400", status: "morno" },
-  { nome: "Rafael Lima", hotel: "Villa Park Hotel", valor: "R$ 1.950", status: "frio" },
-];
+const leads: Lead[] = [];
 
 interface Conquista {
   cliente: string;
@@ -53,11 +42,7 @@ interface Conquista {
   data: string;
 }
 
-const conquistas: Conquista[] = [
-  { cliente: "Hotel Ocean Palace", pacote: "Growth 3 meses", valor: "R$ 2.970", data: "14/05" },
-  { cliente: "Restaurante Mangai", pacote: "Starter", valor: "R$ 350", data: "10/05" },
-  { cliente: "Pousada Villa do Sol", pacote: "Growth 1 mês", valor: "R$ 990", data: "08/05" },
-];
+const conquistas: Conquista[] = [];
 
 const statusColors: Record<Lead["status"], string> = {
   quente: "var(--kr-danger)",
@@ -71,9 +56,9 @@ const statusLabels: Record<Lead["status"], string> = {
   frio: "Frio",
 };
 
-const metaAtual = 8700;
-const metaTotal = 12000;
-const metaPct = Math.round((metaAtual / metaTotal) * 100);
+const metaAtual = undefined;
+const metaTotal = undefined;
+const metaPct = metaAtual && metaTotal ? Math.round((metaAtual / metaTotal) * 100) : 0;
 
 interface ArenaScreenProps {
   isLoading?: boolean;
