@@ -1,0 +1,21 @@
+flowchart LR
+  Obsidian["Obsidian Vault\nDocuments/Obsidian"] --> Scan["scan_vault()"]
+  Scan --> Parse["parse frontmatter"]
+  Parse --> Chunk["chunk_text()"]
+  Chunk --> Embed["Ollama\nnomic-embed-text"]
+  Embed --> PSQL["docker exec psql"]
+  PSQL --> Akasha["Akasha PostgreSQL\ndocuments, chunks, embeddings"]
+
+  Akasha --> Export["build_obsidian_vault.py"]
+  Export --> PARA["PARA folder mapping"]
+  PARA --> Notes["Markdown notes"]
+  PARA --> Dashboards["Dashboards/templates"]
+  Notes --> Obsidian
+  Dashboards --> Obsidian
+
+  Query["RAG query"] --> SearchA["Akasha SQL keyword search"]
+  Query --> SearchO["Obsidian markdown scan"]
+  SearchA --> Prompt["RAG pitch prompt"]
+  SearchO --> Prompt
+  Prompt --> Planning[".planning/pitch_output.md"]
+

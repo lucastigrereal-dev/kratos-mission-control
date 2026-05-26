@@ -1,0 +1,137 @@
+{
+  "generated_at": "2026-05-19",
+  "repository": "C:\\Users\\lucas\\kratos-mission-control",
+  "scope": "documentation-only forensic architecture inventory",
+  "observed_git": {
+    "branch_status": "main...origin/main [ahead 2]",
+    "preexisting_untracked_examples": [
+      ".e2e_output.png",
+      ".e2e_output.txt",
+      ".wrangler-dry/",
+      "UserslucasAppDataLocalTempkratos_world_screenshot.png",
+      "backend/kratos_backend_connected.png",
+      "kratos_screenshot.png",
+      "kratos_screenshot_v2.png"
+    ]
+  },
+  "runtime": {
+    "frontend_candidates": [
+      {
+        "path": "src",
+        "role": "primary TanStack/React KRATOS shell candidate",
+        "risk": "canonical authority not explicitly locked"
+      },
+      {
+        "path": "frontend",
+        "role": "secondary standalone Vite frontend candidate",
+        "risk": "parallel app drift"
+      }
+    ],
+    "backend": {
+      "path": "backend/app/main.py",
+      "framework": "FastAPI",
+      "version_observed": "0.11.0",
+      "phase_observed": "0.11 - Operational Truth Verifier",
+      "local_port_references": ["5100"],
+      "cors_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8083", "http://127.0.0.1:8083"]
+    },
+    "deployment_docs": {
+      "cloudflare_worker_present": true,
+      "wrangler_config_present": true,
+      "contradiction": "documentation still contains Hono/Cloudflare assumptions while real backend is FastAPI"
+    }
+  },
+  "domains": {
+    "health_system": {
+      "routes": ["/health", "/system", "/docker", "/git", "/outputs", "/snapshots"],
+      "collectors": ["system_collector.py", "docker_collector.py", "git_collector.py", "outputs_collector.py"],
+      "risk": "external local dependencies may be offline"
+    },
+    "live_mission": {
+      "routes": ["/live/snapshot", "/live/stream", "/mission/current", "/mission/lens"],
+      "services": ["live_event_service.py", "live_cache_service.py", "mission_intelligence_service.py"],
+      "risk": "large aggregation needs endpoint contract tests"
+    },
+    "context": {
+      "routes": ["/context/current", "/context/lost", "/context/project-guess", "/context/checkpoint"],
+      "services": ["context_classifier_service.py", "context_drift_service.py", "context_loss_service.py"],
+      "external_dependencies": ["ActivityWatch"],
+      "risk": "heuristic classification must expose source/confidence"
+    },
+    "mentor": {
+      "routes": ["/mentor/summary", "/mentor/next-action", "/mentor/signals", "/mentor/focus", "/mentor/mission-brief", "/mentor/recommendations"],
+      "services": ["mentor_signal_service.py", "mentor_decision_service.py"],
+      "risk": "boundary with Aurora interpretation must remain explicit"
+    },
+    "omnis": {
+      "routes": ["/omnis/status", "/omnis/summary"],
+      "contract": "read-only",
+      "forbidden": ["execute jobs", "run crews", "POST/PUT/DELETE to OMNIS"],
+      "risk": "future feature pressure may violate boundary"
+    },
+    "akasha_obsidian": {
+      "scripts": ["ingest_obsidian_to_akasha.py", "build_obsidian_vault.py", "sync_orchestrator.py", "rag_pitch_generator.py"],
+      "external_dependencies": ["akasha-postgres Docker container", "Ollama nomic-embed-text", "Obsidian vault"],
+      "risk": "scripts can write external DB/filesystem state"
+    }
+  },
+  "database": {
+    "runtime": "SQLite",
+    "path_logic": "KRATOS_DB_PATH or backend/data/kratos.db",
+    "settings": ["WAL", "foreign_keys=ON"],
+    "schema_tables_inline": [
+      "projects",
+      "missions",
+      "checkpoints",
+      "activity_events",
+      "alerts",
+      "tasks",
+      "project_goals",
+      "deliverables",
+      "reminders",
+      "unfinished_items",
+      "omnis_snapshot",
+      "collector_snapshots",
+      "collector_runs",
+      "alert_events",
+      "metric_timeseries",
+      "mentor_recommendations",
+      "calendar_events",
+      "execution_plans",
+      "daily_plans",
+      "weekly_plans",
+      "deadline_rules",
+      "activity_windows",
+      "activity_sessions",
+      "browser_contexts",
+      "context_switches"
+    ],
+    "known_drift": [
+      "inline schema uses projects.name; migration uses projects.nome",
+      "inline schema uses projects.description; migration uses projects.descricao",
+      "inline schema uses checkpoints.name; migration uses checkpoints.titulo"
+    ],
+    "severity": "high"
+  },
+  "governance": {
+    "canonical_docs": [
+      "CLAUDE.md",
+      "AGENTS.md",
+      "docs/project-os/governance-constitution.md",
+      "docs/project-os/boundary-map.md",
+      "docs/project-os/agent-manifest.md",
+      "docs/project-os/skill-manifest.md",
+      "docs/architecture/KRATOS_OPERATING_MODEL.md"
+    ],
+    "active_agents": ["kratos-architect", "kratos-data-layer", "kratos-api-builder", "kratos-ui-builder", "kratos-qa-guard"],
+    "core_boundary": "KRATOS observes; Lucas decides; OMNIS acts; Akasha remembers; Aurora interprets"
+  },
+  "highest_priority_actions": [
+    "Declare current runtime authority",
+    "Declare canonical frontend",
+    "Declare database schema authority",
+    "Add contract tests for endpoint envelopes",
+    "Add governance automation for protected paths and OMNIS read-only boundary"
+  ]
+}
+

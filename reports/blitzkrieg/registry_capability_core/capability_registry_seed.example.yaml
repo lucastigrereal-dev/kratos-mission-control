@@ -1,0 +1,372 @@
+# CAPABILITY REGISTRY SEED — OMNISVERSO v0.1.0
+# Example capabilities across all 8 domains.
+# Evidence levels: CONFIRMED (verified), HYPOTHESIS (believed), DOC_ONLY (documented only)
+
+capabilities:
+
+  # ── KRATOS ──
+  - id: "kratos.live.stream"
+    name: "Live Stream SSE"
+    domain: kratos
+    type: service
+    layer: transport
+    status: active
+    version: "0.1.0"
+    description: "Stream SSE de snapshots live para o KRATOS cockpit."
+    depends_on:
+      - "kratos.live.cache"
+    exposes:
+      routes:
+        - "/live/stream"
+      events:
+        - "live.snapshot"
+    contract:
+      input: null
+      output: "live.snapshot.schema.json"
+      side_effects:
+        - "read_runtime_state"
+      sync_mode: stream
+    evidence:
+      level: CONFIRMED
+      tests:
+        - "tests/test_live.py"
+      health_endpoint: "/health/live"
+    risk:
+      level: medium
+      reasons:
+        - "runtime_surface"
+        - "streaming_endpoint"
+      requires_human_slot: false
+    governance:
+      owner: kratos
+      forbidden_tools:
+        - "secrets"
+        - "production_write"
+      approval_required_for:
+        - "production_deploy"
+
+  - id: "kratos.checkpoint.store"
+    name: "Checkpoint Store"
+    domain: kratos
+    type: route
+    layer: transport
+    status: active
+    version: "0.1.0"
+    description: "CRUD de checkpoints do operador — salvar/retomar contexto."
+    exposes:
+      routes:
+        - "/api/checkpoints"
+    contract:
+      input: "checkpoint.create.schema.json"
+      output: "checkpoint.schema.json"
+      side_effects:
+        - "write_sqlite"
+      sync_mode: sync
+    evidence:
+      level: CONFIRMED
+      tests:
+        - "tests/stores/checkpoint-store.test.ts"
+      files:
+        - "backend/app/routes/checkpoints.py"
+    risk:
+      level: low
+      reasons:
+        - "local_only"
+      requires_human_slot: false
+    governance:
+      owner: kratos
+      allowed_tools:
+        - "sqlite"
+      forbidden_tools:
+        - "secrets"
+
+  # ── AKASHA ──
+  - id: "akasha.memory.search"
+    name: "Akasha Vector Search"
+    domain: akasha
+    type: memory_source
+    layer: memory
+    status: active
+    version: "0.1.0"
+    description: "Busca vetorial híbrida (pgvector + tsvector) no Akasha."
+    depends_on:
+      - "akasha.postgres.container"
+    exposes:
+      routes:
+        - "/search"
+        - "/hybrid-search"
+    contract:
+      input: "search.query.schema.json"
+      output: "search.results.schema.json"
+      side_effects:
+        - "read_embeddings"
+      sync_mode: sync
+    evidence:
+      level: CONFIRMED
+      files:
+        - "akasha/src/akasha/search.py"
+      health_endpoint: "/health"
+    risk:
+      level: medium
+      reasons:
+        - "depends_on_docker"
+      requires_human_slot: false
+    governance:
+      owner: akasha
+      forbidden_tools:
+        - "production_write"
+      approval_required_for:
+        - "database_migration"
+
+  # ── OMNIS ──
+  - id: "omnis.crew.execute"
+    name: "OMNIS Crew Execution"
+    domain: omnis
+    type: workflow
+    layer: orchestration
+    status: active
+    version: "0.1.0"
+    description: "Execução de crews CrewAI via LiteLLM gateway."
+    depends_on:
+      - "omnis.litellm.gateway"
+    exposes:
+      commands:
+        - "run_crew"
+      events:
+        - "crew.started"
+        - "crew.completed"
+        - "crew.failed"
+    contract:
+      input: "crew.request.schema.json"
+      output: "crew.result.schema.json"
+      side_effects:
+        - "llm_api_call"
+        - "tool_execution"
+      sync_mode: async
+    evidence:
+      level: CONFIRMED
+      tests:
+        - "tests/test_crew_execution.py"
+      reports:
+        - "docs/KRATOS_SPRINT_A_W08_OMNIS_READONLY_PROVIDER.md"
+    risk:
+      level: high
+      reasons:
+        - "external_api_call"
+        - "tool_execution"
+        - "cost_incurring"
+      requires_human_slot: false
+    governance:
+      owner: omnis
+      forbidden_tools:
+        - "secrets"
+        - "production_deploy"
+        - "database_mutation"
+      approval_required_for:
+        - "production_deploy"
+        - "external_api_call"
+
+  # ── GRINGOTTS ──
+  - id: "gringotts.cost.track"
+    name: "Gringotts Cost Tracker"
+    domain: gringotts
+    type: service
+    layer: domain
+    status: candidate
+    version: "0.1.0"
+    description: "Rastreamento de custos de operação — LLM tokens, APIs, infra."
+    depends_on:
+      - "gringotts.treasury.schema"
+    exposes:
+      routes:
+        - "/api/costs"
+      events:
+        - "cost.updated"
+    contract:
+      input: "cost.entry.schema.json"
+      output: "cost.report.schema.json"
+      side_effects:
+        - "write_sqlite"
+      sync_mode: sync
+    evidence:
+      level: HYPOTHESIS
+      files:
+        - "backend/migrations/"
+      reports:
+        - "reports/PHASE2_ENGINEERING_DOSSIER.md"
+    risk:
+      level: low
+      reasons:
+        - "internal_analytics_only"
+      requires_human_slot: false
+    governance:
+      owner: gringotts
+      forbidden_tools:
+        - "secrets"
+      approval_required_for:
+        - "database_migration"
+
+  # ── PUBLISHER_OS ──
+  - id: "publisher_os.content.produce"
+    name: "Publisher OS Content Production"
+    domain: publisher_os
+    type: workflow
+    layer: automation
+    status: active
+    version: "0.1.0"
+    description: "Criação de conteúdo Instagram via CrewAI — carrossel, reel, multi_copy."
+    depends_on:
+      - "publisher_os.mcp.server"
+    exposes:
+      commands:
+        - "produce_content"
+        - "run_crew"
+      events:
+        - "job.created"
+        - "job.completed"
+        - "job.failed"
+    contract:
+      input: "content.job.request.schema.json"
+      output: "content.job.result.schema.json"
+      side_effects:
+        - "llm_api_call"
+        - "instagram_publication"
+      sync_mode: async
+    evidence:
+      level: CONFIRMED
+      tests:
+        - "tests/test_content_production.py"
+      reports:
+        - "memory/project_publisher_os.md"
+    risk:
+      level: high
+      reasons:
+        - "external_api_call"
+        - "instagram_publication"
+        - "cost_incurring"
+        - "public_surface"
+      requires_human_slot: true
+    governance:
+      owner: publisher_os
+      forbidden_tools:
+        - "secrets"
+        - "database_mutation"
+      approval_required_for:
+        - "instagram_publication"
+        - "production_deploy"
+
+  # ── CROSS_CUTTING ──
+  - id: "cross_cutting.token.enforcer"
+    name: "Design Token Enforcer"
+    domain: cross_cutting
+    type: governor
+    layer: governance
+    status: active
+    version: "0.1.0"
+    description: "Bloqueia CSS inline com cores hex — obriga uso de tokens --kr-*."
+    exposes:
+      commands:
+        - "/audit"
+    contract:
+      input: null
+      output: "audit.report.schema.json"
+      side_effects:
+        - "read_source_files"
+        - "report_violations"
+      sync_mode: sync
+    evidence:
+      level: CONFIRMED
+      files:
+        - ".claude/skills/token-enforcer/"
+      reports:
+        - "docs/KRATOS_SKILLS_REGISTRY_SYNC.md"
+    risk:
+      level: low
+      reasons:
+        - "read_only"
+      requires_human_slot: false
+    governance:
+      owner: cross_cutting
+      forbidden_tools:
+        - "secrets"
+        - "write_source_files"
+      approval_required_for: []
+
+  # ── EXTERNAL ──
+  - id: "external.github.status"
+    name: "GitHub Status Provider"
+    domain: external
+    type: adapter
+    layer: external
+    status: active
+    version: "0.1.0"
+    description: "Coleta status de repositórios GitHub — PRs, commits, CI."
+    exposes:
+      routes:
+        - "/api/github/status"
+    contract:
+      input: null
+      output: "github.status.schema.json"
+      side_effects:
+        - "external_api_call"
+      sync_mode: sync
+    evidence:
+      level: CONFIRMED
+      tests:
+        - "tests/stores/github-store.test.ts"
+      files:
+        - "src/hooks/useGithub.ts"
+    risk:
+      level: medium
+      reasons:
+        - "external_api_call"
+        - "rate_limit_risk"
+      requires_human_slot: false
+    governance:
+      owner: external
+      forbidden_tools:
+        - "secrets"
+        - "git_push"
+      approval_required_for:
+        - "external_api_call"
+
+  # ── MISSION_CONTROL ──
+  - id: "mission_control.health.aggregate"
+    name: "Mission Control Health Aggregator"
+    domain: mission_control
+    type: service
+    layer: observability
+    status: candidate
+    version: "0.1.0"
+    description: "Agrega health checks de todos os domínios em uma visão unificada."
+    depends_on:
+      - "kratos.live.stream"
+      - "akasha.memory.search"
+      - "omnis.crew.execute"
+      - "external.github.status"
+    exposes:
+      routes:
+        - "/api/health/aggregate"
+      events:
+        - "health.changed"
+    contract:
+      input: null
+      output: "health.aggregate.schema.json"
+      side_effects:
+        - "read_health_endpoints"
+      sync_mode: sync
+    evidence:
+      level: HYPOTHESIS
+      reports:
+        - "reports/RUNTIME_AND_DATA_FLOWS.md"
+    risk:
+      level: low
+      reasons:
+        - "read_only"
+      requires_human_slot: false
+    governance:
+      owner: mission_control
+      forbidden_tools:
+        - "secrets"
+        - "production_write"
+      approval_required_for: []

@@ -1,0 +1,26 @@
+sequenceDiagram
+  participant UI as KRATOS Frontend
+  participant API as FastAPI /live/snapshot
+  participant Live as live_event_service
+  participant Mission as mission_intelligence_service
+  participant Mentor as mentor services
+  participant Ctx as context services
+  participant Col as collectors
+  participant DB as SQLite
+
+  UI->>API: GET /live/snapshot
+  API->>Live: get_live_snapshot()
+  Live->>Mission: mission lens/current mission
+  Live->>Mentor: signals + next best action
+  Live->>Ctx: current context + loss/drift
+  Live->>Col: system/docker/git/omnis/activitywatch
+  Live->>DB: checkpoints/tasks/alerts/snapshots
+  DB-->>Live: persisted records
+  Col-->>Live: collector status or fallback/error
+  Ctx-->>Live: context payload
+  Mentor-->>Live: recommendations/signals
+  Mission-->>Live: mission contract
+  Live-->>API: envelope with source/meta/data
+  API-->>UI: JSON snapshot
+  UI->>UI: render source badges and operational state
+
