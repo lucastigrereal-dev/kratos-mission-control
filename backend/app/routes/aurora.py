@@ -23,23 +23,31 @@ def aurora_insight():
 
     raw = state["aurora_insight"]
 
+    # aurora_updated_at é mais específico que timestamp — preferir quando disponível
+    best_ts = state.get("aurora_updated_at") or state.get("timestamp", "")
+    model = state.get("aurora_model")  # ex: "llama3.1:8b"
+
     # Aceita string simples (atalho) ou dict completo
     if isinstance(raw, str):
         insight = {
             "text": raw,
-            "generated_at": state.get("timestamp", ""),
+            "generated_at": best_ts,
             "source": "omnis_ollama",
         }
+        if model:
+            insight["model"] = model
     elif isinstance(raw, dict):
         insight = {
             "text": raw.get("text", ""),
-            "generated_at": raw.get("generated_at", state.get("timestamp", "")),
+            "generated_at": raw.get("generated_at", best_ts),
             "source": raw.get("source", "omnis_ollama"),
         }
         if "confidence" in raw:
             insight["confidence"] = raw["confidence"]
         if "focus_recommendation" in raw:
             insight["focus_recommendation"] = raw["focus_recommendation"]
+        if model:
+            insight["model"] = raw.get("model", model)
     else:
         # Tipo inesperado — retorna null honesto
         return {

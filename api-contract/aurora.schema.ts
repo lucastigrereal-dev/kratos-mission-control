@@ -8,6 +8,7 @@ export const AuroraInsightSchema = z.object({
   source: z.enum(["omnis_ollama", "omnis_fallback", "manual"]),
   confidence: z.enum(["high", "medium", "low"]).optional(),
   focus_recommendation: z.string().optional(),
+  model: z.string().optional(), // ex: "llama3.1:8b" — modelo Ollama que gerou
 });
 
 export const AuroraInsightEnvelopeSchema = z.object({

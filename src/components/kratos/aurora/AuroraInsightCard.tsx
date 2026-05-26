@@ -1,5 +1,8 @@
-import { Sparkles, Clock, RefreshCw } from "lucide-react";
+import { useState } from "react";
+import { Sparkles, Clock, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import type { AuroraInsight } from "../../../../api-contract/aurora.schema";
+
+const MAX_TEXT_CHARS = 220; // trunca texto longo; usuário expande se quiser
 
 const CONFIDENCE_COLORS: Record<string, string> = {
   high: "var(--kr-success)",
@@ -96,6 +99,36 @@ export function AuroraInsightCard({
   const confidenceLabel = insight.confidence
     ? CONFIDENCE_LABELS[insight.confidence]
     : undefined;
+  const isLong = insight.text.length > MAX_TEXT_CHARS;
+
+  return <AuroraInsightCardInner
+    insight={insight}
+    relativeTime={relativeTime}
+    confidenceColor={confidenceColor}
+    confidenceLabel={confidenceLabel}
+    isLong={isLong}
+  />;
+}
+
+interface InnerProps {
+  insight: AuroraInsight;
+  relativeTime: string;
+  confidenceColor: string | undefined;
+  confidenceLabel: string | undefined;
+  isLong: boolean;
+}
+
+function AuroraInsightCardInner({
+  insight,
+  relativeTime,
+  confidenceColor,
+  confidenceLabel,
+  isLong,
+}: InnerProps) {
+  const [expanded, setExpanded] = useState(false);
+  const displayText = isLong && !expanded
+    ? insight.text.slice(0, MAX_TEXT_CHARS).trimEnd() + "…"
+    : insight.text;
 
   return (
     <div
@@ -131,13 +164,24 @@ export function AuroraInsightCard({
         </div>
       </div>
 
-      {/* Insight text */}
+      {/* Insight text — truncado com expand */}
       <p
         className="text-[12px] leading-relaxed"
         style={{ color: "var(--kratos-text-primary)" }}
       >
-        {insight.text}
+        {displayText}
       </p>
+      {isLong && (
+        <button
+          type="button"
+          onClick={() => setExpanded((e) => !e)}
+          className="flex items-center gap-1 text-[10px] transition-opacity hover:opacity-70"
+          style={{ color: "var(--kratos-ghost)" }}
+        >
+          {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+          {expanded ? "Ver menos" : "Ver mais"}
+        </button>
+      )}
 
       {/* Focus recommendation */}
       {insight.focus_recommendation && (
@@ -153,11 +197,13 @@ export function AuroraInsightCard({
         </div>
       )}
 
-      {/* Footer */}
+      {/* Footer — timestamp + modelo */}
       <div className="flex items-center gap-1.5 pt-0.5">
-        <Clock className="h-3 w-3" style={{ color: "var(--kratos-text-muted)" }} />
+        <Clock className="h-3 w-3 shrink-0" style={{ color: "var(--kratos-text-muted)" }} />
         <span className="text-[9px] kratos-mono" style={{ color: "var(--kratos-text-muted)" }}>
-          {relativeTime} · {insight.source === "omnis_ollama" ? "Ollama" : insight.source}
+          {relativeTime}
+          {" · "}
+          {insight.model ?? (insight.source === "omnis_ollama" ? "Ollama" : insight.source)}
         </span>
       </div>
     </div>
