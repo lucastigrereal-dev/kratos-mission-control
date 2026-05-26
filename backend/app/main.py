@@ -58,6 +58,7 @@ from app.routes.observability import router as observability_router
 from app.routes.replay import router as replay_router
 from app.routes.aurora import router as aurora_router
 from app.routes.agencia import router as agencia_router
+from app.routes.omnis_health import router as omnis_health_router
 
 app.include_router(health_router)
 app.include_router(tasks_router)
@@ -99,6 +100,7 @@ app.include_router(runtime_bridge_router)
 app.include_router(observability_router)
 app.include_router(aurora_router)
 app.include_router(agencia_router)
+app.include_router(omnis_health_router)
 app.include_router(replay_router)
 
 
