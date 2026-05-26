@@ -132,6 +132,37 @@ Se Onda 2 passa auditoria:
 
 ---
 
-**Assinado:** Haiku (proxy Lucas)  
+---
+
+## MODO GIGANTE — Waves de integração real (2026-05-25)
+
+### Wave 1 — Aurora Fase 2 ✅ `5a9946d`
+- `backend/app/routes/aurora.py` — lê `aurora_insight` do OMNIS `state.json`
+- `api-contract/aurora.schema.ts` — AuroraInsightSchema (text, generated_at, source, model)
+- `src/hooks/useAuroraInsight.ts` — TanStack Query, refetch 120s
+- `src/components/kratos/aurora/AuroraInsightCard.tsx` — card com truncamento 220 chars, badge de confiança, expand/collapse
+- `AuroraPanelContent` integra o card
+- **Aurora já exibindo:** llama3.1:8b, timestamp `aurora_updated_at`, texto real do OMNIS
+
+### Wave 2 — Agência pipeline real ✅ `cbf2ce2`
+- `backend/app/routes/agencia.py` — GET /agencia/queue-summary lê `content_queue.jsonl`
+  - Retorna: total slots, por_status, próximo slot pendente
+  - Sem dado → `{ data: null }` (nunca inventa)
+- `api-contract/agencia.schema.ts` — AgenciaQueueSummarySchema
+- `src/hooks/useAgenciaQueue.ts` — TanStack Query, staleTime 60s
+- `AgenciaScreen` — usa hook real:
+  - `hasData = summary != null` (auto-detect)
+  - `summary` presente → `QueueSummaryCard` (captions prontas, aguardam asset, próximo slot)
+  - `summary == null` → EmptyState honesto
+  - Fake KPI panels (alcance, engajamento, seguidores) NUNCA renderizados
+- **Dado real em produção:** 42 slots no queue (2 caption_ready, 40 needs_asset)
+
+### Status da suite após Wave 2
+- `bun test tests/stores/` → **98 pass / 13 fail** (13 = zod/v3 ambiente pre-existente)
+- Commit: `cbf2ce2` — `feature/fase14-integration`
+
+---
+
+**Assinado:** opusplan (proxy Lucas)  
 **Entregue a:** Codex (auditoria)  
-**Deadline Codex:** ASAP (bloqueia Onda 3)
+**Deadline Codex:** ASAP — WAVE 3 pode começar sem auditoria completa (independente)
