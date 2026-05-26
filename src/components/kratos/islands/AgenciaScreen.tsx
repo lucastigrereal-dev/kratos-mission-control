@@ -6,6 +6,8 @@ import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { cn } from "@/lib/utils";
+import { useAgenciaQueue } from "@/hooks/useAgenciaQueue";
+import type { AgenciaQueueSummary } from "../../../../api-contract/agencia.schema";
 import {
   Eye,
   Heart,
@@ -14,6 +16,8 @@ import {
   FileText,
   ChevronRight,
   MessageCircle,
+  CalendarClock,
+  Layers,
 } from "lucide-react";
 
 // ── Mock Data — SEM FONTE REAL. hasData=false → EmptyState honesto. ─────────
@@ -376,8 +380,68 @@ function AuroraMiniChat() {
   );
 }
 
-// Sem fonte real = sem número inventado. Auto-detecta estado vazio.
-const hasData = false; // ligar quando Publisher OS expuser endpoint de métricas
+// ── Queue Summary — dado real do OMNIS content_queue.jsonl ─────────────────
+
+function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
+  const captionReady = summary.por_status["caption_ready"] ?? 0;
+  const needsAsset = summary.por_status["needs_asset"] ?? 0;
+  const accent = "var(--kr-island-agencia)";
+
+  return (
+    <GlassPanel padding="md" className="space-y-3">
+      <div className="flex items-center gap-2 mb-1">
+        <Layers className="h-4 w-4" style={{ color: accent }} />
+        <span className="text-[12px] font-semibold" style={{ color: "var(--kratos-text-primary)" }}>
+          Pipeline de Conteúdo
+        </span>
+        <span
+          className="ml-auto text-[10px] kratos-mono px-1.5 py-0.5 rounded"
+          style={{ background: `color-mix(in oklab, ${accent} 12%, transparent)`, color: accent }}
+        >
+          {summary.total} slots
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-lg p-2 text-center" style={{ background: "var(--kratos-surface-2)" }}>
+          <p className="text-lg font-bold kratos-mono" style={{ color: "var(--kr-success)" }}>
+            {captionReady}
+          </p>
+          <p className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
+            Captions prontas
+          </p>
+        </div>
+        <div className="rounded-lg p-2 text-center" style={{ background: "var(--kratos-surface-2)" }}>
+          <p className="text-lg font-bold kratos-mono" style={{ color: "var(--kr-warning)" }}>
+            {needsAsset}
+          </p>
+          <p className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
+            Aguardam asset
+          </p>
+        </div>
+      </div>
+
+      {summary.proximo_slot && (
+        <div className="flex items-start gap-2 pt-1" style={{ borderTop: "1px solid var(--kratos-border)" }}>
+          <CalendarClock className="h-3.5 w-3.5 mt-0.5 shrink-0" style={{ color: "var(--kratos-text-muted)" }} />
+          <div>
+            <p className="text-[11px]" style={{ color: "var(--kratos-text-secondary)" }}>
+              Próximo slot:{" "}
+              <span style={{ color: "var(--kratos-text-primary)", fontFamily: "var(--kratos-font-mono)" }}>
+                {summary.proximo_slot.date} às {summary.proximo_slot.time}
+              </span>
+            </p>
+            {summary.proximo_slot.objective && (
+              <p className="text-[10px] mt-0.5" style={{ color: "var(--kratos-text-muted)" }}>
+                Objetivo: {summary.proximo_slot.objective}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+    </GlassPanel>
+  );
+}
 
 // ── Main Export ────────────────────────────────────────────────────────────
 
@@ -392,14 +456,27 @@ export function AgenciaScreen({
   error = null,
   isEmpty = false,
 }: AgenciaScreenProps) {
+  const {
+    summary,
+    isLoading: queueLoading,
+    isError: queueError,
+  } = useAgenciaQueue();
+
+  // hasData = true quando content_queue do OMNIS tem itens reais.
+  // KPIs de Instagram (alcance, engajamento) ficam em EmptyState até Publisher OS expor endpoint.
+  const hasData = summary != null;
+  const loading = isLoading || queueLoading;
+  const errorMsg =
+    error ?? (queueError ? "Erro ao carregar fila de conteúdo" : null);
+
   return (
     <IslandPageFrame theme="agencia">
-      {isLoading ? (
+      {loading ? (
         <LoadingState lines={6} />
-      ) : error ? (
+      ) : errorMsg ? (
         <ErrorState
           title="Erro ao carregar"
-          description={error}
+          description={errorMsg}
           variant="external_unavailable"
         />
       ) : isEmpty || !hasData ? (
@@ -415,30 +492,8 @@ export function AgenciaScreen({
             theme="agencia"
           />
 
-          {/* KPI row */}
-          <KpiQuadPanel />
-
-          {/* Main grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
-            <div className="lg:col-span-2 space-y-4">
-              <CampaignMainCard />
-              <ContentCalendar />
-            </div>
-            <div className="space-y-4">
-              <ContentPipeline />
-              <IdeaTracker />
-            </div>
-          </div>
-
-          {/* Bottom row */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-4">
-            <div className="lg:col-span-3">
-              <StudioSquads />
-            </div>
-            <div className="lg:col-span-2">
-              <AuroraMiniChat />
-            </div>
-          </div>
+          {/* Dado real: pipeline do content_queue do OMNIS */}
+          <QueueSummaryCard summary={summary!} />
         </>
       )}
     </IslandPageFrame>
