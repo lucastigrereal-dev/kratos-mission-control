@@ -382,16 +382,40 @@ function AuroraMiniChat() {
 
 // ── Queue Summary — dado real do OMNIS content_queue.jsonl ─────────────────
 
+/** "2026-05-03" → "03 Mai" */
+function formatSlotDate(iso: string): string {
+  try {
+    const parts = iso.split("-");
+    const month = parseInt(parts[1] ?? "0", 10);
+    const day = parts[2] ?? "??";
+    const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+    return `${day} ${MESES[month - 1] ?? "?"}`;
+  } catch {
+    return iso;
+  }
+}
+
+const STATUS_CFG: Record<string, { label: string; color: string }> = {
+  caption_ready: { label: "Caption pronta",  color: "var(--kr-success)" },
+  needs_asset:   { label: "Aguarda asset",   color: "var(--kr-warning)" },
+  done:          { label: "Publicado",        color: "var(--kratos-text-muted)" },
+  published:     { label: "Publicado",        color: "var(--kratos-text-muted)" },
+  cancelled:     { label: "Cancelado",        color: "var(--kratos-critical)" },
+  unknown:       { label: "Desconhecido",     color: "var(--kratos-text-muted)" },
+};
+
 function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
-  const captionReady = summary.por_status["caption_ready"] ?? 0;
-  const needsAsset = summary.por_status["needs_asset"] ?? 0;
   const accent = "var(--kr-island-agencia)";
+  const captionReady = summary.por_status["caption_ready"] ?? 0;
+  const readyPct = summary.total > 0 ? Math.round((captionReady / summary.total) * 100) : 0;
+  const statusEntries = Object.entries(summary.por_status).sort(([, a], [, b]) => b - a);
 
   return (
-    <GlassPanel padding="md" className="space-y-3">
-      <div className="flex items-center gap-2 mb-1">
-        <Layers className="h-4 w-4" style={{ color: accent }} />
-        <span className="text-[12px] font-semibold" style={{ color: "var(--kratos-text-primary)" }}>
+    <GlassPanel padding="md" className="space-y-4">
+      {/* ── Header ── */}
+      <div className="flex items-center gap-2">
+        <Layers className="h-4 w-4 shrink-0" style={{ color: accent }} />
+        <span className="text-[13px] font-semibold" style={{ color: "var(--kratos-text-primary)" }}>
           Pipeline de Conteúdo
         </span>
         <span
@@ -402,39 +426,84 @@ function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <div className="rounded-lg p-2 text-center" style={{ background: "var(--kratos-surface-2)" }}>
-          <p className="text-lg font-bold kratos-mono" style={{ color: "var(--kr-success)" }}>
-            {captionReady}
-          </p>
-          <p className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
-            Captions prontas
-          </p>
+      {/* ── Barra de progresso — % prontos ── */}
+      <div>
+        <div className="flex justify-between items-center mb-1.5">
+          <span className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
+            Prontos para publicar
+          </span>
+          <span className="text-[10px] kratos-mono font-medium" style={{ color: "var(--kr-success)" }}>
+            {captionReady} / {summary.total}
+          </span>
         </div>
-        <div className="rounded-lg p-2 text-center" style={{ background: "var(--kratos-surface-2)" }}>
-          <p className="text-lg font-bold kratos-mono" style={{ color: "var(--kr-warning)" }}>
-            {needsAsset}
-          </p>
-          <p className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
-            Aguardam asset
-          </p>
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--kratos-surface-4)" }}>
+          <div
+            className="h-full rounded-full"
+            style={{ width: `${readyPct}%`, background: "var(--kr-success)" }}
+            role="progressbar"
+            aria-valuenow={readyPct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          />
         </div>
       </div>
 
-      {summary.proximo_slot && (
-        <div className="flex items-start gap-2 pt-1" style={{ borderTop: "1px solid var(--kratos-border)" }}>
-          <CalendarClock className="h-3.5 w-3.5 mt-0.5 shrink-0" style={{ color: "var(--kratos-text-muted)" }} />
-          <div>
-            <p className="text-[11px]" style={{ color: "var(--kratos-text-secondary)" }}>
-              Próximo slot:{" "}
-              <span style={{ color: "var(--kratos-text-primary)", fontFamily: "var(--kratos-font-mono)" }}>
-                {summary.proximo_slot.date} às {summary.proximo_slot.time}
+      {/* ── Breakdown por status ── */}
+      <div className="space-y-1.5">
+        {statusEntries.map(([status, count]) => {
+          const cfg = STATUS_CFG[status];
+          const color = cfg?.color ?? "var(--kratos-text-muted)";
+          const label = cfg?.label ?? status;
+          const pct = summary.total > 0 ? Math.round((count / summary.total) * 100) : 0;
+          return (
+            <div key={status} className="flex items-center gap-2">
+              <div className="h-1.5 w-1.5 rounded-full shrink-0" style={{ background: color }} aria-hidden />
+              <span className="text-[11px] flex-1" style={{ color: "var(--kratos-text-secondary)" }}>
+                {label}
               </span>
-            </p>
+              <span className="text-[11px] kratos-mono font-medium" style={{ color }}>
+                {count}
+              </span>
+              <span className="text-[9px] kratos-mono w-7 text-right shrink-0" style={{ color: "var(--kratos-text-muted)" }}>
+                {pct}%
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Próximo slot ── */}
+      {summary.proximo_slot && (
+        <div
+          className="flex items-start gap-2.5 pt-3"
+          style={{ borderTop: "1px solid var(--kratos-border)" }}
+        >
+          <CalendarClock className="h-3.5 w-3.5 mt-0.5 shrink-0" style={{ color: accent }} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span
+                className="text-[12px] font-medium kratos-mono"
+                style={{ color: "var(--kratos-text-primary)" }}
+              >
+                {formatSlotDate(summary.proximo_slot.date)} · {summary.proximo_slot.time}
+              </span>
+              {summary.proximo_slot.account && (
+                <span className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
+                  @{summary.proximo_slot.account}
+                </span>
+              )}
+            </div>
             {summary.proximo_slot.objective && (
-              <p className="text-[10px] mt-0.5" style={{ color: "var(--kratos-text-muted)" }}>
-                Objetivo: {summary.proximo_slot.objective}
-              </p>
+              <span
+                className="inline-block mt-1.5 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded"
+                style={{
+                  background: `color-mix(in oklab, ${accent} 10%, transparent)`,
+                  color: accent,
+                  border: `1px solid color-mix(in oklab, ${accent} 20%, transparent)`,
+                }}
+              >
+                {summary.proximo_slot.objective}
+              </span>
             )}
           </div>
         </div>

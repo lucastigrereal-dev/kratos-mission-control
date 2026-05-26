@@ -152,10 +152,11 @@ function AuroraInsightCardInner({
         <div className="flex items-center gap-1.5">
           {confidenceColor && confidenceLabel && (
             <span
-              className="text-[9px] kratos-mono uppercase tracking-wider px-1.5 py-0.5 rounded"
+              className="text-[10px] kratos-mono uppercase tracking-wider px-1.5 py-0.5 rounded"
               style={{
                 color: confidenceColor,
                 background: `color-mix(in oklab, ${confidenceColor} 12%, transparent)`,
+                border: `1px solid color-mix(in oklab, ${confidenceColor} 20%, transparent)`,
               }}
             >
               {confidenceLabel}
@@ -168,6 +169,8 @@ function AuroraInsightCardInner({
       <p
         className="text-[12px] leading-relaxed"
         style={{ color: "var(--kratos-text-primary)" }}
+        aria-live="polite"
+        aria-atomic="true"
       >
         {displayText}
       </p>
