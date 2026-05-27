@@ -6,6 +6,7 @@ import {
   Trophy,
   Handshake,
   ChevronRight,
+  Zap,
 } from "lucide-react";
 import { KratosCard } from "@/components/kratos/ui-primitives/KratosCard";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
@@ -18,13 +19,24 @@ import { IslandPageHeader } from "./shared/IslandPageHeader";
 
 const accent = "var(--kr-island-arena)";
 
+// ── W10-B2: Pipeline Board mock data ─────────────────────────────────────
+// Fonte futura: /arena/pipeline (crm-tigre-backend)
+
 interface DealStage {
   label: string;
   count: number;
   value: string;
 }
 
-const pipeline: DealStage[] = [];
+const pipeline: DealStage[] = [
+  { label: "Prospecção",  count: 8, value: "R$4.800" },
+  { label: "Proposta",    count: 5, value: "R$5.990" },
+  { label: "Negociação",  count: 3, value: "R$2.970" },
+  { label: "Fechado",     count: 2, value: "R$2.180" },
+];
+
+// ── W10-B3: CRM Board mock data ───────────────────────────────────────────
+// Fonte futura: /arena/leads (crm-tigre-backend + ManyChat webhook)
 
 interface Lead {
   nome: string;
@@ -33,7 +45,13 @@ interface Lead {
   status: "quente" | "morno" | "frio";
 }
 
-const leads: Lead[] = [];
+const leads: Lead[] = [
+  { nome: "Gerente Comercial",  hotel: "Hotel Serhs Natal Grand",  valor: "R$990/mês", status: "quente" },
+  { nome: "Resp. Marketing",    hotel: "Pousada dos Búzios",       valor: "R$350",     status: "quente" },
+  { nome: "Sócio Gerente",      hotel: "Soho Gastrobar",           valor: "R$350",     status: "morno" },
+  { nome: "Gerência",           hotel: "Mangai Natal",             valor: "R$990/mês", status: "morno" },
+  { nome: "Chef/Dono",          hotel: "Tiê Bistrô",               valor: "R$350",     status: "frio" },
+];
 
 interface Conquista {
   cliente: string;
@@ -42,27 +60,31 @@ interface Conquista {
   data: string;
 }
 
-const conquistas: Conquista[] = [];
+const conquistas: Conquista[] = [
+  { cliente: "Hotel Araruna",  pacote: "Starter",    valor: "R$350",     data: "12 Mai" },
+  { cliente: "Pongá Bistrô",   pacote: "Growth",     valor: "R$990/mês", data: "08 Mai" },
+  { cliente: "Taberna do Mar", pacote: "Premium",    valor: "R$1.200",   data: "02 Mai" },
+];
 
 const statusColors: Record<Lead["status"], string> = {
-  quente: "var(--kr-danger)",
-  morno: "var(--kr-warning)",
-  frio: "var(--kratos-text-muted)",
+  quente: "var(--kr-danger, var(--kratos-critical))",
+  morno:  "var(--kr-warning, var(--kratos-warn))",
+  frio:   "var(--kratos-text-muted)",
 };
 
 const statusLabels: Record<Lead["status"], string> = {
   quente: "Quente",
-  morno: "Morno",
-  frio: "Frio",
+  morno:  "Morno",
+  frio:   "Frio",
 };
 
-const metaAtual: number | undefined = undefined;
-const metaTotal: number | undefined = undefined;
-const metaPct = metaAtual != null && metaTotal != null ? Math.round((metaAtual / metaTotal) * 100) : 0;
+// Meta mensal (mock — W10-B3)
+const metaAtual = 5_340;
+const metaTotal = 9_900;
+const metaPct = Math.round((metaAtual / metaTotal) * 100);
 
-// Sem dado real = sem número inventado. Auto-detecta estado vazio.
-const hasData =
-  metaAtual != null || pipeline.length > 0 || leads.length > 0 || conquistas.length > 0;
+// Mock ativo: hasData sempre true neste bloco
+const hasData = true;
 
 interface ArenaScreenProps {
   isLoading?: boolean;
@@ -98,19 +120,34 @@ export function ArenaScreen({
             theme="arena"
           />
 
+          {/* Demo banner */}
+          <div
+            className="rounded-lg px-3 py-2 flex items-center gap-2 text-[11px]"
+            style={{
+              background: "color-mix(in oklab, var(--kratos-warn) 8%, var(--kratos-surface-3))",
+              border: "1px solid color-mix(in oklab, var(--kratos-warn) 20%, transparent)",
+            }}
+          >
+            <Zap className="h-3 w-3 shrink-0" style={{ color: "var(--kratos-warn)" }} aria-hidden />
+            <span style={{ color: "var(--kratos-warn)" }} className="font-medium">DEMO</span>
+            <span style={{ color: "var(--kratos-text-muted)" }}>
+              — dados simulados. Pipeline real via crm-tigre-backend (W10-B3).
+            </span>
+          </div>
+
           {/* Meta Mensal */}
           <KratosCard header={<SectionTitle icon={Target} title="Meta Mensal" />}>
             <div className="flex items-center gap-4">
               <ProgressRing value={metaPct} size={72} strokeWidth={5} color={accent} glow label={`${metaPct}%`} />
               <div>
                 <p className="text-lg font-bold" style={{ color: "var(--kratos-text-primary)", fontFamily: "var(--kratos-font-mono)" }}>
-                  {metaAtual != null && metaTotal != null
-                    ? <>R$ {metaAtual.toLocaleString("pt-BR")} <span className="text-xs" style={{ color: "var(--kratos-text-muted)" }}>/ R$ {metaTotal.toLocaleString("pt-BR")}</span></>
-                    : <span style={{ color: "var(--kratos-text-muted)" }}>—</span>
-                  }
+                  R$ {metaAtual.toLocaleString("pt-BR")}
+                  <span className="text-xs ml-1" style={{ color: "var(--kratos-text-muted)" }}>
+                    / R$ {metaTotal.toLocaleString("pt-BR")}
+                  </span>
                 </p>
                 <p className="text-[11px]" style={{ color: "var(--kratos-text-muted)" }}>
-                  Aguardando dados do CRM
+                  {metaPct}% da meta de Maio
                 </p>
               </div>
             </div>
