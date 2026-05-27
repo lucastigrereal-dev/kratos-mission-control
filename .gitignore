@@ -58,6 +58,14 @@ coverage/
 htmlcov/
 .planning/
 
+# Screenshots e outputs locais de teste/debug
+*.png
+!public/**/*.png
+!src/assets/**/*.png
+.e2e_output.*
+.wrangler-dry/
+UserslucasAppDataLocalTemp*
+
 # Playwright
 playwright-report/
 test-results/
