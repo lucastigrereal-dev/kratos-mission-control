@@ -12,4 +12,11 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  // Suppress vendor chunk size warning — 652kB raw / 202kB gzip is acceptable
+  // for React 19 + TanStack (Query, Router, Start) + Framer Motion + Radix UI
+  vite: {
+    build: {
+      chunkSizeWarningLimit: 700,
+    },
+  },
 });

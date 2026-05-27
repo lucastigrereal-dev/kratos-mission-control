@@ -1,0 +1,39 @@
+{
+  "name": "KRATOS Mission Control",
+  "short_name": "KRATOS",
+  "description": "Cockpit operacional local-first — foco, próxima ação, alertas e deadlines em uma só tela.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030B19",
+  "theme_color": "#0651B4",
+  "orientation": "landscape-primary",
+  "icons": [
+    {
+      "src": "/assets/images/world-map-mockup.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Agora",
+      "short_name": "Agora",
+      "description": "Foco do momento presente",
+      "url": "/agora"
+    },
+    {
+      "name": "OMNIS Lab",
+      "short_name": "OMNIS",
+      "description": "Status das missões do OMNIS",
+      "url": "/ilhas/omnis-lab"
+    },
+    {
+      "name": "Checkpoints",
+      "short_name": "Checkpoints",
+      "description": "Retomar de onde parou",
+      "url": "/checkpoints"
+    }
+  ],
+  "categories": ["productivity", "utilities"]
+}
