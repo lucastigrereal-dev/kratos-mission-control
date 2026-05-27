@@ -1,6 +1,8 @@
-import { Play, Pause, SkipBack, SkipForward, Bookmark, Shield, Music, Zap } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Play, Bookmark, Shield, Zap, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIslandDock } from "@/components/kratos/islands/shared/IslandDockContext";
+import { useMissionLens } from "@/hooks/useMissionLens";
 
 interface BottomDockV2Props {
   className?: string;
@@ -12,151 +14,66 @@ interface BottomDockV2Props {
   onSaveCheckpoint?: () => void;
 }
 
-function MusicPlayer() {
+/** Relógio ao vivo — útil para TDAH (ancora temporal sem abrir outra tela) */
+function LiveClock() {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const time = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  const dayLabel = now.toLocaleDateString("pt-BR", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+
   return (
-    <div className="flex items-center gap-3 min-w-0"
-    >
-      {/* Cover art */}
-      <div
-        className="shrink-0 rounded-lg"
-        style={{
-          width: 44,
-          height: 44,
-          background: "linear-gradient(135deg, #1e3a5f, #0f172a)",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <div className="flex h-full w-full items-center justify-center">
-          <Music className="h-5 w-5" style={{ color: "rgba(255,255,255,0.4)" }} />
-        </div>
+    <div className="flex items-center gap-2 shrink-0">
+      <Clock className="h-4 w-4 shrink-0" style={{ color: "var(--kratos-text-muted)" }} aria-hidden />
+      <div className="flex flex-col leading-none gap-0.5">
+        <span
+          className="text-[18px] font-bold kratos-mono leading-none"
+          style={{ color: "var(--kratos-text-primary)" }}
+          aria-label={`Hora atual: ${time}`}
+        >
+          {time}
+        </span>
+        <span
+          className="text-[9px] uppercase tracking-[0.1em]"
+          style={{ color: "var(--kratos-text-muted)" }}
+        >
+          {dayLabel}
+        </span>
       </div>
-
-      {/* Info + controls */}
-      <div className="flex flex-col gap-1 min-w-0"
-      >
-        <div className="flex items-center gap-2"
-        >
-          <span
-            className="text-[11px] font-semibold truncate"
-            style={{ color: "var(--kr-text-primary, #f0f0f2)" }}
-          >
-            Koopa Road
-          </span>
-          <span
-            className="text-[10px] truncate hidden sm:inline"
-            style={{ color: "var(--kr-text-muted, #4a4a5a)" }}
-          >
-            Tyler, The Creator
-          </span>
-        </div>
-
-        {/* Progress mini-bar */}
-        <div className="flex items-center gap-2"
-        >
-          <span
-            className="text-[9px] kratos-mono shrink-0"
-            style={{ color: "var(--kr-text-muted, #4a4a5a)" }}
-          >
-            1:17
-          </span>
-          <div
-            className="h-1 flex-1 rounded-full overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.08)", minWidth: 60 }}
-          >
-            <div
-              className="h-full rounded-full"
-              style={{
-                width: "35%",
-                background: "linear-gradient(90deg, var(--kr-ghost, #6366f1), var(--kr-gold, #FFD700))",
-              }}
-            />
-          </div>
-          <span
-            className="text-[9px] kratos-mono shrink-0"
-            style={{ color: "var(--kr-text-muted, #4a4a5a)" }}
-          >
-            3:22
-          </span>
-        </div>
-
-        {/* Controls */}
-        <div className="flex items-center gap-2"
-        >
-          <button
-            type="button"
-            className="rounded p-0.5 transition-colors hover:bg-white/10 kratos-focus-ring"
-            aria-label="Música anterior"
-          >
-            <SkipBack className="h-3 w-3" style={{ color: "var(--kr-text-secondary, #8a8a9a)" }} />
-          </button>
-          <button
-            type="button"
-            className="rounded p-0.5 transition-colors hover:bg-white/10 kratos-focus-ring"
-            aria-label="Play"
-          >
-            <Play className="h-3.5 w-3.5" style={{ color: "var(--kr-text-primary, #f0f0f2)" }} />
-          </button>
-          <button
-            type="button"
-            className="rounded p-0.5 transition-colors hover:bg-white/10 kratos-focus-ring"
-            aria-label="Próxima música"
-          >
-            <SkipForward className="h-3 w-3" style={{ color: "var(--kr-text-secondary, #8a8a9a)" }} />
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TeamAvatars() {
-  const members = ["L", "A", "C", "M"];
-  return (
-    <div className="flex items-center gap-1"
-    >
-      {members.map((initial, i) => (
-        <div
-          key={i}
-          className="flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-bold"
-          style={{
-            background: `hsl(${220 + i * 30}, 60%, 45%)`,
-            color: "var(--kratos-text-primary)",
-            border: "1px solid rgba(255,255,255,0.15)",
-            marginLeft: i > 0 ? -6 : 0,
-            zIndex: members.length - i,
-          }}
-        >
-          {initial}
-        </div>
-      ))}
-      <button
-        type="button"
-        className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold transition-colors hover:bg-white/10 kratos-focus-ring"
-        style={{
-          background: "rgba(255,255,255,0.06)",
-          color: "var(--kr-text-muted, #4a4a5a)",
-          border: "1px solid rgba(255,255,255,0.1)",
-          marginLeft: -6,
-          zIndex: 0,
-        }}
-        aria-label="Adicionar membro"
-      >
-        +
-      </button>
     </div>
   );
 }
 
 export function BottomDockV2({
   className,
-  currentMission,
+  currentMission: currentMissionProp,
   missionProgress,
-  focusOfDay,
-  nextAction,
+  focusOfDay: focusOfDayProp,
+  nextAction: nextActionProp,
   onContinue,
   onSaveCheckpoint,
 }: BottomDockV2Props) {
   const { data: islandData } = useIslandDock();
+
+  // Dados reais do /mission/lens — sobrescrevem props hardcoded do AppShell
+  const { lens } = useMissionLens();
+  const currentMission =
+    lens?.mission_lens?.current_mission ?? currentMissionProp ?? null;
+  const focusOfDay =
+    lens?.context?.project ??
+    lens?.context?.focus_state ??
+    focusOfDayProp ??
+    null;
+  const nextAction =
+    lens?.next_best_action?.action ?? nextActionProp ?? null;
 
   return (
     <footer
@@ -174,10 +91,9 @@ export function BottomDockV2({
       role="status"
       aria-label="Barra de status da missão"
     >
-      {/* Left: Music player */}
-      <div className="shrink-0"
-      >
-        <MusicPlayer />
+      {/* Left: Relógio ao vivo — âncora temporal TDAH */}
+      <div className="shrink-0">
+        <LiveClock />
       </div>
 
       {/* Divider */}
@@ -354,11 +270,8 @@ export function BottomDockV2({
         aria-hidden
       />
 
-      {/* Right: Actions + Team */}
-      <div className="flex items-center gap-3 shrink-0"
-      >
-        <TeamAvatars />
-
+      {/* Right: Actions */}
+      <div className="flex items-center gap-3 shrink-0">
         <button
           type="button"
           onClick={onSaveCheckpoint}

@@ -37,7 +37,8 @@ def collect():
                 1,
             ),
             "collector": "psutil",
+            "source_badge": "real",
         }
         return data, "real", "ok"
     except Exception as e:
-        return {"hostname": platform.node(), "error": str(e)}, "fallback", "error"
+        return {"hostname": platform.node(), "error": str(e), "source_badge": "error"}, "fallback", "error"

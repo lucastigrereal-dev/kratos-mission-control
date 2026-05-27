@@ -8,6 +8,10 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { Toaster } from "@/components/ui/sonner";
+import { installGlobalErrorHandlers } from "@/lib/analytics/errorHandler";
+import { trackRouteView } from "@/lib/analytics/kratosAnalytics";
 
 import appCss from "../styles.css?url";
 import { AppShell } from "@/components/kratos/shell/AppShell";
@@ -122,6 +126,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Cockpit operacional local-first — foco, próxima ação, alertas e deadlines em uma só tela.",
       },
       { name: "author", content: "KRATOS" },
+      // PWA / mobile web app
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "KRATOS" },
+      { name: "theme-color", content: "#030B19" },
       { property: "og:title", content: "KRATOS · Mission Control" },
       {
         property: "og:description",
@@ -131,6 +141,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
     ],
     links: [
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
@@ -169,6 +180,16 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isWorld = pathname === "/";
 
+  // W8-B2: Install global error handler once on mount
+  useEffect(() => {
+    installGlobalErrorHandlers();
+  }, []);
+
+  // W8-B3: Track route views on pathname change
+  useEffect(() => {
+    trackRouteView(pathname);
+  }, [pathname]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ReducedMotionProvider>
@@ -182,6 +203,13 @@ function RootComponent() {
           )}
         </IslandDockProvider>
       </ReducedMotionProvider>
+      {/* Toast system — posicionado no bottom-right (TDAH-first: nunca no centro) */}
+      <Toaster
+        position="bottom-right"
+        richColors
+        closeButton
+        toastOptions={{ duration: 6000 }}
+      />
     </QueryClientProvider>
   );
 }

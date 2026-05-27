@@ -1,9 +1,13 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { SidebarV2 } from "./SidebarV2";
 import { TopBarV2 } from "./TopBarV2";
-import { RightRailV2 } from "./RightRailV2";
+import { AuroraDrawer } from "./AuroraDrawer";
+import { AuroraOrb } from "./AuroraOrb";
 import { BottomDockV2 } from "./BottomDockV2";
+import { OfflineBanner } from "./OfflineBanner";
+import { PWAInstallPrompt } from "./PWAInstallPrompt";
 import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
+import { useSSEToasts } from "@/hooks/useSSEToasts";
 
 const SIDEBAR_KEY = "kratos.sidebar.collapsed";
 const AURORA_KEY = "kratos.aurora.open";
@@ -13,6 +17,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [auroraOpen, setAuroraOpen] = useState(false);
 
   useGlobalShortcuts();
+  useSSEToasts(); // dispara toasts para guardrails e eventos críticos do OMNIS
 
   useEffect(() => {
     try {
@@ -87,7 +92,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         leftOffset={sidebarWidth}
       />
 
-      <RightRailV2 topOffset={90} />
+      <AuroraDrawer
+        open={auroraOpen}
+        onClose={() => setAuroraOpen(false)}
+        topOffset={90}
+      />
+
+      <AuroraOrb open={auroraOpen} onClick={toggleAurora} />
 
       <main
         id="kratos-main-content"
@@ -95,7 +106,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         style={{
           top: 90,
           left: sidebarWidth,
-          right: 300,
+          right: 0,
           bottom: 72,
           padding: "24px 32px",
           background: "var(--kr-ocean-deep, #051024)",
@@ -112,6 +123,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         onContinue={() => {}}
         onSaveCheckpoint={() => {}}
       />
+
+      {/* W6-B2a: Offline indicator — slim bar above main content */}
+      <OfflineBanner />
+
+      {/* W6-B2b: PWA install chip — bottom-left, after 3 visits */}
+      <PWAInstallPrompt />
     </div>
   );
 }

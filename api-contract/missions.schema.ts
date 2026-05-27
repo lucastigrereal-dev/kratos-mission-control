@@ -1,0 +1,57 @@
+import { z } from "zod";
+
+export const MissionSummarySchema = z.object({
+  mission_id: z.string(),
+  title: z.string(),
+  sector: z.string(),
+  status: z.enum(["draft", "running", "paused", "completed", "failed", "cancelled"]),
+  current_step: z.string().nullable().optional(),
+  retry_count: z.number().int().min(0).default(0),
+  max_retries: z.number().int().min(1).default(3),
+  last_retry_node: z.string().nullable().optional(),
+  checkpoint_id: z.string().nullable().optional(),
+  checkpoint_label: z.string().nullable().optional(),
+  checkpoint_at: z.string().nullable().optional(),
+  checkpoint_completed_steps: z.array(z.string()).default([]),
+  checkpoint_pause_reason: z.string().nullable().optional(),
+  cumulative_cost_usd: z.number().min(0).default(0),
+  last_event_type: z.string().nullable().optional(),
+  last_event_label: z.string().optional(),
+  last_event_at: z.string().nullable().optional(),
+  error_count: z.number().int().min(0).default(0),
+  last_error: z.string().nullable().optional(),
+  event_count: z.number().int().min(0).default(0),
+  // W7 — guardrail state
+  budget_exceeded: z.boolean().default(false),
+  approval_pending: z.boolean().default(false),
+  approval_reason: z.string().nullable().optional(),
+});
+
+export const MissionsEnvelopeSchema = z.object({
+  data: z.array(MissionSummarySchema),
+  total: z.number().int().min(0),
+  source: z.enum(["live", "empty"]),
+  missions_dir: z.string().optional(),
+});
+
+export type MissionSummary = z.infer<typeof MissionSummarySchema>;
+export type MissionsEnvelope = z.infer<typeof MissionsEnvelopeSchema>;
+
+// ── W7 Read-Only: Event log ─────────────────────────────────────────────────
+
+export const MissionEventSchema = z.object({
+  sequence: z.number().int().min(0).optional(),
+  event_type: z.string(),
+  timestamp: z.string().optional(),
+  cumulative_cost_usd: z.number().min(0).optional(),
+  payload: z.record(z.unknown()).optional(),
+});
+
+export const MissionEventLogSchema = z.object({
+  mission_id: z.string(),
+  total: z.number().int().min(0),
+  data: z.array(MissionEventSchema),
+});
+
+export type MissionEvent = z.infer<typeof MissionEventSchema>;
+export type MissionEventLog = z.infer<typeof MissionEventLogSchema>;

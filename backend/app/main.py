@@ -46,7 +46,22 @@ from app.routes.execution import router as execution_router
 from app.routes.tabs import router as tabs_router
 from app.routes.approvals import router as approvals_router
 from app.routes.continuity import router as continuity_router
+from app.routes.akasha import router as akasha_router
+from app.routes.qdrant import router as qdrant_router
+from app.routes.events import router as events_router
 from app.routes.operational_truth import router as operational_truth_router
+from app.routes.cost import router as cost_router
+from app.routes.crm import router as crm_router
+from app.routes.mission_control import router as mission_control_router
+from app.routes.runtime_bridge import router as runtime_bridge_router
+from app.routes.observability import router as observability_router
+from app.routes.replay import router as replay_router
+from app.routes.aurora import router as aurora_router
+from app.routes.agencia import router as agencia_router
+from app.routes.omnis_health import router as omnis_health_router
+from app.routes.omnis_runs import router as omnis_runs_router
+from app.routes.content_drafts import router as content_drafts_router
+from app.routes.missions import router as missions_router
 
 app.include_router(health_router)
 app.include_router(tasks_router)
@@ -77,7 +92,22 @@ app.include_router(execution_router)
 app.include_router(tabs_router)
 app.include_router(approvals_router)
 app.include_router(continuity_router)
+app.include_router(akasha_router)
+app.include_router(qdrant_router)
+app.include_router(events_router)
 app.include_router(operational_truth_router)
+app.include_router(cost_router)
+app.include_router(crm_router)
+app.include_router(mission_control_router)
+app.include_router(runtime_bridge_router)
+app.include_router(observability_router)
+app.include_router(aurora_router)
+app.include_router(agencia_router)
+app.include_router(omnis_health_router)
+app.include_router(omnis_runs_router)
+app.include_router(content_drafts_router)
+app.include_router(missions_router)
+app.include_router(replay_router)
 
 
 @app.get("/")
@@ -117,5 +147,9 @@ def root():
             "/live/stream", "/live/snapshot",
             "/mission/current", "/mission/lens",
             "/mentor/mission-brief",
+            "/akasha/status",
+            "/qdrant/status",
+            "/cost/status",
+            "/crm/status",
         ],
     }

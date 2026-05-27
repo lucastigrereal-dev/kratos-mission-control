@@ -1,0 +1,17 @@
+flowchart TB
+  Lucas["Lucas\nfinal decision"] --> KRATOS["KRATOS\nobserves"]
+  KRATOS --> Aurora["Aurora\ninterprets"]
+  KRATOS --> Omnis["OMNIS/HOMINIS\nacts"]
+  KRATOS --> Akasha["Akasha\nremembers"]
+  Codex["Codex/Claude\nbuilds"] --> KRATOS
+  Agents[".claude agents"] --> Codex
+  Skills[".claude skills"] --> Codex
+  Governance["Governance constitution\nboundary map\nprotected paths"] --> Agents
+  Governance --> Skills
+  Governance --> Codex
+
+  KRATOS -.read only.-> Omnis
+  KRATOS -.status only.-> Akasha
+  Omnis -.must not be commanded by KRATOS.-> KRATOS
+  Akasha -.runtime should not be written by KRATOS.-> KRATOS
+

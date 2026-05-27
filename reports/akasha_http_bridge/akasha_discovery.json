@@ -1,0 +1,66 @@
+{
+  "_meta": {
+    "project": "KRATOS Mission Control",
+    "date": "2026-05-21",
+    "phase": "ABA23 — Akasha HTTP Bridge"
+  },
+  "akasha": {
+    "location": "/c/Users/lucas/akasha",
+    "type": "CLI-based RAG system",
+    "has_http_api": false,
+    "database": {
+      "type": "PostgreSQL 16 + pgvector",
+      "port": 5432,
+      "container": "akasha-postgres"
+    },
+    "search": {
+      "bm25": true,
+      "vector": true,
+      "hybrid": true,
+      "rrf_fusion": true
+    },
+    "rag": {
+      "pipeline": true,
+      "ollama_integration": true,
+      "context_window": true,
+      "citation_format": true
+    },
+    "embeddings": {
+      "engine": "sentence-transformers",
+      "model": "nomic-embed-text (768d)"
+    },
+    "modules": {
+      "cli": "CONFIRMED",
+      "config": "CONFIRMED",
+      "database": "CONFIRMED",
+      "models": "CONFIRMED",
+      "embeddings": "CONFIRMED",
+      "ingestion": "CONFIRMED",
+      "processing": "CONFIRMED",
+      "search_bm25": "CONFIRMED",
+      "search_vector": "CONFIRMED",
+      "search_hybrid": "CONFIRMED",
+      "rag_context": "CONFIRMED",
+      "rag_llm": "CONFIRMED",
+      "rag_pipeline": "CONFIRMED",
+      "watcher": "CONFIRMED"
+    }
+  },
+  "kratos_integration": {
+    "existing_endpoints": [
+      {"path": "/akasha/status", "method": "GET", "status": "CONFIRMED"}
+    ],
+    "collector": {
+      "type": "Docker + TCP health check",
+      "file": "backend/app/collectors/akasha_collector.py",
+      "status": "CONFIRMED"
+    },
+    "gaps": [
+      "No search endpoint in KRATOS",
+      "No context retrieval endpoint",
+      "No source listing",
+      "No privacy boundaries defined",
+      "No governance integration"
+    ]
+  }
+}

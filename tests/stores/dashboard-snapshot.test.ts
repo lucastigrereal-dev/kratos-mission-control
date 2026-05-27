@@ -149,7 +149,7 @@ describe("Dashboard Snapshot Sources", () => {
 
   describe("Dashboard Snapshot Data contract", () => {
     it("assembles valid DashboardSnapshotData from backend sources", async () => {
-      const svc = getServicesHealthSummary();
+      const svc = await getServicesHealthSummary();
       const ctx = getContextLatest();
       const repoDigests = (await Promise.all(listTrackedRepos().map(async (r) => {
         const gh = await getRepoStatus("lucastigrereal-dev", r);

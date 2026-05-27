@@ -40,17 +40,20 @@ const ISLAND_TITLES: Record<string, { title: string; subtitle: string }> = {
   tesouro: { title: "TESOURO / FINANÇAS", subtitle: "Finanças Pessoais e Investimentos" },
 };
 
+// Dock defaults — screens with real data sources override these via useIslandDock().setData().
+// Islands without a real data source use value: undefined + progress: 0 (honest empty).
+// Financial values are NEVER hardcoded here (arena, tesouro).
 const ISLAND_DOCK_DATA: Record<string, IslandDockData> = {
-  omnis: { islandId: "omnis", label: "Agents Ativos", value: "3 crews rodando", progress: 72, progressColor: "var(--kr-island-omnis)", quickActions: [{ label: "Run Crew" }, { label: "Stop All" }] },
-  agencia: { islandId: "agencia", label: "Alcance Hoje", value: "128K (+12%)", progress: 84, progressColor: "var(--kr-island-agencia)", quickActions: [{ label: "Criar Conteúdo" }, { label: "Agendar" }] },
-  akasha: { islandId: "akasha", label: "Vault Integrity", value: "100% seguro", progress: 100, progressColor: "var(--kr-island-akasha)", quickActions: [{ label: "Buscar" }, { label: "Sync" }] },
-  nimbus: { islandId: "nimbus", label: "Próxima Viagem", value: "Japão — 15 dias", progress: 45, progressColor: "var(--kr-island-nimbus)", quickActions: [{ label: "+ Destino" }, { label: "Checklist" }] },
-  arena: { islandId: "arena", label: "Pipeline", value: "R$ 52.5K em negociação", progress: 68, progressColor: "var(--kr-island-arena)", quickActions: [{ label: "Novo Lead" }, { label: "Follow-up" }] },
-  vila: { islandId: "vila", label: "Próximo Evento", value: "Apresentação escola — 20/05", progress: 60, progressColor: "var(--kr-island-vila)", quickActions: [{ label: "Nova Tarefa" }, { label: "Evento" }] },
-  forja: { islandId: "forja", label: "Streak", value: "47 dias seguidos", progress: 78, progressColor: "var(--kr-island-forja)", quickActions: [{ label: "Registrar Treino" }, { label: "+ Água" }] },
-  observatorio: { islandId: "observatorio", label: "Ideias na Fila", value: "3 projetos futuros", progress: 30, progressColor: "var(--kr-island-observatorio)", quickActions: [{ label: "Nova Ideia" }, { label: "Mural" }] },
-  filosofia: { islandId: "filosofia", label: "Leitura Atual", value: "Naval Ravikant — 64%", progress: 64, progressColor: "var(--kr-island-filosofia)", quickActions: [{ label: "Novo Insight" }, { label: "Meta" }] },
-  tesouro: { islandId: "tesouro", label: "Patrimônio", value: "R$ 60.000 (+12.4%)", progress: 55, progressColor: "var(--kr-island-tesouro)", quickActions: [{ label: "Registrar" }, { label: "Meta" }] },
+  omnis: { islandId: "omnis", label: "Agents Ativos", progressColor: "var(--kr-island-omnis)", quickActions: [{ label: "Run Crew" }, { label: "Stop All" }] },
+  agencia: { islandId: "agencia", label: "Alcance", progressColor: "var(--kr-island-agencia)", quickActions: [{ label: "Criar Conteúdo" }, { label: "Agendar" }] },
+  akasha: { islandId: "akasha", label: "Vault", progressColor: "var(--kr-island-akasha)", quickActions: [{ label: "Buscar" }, { label: "Sync" }] },
+  nimbus: { islandId: "nimbus", label: "Viagens", progressColor: "var(--kr-island-nimbus)", quickActions: [{ label: "+ Destino" }, { label: "Checklist" }] },
+  arena: { islandId: "arena", label: "Pipeline", progressColor: "var(--kr-island-arena)", quickActions: [{ label: "Novo Lead" }, { label: "Follow-up" }] },
+  vila: { islandId: "vila", label: "Rotina", progressColor: "var(--kr-island-vila)", quickActions: [{ label: "Nova Tarefa" }, { label: "Evento" }] },
+  forja: { islandId: "forja", label: "Treino", progressColor: "var(--kr-island-forja)", quickActions: [{ label: "Registrar Treino" }, { label: "+ Água" }] },
+  observatorio: { islandId: "observatorio", label: "Projetos", progressColor: "var(--kr-island-observatorio)", quickActions: [{ label: "Ver Todos" }] },
+  filosofia: { islandId: "filosofia", label: "Leitura", progressColor: "var(--kr-island-filosofia)", quickActions: [{ label: "Novo Insight" }, { label: "Meta" }] },
+  tesouro: { islandId: "tesouro", label: "Finanças", progressColor: "var(--kr-island-tesouro)", quickActions: [{ label: "Registrar" }, { label: "Meta" }] },
 };
 
 const ISLAND_SCREENS: Record<string, React.LazyExoticComponent<() => JSX.Element>> = {

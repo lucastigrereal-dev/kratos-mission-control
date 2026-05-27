@@ -114,6 +114,7 @@ function SidebarItemV2({
   return (
     <Link
       to={item.to}
+      preload="intent"
       className={`group relative flex items-center gap-3 rounded-lg px-2.5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] transition-all duration-150 kratos-focus-ring ${
         active ? "bg-white/[0.06]" : "hover:bg-white/[0.04]"
       }`}

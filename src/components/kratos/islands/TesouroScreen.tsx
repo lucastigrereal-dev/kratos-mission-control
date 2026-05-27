@@ -27,18 +27,12 @@ interface Investimento {
   positivo: boolean;
 }
 
-const investimentos: Investimento[] = [
-  { categoria: "Reserva Emergência", valor: "R$ 24.000", pct: 40, retorno: "+11.2%", positivo: true },
-  { categoria: "Ações BR", valor: "R$ 15.600", pct: 26, retorno: "+8.7%", positivo: true },
-  { categoria: "Fundos Imobiliários", valor: "R$ 10.200", pct: 17, retorno: "+6.4%", positivo: true },
-  { categoria: "Cripto", valor: "R$ 9.000", pct: 15, retorno: "+14.3%", positivo: true },
-  { categoria: "Cash Livre", valor: "R$ 1.200", pct: 2, retorno: "+0%", positivo: true },
-];
+const investimentos: Investimento[] = [];
 
-const patrimonio = {
-  total: "R$ 60.000",
-  variacao: "+12.4%",
-  mes: "+R$ 2.400",
+const patrimonio: { total: string | undefined; variacao: string | undefined; mes: string | undefined } = {
+  total: undefined,
+  variacao: undefined,
+  mes: undefined,
 };
 
 interface MetaFinanceira {
@@ -48,18 +42,26 @@ interface MetaFinanceira {
   cor: string;
 }
 
-const metas: MetaFinanceira[] = [
-  { label: "Reserva 6 meses", atual: 24000, meta: 36000, cor: "var(--kr-success)" },
-  { label: "Viagem Internacional", atual: 4200, meta: 15000, cor: "var(--kr-sky)" },
-  { label: "Apartamento (entrada)", atual: 18500, meta: 80000, cor: accent },
-];
+const metas: MetaFinanceira[] = [];
 
-const orcamento = {
-  ganho: 12500,
-  gasto: 9800,
-  economia: 2700,
-  pctEconomia: 21.6,
+const orcamento: {
+  ganho: number | undefined;
+  gasto: number | undefined;
+  economia: number | undefined;
+  pctEconomia: number | undefined;
+} = {
+  ganho: undefined,
+  gasto: undefined,
+  economia: undefined,
+  pctEconomia: undefined,
 };
+
+// Sem dado real = sem número inventado. Auto-detecta estado vazio.
+const hasData =
+  patrimonio.total != null ||
+  metas.length > 0 ||
+  investimentos.length > 0 ||
+  orcamento.ganho != null;
 
 interface TesouroScreenProps {
   isLoading?: boolean;
@@ -82,10 +84,10 @@ export function TesouroScreen({
           description={error}
           variant="external_unavailable"
         />
-      ) : isEmpty ? (
+      ) : isEmpty || !hasData ? (
         <EmptyState
-          title="Nada por aqui"
-          description="Nenhum dado disponível neste momento."
+          title="Tesouro sem dados"
+          description="Nenhum dado financeiro disponível. Conecte a fonte de dados para ver patrimônio, orçamento e metas."
         />
       ) : (
         <div className="space-y-5">
@@ -127,7 +129,7 @@ export function TesouroScreen({
                 <div className="flex justify-between text-[11px] mb-1">
                   <span style={{ color: "var(--kratos-text-secondary)" }}>Ganho</span>
                   <span style={{ color: "var(--kratos-text-primary)", fontFamily: "var(--kratos-font-mono)" }}>
-                    R$ {orcamento.ganho.toLocaleString("pt-BR")}
+                    {orcamento.ganho != null ? `R$ ${orcamento.ganho.toLocaleString("pt-BR")}` : "—"}
                   </span>
                 </div>
                 <div className="h-2 rounded-full" style={{ background: "var(--kratos-surface-4)" }}>
@@ -138,13 +140,13 @@ export function TesouroScreen({
                 <div className="flex justify-between text-[11px] mb-1">
                   <span style={{ color: "var(--kratos-text-secondary)" }}>Gasto</span>
                   <span style={{ color: "var(--kratos-text-primary)", fontFamily: "var(--kratos-font-mono)" }}>
-                    R$ {orcamento.gasto.toLocaleString("pt-BR")}
+                    {orcamento.gasto != null ? `R$ ${orcamento.gasto.toLocaleString("pt-BR")}` : "—"}
                   </span>
                 </div>
                 <div className="h-2 rounded-full" style={{ background: "var(--kratos-surface-4)" }}>
                   <div
                     className="h-full rounded-full"
-                    style={{ width: `${(orcamento.gasto / orcamento.ganho) * 100}%`, backgroundColor: "var(--kr-danger)" }}
+                    style={{ width: orcamento.gasto != null && orcamento.ganho != null ? `${(orcamento.gasto / orcamento.ganho) * 100}%` : "0%", backgroundColor: "var(--kr-danger)" }}
                   />
                 </div>
               </div>
@@ -153,7 +155,9 @@ export function TesouroScreen({
                 <span className="text-[11px]" style={{ color: "var(--kratos-text-secondary)" }}>
                   Economia:{" "}
                   <span style={{ color: accent, fontFamily: "var(--kratos-font-mono)" }}>
-                    R$ {orcamento.economia.toLocaleString("pt-BR")} ({orcamento.pctEconomia}%)
+                    {orcamento.economia != null && orcamento.pctEconomia != null
+                      ? `R$ ${orcamento.economia.toLocaleString("pt-BR")} (${orcamento.pctEconomia}%)`
+                      : "—"}
                   </span>
                 </span>
               </div>

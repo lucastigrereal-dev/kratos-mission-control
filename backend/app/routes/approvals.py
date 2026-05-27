@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 from app.services import approval_service
+from app.schemas.approval_schemas import ApprovalItemResponse, ApprovalCreateResponse, ApprovalListResponse
 
 router = APIRouter(prefix="/approvals", tags=["approvals"])
 
@@ -19,13 +20,13 @@ class UpdateApprovalBody(BaseModel):
     status: str
 
 
-@router.get("/")
+@router.get("/", response_model=ApprovalListResponse)
 def list_approvals(status: Optional[str] = Query(None)):
     items = approval_service.list_approvals(status)
     return {"source": "real", "data": items, "meta": {"count": len(items)}}
 
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=201, response_model=ApprovalCreateResponse)
 def create_approval(body: CreateApprovalBody):
     item = approval_service.create_approval(
         title=body.title,

@@ -13,14 +13,14 @@ const HealthCheckSchema = z.object({
 });
 
 describe("Worker Health Hook Contract", () => {
-  it("derives ok status when all services healthy", () => {
-    const svc = getServicesHealthSummary();
+  it("derives ok status when all services healthy", async () => {
+    const svc = await getServicesHealthSummary();
     const status = svc.offline > 0 ? "error" : svc.degraded > 0 ? "degraded" : "ok";
     expect(["ok", "degraded", "error"]).toContain(status);
   });
 
-  it("worker health payload passes schema", () => {
-    const svc = getServicesHealthSummary();
+  it("worker health payload passes schema", async () => {
+    const svc = await getServicesHealthSummary();
     const payload = {
       status: svc.offline > 0 ? "error" : svc.degraded > 0 ? "degraded" : "ok",
       service: "kratos-mission-control",
@@ -31,8 +31,8 @@ describe("Worker Health Hook Contract", () => {
     expect(HealthCheckSchema.safeParse(payload).success).toBe(true);
   });
 
-  it("service name is kratos-mission-control", () => {
-    const svc = getServicesHealthSummary();
+  it("service name is kratos-mission-control", async () => {
+    const svc = await getServicesHealthSummary();
     const name = "kratos-mission-control";
     expect(name).toBe("kratos-mission-control");
     expect(svc.total).toBeGreaterThan(0);
@@ -43,8 +43,8 @@ describe("Worker Health Hook Contract", () => {
     expect(version).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
-  it("checks.services.total equals sum", () => {
-    const svc = getServicesHealthSummary();
+  it("checks.services.total equals sum", async () => {
+    const svc = await getServicesHealthSummary();
     expect(svc.total).toBe(svc.live + svc.degraded + svc.offline + svc.unknown);
   });
 });

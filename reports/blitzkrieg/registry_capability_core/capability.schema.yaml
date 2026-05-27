@@ -1,0 +1,282 @@
+# CAPABILITY SCHEMA v0.1.0
+# OMNISVERSO Capability Registry — canonical schema for all capability nodes.
+# Every field marked with evidence label where applicable.
+
+$schema: "https://omnisverso.local/schemas/capability.schema.yaml"
+$version: "0.1.0"
+$evidence: CONFIRMED
+
+# --- Field Definitions ---
+
+id:
+  type: string
+  required: true
+  format: "{domain}.{component}.{name}"
+  description: "Unique capability identifier in dot-notation."
+  example: "kratos.live.stream"
+  evidence: CONFIRMED
+
+name:
+  type: string
+  required: true
+  max_length: 120
+  description: "Human-readable short name."
+  example: "Live Stream SSE"
+  evidence: CONFIRMED
+
+domain:
+  type: enum
+  required: true
+  values:
+    - kratos
+    - akasha
+    - omnis
+    - gringotts
+    - mission_control
+    - publisher_os
+    - cross_cutting
+    - external
+  description: "System domain this capability belongs to."
+  evidence: CONFIRMED
+
+type:
+  type: enum
+  required: true
+  values:
+    - route
+    - hook
+    - agent
+    - skill
+    - collector
+    - service
+    - script
+    - external
+    - workflow
+    - adapter
+    - repo_lego
+    - schema
+    - dashboard
+    - command
+    - event
+    - memory_source
+    - governor
+    - prompt_pack
+  description: "Kind of capability."
+  evidence: CONFIRMED
+
+layer:
+  type: enum
+  required: true
+  values:
+    - interface
+    - transport
+    - application
+    - domain
+    - infrastructure
+    - memory
+    - orchestration
+    - governance
+    - observability
+    - automation
+    - content
+    - external
+  description: "Architectural layer."
+  evidence: CONFIRMED
+
+status:
+  type: enum
+  required: true
+  values:
+    - planned
+    - candidate
+    - active
+    - degraded
+    - deprecated
+    - archived
+    - banned
+  description: "Lifecycle status. See CAPABILITY_LIFECYCLE_POLICY.md."
+  evidence: CONFIRMED
+
+version:
+  type: semver
+  required: true
+  default: "0.1.0"
+  description: "Semantic version of this capability record."
+
+description:
+  type: string
+  required: true
+  max_length: 500
+  description: "What this capability does — one to three sentences."
+
+depends_on:
+  type: list[string]
+  required: false
+  default: []
+  description: "Capability IDs this one REQUIRES to function."
+  example: ["kratos.live.cache"]
+
+exposes:
+  type: object
+  required: true
+  properties:
+    routes:
+      type: list[string]
+      default: []
+      description: "HTTP routes exposed."
+    events:
+      type: list[string]
+      default: []
+      description: "Events emitted."
+    commands:
+      type: list[string]
+      default: []
+      description: "CLI/slash commands exposed."
+    artifacts:
+      type: list[string]
+      default: []
+      description: "Files, schemas, or assets produced."
+
+contract:
+  type: object
+  required: true
+  properties:
+    input:
+      type: string|null
+      description: "Schema reference for input validation."
+    output:
+      type: string|null
+      description: "Schema reference for output type."
+    side_effects:
+      type: list[string]
+      default: []
+      description: "Side effects this capability produces."
+      example: ["read_runtime_state", "write_cache"]
+    sync_mode:
+      type: enum
+      values: [sync, async, stream, batch]
+      description: "Execution mode."
+
+evidence:
+  type: object
+  required: true
+  properties:
+    level:
+      type: enum
+      required: true
+      values: [CONFIRMED, HYPOTHESIS, DOC_ONLY, UNKNOWN]
+      description: "Evidence confidence level."
+    files:
+      type: list[string]
+      default: []
+      description: "Source files confirming existence."
+    tests:
+      type: list[string]
+      default: []
+      description: "Test files."
+    health_endpoint:
+      type: string|null
+      description: "Health check URL."
+    reports:
+      type: list[string]
+      default: []
+      description: "Audit/report files confirming this capability."
+
+risk:
+  type: object
+  required: true
+  properties:
+    level:
+      type: enum
+      required: true
+      values: [low, medium, high, critical]
+      description: "Risk classification."
+    reasons:
+      type: list[string]
+      default: []
+      description: "Why this risk level."
+    requires_human_slot:
+      type: boolean
+      default: false
+      description: "Must a human approve every execution?"
+
+governance:
+  type: object
+  required: true
+  properties:
+    owner:
+      type: string
+      required: true
+      description: "Domain that owns this capability."
+    allowed_tools:
+      type: list[string]
+      default: []
+      description: "Tools this capability is authorized to use."
+    forbidden_tools:
+      type: list[string]
+      default: []
+      description: "Tools explicitly forbidden."
+      example: ["secrets", "production_write"]
+    approval_required_for:
+      type: list[string]
+      default: []
+      description: "Actions requiring explicit human approval."
+      example: ["production_deploy", "external_api_call"]
+
+lifecycle:
+  type: object
+  required: true
+  properties:
+    created_at:
+      type: datetime|null
+      description: "ISO 8601 creation timestamp."
+    updated_at:
+      type: datetime|null
+      description: "ISO 8601 last update timestamp."
+    approved_by:
+      type: string|null
+      description: "Who approved this capability (human or system)."
+    replaces:
+      type: string|null
+      description: "Capability ID this replaces."
+    replaced_by:
+      type: string|null
+      description: "Capability ID that replaces this."
+    deprecation_reason:
+      type: string|null
+      description: "Why this was deprecated."
+
+quality:
+  type: object
+  required: true
+  properties:
+    tests:
+      type: list[string]
+      default: []
+      description: "Test file paths."
+    health_checks:
+      type: list[string]
+      default: []
+      description: "Health check endpoints or commands."
+    verification_command:
+      type: string|null
+      description: "Single command to verify this capability works."
+
+fingerprint:
+  type: object
+  required: true
+  description: "Structural keys used for duplicate detection."
+  properties:
+    structural_keys:
+      type: list[string]
+      required: true
+      description: "Fields used to compute structural similarity."
+      default:
+        - "domain"
+        - "type"
+        - "layer"
+        - "contract.output"
+        - "exposes.routes"
+        - "exposes.events"
+        - "exposes.commands"
+        - "depends_on"

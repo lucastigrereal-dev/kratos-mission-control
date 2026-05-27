@@ -1,66 +1,12 @@
+import { Plane } from "lucide-react";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
-import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
-import { LoadingState } from "@/components/kratos/base/LoadingState";
-import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
-import { cn } from "@/lib/utils";
-import {
-  MapPin,
-  Compass,
-  CheckCircle2,
-  Circle,
-  Sparkles,
-  Calendar,
-} from "lucide-react";
-
-// ── Mock Data ──────────────────────────────────────────────────────────────
-
-const travels = [
-  {
-    destination: "Japão — Kyoto & Tokyo",
-    dates: "15-30 Out 2026",
-    days: 15,
-    thumbnail: "JP",
-    color: "var(--kr-danger)",
-  },
-  {
-    destination: "Patagônia Argentina",
-    dates: "5-12 Dez 2026",
-    days: 8,
-    thumbnail: "PA",
-    color: "var(--kr-sky)",
-  },
-  {
-    destination: "Nordeste Raiz — Rota das Emoções",
-    dates: "Jan 2027",
-    days: 12,
-    thumbnail: "NE",
-    color: "var(--kr-warning)",
-  },
-];
-
-const adventures = [
-  { name: "Curso de Fotografia Avançada", progress: 75 },
-  { name: "Leitura: Meditações — Marco Aurélio", progress: 60 },
-  { name: "Prática de Japonês Básico", progress: 25 },
-];
-
-const wishlist = [
-  { text: "Aurora Boreal na Noruega", done: false },
-  { text: "Mergulho em Fernando de Noronha", done: true },
-  { text: "Trilha Inca até Machu Picchu", done: false },
-  { text: "Safári no Quênia", done: false },
-  { text: "Transiberiana Moscou-Vladivostok", done: false },
-];
-
-// ── Sub-components ─────────────────────────────────────────────────────────
 
 function DreamPortal() {
   return (
     <div className="flex flex-col items-center mb-6">
       <div className="relative flex items-center justify-center h-[180px] w-[180px]">
-        {/* Outer glow */}
         <div
           className="absolute inset-0 rounded-full kratos-pulse"
           style={{
@@ -69,8 +15,6 @@ function DreamPortal() {
           }}
           aria-hidden
         />
-
-        {/* Portal rings */}
         <div
           className="relative z-10 flex h-48 w-48 items-center justify-center rounded-full"
           style={{
@@ -79,7 +23,6 @@ function DreamPortal() {
             boxShadow: "0 0 60px color-mix(in oklab, var(--kr-island-nimbus, #0EA5E9) 15%, transparent)",
           }}
         >
-          {/* SVG concentric rings */}
           {[0, 20, 40].map((offset, i) => (
             <svg
               key={i}
@@ -110,8 +53,6 @@ function DreamPortal() {
               </defs>
             </svg>
           ))}
-
-          {/* Pulsating center */}
           <div
             className="z-20 h-14 w-14 rounded-full"
             style={{
@@ -127,269 +68,20 @@ function DreamPortal() {
   );
 }
 
-function WoodenSign() {
-  return (
-    <div
-      className="inline-block px-6 py-2 rounded-md mx-auto mb-4"
-      style={{
-        background: "linear-gradient(135deg, var(--kr-earth-dark, #78350F), var(--kr-earth, #92400E))",
-        border: "2px solid var(--kr-earth-dark, #451A03)",
-        boxShadow: "0 4px 12px color-mix(in oklab, black 50%, transparent), inset 0 1px 0 color-mix(in oklab, white 8%, transparent)",
-      }}
-    >
-      <span
-        className="text-[14px] font-bold uppercase tracking-[0.15em]"
-        style={{ color: "var(--kr-accent-gold-pale)" }}
-      >
-        ESCOLHA SEU DESTINO
-      </span>
-    </div>
-  );
-}
-
-function TravelCards() {
-  return (
-    <div className="space-y-3">
-      {travels.map((t) => (
-        <div
-          key={t.destination}
-          className="flex items-center gap-3 rounded-xl p-3 transition-all kratos-card-hover"
-          style={{
-            background: "var(--kratos-surface-2)",
-            borderLeft: `3px solid ${t.color}`,
-          }}
-        >
-          {/* Thumbnail */}
-          <div
-            className="h-12 w-12 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: `color-mix(in srgb, ${t.color} 12%, transparent)` }}
-          >
-            <span
-              className="text-[11px] font-bold kratos-mono"
-              style={{ color: t.color }}
-            >
-              {t.thumbnail}
-            </span>
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-medium truncate" style={{ color: "var(--kratos-text-primary)" }}>
-              {t.destination}
-            </p>
-            <p className="text-[11px] kratos-mono" style={{ color: "var(--kratos-text-muted)" }}>
-              <Calendar className="h-3 w-3 inline mr-1" aria-hidden />
-              {t.dates}
-            </p>
-          </div>
-
-          {/* Day count badge */}
-          <span
-            className="kratos-chip flex-shrink-0"
-            style={{ color: "var(--kr-accent-blue-light)" }}
-          >
-            {t.days} dias
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function AdventureTracker() {
-  return (
-    <GlassPanel padding="md">
-      <h3
-        className="kratos-eyebrow mb-3"
-        style={{ color: "var(--kratos-text-secondary)" }}
-      >
-        Aventuras em Progresso
-      </h3>
-      <div className="space-y-3">
-        {adventures.map((a) => (
-          <div key={a.name} className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 min-w-0">
-                <Compass className="h-4 w-4 flex-shrink-0" style={{ color: "var(--kr-accent-blue-light)" }} aria-hidden />
-                <span className="text-[13px] truncate" style={{ color: "var(--kratos-text-primary)" }}>
-                  {a.name}
-                </span>
-              </div>
-              <span className="kratos-mono text-[11px] flex-shrink-0 ml-2" style={{ color: "var(--kratos-text-muted)" }}>
-                {a.progress}%
-              </span>
-            </div>
-            <div className="h-1.5 rounded-full overflow-hidden ml-6" style={{ background: "var(--kratos-surface-4)" }}>
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{
-                  width: `${a.progress}%`,
-                  background:
-                    a.progress >= 70
-                      ? "linear-gradient(90deg, var(--kr-island-nimbus), var(--kr-accent-cyan-bright, #22D3EE))"
-                      : a.progress >= 30
-                        ? "var(--kr-island-nimbus)"
-                        : "var(--kratos-surface-4)",
-                }}
-                aria-hidden
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </GlassPanel>
-  );
-}
-
-function WishList() {
-  return (
-    <GlassPanel padding="md">
-      <h3
-        className="kratos-eyebrow mb-3"
-        style={{ color: "var(--kratos-text-secondary)" }}
-      >
-        Lugares que Quero Visitar
-      </h3>
-      <div className="space-y-2">
-        {wishlist.map((item) => (
-          <div
-            key={item.text}
-            className="flex items-center gap-2.5 rounded-lg px-3 py-2 transition-colors kratos-card-hover"
-            style={{ background: "var(--kratos-surface-2)" }}
-          >
-            {item.done ? (
-              <CheckCircle2 className="h-4 w-4 flex-shrink-0" style={{ color: "var(--kr-success)" }} aria-label="Concluído" />
-            ) : (
-              <Circle className="h-4 w-4 flex-shrink-0" style={{ color: "var(--kratos-text-muted)" }} aria-label="Pendente" />
-            )}
-            <span
-              className={cn(
-                "text-[13px]",
-                item.done ? "" : "",
-              )}
-              style={{
-                color: item.done ? "var(--kratos-text-muted)" : "var(--kratos-text-primary)",
-                textDecoration: item.done ? "line-through" : "none",
-              }}
-            >
-              {item.text}
-            </span>
-            {item.done && (
-              <span className="ml-auto text-[10px] kratos-mono" style={{ color: "var(--kr-success)" }}>
-                FEITO
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-    </GlassPanel>
-  );
-}
-
-function InspirationCard() {
-  return (
-    <GlassPanel padding="md">
-      <div
-        className="rounded-xl p-4"
-        style={{
-          background:
-            "linear-gradient(135deg, color-mix(in oklab, var(--kr-island-nimbus, #0EA5E9) 10%, transparent), color-mix(in oklab, var(--kr-accent-cyan-bright, #22D3EE) 5%, transparent))",
-          border: "1px solid color-mix(in oklab, var(--kr-island-nimbus, #0EA5E9) 15%, transparent)",
-        }}
-      >
-        <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="h-4 w-4" style={{ color: "var(--kr-accent-blue-light)" }} aria-hidden />
-          <span
-            className="text-[10px] font-bold uppercase tracking-[0.12em]"
-            style={{ color: "var(--kr-accent-blue-light)" }}
-          >
-            Inspiração
-          </span>
-        </div>
-        <blockquote
-          className="text-[14px] italic leading-relaxed"
-          style={{ color: "var(--kratos-text-primary)" }}
-        >
-          "O mundo é um livro, e quem não viaja lê apenas uma página."
-        </blockquote>
-        <p
-          className="mt-2 text-[11px]"
-          style={{ color: "var(--kratos-text-muted)" }}
-        >
-          — Santo Agostinho
-        </p>
-      </div>
-    </GlassPanel>
-  );
-}
-
-// ── Main Export ────────────────────────────────────────────────────────────
-
-interface NimbusScreenProps {
-  isLoading?: boolean;
-  error?: string | null;
-  isEmpty?: boolean;
-}
-
-export function NimbusScreen({
-  isLoading = false,
-  error = null,
-  isEmpty = false,
-}: NimbusScreenProps) {
+export function NimbusScreen() {
   return (
     <IslandPageFrame theme="nimbus">
-      {isLoading ? (
-        <LoadingState lines={6} />
-      ) : error ? (
-        <ErrorState
-          title="Erro ao carregar"
-          description={error}
-          variant="external_unavailable"
-        />
-      ) : isEmpty ? (
-        <EmptyState
-          title="Nada por aqui"
-          description="Nenhum dado disponível neste momento."
-        />
-      ) : (
-        <>
-          <IslandPageHeader
-            title="NIMBUS ACADEMY"
-            subtitle="Sua vassoura mágica. Vá para onde precisar."
-            theme="nimbus"
-          />
-
-          {/* Dream portal — centered hero */}
-          <DreamPortal />
-
-          {/* Wooden sign */}
-          <div className="flex justify-center">
-            <WoodenSign />
-          </div>
-
-          {/* Main layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2">
-              <GlassPanel padding="md">
-                <h3
-                  className="kratos-eyebrow mb-3"
-                  style={{ color: "var(--kratos-text-secondary)" }}
-                >
-                  Próximas Viagens
-                </h3>
-                <TravelCards />
-              </GlassPanel>
-            </div>
-            <div className="space-y-4">
-              <AdventureTracker />
-              <InspirationCard />
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <WishList />
-          </div>
-        </>
-      )}
+      <IslandPageHeader
+        title="NIMBUS ACADEMY"
+        subtitle="Viagens, Aventuras e Bucket List"
+        theme="nimbus"
+      />
+      <DreamPortal />
+      <EmptyState
+        icon={<Plane className="h-4 w-4" />}
+        title="Nenhuma viagem programada"
+        description="Esta ilha exibirá viagens e aventuras quando integrada a um tracker externo."
+      />
     </IslandPageFrame>
   );
 }

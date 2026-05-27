@@ -6,6 +6,7 @@ import type { LiveState } from "@/components/kratos/base/LiveStatusIndicator";
 import type { SystemPulse } from "@/components/kratos/agora/SystemPulseStrip";
 import type { Severity } from "@/components/kratos/base/StatusDot";
 import type { DataSource } from "../../api-contract/source-badge.schema";
+import { API_BASE } from "../lib/api/client";
 
 function serviceHealthToSeverity(status: string): Severity {
   if (status === "healthy" || status === "up" || status === "ok") return "ok";
@@ -26,10 +27,6 @@ function deriveLiveState(krOk: number, krWarn: number, krCrit: number, omOk: num
 function useSSEConnection(): { isConnected: boolean } {
   const [isConnected, setIsConnected] = useState(false);
   const qc = useQueryClient();
-  const BASE_URL =
-    typeof window !== "undefined"
-      ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-      : "http://localhost:5100";
 
   useEffect(() => {
     if (typeof EventSource === "undefined") return;
@@ -38,7 +35,7 @@ function useSSEConnection(): { isConnected: boolean } {
     let failTimer: ReturnType<typeof setTimeout> | null = null;
 
     function connect() {
-      es = new EventSource(`${BASE_URL}/live/stream`);
+      es = new EventSource(`${API_BASE}/live/stream`);
 
       failTimer = setTimeout(() => {
         setIsConnected(false);
@@ -50,7 +47,12 @@ function useSSEConnection(): { isConnected: boolean } {
       };
 
       es.onmessage = () => {
+        // Invalidate KRATOS services + system pulse on every SSE heartbeat (5s)
         qc.invalidateQueries({ queryKey: ["services"] });
+        qc.invalidateQueries({ queryKey: ["system", "pulse"] });
+        // Missions and health score have own polling — only nudge them, not force
+        // (staleTime 20s keeps them from thrashing on every 5s SSE tick)
+        qc.invalidateQueries({ queryKey: ["missions-active"] });
       };
 
       es.onerror = () => {
@@ -66,7 +68,7 @@ function useSSEConnection(): { isConnected: boolean } {
       if (failTimer) clearTimeout(failTimer);
       es?.close();
     };
-  }, [BASE_URL, qc]); // isConnected excluded from deps to avoid reconnect loop
+  }, [qc]); // API_BASE is a module-level constant — stable ref, no dep needed
 
   return { isConnected };
 }

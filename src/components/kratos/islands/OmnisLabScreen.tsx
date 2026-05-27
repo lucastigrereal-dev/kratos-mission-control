@@ -1,52 +1,79 @@
+import { useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
-import { IslandPageFrame } from "./shared/IslandPageFrame";
-import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
+import { IslandDetailStage } from "./shared/IslandDetailStage";
+import { IslandGlassCard } from "./shared/IslandGlassCard";
+import { useIslandDock } from "./shared/IslandDockContext";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { cn } from "@/lib/utils";
+import { useOmnisStatus, useOmnisCrews, useOmnisJobs } from "@/hooks/useOmnis";
+import { useMissions } from "@/hooks/useMissions";
+import type { OmnisCrew, OmnisJob } from "../../../../api-contract/omnis.schema";
+import { HealthScoreCard } from "@/components/kratos/omnis/HealthScoreCard";
+import { MissionRunsCard } from "@/components/kratos/omnis/MissionRunsCard";
+import { MissionGraphCard } from "@/components/kratos/omnis/MissionGraphCard";
+import { GuardrailAlertCard } from "@/components/kratos/omnis/GuardrailAlertCard";
+import { CostSummaryCard } from "@/components/kratos/omnis/CostSummaryCard";
+import { MissionEventLogCard } from "@/components/kratos/omnis/MissionEventLogCard";
 import {
   Cpu,
-  Zap,
   Workflow,
   Play,
   CheckCircle2,
   Clock,
   Circle,
   Activity,
+  FlaskConical,
+  Sparkles,
+  Target,
+  ShieldAlert,
+  XCircle,
 } from "lucide-react";
 
-// ── Mock Data ──────────────────────────────────────────────────────────────
+// ── Cores por crew ────────────────────────────────────────────────────────────
 
-const summaryCards = [
-  { label: "Agentes IA", value: "5", icon: Cpu },
-  { label: "Automações", value: "12", icon: Zap },
-  { label: "Workflows", value: "3", icon: Workflow },
-  { label: "Execuções Hoje", value: "47", icon: Play },
+const CREW_COLORS = [
+  "var(--kr-success)",
+  "var(--kr-accent-purple)",
+  "var(--kr-sky)",
+  "var(--kr-accent-cyan)",
+  "var(--kr-island-agencia)",
 ];
 
-const automations = [
-  { name: "Gerar relatório diário", status: "idle" as const },
-  { name: "Backup do banco", status: "running" as const },
-  { name: "Limpar cache", status: "done" as const },
-];
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
-const agents = [
-  { name: "Omnis Core", role: "Orquestrador", color: "var(--kr-success)" },
-  { name: "Aurora AI", role: "Mentora", color: "var(--kr-accent-purple)" },
-  { name: "Chrono Bot", role: "Documentação", color: "var(--kr-sky)" },
-  { name: "Insight Bot", role: "Análises", color: "var(--kr-accent-cyan)" },
-  { name: "Builder Bot", role: "Desenvolvimento", color: "var(--kr-island-agencia)" },
-];
+function jobStatusLabel(status: OmnisJob["status"]): string {
+  const MAP: Record<OmnisJob["status"], string> = {
+    queued: "Na fila",
+    running: "Executando",
+    done: "Concluído",
+    failed: "Falhou",
+    needs_review: "Revisão",
+  };
+  return MAP[status] ?? status;
+}
 
-const executions = [
-  { name: "Pipeline Diário", time: "08:32", status: "success" as const },
-  { name: "Análise de Sentimento", time: "07:15", status: "success" as const },
-  { name: "Sync Knowledge Base", time: "06:00", status: "success" as const },
-  { name: "Health Check", time: "05:45", status: "warning" as const },
-];
+function crewStatusColor(status: OmnisCrew["status"]): string {
+  if (status === "running") return "var(--kr-accent-cyan)";
+  if (status === "failed") return "var(--kratos-critical)";
+  return "var(--kratos-text-muted)";
+}
 
-const flowSteps = [
+function relativeTimeShort(iso: string): string {
+  if (!iso) return "—";
+  const diff = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(diff / 60000);
+  if (min < 60) return `${min}m`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h`;
+  return `${Math.floor(hr / 24)}d`;
+}
+
+// ── Passos de fluxo — hardcoded (badge MOCK no header) ───────────────────────
+
+const FLOW_STEPS = [
   { label: "Coleta", done: true },
   { label: "Processamento", done: true },
   { label: "Decisão", done: true },
@@ -54,300 +81,352 @@ const flowSteps = [
   { label: "Resultado", done: false },
 ];
 
-// ── Sub-components ─────────────────────────────────────────────────────────
+// ── Badge MOCK ────────────────────────────────────────────────────────────────
 
-function HolographicCore() {
+function MockBadge() {
   return (
-    <div className="flex flex-col items-center">
-      <div
-        className="relative flex h-40 w-40 items-center justify-center"
-        style={{ perspective: "600px" }}
-      >
-        {/* Outer glow */}
-        <div
-          className="absolute -inset-8 rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle, color-mix(in oklab, var(--kr-aurora, #8B5CF6) 25%, transparent) 0%, transparent 70%)",
-          }}
-          aria-hidden
-        />
+    <span
+      className="inline-flex items-center rounded px-1 py-px text-[7px] font-bold uppercase tracking-wider"
+      style={{
+        background: "rgba(251,191,36,0.15)",
+        color: "#FBBF24",
+        border: "1px solid rgba(251,191,36,0.3)",
+      }}
+    >
+      MOCK
+    </span>
+  );
+}
 
-        {/* Ring container */}
+// ── Aurora Card ───────────────────────────────────────────────────────────────
+
+function AuroraCard() {
+  return (
+    <div
+      className="rounded-2xl p-4 mb-5"
+      style={{
+        background: "rgba(124,58,237,0.10)",
+        border: "1px solid rgba(139,92,246,0.22)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+      }}
+    >
+      <div className="flex items-start gap-3">
         <div
-          className="relative flex h-full w-full items-center justify-center rounded-full"
-          style={{
-            border: "2px solid color-mix(in oklab, var(--kr-island-omnis, #7C3AED) 30%, transparent)",
-            background: "color-mix(in oklab, var(--kr-surface-abyss, #020617) 60%, transparent)",
-            boxShadow: "0 0 60px color-mix(in oklab, var(--kr-aurora, #8B5CF6) 40%, transparent)",
-          }}
+          className="flex-shrink-0 h-7 w-7 rounded-full flex items-center justify-center mt-0.5"
+          style={{ background: "rgba(139,92,246,0.18)" }}
         >
-          {/* SVG Rings — spinning */}
-          <svg
-            className="absolute inset-0 h-full w-full"
-            style={{ animation: "spin 10s linear infinite" }}
-            viewBox="0 0 160 160"
-          >
-            <circle
-              cx="80"
-              cy="80"
-              r="70"
-              fill="none"
-              stroke="url(#hcg1)"
-              strokeWidth="2"
-              strokeDasharray="20 40"
-              opacity="0.6"
-            />
-            <defs>
-              <linearGradient id="hcg1" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="var(--kr-aurora)" />
-                <stop offset="100%" stopColor="var(--kr-accent-cyan)" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <svg
-            className="absolute inset-3 h-[calc(100%-24px)] w-[calc(100%-24px)]"
-            style={{ animation: "spin 7s linear infinite reverse" }}
-            viewBox="0 0 136 136"
-          >
-            <circle
-              cx="68"
-              cy="68"
-              r="60"
-              fill="none"
-              stroke="url(#hcg2)"
-              strokeWidth="3"
-              strokeDasharray="60 30"
-              opacity="0.5"
-            />
-            <defs>
-              <linearGradient id="hcg2" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="var(--kr-accent-cyan-bright)" />
-                <stop offset="100%" stopColor="var(--kr-sky)" />
-              </linearGradient>
-            </defs>
-          </svg>
-
-          {/* CSS 3D Cube */}
-          <div
-            className="relative h-12 w-12"
-            style={{ transformStyle: "preserve-3d" }}
-          >
-            {[0, 90, 180, 270].map((deg, i) => (
-              <div
-                key={i}
-                className="absolute inset-0"
-                style={{
-                  border: "1px solid color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 60%, transparent)",
-                  background: "color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 10%, transparent)",
-                  boxShadow: "0 0 15px color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 50%, transparent)",
-                  transform:
-                    i < 2
-                      ? `rotateY(${deg}deg) translateZ(24px)`
-                      : `rotateX(${deg - 180}deg) translateZ(24px)`,
-                }}
-              />
-            ))}
-            <div
-              className="absolute inset-0"
-              style={{
-                border: "1px solid color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 60%, transparent)",
-                background: "color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 10%, transparent)",
-                transform: "rotateX(90deg) translateZ(24px)",
-              }}
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                border: "1px solid color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 60%, transparent)",
-                background: "color-mix(in oklab, var(--kr-accent-cyan, #06B6D4) 10%, transparent)",
-                transform: "rotateX(-90deg) translateZ(24px)",
-              }}
-            />
-          </div>
+          <Sparkles className="h-3.5 w-3.5" style={{ color: "#A78BFA" }} aria-hidden />
         </div>
-      </div>
-
-      {/* Label */}
-      <div
-        className="relative z-10 -mt-4 rounded-lg px-6 py-1.5"
-        style={{
-          background: "color-mix(in oklab, var(--kr-surface-abyss, #020617) 90%, transparent)",
-          border: "1px solid color-mix(in oklab, var(--kr-island-omnis, #7C3AED) 40%, transparent)",
-        }}
-      >
-        <span
-          className="text-[10px] font-bold uppercase tracking-[0.2em]"
-          style={{ color: "var(--kr-accent-cyan)" }}
-        >
-          OMNIS Core
-        </span>
+        <div>
+          <p
+            className="text-[10px] font-bold uppercase tracking-[0.15em] mb-1"
+            style={{ color: "#A78BFA" }}
+          >
+            Aurora · Modo Visual Seguro
+          </p>
+          <p className="text-[12px] leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
+            Tigrão, aqui é onde intenção vira execução. Estamos no modo visual seguro — nenhuma
+            automação real está ativa. Defina o contrato KRATOS ↔ OMNIS antes de ligar o motor.
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
-function OmnisSummaryCards() {
+// ── Summary Cards — 4 instrumentos do laboratório ────────────────────────────
+
+interface SummaryCard {
+  label: string;
+  value: string;
+  icon: React.ElementType;
+}
+
+function OmnisSummaryCards({ cards }: { cards: SummaryCard[] }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {summaryCards.map((card) => (
-        <GlassPanel key={card.label} padding="md" className="text-center">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      {cards.map((card) => (
+        <IslandGlassCard key={card.label} padding="md" className="flex flex-col items-center text-center">
           <card.icon
-            className="h-5 w-5 mx-auto mb-2"
-            style={{ color: "var(--kr-accent-purple-lighter)" }}
+            className="h-5 w-5 mb-2"
+            style={{ color: "rgba(167,139,250,0.8)" }}
             aria-hidden
           />
-          <p className="kratos-num text-xl">{card.value}</p>
-          <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5" style={{ color: "var(--kratos-text-muted)" }}>
+          <div className="flex items-center gap-1.5 mb-1">
+            <p
+              className="kratos-num text-[22px] leading-none"
+              style={{ color: "var(--kratos-text-primary)" }}
+            >
+              {card.value}
+            </p>
+            <MockBadge />
+          </div>
+          <p
+            className="text-[10px] uppercase tracking-[0.1em]"
+            style={{ color: "var(--kratos-text-muted)" }}
+          >
             {card.label}
           </p>
-        </GlassPanel>
+        </IslandGlassCard>
       ))}
     </div>
   );
 }
 
-function AutomationBoard() {
+// ── Próxima Ação — card dominante ─────────────────────────────────────────────
+
+function ProximaAcaoCard() {
   return (
-    <GlassPanel padding="md">
-      <h3
-        className="kratos-eyebrow mb-3"
-        style={{ color: "var(--kratos-text-secondary)" }}
+    <IslandGlassCard
+      padding="md"
+      accentLine="linear-gradient(90deg, #7C3AED, #8B5CF6)"
+      className="pt-5"
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <Target className="h-4 w-4" style={{ color: "#A78BFA" }} aria-hidden />
+        <h3
+          className="text-[10px] font-bold uppercase tracking-[0.15em]"
+          style={{ color: "#A78BFA" }}
+        >
+          Próxima Ação
+        </h3>
+      </div>
+      <p
+        className="text-[15px] font-semibold leading-snug mb-2"
+        style={{ color: "var(--kratos-text-primary)" }}
       >
-        Automações Rápidas
-      </h3>
-      <div className="space-y-2">
-        {automations.map((a) => (
-          <div
-            key={a.name}
-            className="flex items-center justify-between rounded-lg px-3 py-2 transition-colors kratos-card-hover"
-            style={{ background: "var(--kratos-surface-2)" }}
-          >
-            <span className="text-[13px]" style={{ color: "var(--kratos-text-primary)" }}>
-              {a.name}
-            </span>
-            <span className="text-[10px] kratos-mono uppercase tracking-[0.1em]">
-              {a.status === "running" && (
-                <span style={{ color: "var(--kr-accent-cyan)" }}>Executando</span>
-              )}
-              {a.status === "idle" && (
-                <span style={{ color: "var(--kratos-text-muted)" }}>Parado</span>
-              )}
-              {a.status === "done" && (
-                <span style={{ color: "var(--kr-success)" }}>Concluído</span>
-              )}
+        Definir contrato KRATOS ↔ OMNIS antes de permitir execução real.
+      </p>
+      <p className="text-[12px] leading-relaxed" style={{ color: "rgba(255,255,255,0.50)" }}>
+        Especificar quais ações o OMNIS pode executar autonomamente, quais precisam de aprovação
+        explícita e quais são sempre bloqueadas.
+      </p>
+    </IslandGlassCard>
+  );
+}
+
+// ── Guardrail — não fazer agora ───────────────────────────────────────────────
+
+const GUARDRAIL_ITEMS = [
+  "Executar automação real",
+  "Apagar arquivo ou dado",
+  "Publicar conteúdo",
+  "Commitar no repositório",
+  "Conectar API sensível",
+  "Mexer no backend",
+];
+
+function GuardrailCard() {
+  return (
+    <IslandGlassCard
+      padding="md"
+      accentLine="linear-gradient(90deg, rgba(245,158,11,0.8), rgba(251,191,36,0.5))"
+      className="pt-5"
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <ShieldAlert className="h-4 w-4" style={{ color: "#F59E0B" }} aria-hidden />
+        <h3
+          className="text-[10px] font-bold uppercase tracking-[0.15em]"
+          style={{ color: "#F59E0B" }}
+        >
+          Não Fazer Agora
+        </h3>
+      </div>
+      <div className="space-y-1.5">
+        {GUARDRAIL_ITEMS.map((item) => (
+          <div key={item} className="flex items-center gap-2">
+            <XCircle className="h-3 w-3 flex-shrink-0" style={{ color: "#EF4444" }} aria-hidden />
+            <span className="text-[11px]" style={{ color: "rgba(255,255,255,0.55)" }}>
+              {item}
             </span>
           </div>
         ))}
       </div>
-    </GlassPanel>
+    </IslandGlassCard>
   );
 }
 
-function ActiveAgentsList() {
+// ── Jobs Recentes ─────────────────────────────────────────────────────────────
+
+function AutomationBoard({ jobs }: { jobs: OmnisJob[] }) {
   return (
-    <GlassPanel padding="md">
+    <IslandGlassCard padding="md">
       <h3
-        className="kratos-eyebrow mb-3"
-        style={{ color: "var(--kratos-text-secondary)" }}
+        className="text-[10px] font-bold uppercase tracking-[0.12em] mb-3"
+        style={{ color: "rgba(255,255,255,0.40)" }}
       >
-        Agentes Ativos
+        Jobs Recentes
       </h3>
-      <div className="space-y-3">
-        {agents.map((agent) => (
-          <div key={agent.name} className="flex items-center gap-3">
-            {/* Avatar with colored ring */}
+      {jobs.length === 0 ? (
+        <EmptyState title="Sem jobs" description="Nenhum job registrado." compact />
+      ) : (
+        <div className="space-y-1.5">
+          {jobs.map((job) => (
             <div
-              className="flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center"
-              style={{
-                background: `color-mix(in srgb, ${agent.color} 12%, transparent)`,
-                border: `2px solid ${agent.color}`,
-                boxShadow: `0 0 10px color-mix(in srgb, ${agent.color} 25%, transparent)`,
-              }}
+              key={job.id}
+              className="flex items-center justify-between rounded-xl px-3 py-2"
+              style={{ background: "rgba(255,255,255,0.04)" }}
             >
-              <Activity className="h-4 w-4" style={{ color: agent.color }} aria-hidden />
+              <span
+                className="text-[12px] kratos-mono truncate max-w-[140px]"
+                style={{ color: "var(--kratos-text-primary)" }}
+              >
+                {job.tipo}
+              </span>
+              <span className="text-[10px] kratos-mono uppercase tracking-[0.08em] flex-shrink-0">
+                {job.status === "running" && (
+                  <span style={{ color: "var(--kr-accent-cyan)" }}>{jobStatusLabel(job.status)}</span>
+                )}
+                {job.status === "done" && (
+                  <span style={{ color: "var(--kr-success)" }}>{jobStatusLabel(job.status)}</span>
+                )}
+                {job.status === "failed" && (
+                  <span style={{ color: "var(--kratos-critical)" }}>{jobStatusLabel(job.status)}</span>
+                )}
+                {(job.status === "queued" || job.status === "needs_review") && (
+                  <span style={{ color: "var(--kratos-text-muted)" }}>{jobStatusLabel(job.status)}</span>
+                )}
+              </span>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-medium truncate" style={{ color: "var(--kratos-text-primary)" }}>
-                {agent.name}
-              </p>
-              <p className="text-[11px] truncate" style={{ color: "var(--kratos-text-muted)" }}>
-                {agent.role}
-              </p>
-            </div>
-            {/* Status dot */}
-            <div
-              className="h-2 w-2 rounded-full flex-shrink-0"
-              style={{ background: agent.color }}
-              aria-label="Online"
-            />
-          </div>
-        ))}
-      </div>
-    </GlassPanel>
+          ))}
+        </div>
+      )}
+    </IslandGlassCard>
   );
 }
 
-function RecentExecutionsList() {
+// ── Crews OMNIS ───────────────────────────────────────────────────────────────
+
+function ActiveAgentsList({ crews }: { crews: OmnisCrew[] }) {
   return (
-    <GlassPanel padding="md">
+    <IslandGlassCard padding="md">
       <h3
-        className="kratos-eyebrow mb-3"
-        style={{ color: "var(--kratos-text-secondary)" }}
+        className="text-[10px] font-bold uppercase tracking-[0.12em] mb-3"
+        style={{ color: "rgba(255,255,255,0.40)" }}
+      >
+        Crews OMNIS
+      </h3>
+      {crews.length === 0 ? (
+        <EmptyState title="Sem crews" description="Nenhuma crew registrada." compact />
+      ) : (
+        <div className="space-y-3">
+          {crews.map((crew, i) => {
+            const color = CREW_COLORS[i % CREW_COLORS.length];
+            return (
+              <div key={crew.nome} className="flex items-center gap-3">
+                <div
+                  className="flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center"
+                  style={{
+                    background: `color-mix(in srgb, ${color} 12%, transparent)`,
+                    border: `1.5px solid ${color}`,
+                    boxShadow: `0 0 8px color-mix(in srgb, ${color} 20%, transparent)`,
+                  }}
+                >
+                  <Activity className="h-3.5 w-3.5" style={{ color }} aria-hidden />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p
+                    className="text-[12px] font-medium truncate kratos-mono"
+                    style={{ color: "var(--kratos-text-primary)" }}
+                  >
+                    {crew.nome}
+                  </p>
+                  <p className="text-[10px] truncate" style={{ color: "var(--kratos-text-muted)" }}>
+                    {crew.descricao ??
+                      `${crew.jobsConcluidos} jobs · ${Math.round(crew.taxaSucesso * 100)}% sucesso`}
+                  </p>
+                </div>
+                <div
+                  className="h-1.5 w-1.5 rounded-full flex-shrink-0"
+                  style={{ background: crewStatusColor(crew.status) }}
+                  aria-label={crew.status}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </IslandGlassCard>
+  );
+}
+
+// ── Últimas Execuções ─────────────────────────────────────────────────────────
+
+function RecentExecutionsList({ jobs }: { jobs: OmnisJob[] }) {
+  return (
+    <IslandGlassCard padding="md">
+      <h3
+        className="text-[10px] font-bold uppercase tracking-[0.12em] mb-3"
+        style={{ color: "rgba(255,255,255,0.40)" }}
       >
         Últimas Execuções
       </h3>
-      <div className="space-y-2">
-        {executions.map((ex) => (
-          <div
-            key={ex.name}
-            className="flex items-center gap-3 rounded-lg px-3 py-2"
-            style={{ background: "var(--kratos-surface-2)" }}
-          >
-            {ex.status === "success" ? (
-              <CheckCircle2
-                className="h-4 w-4 flex-shrink-0"
-                style={{ color: "var(--kr-success)" }}
-                aria-label="Sucesso"
-              />
-            ) : (
-              <Circle
-                className="h-4 w-4 flex-shrink-0"
-                style={{ color: "var(--kr-warning)" }}
-                aria-label="Aviso"
-              />
-            )}
-            <span className="flex-1 text-[13px]" style={{ color: "var(--kratos-text-primary)" }}>
-              {ex.name}
-            </span>
-            <span
-              className="kratos-mono text-[11px] flex-shrink-0"
-              style={{ color: "var(--kratos-text-muted)" }}
+      {jobs.length === 0 ? (
+        <EmptyState title="Sem execuções" description="Nenhuma execução registrada." compact />
+      ) : (
+        <div className="space-y-1.5">
+          {jobs.map((job) => (
+            <div
+              key={job.id}
+              className="flex items-center gap-3 rounded-xl px-3 py-2"
+              style={{ background: "rgba(255,255,255,0.04)" }}
             >
-              <Clock className="h-3 w-3 inline mr-1" aria-hidden />
-              {ex.time}
-            </span>
-          </div>
-        ))}
-      </div>
-    </GlassPanel>
+              {job.status === "done" ? (
+                <CheckCircle2
+                  className="h-3.5 w-3.5 flex-shrink-0"
+                  style={{ color: "var(--kr-success)" }}
+                  aria-label="Concluído"
+                />
+              ) : (
+                <Circle
+                  className="h-3.5 w-3.5 flex-shrink-0"
+                  style={{
+                    color:
+                      job.status === "failed" ? "var(--kratos-critical)" : "var(--kr-warning)",
+                  }}
+                  aria-label={job.status}
+                />
+              )}
+              <span
+                className="flex-1 text-[12px] kratos-mono truncate"
+                style={{ color: "var(--kratos-text-primary)" }}
+              >
+                {job.tipo}
+              </span>
+              <span
+                className="kratos-mono text-[10px] flex-shrink-0 flex items-center gap-0.5"
+                style={{ color: "var(--kratos-text-muted)" }}
+              >
+                <Clock className="h-3 w-3" aria-hidden />
+                {relativeTimeShort(job.criadoEm)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </IslandGlassCard>
   );
 }
 
+// ── Fluxo em Tempo Real — hardcoded + MOCK ────────────────────────────────────
+
 function RealtimeFlowStepper() {
   return (
-    <GlassPanel padding="md">
-      <h3
-        className="kratos-eyebrow mb-4"
-        style={{ color: "var(--kratos-text-secondary)" }}
-      >
-        Fluxo em Tempo Real
-      </h3>
-      <div className="flex items-center justify-between">
-        {flowSteps.map((step, i) => (
-          <div key={step.label} className="flex items-center gap-0 flex-1">
-            {/* Step node */}
-            <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
+    <IslandGlassCard padding="md">
+      <div className="flex items-center gap-2 mb-4">
+        <h3
+          className="text-[10px] font-bold uppercase tracking-[0.12em]"
+          style={{ color: "rgba(255,255,255,0.40)" }}
+        >
+          Fluxo em Tempo Real
+        </h3>
+        <MockBadge />
+      </div>
+      <div className="flex items-start">
+        {FLOW_STEPS.map((step, i) => (
+          <div key={step.label} className="flex items-center flex-1">
+            <div className="flex flex-col items-center gap-1.5">
               <div
                 className={cn(
                   "h-8 w-8 rounded-full flex items-center justify-center transition-all",
@@ -357,48 +436,60 @@ function RealtimeFlowStepper() {
                   background: step.done
                     ? "var(--kr-island-omnis)"
                     : step.active
-                      ? "color-mix(in srgb, var(--kr-island-omnis) 40%, transparent)"
-                      : "var(--kratos-surface-4)",
+                      ? "rgba(124,58,237,0.35)"
+                      : "rgba(255,255,255,0.06)",
                   border: step.active
-                    ? "2px solid var(--kr-accent-purple-lighter)"
+                    ? "2px solid rgba(167,139,250,0.8)"
                     : step.done
                       ? "2px solid var(--kr-island-omnis)"
-                      : "2px solid var(--kratos-border)",
+                      : "2px solid rgba(255,255,255,0.12)",
                 }}
               >
                 {step.done ? (
-                  <CheckCircle2 className="h-4 w-4" style={{ color: "var(--kr-text-on-primary, white)" }} aria-hidden />
+                  <CheckCircle2 className="h-4 w-4" style={{ color: "white" }} aria-hidden />
                 ) : (
                   <span
                     className="text-[11px] font-bold"
-                    style={{ color: step.active ? "var(--kr-accent-purple-lighter)" : "var(--kratos-text-muted)" }}
+                    style={{
+                      color: step.active ? "rgba(167,139,250,0.9)" : "rgba(255,255,255,0.25)",
+                    }}
                   >
                     {i + 1}
                   </span>
                 )}
               </div>
               <span
-                className="text-[10px] uppercase tracking-[0.08em] text-center"
+                className="text-[9px] uppercase tracking-[0.06em] text-center leading-tight max-w-[52px]"
                 style={{
-                  color: step.done ? "var(--kr-accent-purple-light)" : step.active ? "var(--kr-accent-purple-lighter)" : "var(--kratos-text-muted)",
+                  color: step.done
+                    ? "rgba(167,139,250,0.75)"
+                    : step.active
+                      ? "rgba(167,139,250,0.95)"
+                      : "rgba(255,255,255,0.25)",
                 }}
               >
                 {step.label}
               </span>
             </div>
-
-            {/* Connector line */}
-            {i < flowSteps.length - 1 && (
-              <div className="flex-1 h-[2px] mx-1 mb-5" style={{ background: step.done ? "var(--kr-island-omnis)" : "var(--kratos-surface-4)" }} aria-hidden />
+            {i < FLOW_STEPS.length - 1 && (
+              <div
+                className="flex-1 h-[1.5px] mx-1 mb-5"
+                style={{
+                  background: step.done
+                    ? "rgba(124,58,237,0.5)"
+                    : "rgba(255,255,255,0.08)",
+                }}
+                aria-hidden
+              />
             )}
           </div>
         ))}
       </div>
-    </GlassPanel>
+    </IslandGlassCard>
   );
 }
 
-// ── Main Export ────────────────────────────────────────────────────────────
+// ── Export principal ──────────────────────────────────────────────────────────
 
 interface OmnisLabScreenProps {
   isLoading?: boolean;
@@ -407,58 +498,169 @@ interface OmnisLabScreenProps {
 }
 
 export function OmnisLabScreen({
-  isLoading = false,
-  error = null,
+  isLoading: propLoading = false,
+  error: propError = null,
   isEmpty = false,
 }: OmnisLabScreenProps) {
-  return (
-    <IslandPageFrame theme="omnis">
-      {isLoading ? (
+  const navigate = useNavigate();
+  const { data: omnis, isLoading: omLoading, isError: omError } = useOmnisStatus();
+  const { data: crews, isLoading: crLoading } = useOmnisCrews();
+  const { data: jobs, isLoading: jbLoading } = useOmnisJobs(5);
+  const { missions } = useMissions(10);
+  const { setData } = useIslandDock();
+
+  // Auto-select first running mission for the event log (read-only, boundary preserved)
+  const activeMissionId: string | null =
+    missions.find((m) => m.status === "running")?.mission_id ??
+    missions[0]?.mission_id ??
+    null;
+
+  const anyLoading = propLoading || omLoading || crLoading || jbLoading;
+
+  useEffect(() => {
+    if (!omLoading && omnis != null) {
+      setData({
+        islandId: "omnis",
+        label: "OMNIS",
+        value: `${omnis.workflows_registered ?? "—"} workflows · ${omnis.test_count?.toLocaleString("pt-BR") ?? "—"} testes`,
+        progress:
+          omnis.test_count != null
+            ? Math.min(100, Math.round((omnis.test_count / 10000) * 100))
+            : 72,
+        progressColor: "var(--kr-island-omnis)",
+        quickActions: [{ label: "Ver Sistema" }],
+      });
+    }
+  }, [omLoading, omnis, setData]);
+
+  const summaryCards: SummaryCard[] = [
+    {
+      label: "Testes OMNIS",
+      value:
+        omnis?.test_count != null
+          ? omnis.test_count.toLocaleString("pt-BR")
+          : omLoading
+            ? "…"
+            : "Aguardando",
+      icon: FlaskConical,
+    },
+    {
+      label: "Workflows",
+      value:
+        omnis?.workflows_registered != null
+          ? String(omnis.workflows_registered)
+          : omLoading
+            ? "…"
+            : "Visual",
+      icon: Cpu,
+    },
+    {
+      label: "Docs Akasha",
+      value:
+        omnis?.memoria?.totalDocs != null
+          ? omnis.memoria.totalDocs.toLocaleString("pt-BR")
+          : omLoading
+            ? "…"
+            : "Aguardando",
+      icon: Workflow,
+    },
+    {
+      label: "Último Run",
+      value: omnis?.last_run_status ?? (omLoading ? "…" : "Pendente"),
+      icon: Play,
+    },
+  ];
+
+  const crewList = crews ?? [];
+  const jobList = jobs ?? [];
+
+  if (anyLoading) {
+    return (
+      <IslandDetailStage islandId="omnis">
         <LoadingState lines={6} />
-      ) : error ? (
+      </IslandDetailStage>
+    );
+  }
+
+  if (propError || omError) {
+    return (
+      <IslandDetailStage islandId="omnis">
         <ErrorState
           title="Erro ao carregar"
-          description={error}
+          description={propError ?? "Falha ao consultar OMNIS."}
           variant="external_unavailable"
         />
-      ) : isEmpty ? (
-        <EmptyState
-          title="Nada por aqui"
-          description="Nenhum dado disponível neste momento."
-        />
-      ) : (
-        <>
-          <IslandPageHeader
-            title="OMNIS LAB"
-            subtitle="Centro de IA, Automações e Inteligência de Execução"
-            theme="omnis"
-          />
+      </IslandDetailStage>
+    );
+  }
 
-          {/* Holographic Core — centered hero */}
-          <div className="flex justify-center mb-10">
-            <HolographicCore />
-          </div>
+  if (isEmpty) {
+    return (
+      <IslandDetailStage islandId="omnis">
+        <EmptyState title="Nada por aqui" description="Nenhum dado disponível neste momento." />
+      </IslandDetailStage>
+    );
+  }
 
-          {/* Summary cards */}
-          <OmnisSummaryCards />
+  return (
+    <IslandDetailStage islandId="omnis">
+      {/* 1. Localização: onde estou + voltar */}
+      <IslandPageHeader
+        title="OMNIS LAB"
+        subtitle="Centro de IA, Automações e Inteligência de Execução"
+        theme="omnis"
+        onBack={() => navigate({ to: "/" })}
+      />
 
-          {/* Two-column layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-6">
-            <AutomationBoard />
-            <ActiveAgentsList />
-          </div>
+      {/* 2. O que Aurora diz: modo seguro */}
+      <AuroraCard />
 
-          {/* Bottom row */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mt-4">
-            <div className="lg:col-span-2">
-              <RecentExecutionsList />
-            </div>
-            <div className="lg:col-span-3">
-              <RealtimeFlowStepper />
-            </div>
-          </div>
-        </>
-      )}
-    </IslandPageFrame>
+      {/* 3. Estado visual do sistema: summary cards */}
+      <OmnisSummaryCards cards={summaryCards} />
+
+      {/* 3b. Health Score + Mission Runs — dados reais do OMNIS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <HealthScoreCard />
+        <MissionRunsCard />
+      </div>
+
+      {/* 3c. Mission Graph — estado das missões ativas */}
+      <div className="mb-4">
+        <MissionGraphCard />
+      </div>
+
+      {/* 3d. Guardrails + Custo (W7+W8) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <GuardrailAlertCard />
+        <CostSummaryCard />
+      </div>
+
+      {/* 3e. Mission Event Log — drill-down read-only (W7) */}
+      <div className="mb-4">
+        <MissionEventLogCard missionId={activeMissionId} limit={12} />
+      </div>
+
+      {/* 4. Próxima ação (dominante) + guardrail (restrições) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <ProximaAcaoCard />
+        <GuardrailCard />
+      </div>
+
+      {/* 5. Jobs + Crews — dados reais da API */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <AutomationBoard jobs={jobList} />
+        <ActiveAgentsList crews={crewList} />
+      </div>
+
+      {/* 6. Execuções + Fluxo */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div className="lg:col-span-2">
+          <RecentExecutionsList jobs={jobList} />
+        </div>
+        <div className="lg:col-span-3">
+          <RealtimeFlowStepper />
+        </div>
+      </div>
+    </IslandDetailStage>
   );
 }

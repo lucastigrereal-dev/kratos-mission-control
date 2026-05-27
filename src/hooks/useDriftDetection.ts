@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import { apiGet } from "../lib/api/client";
 
 // --- Tipos ---
 export type DriftState = "on-mission" | "drifting" | "lost" | "zombie";
@@ -41,26 +42,14 @@ export function useDriftDetection(): DriftStatus {
   // Rastreia quais thresholds já exibiram nudge nesta sessão
   const nudgedThresholds = useRef<Set<DriftState>>(new Set());
 
-  const BASE_URL =
-    typeof window !== "undefined"
-      ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-      : "http://localhost:5100";
-
   // Fetch /context/lost
   const { data: lostData } = useQuery({
     queryKey: ["context", "lost"],
     queryFn: async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/context/lost`, {
-          signal: AbortSignal.timeout(5000),
-        });
-        if (!res.ok) return null;
-        const raw = await res.json();
-        const parsed = ContextLostResponseSchema.safeParse(raw);
-        return parsed.success ? parsed.data : null;
-      } catch {
-        return null;
-      }
+      const result = await apiGet("/context/lost");
+      if (!result.ok) return null;
+      const parsed = ContextLostResponseSchema.safeParse(result.raw);
+      return parsed.success ? parsed.data : null;
     },
     staleTime: 60_000,
     retry: false,

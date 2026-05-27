@@ -77,8 +77,8 @@ describe("Backend Contract Regression", () => {
       expect(schema.ultimoPing).toBeDefined();
     });
 
-    it("live data validates against schema", () => {
-      const services = getServices();
+    it("live data validates against schema", async () => {
+      const services = await getServices();
       expect(services.length).toBeGreaterThan(0);
       for (const s of services) {
         const result = ServiceSchema.safeParse(s);

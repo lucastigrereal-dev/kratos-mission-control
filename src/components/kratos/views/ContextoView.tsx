@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { StatusCard } from "@/components/kratos/base/StatusCard";
 import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
 import { useContextSnapshot, useContextoMissionSnapshot } from "@/hooks/useContexto";
-import type { BrowserTab } from "../../../api-contract/contexto.schema";
+import type { BrowserTab } from "../../../../api-contract/contexto.schema";
 
 type BrowserItemStatus = "active" | "stale" | "distraction" | "unknown";
 

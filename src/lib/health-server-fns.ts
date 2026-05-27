@@ -28,7 +28,7 @@ interface HealthEnvelope {
 export const getWorkerHealth = createServerFn({ method: "GET" })
   .handler(async (): Promise<HealthEnvelope> => {
     try {
-      const svc = getServicesHealthSummary();
+      const svc = await getServicesHealthSummary();
       const payload: HealthCheck = {
         status: svc.offline > 0 ? "error" : svc.degraded > 0 ? "degraded" : "ok",
         service: "kratos-mission-control",

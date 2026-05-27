@@ -277,3 +277,105 @@ A frente `feat/deploy-config` só abre com confirmação verbal do Lucas. Seu es
 | `kratos-qa-guard` | Revisar qualidade antes de commit/merge |
 
 **Todo agente segue as Regras de Ouro deste CLAUDE.md.**
+
+---
+
+## Identidade Canônica
+
+**KRATOS não organiza sua lista. KRATOS devolve sua mente para a missão.**
+
+KRATOS é um cockpit local-first de continuidade cognitiva. Transforma caos operacional em próxima ação clara. Não é dashboard, não é app de tarefas, não é Notion.
+
+```
+KRATOS vê.
+Aurora interpreta.
+OMNIS/HOMINIS age.
+Akasha lembra.
+Codex/Claude constrói.
+Lucas decide.
+```
+
+Nunca inverter essa hierarquia.
+
+---
+
+## Riscos Ativos (verificar em toda sessão)
+
+| Risco | Descrição | Mitigação |
+|---|---|---|
+| Duas árvores | `src/` é principal, `frontend/` é legado | SEMPRE `src/` |
+| Tokens duplicados | `--kr-*` e `--kratos-*` coexistem | Usar `--kr-*`, migrar legado |
+| project-state.json | Pode estar desatualizado | Sempre `git status` |
+| routeTree.gen.ts | Gerado pelo Vite plugin | NUNCA editar |
+| SSE duplicado | Dois hooks no mesmo endpoint | Verificar antes de criar hook |
+
+---
+
+## Stack Completa
+
+**Runtime:** React 19 · TanStack Start · TanStack Router · TanStack Query
+**Visual:** Tailwind v4 · shadcn/ui (47) · **Framer Motion 12** · Lucide
+**Backend:** FastAPI Python (port 5100) · SQLite · SSE (/live/stream)
+**Dev:** Vite 7 (port 5173) · Bun
+**Deploy:** Cloudflare Workers via wrangler.jsonc
+**Tokens canônicos:** `var(--kr-*)`
+
+---
+
+## Layout HUD-first (obrigatório)
+
+```
+CORRETO — mundo-primeiro:
+┌─────────────────────────────────┐
+│  TopHUD (48px, leve)            │
+├─┬───────────────────────────────┤
+│N│   MUNDO / CONTEÚDO (flex-1)   │
+│a│   Ilhas · Rotas · Painéis     │
+│v│   contextuais sob demanda     │
+│R│                               │
+│a│                               │
+│i│                               │
+│l│                               │
+├─┴───────────────────────────────┤
+│  BottomDock (56px)              │
+└─────────────────────────────────┘
+
+PROIBIDO:
+grid-cols-[240px_1fr_320px]
+```
+
+---
+
+## Skills de Engenharia
+
+| Skill | Usar quando |
+|---|---|
+| `repo-onboarding` | Início de toda sessão |
+| `feature-planner` | Antes de implementar qualquer feature |
+| `lovable-ui-builder` | Criar/refinar componente visual |
+| `design-system-guardian` | QA visual antes de commit |
+| `shadcn-page-builder` | Nova rota/tela completa |
+| `prompt-engineering-swe` | Templates de prompt |
+| `deploy-automation` | Preparar release |
+| `code-review-strict` | Revisão antes de commit |
+| `bug-hunter` | Qualquer bug |
+| `integration-architect` | Nova integração externa |
+
+## Commands
+
+`/criar-feature` · `/criar-ilha` · `/revisar-ui` · `/snapshot-visual`
+`/corrigir-bug` · `/modo-foco` · `/adaptive-hud` · `/task-from-brief`
+
+## Docs de IA
+
+- `docs/ai/design-rules.md` — guia anti-slop visual
+- `docs/ai/workflow.md` — como trabalhar neste repo
+- `docs/ai/prompt-patterns.md` — templates de prompt
+
+## Framer Motion — regras de uso
+
+- Instalado: `framer-motion@12.40.0`
+- Usar em: entradas de painéis, drawers, island overlays, orb expand
+- Não usar em: listas estáticas, backgrounds decorativos, spinners
+- Duração máxima: 0.3s · ease: `easeOut`
+- Obrigatório: `prefers-reduced-motion` em toda animação

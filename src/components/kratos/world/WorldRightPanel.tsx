@@ -1,7 +1,9 @@
 import { useMemo } from "react";
-import { CheckCircle2, Circle, Quote, CalendarDays, ChevronRight, Sparkles } from "lucide-react";
+import { CheckCircle2, Circle, Quote, CalendarDays, ChevronRight, Sparkles, CalendarX } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { useKratosContext } from "./KratosContext";
+import { useAppointments } from "@/hooks/useAppointments";
 
 interface WorldRightPanelProps {
   className?: string;
@@ -9,6 +11,8 @@ interface WorldRightPanelProps {
 
 export function WorldRightPanel({ className }: WorldRightPanelProps) {
   const ctx = useKratosContext();
+  const navigate = useNavigate();
+  const { data: allAppointments, isLoading: apptLoading } = useAppointments();
 
   const focusItems = useMemo(() => {
     const lens = ctx.lens;
@@ -28,13 +32,16 @@ export function WorldRightPanel({ className }: WorldRightPanelProps) {
   const progress = ctx.checkpointProgress ?? 0;
 
   const agendaItems = useMemo(() => {
-    // Stub — would come from real appointment data
-    return [
-      { time: "10:30", title: "Reunião Growth Lab", done: false },
-      { time: "14:00", title: "Call Comercial", done: false },
-      { time: "16:00", title: "Tempo Livre: Lazer & Aprender", done: false },
-    ];
-  }, []);
+    const today = new Date().toISOString().slice(0, 10);
+    return (allAppointments ?? [])
+      .filter((a) => a.data === today)
+      .sort((a, b) => (a.horario ?? "99:99").localeCompare(b.horario ?? "99:99"))
+      .map((a) => ({
+        time: a.horario ?? "—",
+        title: a.titulo,
+        done: a.status === "completed",
+      }));
+  }, [allAppointments]);
 
   return (
     <div
@@ -207,27 +214,52 @@ export function WorldRightPanel({ className }: WorldRightPanelProps) {
           </p>
           <CalendarDays className="h-3.5 w-3.5" style={{ color: "color-mix(in oklab, white 40%, transparent)" }} />
         </div>
-        <div className="space-y-3">
-          {agendaItems.map((item, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-2 rounded-lg px-2 py-1.5"
-              style={{
-                background: "color-mix(in oklab, white 4%, transparent)",
-              }}
-            >
-              <span className="text-[10px] font-bold tabular-nums" style={{ color: "#60A5FA" }}>
-                {item.time}
-              </span>
-              <span className="min-w-0 flex-1 truncate text-xs" style={{ color: "#E5E7EB" }}>
-                {item.title}
-              </span>
-              {item.done && <CheckCircle2 className="h-3 w-3 shrink-0" style={{ color: "#22C55E" }} />}
-            </div>
-          ))}
-        </div>
+
+        {apptLoading ? (
+          <div className="space-y-2">
+            {[1, 2].map((i) => (
+              <div
+                key={i}
+                className="h-8 rounded-lg animate-pulse"
+                style={{ background: "color-mix(in oklab, white 6%, transparent)" }}
+              />
+            ))}
+          </div>
+        ) : agendaItems.length === 0 ? (
+          <div
+            className="flex flex-col items-center gap-1.5 rounded-lg py-4"
+            style={{ background: "color-mix(in oklab, white 4%, transparent)" }}
+          >
+            <CalendarX className="h-5 w-5" style={{ color: "color-mix(in oklab, white 30%, transparent)" }} />
+            <p className="text-[10px]" style={{ color: "color-mix(in oklab, white 40%, transparent)" }}>
+              Nenhum compromisso hoje
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {agendaItems.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-2 rounded-lg px-2 py-1.5"
+                style={{
+                  background: "color-mix(in oklab, white 4%, transparent)",
+                }}
+              >
+                <span className="text-[10px] font-bold tabular-nums" style={{ color: "#60A5FA" }}>
+                  {item.time}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-xs" style={{ color: "#E5E7EB" }}>
+                  {item.title}
+                </span>
+                {item.done && <CheckCircle2 className="h-3 w-3 shrink-0" style={{ color: "#22C55E" }} />}
+              </div>
+            ))}
+          </div>
+        )}
+
         <button
           type="button"
+          onClick={() => void navigate({ to: "/agenda" })}
           className="mt-2 flex items-center gap-1 text-[11px] font-medium transition-colors hover:brightness-110"
           style={{ color: "#60A5FA" }}
         >

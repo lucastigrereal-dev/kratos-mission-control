@@ -63,6 +63,7 @@ def collect():
         "total": len(repos),
         "dirty": sum(1 for r in repos if r.get("dirty", False)),
         "status": "degraded" if degraded > 0 else "ok",
+        "source_badge": "real",
     }, "real", "ok"
 
 

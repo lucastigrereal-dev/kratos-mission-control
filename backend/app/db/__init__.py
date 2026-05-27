@@ -23,6 +23,7 @@ def init_db():
     conn.commit()
     conn.close()
     seed_db()
+    seed_treasury()
 
 
 def seed_db():
@@ -71,6 +72,56 @@ def now_iso():
 
 def generate_id():
     return uuid.uuid4().hex[:12]
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Gringotts Treasury Seeds (M5A)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+TREASURY_MODELS = [
+    ("claude-sonnet-4-6", "anthropic",  3.00, 15.00, 0),
+    ("claude-haiku-4-5",  "anthropic",  0.80,  4.00, 0),
+    ("deepseek-v4-pro",   "deepseek",   0.50,  2.00, 0),
+    ("gemini-2.5-flash",  "google",     0.15,  0.60, 0),
+    ("gemini-2.5-pro",    "google",     1.25,  5.00, 0),
+    ("gpt-5",             "openai",     3.75, 15.00, 0),
+    ("gpt-5-mini",        "openai",     0.50,  2.00, 0),
+    ("qwen2.5-7b",        "local",      0.00,  0.00, 1),
+]
+
+TREASURY_BUDGET_RULES = [
+    ("global_monthly",    "global",    None,       20.00, 80, "monthly", "warning"),
+    ("cloud_daily",       "provider",  None,        5.00, 80, "daily",   "warning"),
+    ("anthropic_monthly", "provider",  "anthropic", 15.00, 80, "monthly", "warning"),
+]
+
+
+def seed_treasury():
+    conn = get_db()
+    now = now_iso()
+
+    for model_name, provider, inp, out, is_local in TREASURY_MODELS:
+        conn.execute(
+            "INSERT OR IGNORE INTO model_pricing "
+            "(id, model_name, provider, input_price_per_1m, output_price_per_1m, "
+            "is_local, effective_from, source, created_at, updated_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (generate_id(), model_name, provider, inp, out, is_local,
+             now, "seed_m5a", now, now),
+        )
+
+    for rule_name, scope, scope_value, threshold, warn_pct, period, severity in TREASURY_BUDGET_RULES:
+        conn.execute(
+            "INSERT OR IGNORE INTO budget_rules "
+            "(id, rule_name, scope, scope_value, threshold_usd, warning_pct, "
+            "period, alert_severity, active, created_at, updated_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)",
+            (generate_id(), rule_name, scope, scope_value, threshold,
+             warn_pct, period, severity, now, now),
+        )
+
+    conn.commit()
+    conn.close()
 
 
 SCHEMA = """
@@ -410,4 +461,86 @@ CREATE TABLE IF NOT EXISTS context_switches (
     environment TEXT DEFAULT 'dev',
     created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS cost_ledger (
+    id TEXT PRIMARY KEY,
+    execution_id TEXT NOT NULL,
+    mission_id TEXT DEFAULT 'unknown',
+    model TEXT NOT NULL,
+    provider TEXT NOT NULL,
+    input_tokens INTEGER DEFAULT 0,
+    output_tokens INTEGER DEFAULT 0,
+    estimated_cost_usd REAL DEFAULT 0.0,
+    local_or_cloud TEXT DEFAULT 'cloud',
+    endpoint TEXT DEFAULT '',
+    timestamp TEXT NOT NULL,
+    notes TEXT DEFAULT ''
+);
+
+CREATE INDEX IF NOT EXISTS idx_cost_ledger_timestamp ON cost_ledger(timestamp);
+CREATE INDEX IF NOT EXISTS idx_cost_ledger_model ON cost_ledger(model);
+CREATE INDEX IF NOT EXISTS idx_cost_ledger_mission ON cost_ledger(mission_id);
+
+-- ═══════════════════════════════════════════════════════
+-- Gringotts Treasury (M5A)
+-- ═══════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS model_pricing (
+    id TEXT PRIMARY KEY,
+    model_name TEXT NOT NULL UNIQUE,
+    provider TEXT NOT NULL,
+    input_price_per_1m REAL NOT NULL,
+    output_price_per_1m REAL NOT NULL,
+    is_local INTEGER DEFAULT 0,
+    currency TEXT DEFAULT 'USD',
+    effective_from TEXT NOT NULL,
+    effective_to TEXT,
+    source TEXT DEFAULT 'manual',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS provider_usage (
+    id TEXT PRIMARY KEY,
+    provider TEXT NOT NULL,
+    model_name TEXT NOT NULL,
+    period TEXT NOT NULL,
+    input_tokens_total INTEGER DEFAULT 0,
+    output_tokens_total INTEGER DEFAULT 0,
+    total_cost_usd REAL DEFAULT 0.0,
+    call_count INTEGER DEFAULT 0,
+    last_updated TEXT NOT NULL,
+    UNIQUE(provider, model_name, period)
+);
+
+CREATE TABLE IF NOT EXISTS mission_roi (
+    id TEXT PRIMARY KEY,
+    mission_id TEXT NOT NULL,
+    period TEXT NOT NULL,
+    total_cost_usd REAL DEFAULT 0.0,
+    estimated_value_usd REAL DEFAULT 0.0,
+    roi_ratio REAL DEFAULT 0.0,
+    notes TEXT DEFAULT '',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    UNIQUE(mission_id, period)
+);
+
+CREATE TABLE IF NOT EXISTS budget_rules (
+    id TEXT PRIMARY KEY,
+    rule_name TEXT NOT NULL UNIQUE,
+    scope TEXT NOT NULL CHECK(scope IN ('global','provider','model','mission')),
+    scope_value TEXT,
+    threshold_usd REAL NOT NULL,
+    warning_pct INTEGER DEFAULT 80,
+    period TEXT NOT NULL CHECK(period IN ('daily','weekly','monthly')),
+    active INTEGER DEFAULT 1,
+    alert_severity TEXT DEFAULT 'warning' CHECK(alert_severity IN ('info','warning','critical')),
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_model_pricing_provider ON model_pricing(provider);
+CREATE INDEX IF NOT EXISTS idx_provider_usage_period ON provider_usage(period);
+CREATE INDEX IF NOT EXISTS idx_mission_roi_mission ON mission_roi(mission_id);
 """

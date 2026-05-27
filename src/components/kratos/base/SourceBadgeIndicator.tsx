@@ -1,5 +1,5 @@
 import { X, Cpu } from "lucide-react";
-import type { SourceBadgeMeta } from "../../../api-contract/source-badge.schema";
+import type { SourceBadgeMeta } from "../../../../api-contract/source-badge.schema";
 
 interface Props {
   meta: SourceBadgeMeta | null;
@@ -8,6 +8,7 @@ interface Props {
 }
 
 function relativeTime(iso: string): string {
+  if (!iso) return "?";
   const ts = new Date(iso).getTime();
   if (isNaN(ts)) return "?";
   const diff = Date.now() - ts;

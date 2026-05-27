@@ -124,7 +124,7 @@ export function SistemaView() {
           origin: "omnis",
           errors: omError ? [(omErr as Error)?.message ?? "Falha ao carregar status do OMNIS"] : [],
           stale: omError,
-          updated_at: null,
+          updated_at: omnis?.atualizadoEm ?? null,
           confidence: omError ? 0 : 90,
         }}
         size="sm"
@@ -154,7 +154,21 @@ export function SistemaView() {
 
       {/* OMNIS — services */}
       <section>
-        <div className="kratos-eyebrow mb-3">OMNIS — Serviços</div>
+        <div className="kratos-eyebrow mb-3 flex items-center justify-between">
+          <span>OMNIS — Serviços</span>
+          {omnis?.test_count != null && (
+            <span
+              className="text-[10px] kratos-mono rounded px-1.5 py-0.5"
+              style={{
+                color: "var(--kratos-text-muted)",
+                background: "color-mix(in oklab, var(--kratos-ok) 10%, transparent)",
+                border: "1px solid color-mix(in oklab, var(--kratos-ok) 25%, transparent)",
+              }}
+            >
+              {omnis.test_count.toLocaleString("pt-BR")} testes
+            </span>
+          )}
+        </div>
         {omLoading ? (
           <LoadingState lines={4} />
         ) : omError ? (

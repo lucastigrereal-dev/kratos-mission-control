@@ -1,15 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import type { DataSource } from "../../api-contract/source-badge.schema";
+import { apiGet } from "../lib/api/client";
 
-// --- Schema do /live/snapshot (campos relevantes) ---
-const CollectorStatusSchema = z.object({
-  collector: z.string(),
-  status: z.enum(["healthy", "degraded", "offline", "error"]),
+// --- Schema do /live/snapshot (campos reais do backend) ---
+const CollectorStatusEntrySchema = z.object({
   source: z.string().optional(),
-  last_check: z.string().optional(),
-  error: z.string().nullable().optional(),
-});
+  status: z.string().optional(),
+  cpu_percent: z.number().optional(),
+  memory_percent: z.number().optional(),
+  total: z.number().optional(),
+  running: z.number().optional(),
+  unhealthy: z.number().optional(),
+  error: z.string().optional(),
+}).catchall(z.unknown());
 
 const SnapshotDataSchema = z.object({
   context: z.object({
@@ -17,19 +21,18 @@ const SnapshotDataSchema = z.object({
     focus_state: z.string().optional(),
     drift_risk: z.enum(["low", "medium", "high"]).optional(),
   }).optional(),
-  collector_status: z.array(CollectorStatusSchema).optional(),
-  // Campos de sistema — podem vir em diferentes paths dependendo do backend
-  cpu_percent: z.number().optional(),
-  ram_percent: z.number().optional(),
-  docker_running: z.number().optional(),
-  git_dirty: z.boolean().optional(),
-}).catchall(z.unknown()); // tolerante a campos extras
+  collector_status: z.record(z.string(), CollectorStatusEntrySchema).optional(),
+  _live_meta: z.object({
+    mode: z.string().optional(),
+    degraded_count: z.number().optional(),
+    build_time_ms: z.number().optional(),
+  }).optional(),
+}).catchall(z.unknown());
 
 const SnapshotEnvelopeSchema = z.object({
-  source: z.string().optional(),
-  data: SnapshotDataSchema.nullable(),
-  meta: z.record(z.unknown()).optional(),
-});
+  timestamp: z.string().optional(),
+  _live_meta: z.object({ mode: z.string().optional(), degraded_count: z.number().optional() }).optional(),
+}).catchall(z.unknown());
 
 // --- Tipos exportados ---
 export type SystemHealth = "healthy" | "degraded" | "critical";
@@ -58,30 +61,57 @@ function deriveHealth(cpu: number, ram: number): SystemHealth {
 }
 
 // --- Fetch ---
-const BASE_URL = typeof window !== "undefined"
-  ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-  : "http://localhost:5100";
 
-async function fetchSnapshot(): Promise<{ data: z.infer<typeof SnapshotDataSchema> | null; sourceType: DataSource }> {
-  try {
-    const res = await fetch(`${BASE_URL}/live/snapshot`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) return { data: null, sourceType: "error" };
-    const raw = await res.json();
-    const parsed = SnapshotEnvelopeSchema.safeParse(raw);
-    if (!parsed.success) return { data: null, sourceType: "error" };
-    const src = parsed.data.source;
-    const sourceType: DataSource =
-      src === "real" ? "live" :
-      src === "cached" ? "cache" :
-      src === "fallback" ? "cache" :
-      src === "mock" ? "mock" :
-      src === "error" ? "error" : "live";
-    return { data: parsed.data.data, sourceType };
-  } catch {
-    return { data: null, sourceType: "error" };
+interface CollectorDictEntry {
+  source?: string;
+  status?: string;
+  cpu_percent?: number;
+  memory_percent?: number;
+  total?: number;
+  running?: number;
+  unhealthy?: number;
+  error?: string;
+}
+
+async function fetchSnapshot(): Promise<{ pulse: SystemPulseData | null; sourceType: DataSource }> {
+  const result = await apiGet("/live/snapshot");
+  if (!result.ok) return { pulse: null, sourceType: "error" };
+  const raw = result.raw;
+  const parsed = SnapshotEnvelopeSchema.safeParse(raw);
+  if (!parsed.success) return { pulse: null, sourceType: "error" };
+
+  const payload = parsed.data;
+  const meta = payload._live_meta;
+  const sourceType: DataSource = meta?.mode === "live" ? "live"
+    : meta?.mode === "degraded" ? "cache"
+    : "live";
+
+  // Extract collector data from the real backend shape (dict of named collectors)
+  const collectors = (payload.collector_status ?? {}) as Record<string, CollectorDictEntry>;
+  const system = collectors.system ?? {};
+  const docker = collectors.docker ?? {};
+
+  const cpu = system.cpu_percent ?? 0;
+  const ram = system.memory_percent ?? 0;
+  const dockerRunning = docker.running ?? 0;
+
+  // git dirty: read from the git collector entry if present
+  const git = collectors.git ?? {};
+  const gitDirty = (git as { dirty?: boolean }).dirty === true;
+
+  const alerts: Array<{ collector: string; status: string; error?: string | null }> = [];
+  for (const [name, c] of Object.entries(collectors)) {
+    if (c.status === "degraded" || c.status === "error" || c.status === "offline") {
+      alerts.push({ collector: name, status: c.status ?? "unknown", error: c.error ?? null });
+    }
   }
+
+  const health = deriveHealth(cpu, ram);
+
+  return {
+    pulse: { cpuPercent: cpu, ramPercent: ram, dockerRunning, gitDirty, health, alerts },
+    sourceType,
+  };
 }
 
 // --- Hook ---
@@ -94,34 +124,12 @@ export function useSystemPulse(): UseSystemPulseResult {
     retry: false,
   });
 
-  const raw = query.data?.data ?? null;
+  const pulse = query.data?.pulse ?? null;
   const sourceType = query.data?.sourceType ?? (query.isError ? "error" : "cache");
 
-  if (!raw) {
-    return {
-      pulse: null,
-      health: "healthy",
-      isLoading: query.isLoading,
-      sourceType,
-    };
+  if (!pulse) {
+    return { pulse: null, health: "healthy", isLoading: query.isLoading, sourceType };
   }
 
-  const cpu = raw.cpu_percent ?? 0;
-  const ram = raw.ram_percent ?? 0;
-  const health = deriveHealth(cpu, ram);
-
-  const alerts = (raw.collector_status ?? [])
-    .filter((c) => c.status === "degraded" || c.status === "error" || c.status === "offline")
-    .map((c) => ({ collector: c.collector, status: c.status, error: c.error }));
-
-  const pulse: SystemPulseData = {
-    cpuPercent: cpu,
-    ramPercent: ram,
-    dockerRunning: raw.docker_running ?? 0,
-    gitDirty: raw.git_dirty ?? false,
-    health,
-    alerts,
-  };
-
-  return { pulse, health, isLoading: query.isLoading, sourceType };
+  return { pulse, health: pulse.health, isLoading: query.isLoading, sourceType };
 }

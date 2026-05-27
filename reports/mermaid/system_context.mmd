@@ -1,0 +1,22 @@
+flowchart TD
+  Lucas["Lucas decides"] --> KRATOS["KRATOS Mission Control\nobserves + displays"]
+  KRATOS --> UI["React/TanStack UI\nsrc and frontend surfaces"]
+  UI --> API["FastAPI backend\nlocalhost:5100"]
+  API --> Services["Services\nmission, mentor, live, context, continuity"]
+  Services --> DB["SQLite local-first DB"]
+  Services --> Collectors["Collectors"]
+  Collectors --> OS["System/psutil"]
+  Collectors --> Git["Git CLI"]
+  Collectors --> Docker["Docker CLI"]
+  Collectors --> AW["ActivityWatch"]
+  Collectors --> Omnis["OMNIS status\nread-only"]
+  API --> SSE["/live/stream SSE"]
+  SSE --> UI
+  KRATOS --> Aurora["Aurora interprets\nmentor voice"]
+  KRATOS --> AkashaStatus["Akasha status/read model"]
+  Scripts["Akasha/Obsidian scripts"] --> Obsidian["Obsidian vault"]
+  Scripts --> Akasha["Akasha PostgreSQL pgvector"]
+  Scripts --> Ollama["Ollama embeddings"]
+  Scripts --> Notion["Notion ingestion state"]
+  Omnis --> Publisher["Publisher/crews/jobs\nexternal execution"]
+

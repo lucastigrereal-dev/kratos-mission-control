@@ -36,10 +36,11 @@ def collect():
             "total": len(containers),
             "running": running,
             "unhealthy": unhealthy,
+            "source_badge": "real",
         }, "real", "ok"
     except FileNotFoundError:
-        return {"containers": [], "total": 0, "error": "Docker not installed"}, "fallback", "error"
+        return {"containers": [], "total": 0, "error": "Docker not installed", "source_badge": "error"}, "fallback", "error"
     except subprocess.TimeoutExpired:
-        return {"containers": [], "total": 0, "error": "Docker CLI timeout"}, "fallback", "error"
+        return {"containers": [], "total": 0, "error": "Docker CLI timeout", "source_badge": "error"}, "fallback", "error"
     except Exception as e:
-        return {"containers": [], "total": 0, "error": str(e)}, "fallback", "error"
+        return {"containers": [], "total": 0, "error": str(e), "source_badge": "error"}, "fallback", "error"

@@ -1,0 +1,55 @@
+{
+  "_meta": {
+    "project": "KRATOS Mission Control",
+    "date": "2026-05-21",
+    "phase": "ABA23 — P0 Retrieval Contracts"
+  },
+  "endpoints": {
+    "akasha_health": {
+      "path": "/akasha/health",
+      "method": "GET",
+      "description": "Extended health check for Akasha stack",
+      "request_schema": null,
+      "response_schema": "AkashaHealthResponse",
+      "risk": "L1",
+      "auth_phase": "A",
+      "scope": "memory:read"
+    },
+    "akasha_search": {
+      "path": "/akasha/search",
+      "method": "POST",
+      "description": "Search Akasha knowledge base",
+      "request_schema": "AkashaSearchRequest",
+      "response_schema": "AkashaSearchResponse",
+      "risk": "L2",
+      "auth_phase": "A",
+      "scope": "memory:read",
+      "privacy_rules": ["chunk_truncated_500chars", "no_full_document", "no_system_path"]
+    },
+    "akasha_context": {
+      "path": "/akasha/context",
+      "method": "POST",
+      "description": "Get context for mission/project",
+      "request_schema": "AkashaContextRequest",
+      "response_schema": "AkashaContextResponse",
+      "risk": "L2",
+      "auth_phase": "A",
+      "scope": "memory:read"
+    },
+    "akasha_sources": {
+      "path": "/akasha/sources",
+      "method": "GET",
+      "description": "List available source domains",
+      "request_schema": null,
+      "response_schema": "AkashaSourceSummary",
+      "risk": "L1",
+      "auth_phase": "A",
+      "scope": "memory:read"
+    }
+  },
+  "auth_plan": {
+    "phase": "A (API Key)",
+    "scope": "memory:read",
+    "blocker_note": "Auth not implemented yet — see ABA22 reports/auth_minimum_layer/"
+  }
+}
