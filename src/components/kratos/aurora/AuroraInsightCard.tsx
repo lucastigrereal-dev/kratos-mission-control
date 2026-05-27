@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, Clock, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
+import { Sparkles, Clock, RefreshCw, ChevronDown, ChevronUp, Brain, Mic2 } from "lucide-react";
 import type { AuroraInsight } from "../../../../api-contract/aurora.schema";
 
 const MAX_TEXT_CHARS = 220; // trunca texto longo; usuário expande se quiser
@@ -197,6 +197,42 @@ function AuroraInsightCardInner({
           }}
         >
           {insight.focus_recommendation}
+        </div>
+      )}
+
+      {/* C4 — Fio mental (A2): narrativa interna da Aurora */}
+      {insight.fio_mental && (
+        <div
+          className="flex items-start gap-2 rounded px-2 py-1.5"
+          style={{
+            background: "rgba(168,85,247,0.07)",
+            borderLeft: "2px solid rgba(168,85,247,0.4)",
+          }}
+        >
+          <Brain className="h-3 w-3 shrink-0 mt-0.5" style={{ color: "rgba(168,85,247,0.7)" }} />
+          <p className="text-[11px] leading-snug italic" style={{ color: "var(--kratos-text-secondary)" }}>
+            {insight.fio_mental}
+          </p>
+        </div>
+      )}
+
+      {/* C4 — Tom de voz (A4): recomendação de comunicação */}
+      {insight.tom && (
+        <div className="flex items-center gap-1.5">
+          <Mic2 className="h-3 w-3 shrink-0" style={{ color: "rgba(168,85,247,0.7)" }} />
+          <span className="text-[10px] kratos-mono" style={{ color: "var(--kratos-text-muted)" }}>
+            tom:
+          </span>
+          <span
+            className="text-[10px] kratos-mono px-1.5 py-0.5 rounded"
+            style={{
+              background: "rgba(168,85,247,0.1)",
+              color: "rgba(168,85,247,0.85)",
+              border: "1px solid rgba(168,85,247,0.2)",
+            }}
+          >
+            {insight.tom}
+          </span>
         </div>
       )}
 

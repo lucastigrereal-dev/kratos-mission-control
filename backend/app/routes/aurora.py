@@ -27,6 +27,10 @@ def aurora_insight():
     best_ts = state.get("aurora_updated_at") or state.get("timestamp", "")
     model = state.get("aurora_model")  # ex: "llama3.1:8b"
 
+    # C4 — fio_mental e tom escritos pelo OMNIS A2/A4 em aurora_fio_mental / aurora_tom
+    fio_mental: str | None = state.get("aurora_fio_mental") or None
+    tom: str | None = state.get("aurora_tom") or None
+
     # Aceita string simples (atalho) ou dict completo
     if isinstance(raw, str):
         insight = {
@@ -36,6 +40,10 @@ def aurora_insight():
         }
         if model:
             insight["model"] = model
+        if fio_mental:
+            insight["fio_mental"] = fio_mental
+        if tom:
+            insight["tom"] = tom
     elif isinstance(raw, dict):
         insight = {
             "text": raw.get("text", ""),
@@ -48,6 +56,13 @@ def aurora_insight():
             insight["focus_recommendation"] = raw["focus_recommendation"]
         if model:
             insight["model"] = raw.get("model", model)
+        # fio_mental / tom: preferir no dict se presentes, senão usar nível state
+        _fio = raw.get("fio_mental") or fio_mental
+        _tom = raw.get("tom") or tom
+        if _fio:
+            insight["fio_mental"] = _fio
+        if _tom:
+            insight["tom"] = _tom
     else:
         # Tipo inesperado — retorna null honesto
         return {

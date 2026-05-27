@@ -9,6 +9,9 @@ export const AuroraInsightSchema = z.object({
   confidence: z.enum(["high", "medium", "low"]).optional(),
   focus_recommendation: z.string().optional(),
   model: z.string().optional(), // ex: "llama3.1:8b" — modelo Ollama que gerou
+  // C4 — entregues pelo OMNIS A2/A4 (opcional até que OMNIS os grave)
+  fio_mental: z.string().optional(), // fio narrativo interno da Aurora
+  tom: z.string().optional(),        // tom de comunicação recomendado (ex: "direto", "reflexivo")
 });
 
 export const AuroraInsightEnvelopeSchema = z.object({
