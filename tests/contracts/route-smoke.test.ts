@@ -114,8 +114,8 @@ describe("Route Backend Smoke Tests", () => {
   });
 
   describe("/sistema — services + omnis + github", () => {
-    it("services returns list with health info", () => {
-      const result = getServices();
+    it("services returns list with health info", async () => {
+      const result = await getServices();
       expect(result.length).toBeGreaterThan(0);
       for (const s of result) {
         expect(["live", "degraded", "offline", "unknown"]).toContain(s.health);
