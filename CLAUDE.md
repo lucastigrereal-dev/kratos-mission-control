@@ -21,6 +21,25 @@ O KRATOS NÃO chama modelos diretamente — comandos passam pela Aurora (boundar
 Antes de mexer em qualquer schema relacionado a "model_used" ou "cost", leia a página Notion acima.
 ---
 
+---
+## 🌊 Próximas waves planejadas (W11-W14)
+
+Master no Notion: https://www.notion.so/36d22eba8f088140acdad17c9dffbea3
+
+- W11 — Saneamento + Frontend Observability: https://www.notion.so/36d22eba8f088125b9eded6789f88618
+- W12 — Multi-Page Cockpit UI: https://www.notion.so/36d22eba8f088118af63e804d20227e7
+- W13 — Memory Search UI: https://www.notion.so/36d22eba8f0881479a04e291f1e00470
+- W14 — Auto-Learning UI + Mobile (PWA): https://www.notion.so/36d22eba8f0881e28c8fec725d8f4ce3
+
+Cross-deps com OMNIS:
+- W11 ⇄ OMNIS W23 (saneamento)
+- W12 ⇄ OMNIS W24 (multi-page backend)
+- W13 ⇄ OMNIS W25 (Akasha search API)
+- W14 ⇄ OMNIS W26 (insights + suggestions API)
+
+Sequência: W10 (atual) → W11 → W12 → W13 → W14 → tag kratos-v2.0-main
+---
+
 # KRATOS — Mission Control
 
 **Stack:** React 19 · TanStack Start · TanStack Router · TanStack Query · Tailwind v4 · Radix UI · shadcn/ui · Zod · Vite 7 · Bun · Cloudflare Workers
