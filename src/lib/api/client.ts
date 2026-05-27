@@ -114,6 +114,43 @@ const MOCK_REGISTRY: Record<string, unknown> = {
       { name: "Akasha (pgvector)", status: "healthy", latency_ms: 31 },
     ],
   },
+  // ── W10-B1: Marketing Island mocks ───────────────────────────────────────
+  "/agencia/queue-summary": {
+    data: {
+      total: 18,
+      por_status: {
+        caption_ready: 7,
+        needs_asset: 5,
+        done: 4,
+        cancelled: 2,
+      },
+      proximo_slot: {
+        date: "2026-05-28",
+        time: "18:00",
+        account: "oinatalrn",
+        objective: "engagement",
+        status: "caption_ready",
+      },
+    },
+    source: "live",
+    queue_path: "mock",
+  },
+  "/agencia/metrics": {
+    source: "mock",
+    period: "last_7d",
+    accounts: [
+      { handle: "lucastigrereal",   followers: 690_000, reach: 41_200, engagement_pct: 4.8 },
+      { handle: "oinatalrn",        followers: 630_000, reach: 37_800, engagement_pct: 5.1 },
+      { handle: "agenteviajabrasil",followers: 452_000, reach: 28_400, engagement_pct: 4.3 },
+      { handle: "afamiliatigrereal",followers: 320_000, reach: 19_600, engagement_pct: 3.9 },
+      { handle: "oquecomernatalrn", followers: 249_000, reach: 17_800, engagement_pct: 5.6 },
+      { handle: "natalaivoueu",     followers: 240_000, reach: 15_200, engagement_pct: 4.7 },
+    ],
+    total_followers: 2_581_000,
+    total_reach_7d: 160_000,
+    avg_engagement_pct: 4.7,
+    posts_published_7d: 14,
+  },
 };
 
 /** Finds best-match mock for a given path (most specific prefix wins). */
