@@ -1,24 +1,33 @@
 ---
-## ⚡ Política Oficial de Roteamento de Modelos v2.0 — Ollama-First
+## ⚡ Política Oficial de Roteamento de Modelos v2.1 — Quality-First
 
-**Verdade institucional (Notion):** https://www.notion.so/36d22eba8f0881519268f05675380a8c
+**Verdade institucional (Notion):** https://www.notion.so/36d22eba8f088199a2d6cf5a7e958cee
+**Benchmarks:** https://www.notion.so/36d22eba8f08815b9b29c5de05d032fb
 
-O KRATOS NÃO chama modelos diretamente — comandos passam pela Aurora (boundary "KRATOS lê, Aurora comanda"). Mas exibe info de modelo/custo no Cost Dashboard, e essa info DEVE refletir a política abaixo.
+O KRATOS NÃO chama modelos diretamente — comandos passam pela Aurora (boundary "KRATOS lê, Aurora comanda"). Cost Dashboard reflete a política abaixo.
 
-### O que o KRATOS pode mostrar:
-- Modelo que respondeu cada mensagem Aurora (deepseek-v4-pro, glm-5.1, kimi-k2.6, sonnet, haiku)
-- Cost breakdown por modelo no /sistema/custo
-- Alertas se opus ou gpt-* aparecer (deveria ser sempre 0%)
+### Stack vigente (6 premium):
+- ollama-fast → glm-5.1:cloud (operação volume, 6 agentes)
+- ollama-code → kimi-k2.6:cloud (Aurora + SDR + Claude Code)
+- ollama-build → minimax-m2.7:cloud (App Factory + builds reais)
+- ollama-smart → deepseek-v4-pro:cloud (arquitetura + análise)
+- ollama-longctx → minimax-m2.7:cloud (A Caixa, RAG 1M ctx)
+- ollama-backup → qwen3.5:397b:cloud (backup premium)
+
+### Filosofia v2.1:
+Quality-First. Zero modelos free em produção. Ollama Max é o budget.
+
+### Mudanças críticas vs v2.0 que afetam KRATOS:
+- Cost Dashboard mostra 6 modelos (não 4)
+- Aurora chat agora exibe model_used = "kimi-k2.6" (era deepseek-v4-pro)
+- Schemas Zod precisam refletir os 6 nomes lógicos
 
 ### Regras invioláveis no KRATOS:
-- ❌ NUNCA secret com prefixo VITE_ (PUBLER_API_KEY, OLLAMA_API_KEY, ANTHROPIC_API_KEY ficam server-side)
+- ❌ NUNCA secret com prefixo VITE_ (OLLAMA_API_KEY fica server-side)
 - ❌ NUNCA hardcode model name em componente UI
 - ❌ NUNCA chamar API de modelo direto do browser
-- ✅ Schemas Zod refletem os nomes lógicos (ollama-fast/code/smart, fallback-*)
-- ✅ Cost Dashboard deve mostrar economia vs cenário 100% Anthropic
-
-### Para devs futuros:
-Antes de mexer em qualquer schema relacionado a "model_used" ou "cost", leia a página Notion acima.
+- ✅ Schemas Zod refletem os 6 nomes lógicos
+- ✅ Cost Dashboard alerta visual se opus/gpt-* aparecer (deve ser 0%)
 ---
 
 ---
