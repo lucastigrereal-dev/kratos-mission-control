@@ -93,7 +93,10 @@ export function AuroraPanelV2({
         icon: Timer,
         label: "Plano 25min",
         onClick: () => {
-          /* TODO: wire to Pomodoro timer */
+          navigate({ to: "/agora" });
+          window.dispatchEvent(
+            new CustomEvent("kratos:pomodoro-start", { detail: { minutes: 25 } }),
+          );
         },
       },
       {

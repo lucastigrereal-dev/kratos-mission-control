@@ -8,6 +8,11 @@ import {
   AlertTriangle,
   Target,
   FolderKanban,
+  CalendarDays,
+  MapPin,
+  Cpu,
+  Globe,
+  Timer,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,6 +25,8 @@ interface CommandItem {
   label: string;
   description: string;
   icon: typeof Search;
+  /** Optional keyboard shortcut hint displayed in the palette */
+  shortcut?: string;
   action: () => void;
 }
 
@@ -29,48 +36,93 @@ interface AuroraCommandPaletteProps {
   onCommand?: (command: string) => void;
 }
 
-const COMMANDS: CommandItem[] = [
+// Static command definitions — actions wired inside component with navigate
+const COMMANDS: Omit<CommandItem, "action">[] = [
+  // ── Aurora intelligence ──────────────────────────────────────────────
   {
     id: "resume-checkpoint",
     label: "Onde parei?",
     description: "Retomar último checkpoint salvo",
     icon: RotateCcw,
-    action: () => {},
+    shortcut: "⌘4",
   },
   {
     id: "next-action",
     label: "Próxima ação",
     description: "Ver próxima melhor ação recomendada",
     icon: ArrowRight,
-    action: () => {},
+    shortcut: "⌘2",
   },
   {
     id: "save-checkpoint",
     label: "Salvar checkpoint",
     description: "Salvar estado atual da missão",
     icon: Save,
-    action: () => {},
+    shortcut: "⌘4",
+  },
+  {
+    id: "pomodoro-25",
+    label: "Plano 25 min",
+    description: "Iniciar sessão de foco de 25 minutos",
+    icon: Timer,
+    shortcut: "⌘2",
   },
   {
     id: "view-risks",
     label: "Ver riscos",
     description: "Mostrar lista de riscos ativos",
     icon: AlertTriangle,
-    action: () => {},
+    shortcut: "⌘5",
+  },
+  // ── Navegação rápida ─────────────────────────────────────────────────
+  {
+    id: "go-dashboard",
+    label: "Dashboard",
+    description: "Visão geral do momento",
+    icon: Globe,
+    shortcut: "⌘1",
   },
   {
     id: "go-agora",
-    label: "Ir para Agora",
-    description: "Navegar para a página de foco imediato",
+    label: "Agora",
+    description: "Página de foco imediato",
     icon: Target,
-    action: () => {},
+    shortcut: "⌘2",
+  },
+  {
+    id: "go-agenda",
+    label: "Agenda",
+    description: "Calendário e compromissos",
+    icon: CalendarDays,
+    shortcut: "⌘3",
+  },
+  {
+    id: "go-checkpoints",
+    label: "Checkpoints",
+    description: "Marcos e metas com progresso",
+    icon: Save,
+    shortcut: "⌘4",
   },
   {
     id: "go-projetos",
-    label: "Ir para Projetos",
-    description: "Navegar para a página de projetos",
+    label: "Projetos",
+    description: "Projetos ativos e status",
     icon: FolderKanban,
-    action: () => {},
+    shortcut: "⌘5",
+  },
+  {
+    id: "go-contexto",
+    label: "Contexto",
+    description: "Contexto pessoal e situacional",
+    icon: MapPin,
+    shortcut: "⌘6",
+  },
+  {
+    id: "go-sistema",
+    label: "Sistema",
+    description: "Status dos serviços e configurações",
+    icon: Cpu,
+    shortcut: "⌘7",
   },
 ];
 
@@ -85,27 +137,36 @@ export function AuroraCommandPalette({
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Build commands with navigation actions wired in
+  // Wire all commands with navigate + functional actions
   const commands: CommandItem[] = COMMANDS.map((cmd) => {
-    if (cmd.id === "go-agora") {
-      return { ...cmd, action: () => navigate({ to: "/agora" }) };
+    const NAV_MAP: Record<string, string> = {
+      "go-dashboard":   "/",
+      "go-agora":       "/agora",
+      "go-agenda":      "/agenda",
+      "go-checkpoints": "/checkpoints",
+      "go-projetos":    "/projetos",
+      "go-contexto":    "/contexto",
+      "go-sistema":     "/sistema",
+      "save-checkpoint": "/checkpoints",
+      "resume-checkpoint": "/checkpoints",
+      "next-action":    "/agora",
+      "view-risks":     "/projetos",
+    };
+    if (NAV_MAP[cmd.id]) {
+      return { ...cmd, action: () => navigate({ to: NAV_MAP[cmd.id] as "/" }) };
     }
-    if (cmd.id === "go-projetos") {
-      return { ...cmd, action: () => navigate({ to: "/projetos" }) };
+    if (cmd.id === "pomodoro-25") {
+      return {
+        ...cmd,
+        action: () => {
+          navigate({ to: "/agora" });
+          // Dispatch event so Agora page can auto-start 25min focus mode
+          window.dispatchEvent(new CustomEvent("kratos:pomodoro-start", { detail: { minutes: 25 } }));
+        },
+      };
     }
-    if (cmd.id === "save-checkpoint") {
-      return { ...cmd, action: () => navigate({ to: "/checkpoints" }) };
-    }
-    if (cmd.id === "view-risks") {
-      return { ...cmd, action: () => navigate({ to: "/projetos" }) };
-    }
-    if (cmd.id === "resume-checkpoint") {
-      return { ...cmd, action: () => navigate({ to: "/checkpoints" }) };
-    }
-    if (cmd.id === "next-action") {
-      return { ...cmd, action: () => navigate({ to: "/agora" }) };
-    }
-    return cmd;
+    // Fallback no-op (shouldn't reach here with current registry)
+    return { ...cmd, action: () => {} };
   });
 
   // Filter commands by query
@@ -295,17 +356,30 @@ export function AuroraCommandPalette({
                           {cmd.description}
                         </div>
                       </div>
-                      {isSelected && (
-                        <kbd
-                          className="rounded px-1 py-0.5 text-[9px] kratos-mono"
-                          style={{
-                            background: "var(--kratos-surface-3)",
-                            color: "var(--kratos-text-muted)",
-                          }}
-                        >
-                          ⏎
-                        </kbd>
-                      )}
+                      <div className="flex items-center gap-1 shrink-0">
+                        {cmd.shortcut && !isSelected && (
+                          <kbd
+                            className="rounded px-1 py-0.5 text-[9px] kratos-mono"
+                            style={{
+                              background: "var(--kratos-surface-4)",
+                              color: "var(--kratos-text-muted)",
+                            }}
+                          >
+                            {cmd.shortcut}
+                          </kbd>
+                        )}
+                        {isSelected && (
+                          <kbd
+                            className="rounded px-1 py-0.5 text-[9px] kratos-mono"
+                            style={{
+                              background: "var(--kratos-surface-3)",
+                              color: "var(--kratos-text-muted)",
+                            }}
+                          >
+                            ⏎
+                          </kbd>
+                        )}
+                      </div>
                     </li>
                   );
                 })}

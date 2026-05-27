@@ -47,12 +47,23 @@ function useSSEConnection(): { isConnected: boolean } {
       };
 
       es.onmessage = () => {
-        // Invalidate KRATOS services + system pulse on every SSE heartbeat (5s)
+        // ── W10-B5: invalidate ALL cockpit query keys on each SSE heartbeat ──
+        // KRATOS infra keys
         qc.invalidateQueries({ queryKey: ["services"] });
         qc.invalidateQueries({ queryKey: ["system", "pulse"] });
-        // Missions and health score have own polling — only nudge them, not force
-        // (staleTime 20s keeps them from thrashing on every 5s SSE tick)
+        // Mission / Aurora keys (staleTime guards against thrashing)
         qc.invalidateQueries({ queryKey: ["missions-active"] });
+        qc.invalidateQueries({ queryKey: ["mission-lens"] });
+        qc.invalidateQueries({ queryKey: ["live-drift"] });
+        qc.invalidateQueries({ queryKey: ["aurora-insight"] });
+        // OMNIS health keys
+        qc.invalidateQueries({ queryKey: ["omnis", "status"] });
+        qc.invalidateQueries({ queryKey: ["omnis", "health"] });
+        // Island data keys
+        qc.invalidateQueries({ queryKey: ["agencia-queue"] });
+        qc.invalidateQueries({ queryKey: ["omnis-health-score"] });
+        // Dashboard aggregate
+        qc.invalidateQueries({ queryKey: ["dashboard"] });
       };
 
       es.onerror = () => {
