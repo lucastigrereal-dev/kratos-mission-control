@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServices } from "./useServices";
 import { useOmnisStatus } from "./useOmnis";
@@ -7,6 +7,11 @@ import type { SystemPulse } from "@/components/kratos/agora/SystemPulseStrip";
 import type { Severity } from "@/components/kratos/base/StatusDot";
 import type { DataSource } from "../../api-contract/source-badge.schema";
 import { fetchLiveEventsStatus } from "../lib/live-events-server-fns";
+import {
+  trackSSEConnect,
+  trackSSEDisconnect,
+  trackSSEReconnect,
+} from "../lib/analytics/kratosAnalytics";
 
 function serviceHealthToSeverity(status: string): Severity {
   if (status === "healthy" || status === "up" || status === "ok" || status === "live") return "ok";
@@ -34,8 +39,38 @@ function useSSEConnection(): { isConnected: boolean } {
     retry: false,
   });
 
+  // ── Telemetria SSE: rastreia transições connected↔disconnected ────────────
+  // prevConnected: undefined = estado inicial (sem dado ainda)
+  const prevConnectedRef = useRef<boolean | undefined>(undefined);
+  // Contador de falhas consecutivas para trackSSEDisconnect
+  const failCountRef = useRef(0);
+
+  const connected = Boolean(query.data?.data?.connected && !query.data?.error);
+  const hasData = query.data !== undefined;
+
   useEffect(() => {
-    const connected = Boolean(query.data?.data?.connected && !query.data?.error);
+    if (!hasData) return; // aguarda primeiro fetch completar
+
+    const prev = prevConnectedRef.current;
+
+    if (prev === undefined && connected) {
+      // 1ª conexão bem-sucedida da sessão
+      failCountRef.current = 0;
+      trackSSEConnect();
+    } else if (prev === true && !connected) {
+      // Transição connected → disconnected
+      failCountRef.current += 1;
+      trackSSEDisconnect("poll_failure", failCountRef.current);
+    } else if (prev === false && connected) {
+      // Transição disconnected → reconnected
+      trackSSEReconnect(failCountRef.current);
+      failCountRef.current = 0;
+    }
+
+    prevConnectedRef.current = connected;
+  }, [connected, hasData]);
+
+  useEffect(() => {
     if (!connected) {
       return;
     }
@@ -46,7 +81,7 @@ function useSSEConnection(): { isConnected: boolean } {
     qc.invalidateQueries({ queryKey: ["missions-active"] });
   }, [qc, query.dataUpdatedAt, query.data?.data?.connected, query.data?.error]);
 
-  return { isConnected: Boolean(query.data?.data?.connected && !query.data?.error) };
+  return { isConnected: connected };
 }
 
 interface LiveStatus {

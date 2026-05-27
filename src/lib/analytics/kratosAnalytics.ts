@@ -23,6 +23,8 @@ export type KratosEventName =
   | "aurora_command"
   | "optimistic_create"
   | "sse_disconnect"
+  | "sse_reconnect"
+  | "sse_connect"
   | "error_boundary";
 
 export interface KratosEvent {
@@ -108,9 +110,48 @@ export function trackOptimisticCreate(entity: "checkpoint" | "project" | "appoin
   track("optimistic_create", { entity });
 }
 
-/** Track SSE disconnect (infrastructure observability) */
-export function trackSSEDisconnect(reconnectAttempt: number): void {
-  track("sse_disconnect", { attempt: reconnectAttempt });
+/**
+ * Track SSE disconnect (infrastructure observability).
+ *
+ * @param reason    — machine-readable cause: "poll_failure" | "heartbeat_timeout" | "network_error"
+ * @param attemptCount — how many failed attempts so far (1-based)
+ * @param lastEventId  — last OMNIS event ID seen before disconnect (optional, for replay)
+ *
+ * // TODO(W11-B3): Sentry.captureMessage('sse_disconnect', {
+ * //   level: attemptCount >= 3 ? 'error' : 'warning',
+ * //   extra: { reason, attemptCount, lastEventId },
+ * // });
+ */
+export function trackSSEDisconnect(
+  reason: "poll_failure" | "heartbeat_timeout" | "network_error",
+  attemptCount: number,
+  lastEventId?: string,
+): void {
+  track("sse_disconnect", {
+    reason,
+    attempt: attemptCount,
+    ...(lastEventId ? { last_event_id: lastEventId.slice(0, 40) } : {}),
+  });
+}
+
+/**
+ * Track SSE reconnect success.
+ *
+ * @param attemptNumber — which attempt succeeded (≥1)
+ *
+ * // TODO(W11-B3): Sentry.addBreadcrumb({ category: 'sse', message: 'reconnected', data: { attemptNumber } });
+ */
+export function trackSSEReconnect(attemptNumber: number): void {
+  track("sse_reconnect", { attempt: attemptNumber });
+}
+
+/**
+ * Track SSE initial connection success (first connect after page load).
+ *
+ * // TODO(W11-B3): Sentry.addBreadcrumb({ category: 'sse', message: 'connected_initial' });
+ */
+export function trackSSEConnect(): void {
+  track("sse_connect", { source: "initial" });
 }
 
 /** Track error boundary catch */
