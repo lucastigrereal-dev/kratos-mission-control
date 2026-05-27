@@ -10,15 +10,6 @@ from datetime import date
 
 # Current Anthropic API pricing (May 2026) — $/1M tokens
 MODEL_PRICING = {
-    "claude-opus-4": {
-        "provider": "anthropic",
-        "input_per_1M": 15.00,
-        "output_per_1M": 75.00,
-        "routing_name": "cloud-max (currently Sonnet fallback in LiteLLM)",
-        "is_local": False,
-        "usage_profile": "Emergency/planning — rarely used",
-        "typical_monthly_cost": 0.10,
-    },
     "claude-sonnet-4-6": {
         "provider": "anthropic",
         "input_per_1M": 3.00,

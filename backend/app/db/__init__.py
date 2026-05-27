@@ -79,7 +79,6 @@ def generate_id():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 TREASURY_MODELS = [
-    ("claude-opus-4-7",   "anthropic", 15.00, 75.00, 0),
     ("claude-sonnet-4-6", "anthropic",  3.00, 15.00, 0),
     ("claude-haiku-4-5",  "anthropic",  0.80,  4.00, 0),
     ("deepseek-v4-pro",   "deepseek",   0.50,  2.00, 0),
