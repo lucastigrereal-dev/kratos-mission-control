@@ -5,6 +5,7 @@ import { AuroraDrawer } from "./AuroraDrawer";
 import { AuroraOrb } from "./AuroraOrb";
 import { BottomDockV2 } from "./BottomDockV2";
 import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
+import { useSSEToasts } from "@/hooks/useSSEToasts";
 
 const SIDEBAR_KEY = "kratos.sidebar.collapsed";
 const AURORA_KEY = "kratos.aurora.open";
@@ -14,6 +15,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [auroraOpen, setAuroraOpen] = useState(false);
 
   useGlobalShortcuts();
+  useSSEToasts(); // dispara toasts para guardrails e eventos críticos do OMNIS
 
   useEffect(() => {
     try {

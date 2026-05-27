@@ -8,6 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
 import { AppShell } from "@/components/kratos/shell/AppShell";
@@ -182,6 +183,13 @@ function RootComponent() {
           )}
         </IslandDockProvider>
       </ReducedMotionProvider>
+      {/* Toast system — posicionado no bottom-right (TDAH-first: nunca no centro) */}
+      <Toaster
+        position="bottom-right"
+        richColors
+        closeButton
+        toastOptions={{ duration: 6000 }}
+      />
     </QueryClientProvider>
   );
 }

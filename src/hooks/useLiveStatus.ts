@@ -47,7 +47,12 @@ function useSSEConnection(): { isConnected: boolean } {
       };
 
       es.onmessage = () => {
+        // Invalidate KRATOS services + system pulse on every SSE heartbeat (5s)
         qc.invalidateQueries({ queryKey: ["services"] });
+        qc.invalidateQueries({ queryKey: ["system", "pulse"] });
+        // Missions and health score have own polling — only nudge them, not force
+        // (staleTime 20s keeps them from thrashing on every 5s SSE tick)
+        qc.invalidateQueries({ queryKey: ["missions-active"] });
       };
 
       es.onerror = () => {
