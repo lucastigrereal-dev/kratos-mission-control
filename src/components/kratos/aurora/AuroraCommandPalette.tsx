@@ -98,6 +98,12 @@ export function AuroraCommandPalette({
     if (cmd.id === "view-risks") {
       return { ...cmd, action: () => navigate({ to: "/projetos" }) };
     }
+    if (cmd.id === "resume-checkpoint") {
+      return { ...cmd, action: () => navigate({ to: "/checkpoints" }) };
+    }
+    if (cmd.id === "next-action") {
+      return { ...cmd, action: () => navigate({ to: "/agora" }) };
+    }
     return cmd;
   });
 
