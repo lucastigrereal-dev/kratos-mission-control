@@ -124,7 +124,7 @@ export function SistemaView() {
           origin: "omnis",
           errors: omError ? [(omErr as Error)?.message ?? "Falha ao carregar status do OMNIS"] : [],
           stale: omError,
-          updated_at: omnis?.atualizadoEm ?? null,
+          updated_at: omnis?.atualizadoEm ?? new Date().toISOString(),
           confidence: omError ? 0 : 90,
         }}
         size="sm"
@@ -269,7 +269,7 @@ export function SistemaView() {
             <div className="kratos-eyebrow mb-3">error</div>
             <ErrorState
               title="Coletor indisponível"
-              description="Falha ao consultar /live/stream."
+              description="Falha ao consultar /v1/events/status."
               hint="código 503"
             />
           </StatusCard>

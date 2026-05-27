@@ -1,17 +1,17 @@
-import { useState, useEffect, useMemo } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServices } from "./useServices";
 import { useOmnisStatus } from "./useOmnis";
 import type { LiveState } from "@/components/kratos/base/LiveStatusIndicator";
 import type { SystemPulse } from "@/components/kratos/agora/SystemPulseStrip";
 import type { Severity } from "@/components/kratos/base/StatusDot";
 import type { DataSource } from "../../api-contract/source-badge.schema";
-import { API_BASE } from "../lib/api/client";
+import { fetchLiveEventsStatus } from "../lib/live-events-server-fns";
 
 function serviceHealthToSeverity(status: string): Severity {
-  if (status === "healthy" || status === "up" || status === "ok") return "ok";
+  if (status === "healthy" || status === "up" || status === "ok" || status === "live") return "ok";
   if (status === "degraded") return "warn";
-  if (status === "down" || status === "failed") return "critical";
+  if (status === "down" || status === "failed" || status === "offline") return "critical";
   return "muted";
 }
 
@@ -25,63 +25,28 @@ function deriveLiveState(krOk: number, krWarn: number, krCrit: number, omOk: num
 }
 
 function useSSEConnection(): { isConnected: boolean } {
-  const [isConnected, setIsConnected] = useState(false);
   const qc = useQueryClient();
+  const query = useQuery({
+    queryKey: ["omnis", "events-status"],
+    queryFn: () => fetchLiveEventsStatus(),
+    staleTime: 5_000,
+    refetchInterval: 10_000,
+    retry: false,
+  });
 
   useEffect(() => {
-    if (typeof EventSource === "undefined") return;
-
-    let es: EventSource | null = null;
-    let failTimer: ReturnType<typeof setTimeout> | null = null;
-
-    function connect() {
-      es = new EventSource(`${API_BASE}/live/stream`);
-
-      failTimer = setTimeout(() => {
-        setIsConnected(false);
-      }, 3000);
-
-      es.onopen = () => {
-        if (failTimer) clearTimeout(failTimer);
-        setIsConnected(true);
-      };
-
-      es.onmessage = () => {
-        // ── W10-B5: invalidate ALL cockpit query keys on each SSE heartbeat ──
-        // KRATOS infra keys
-        qc.invalidateQueries({ queryKey: ["services"] });
-        qc.invalidateQueries({ queryKey: ["system", "pulse"] });
-        // Mission / Aurora keys (staleTime guards against thrashing)
-        qc.invalidateQueries({ queryKey: ["missions-active"] });
-        qc.invalidateQueries({ queryKey: ["mission-lens"] });
-        qc.invalidateQueries({ queryKey: ["live-drift"] });
-        qc.invalidateQueries({ queryKey: ["aurora-insight"] });
-        // OMNIS health keys
-        qc.invalidateQueries({ queryKey: ["omnis", "status"] });
-        qc.invalidateQueries({ queryKey: ["omnis", "health"] });
-        // Island data keys
-        qc.invalidateQueries({ queryKey: ["agencia-queue"] });
-        qc.invalidateQueries({ queryKey: ["omnis-health-score"] });
-        // Dashboard aggregate
-        qc.invalidateQueries({ queryKey: ["dashboard"] });
-      };
-
-      es.onerror = () => {
-        setIsConnected(false);
-        es?.close();
-        setTimeout(connect, 10_000);
-      };
+    const connected = Boolean(query.data?.data?.connected && !query.data?.error);
+    if (!connected) {
+      return;
     }
 
-    connect();
+    // Keep data fresh while the backend SSE health endpoint is reachable.
+    qc.invalidateQueries({ queryKey: ["services"] });
+    qc.invalidateQueries({ queryKey: ["system", "pulse"] });
+    qc.invalidateQueries({ queryKey: ["missions-active"] });
+  }, [qc, query.dataUpdatedAt, query.data?.data?.connected, query.data?.error]);
 
-    return () => {
-      if (failTimer) clearTimeout(failTimer);
-      es?.close();
-    };
-  }, [qc]); // API_BASE is a module-level constant — stable ref, no dep needed
-
-  return { isConnected };
+  return { isConnected: Boolean(query.data?.data?.connected && !query.data?.error) };
 }
 
 interface LiveStatus {
@@ -113,14 +78,14 @@ export function useLiveStatus(checkpointCount: number): LiveStatus {
     // KRATOS services
     let krOk = 0, krWarn = 0, krCrit = 0;
     for (const s of services) {
-      const sev = serviceHealthToSeverity(s.status);
+      const sev = serviceHealthToSeverity(s.health);
       if (sev === "ok") krOk++;
       else if (sev === "warn") krWarn++;
       else if (sev === "critical") krCrit++;
       systems.push({
         name: s.nome.toUpperCase(),
         severity: sev,
-        hint: s.port ? `:${s.port}` : undefined,
+        hint: s.url,
       });
     }
 
