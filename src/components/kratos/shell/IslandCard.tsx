@@ -4,7 +4,7 @@ import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndica
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
-import type { DataSource } from "../../../api-contract/source-badge.schema";
+import type { DataSource } from "../../../../api-contract/source-badge.schema";
 
 // --- ErrorBoundary por island ---
 interface BoundaryState {

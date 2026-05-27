@@ -1,7 +1,7 @@
 import { Play, Clock, AlertTriangle, ChevronUp, Minus, ChevronDown } from "lucide-react";
 import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
-import type { DataSource } from "../../../api-contract/source-badge.schema";
+import type { DataSource } from "../../../../api-contract/source-badge.schema";
 import type { MissionLensData } from "@/hooks/useMissionLens";
 
 type Priority = "critical" | "high" | "medium" | "low";

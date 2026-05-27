@@ -1,5 +1,5 @@
 import { X, Cpu } from "lucide-react";
-import type { SourceBadgeMeta } from "../../../api-contract/source-badge.schema";
+import type { SourceBadgeMeta } from "../../../../api-contract/source-badge.schema";
 
 interface Props {
   meta: SourceBadgeMeta | null;

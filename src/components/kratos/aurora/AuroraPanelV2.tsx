@@ -17,7 +17,7 @@ import { AuroraOrb, type OrbState } from "./AuroraOrb";
 import { AuroraSignalList, type AuroraSignal } from "./AuroraSignalList";
 import type { MissionLensData } from "@/hooks/useMissionLens";
 import type { DriftState } from "@/hooks/useDriftDetection";
-import type { DataSource } from "@/api-contract/source-badge.schema";
+import type { DataSource } from "../../../../api-contract/source-badge.schema";
 
 interface AuroraPanelV2Props {
   lens?: MissionLensData | null;
