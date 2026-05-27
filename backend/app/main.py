@@ -60,6 +60,7 @@ from app.routes.aurora import router as aurora_router
 from app.routes.agencia import router as agencia_router
 from app.routes.omnis_health import router as omnis_health_router
 from app.routes.omnis_runs import router as omnis_runs_router
+from app.routes.content_drafts import router as content_drafts_router
 
 app.include_router(health_router)
 app.include_router(tasks_router)
@@ -103,6 +104,7 @@ app.include_router(aurora_router)
 app.include_router(agencia_router)
 app.include_router(omnis_health_router)
 app.include_router(omnis_runs_router)
+app.include_router(content_drafts_router)
 app.include_router(replay_router)
 
 

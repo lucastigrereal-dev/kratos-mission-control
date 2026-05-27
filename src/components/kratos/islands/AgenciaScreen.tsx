@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { cn } from "@/lib/utils";
 import { useAgenciaQueue } from "@/hooks/useAgenciaQueue";
 import type { AgenciaQueueSummary } from "../../../../api-contract/agencia.schema";
+import { ContentDraftsCard } from "@/components/kratos/omnis/ContentDraftsCard";
 import {
   Eye,
   Heart,
@@ -563,6 +564,9 @@ export function AgenciaScreen({
 
           {/* Dado real: pipeline do content_queue do OMNIS */}
           <QueueSummaryCard summary={summary!} />
+
+          {/* C3 — Fila de aprovação de captions (caption_drafts.jsonl) */}
+          <ContentDraftsCard />
         </>
       )}
     </IslandPageFrame>
