@@ -4,6 +4,8 @@ import { TopBarV2 } from "./TopBarV2";
 import { AuroraDrawer } from "./AuroraDrawer";
 import { AuroraOrb } from "./AuroraOrb";
 import { BottomDockV2 } from "./BottomDockV2";
+import { OfflineBanner } from "./OfflineBanner";
+import { PWAInstallPrompt } from "./PWAInstallPrompt";
 import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
 import { useSSEToasts } from "@/hooks/useSSEToasts";
 
@@ -121,6 +123,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         onContinue={() => {}}
         onSaveCheckpoint={() => {}}
       />
+
+      {/* W6-B2a: Offline indicator — slim bar above main content */}
+      <OfflineBanner />
+
+      {/* W6-B2b: PWA install chip — bottom-left, after 3 visits */}
+      <PWAInstallPrompt />
     </div>
   );
 }
