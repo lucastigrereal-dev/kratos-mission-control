@@ -17,7 +17,9 @@ import { useMissions } from "@/hooks/useMissions";
 import {
   MODEL_DISPLAY_NAMES,
   MODEL_REAL_NAMES,
+  MODEL_TIER,
   isPolicyViolation,
+  isFallbackDisabled,
 } from "../../../../api-contract/models.schema";
 
 // ── Preços de referência (USD por 1M tokens) — Maio 2026 ─────────────────
@@ -31,10 +33,10 @@ const ANTHROPIC_PRICE_PER_1M_TOKENS_USD = 3.0; // sonnet médio input+output
 // name = LogicalModel — label via MODEL_DISPLAY_NAMES — nunca hardcode real model
 
 interface ModelUsage {
-  name: string;          // LogicalModel key (ollama-fast, ollama-code, …)
-  label: string;         // Human-readable via MODEL_DISPLAY_NAMES
-  realModel: string;     // Real model name para tooltip (via MODEL_REAL_NAMES)
-  provider: "ollama" | "anthropic";
+  name: string;                        // LogicalModel key (ollama-fast, ollama-code, …)
+  label: string;                       // Human-readable via MODEL_DISPLAY_NAMES
+  realModel: string;                   // Real model name para tooltip (via MODEL_REAL_NAMES)
+  tier: "premium" | "disabled";        // via MODEL_TIER — premium=ok, disabled=warn
   tokens_used: number;
   cost_usd: number;
   pct: number;
@@ -45,7 +47,7 @@ const MOCK_MODEL_USAGE: ModelUsage[] = [
     name: "ollama-fast",
     label: MODEL_DISPLAY_NAMES["ollama-fast"],
     realModel: MODEL_REAL_NAMES["ollama-fast"],
-    provider: "ollama",
+    tier: MODEL_TIER["ollama-fast"],
     tokens_used: 186_000,
     cost_usd: 0.0,
     pct: 40,
@@ -54,7 +56,7 @@ const MOCK_MODEL_USAGE: ModelUsage[] = [
     name: "ollama-code",
     label: MODEL_DISPLAY_NAMES["ollama-code"],
     realModel: MODEL_REAL_NAMES["ollama-code"],
-    provider: "ollama",
+    tier: MODEL_TIER["ollama-code"],
     tokens_used: 93_000,
     cost_usd: 0.0,
     pct: 20,
@@ -63,7 +65,7 @@ const MOCK_MODEL_USAGE: ModelUsage[] = [
     name: "ollama-build",
     label: MODEL_DISPLAY_NAMES["ollama-build"],
     realModel: MODEL_REAL_NAMES["ollama-build"],
-    provider: "ollama",
+    tier: MODEL_TIER["ollama-build"],
     tokens_used: 70_000,
     cost_usd: 0.0,
     pct: 15,
@@ -72,7 +74,7 @@ const MOCK_MODEL_USAGE: ModelUsage[] = [
     name: "ollama-smart",
     label: MODEL_DISPLAY_NAMES["ollama-smart"],
     realModel: MODEL_REAL_NAMES["ollama-smart"],
-    provider: "ollama",
+    tier: MODEL_TIER["ollama-smart"],
     tokens_used: 70_000,
     cost_usd: 0.0,
     pct: 15,
@@ -81,7 +83,7 @@ const MOCK_MODEL_USAGE: ModelUsage[] = [
     name: "ollama-longctx",
     label: MODEL_DISPLAY_NAMES["ollama-longctx"],
     realModel: MODEL_REAL_NAMES["ollama-longctx"],
-    provider: "ollama",
+    tier: MODEL_TIER["ollama-longctx"],
     tokens_used: 32_500,
     cost_usd: 0.0,
     pct: 7,
@@ -90,7 +92,7 @@ const MOCK_MODEL_USAGE: ModelUsage[] = [
     name: "ollama-backup",
     label: MODEL_DISPLAY_NAMES["ollama-backup"],
     realModel: MODEL_REAL_NAMES["ollama-backup"],
-    provider: "ollama",
+    tier: MODEL_TIER["ollama-backup"],
     tokens_used: 14_000,
     cost_usd: 0.0,
     pct: 3,
@@ -116,13 +118,13 @@ function fmtTokens(n: number): string {
 // ── Sub-components ────────────────────────────────────────────────────────
 
 function ModelRow({ m }: { m: ModelUsage }) {
-  const isOllama = m.provider === "ollama";
-  const barColor = isOllama ? "var(--kr-success, var(--kratos-ok))" : "var(--kratos-warn)";
+  const isPremium = m.tier === "premium";
+  const barColor = isPremium ? "var(--kr-success, var(--kratos-ok))" : "var(--kratos-warn)";
 
   return (
     <div className="space-y-0.5">
       <div className="flex items-center gap-2">
-        {/* Provider dot */}
+        {/* Tier dot */}
         <span
           className="inline-block h-1.5 w-1.5 rounded-full shrink-0"
           style={{ background: barColor }}
@@ -144,7 +146,7 @@ function ModelRow({ m }: { m: ModelUsage }) {
         {/* Cost */}
         <span
           className="text-[10px] kratos-mono w-12 text-right shrink-0 font-medium"
-          style={{ color: isOllama ? "var(--kr-success, var(--kratos-ok))" : "var(--kratos-warn)" }}
+          style={{ color: isPremium ? "var(--kr-success, var(--kratos-ok))" : "var(--kratos-warn)" }}
         >
           {fmtUsd(m.cost_usd)}
         </span>
@@ -178,7 +180,7 @@ export function ModelCostDashboard() {
 
   // Total tokens (mock, since missions don't track tokens yet)
   const totalTokensMock = MOCK_MODEL_USAGE.reduce((s, m) => s + m.tokens_used, 0);
-  const ollamaTokens = MOCK_MODEL_USAGE.filter((m) => m.provider === "ollama").reduce((s, m) => s + m.tokens_used, 0);
+  const ollamaTokens = MOCK_MODEL_USAGE.filter((m) => m.tier === "premium").reduce((s, m) => s + m.tokens_used, 0);
   const ollamaPct = totalTokensMock > 0 ? Math.round((ollamaTokens / totalTokensMock) * 100) : 0;
 
   // Hypothetical cost if 100% Anthropic
@@ -196,9 +198,13 @@ export function ModelCostDashboard() {
     budgetUsedPct > 50 ? "var(--kratos-warn)" :
     "var(--kr-success, var(--kratos-ok))";
 
-  // Policy v2.1: opus/gpt-*/claude-3-*/gemini-ultra devem ser 0% — alerta visual
+  // 🔴 Violação crítica: opus/gpt-*/claude-3-*/gemini-* devem ser 0%
   const violatingModels = MOCK_MODEL_USAGE.filter((m) => isPolicyViolation(m.name) || isPolicyViolation(m.realModel));
   const policyViolation = violatingModels.length > 0;
+
+  // 🟡 Alerta amarelo: fallback-cheap/premium desativados aparecendo (sem ANTHROPIC_API_KEY)
+  const fallbackModels = MOCK_MODEL_USAGE.filter((m) => isFallbackDisabled(m.name) && m.tokens_used > 0);
+  const fallbackWarning = fallbackModels.length > 0;
 
   return (
     <GlassPanel padding="md" className="space-y-4">
@@ -220,7 +226,7 @@ export function ModelCostDashboard() {
         </span>
       </div>
 
-      {/* Policy violation alert */}
+      {/* 🔴 Violação crítica: opus/gpt-* */}
       {policyViolation && (
         <div
           className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[11px]"
@@ -231,7 +237,22 @@ export function ModelCostDashboard() {
           }}
         >
           <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
-          Modelo proibido detectado ({violatingModels.map((m) => m.name).join(", ")}) — viola política Ollama-First v2.1. Verificar config.
+          PROIBIDO: {violatingModels.map((m) => m.name).join(", ")} — viola Política v2.1. Verificar config imediatamente.
+        </div>
+      )}
+
+      {/* 🟡 Alerta fallback desativado: Anthropic sem chave configurada */}
+      {fallbackWarning && !policyViolation && (
+        <div
+          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-[11px]"
+          style={{
+            background: "color-mix(in oklab, var(--kratos-warn) 10%, transparent)",
+            border: "1px solid color-mix(in oklab, var(--kratos-warn) 25%, transparent)",
+            color: "var(--kratos-warn)",
+          }}
+        >
+          <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
+          Anthropic desativado, mas usou? {fallbackModels.map((m) => m.name).join(", ")} — verificar ANTHROPIC_API_KEY.
         </div>
       )}
 
