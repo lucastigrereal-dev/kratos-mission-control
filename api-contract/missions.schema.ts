@@ -36,3 +36,22 @@ export const MissionsEnvelopeSchema = z.object({
 
 export type MissionSummary = z.infer<typeof MissionSummarySchema>;
 export type MissionsEnvelope = z.infer<typeof MissionsEnvelopeSchema>;
+
+// ── W7 Read-Only: Event log ─────────────────────────────────────────────────
+
+export const MissionEventSchema = z.object({
+  sequence: z.number().int().min(0).optional(),
+  event_type: z.string(),
+  timestamp: z.string().optional(),
+  cumulative_cost_usd: z.number().min(0).optional(),
+  payload: z.record(z.unknown()).optional(),
+});
+
+export const MissionEventLogSchema = z.object({
+  mission_id: z.string(),
+  total: z.number().int().min(0),
+  data: z.array(MissionEventSchema),
+});
+
+export type MissionEvent = z.infer<typeof MissionEventSchema>;
+export type MissionEventLog = z.infer<typeof MissionEventLogSchema>;

@@ -9,12 +9,14 @@ import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { cn } from "@/lib/utils";
 import { useOmnisStatus, useOmnisCrews, useOmnisJobs } from "@/hooks/useOmnis";
+import { useMissions } from "@/hooks/useMissions";
 import type { OmnisCrew, OmnisJob } from "../../../../api-contract/omnis.schema";
 import { HealthScoreCard } from "@/components/kratos/omnis/HealthScoreCard";
 import { MissionRunsCard } from "@/components/kratos/omnis/MissionRunsCard";
 import { MissionGraphCard } from "@/components/kratos/omnis/MissionGraphCard";
 import { GuardrailAlertCard } from "@/components/kratos/omnis/GuardrailAlertCard";
 import { CostSummaryCard } from "@/components/kratos/omnis/CostSummaryCard";
+import { MissionEventLogCard } from "@/components/kratos/omnis/MissionEventLogCard";
 import {
   Cpu,
   Workflow,
@@ -504,7 +506,14 @@ export function OmnisLabScreen({
   const { data: omnis, isLoading: omLoading, isError: omError } = useOmnisStatus();
   const { data: crews, isLoading: crLoading } = useOmnisCrews();
   const { data: jobs, isLoading: jbLoading } = useOmnisJobs(5);
+  const { missions } = useMissions(10);
   const { setData } = useIslandDock();
+
+  // Auto-select first running mission for the event log (read-only, boundary preserved)
+  const activeMissionId: string | null =
+    missions.find((m) => m.status === "running")?.mission_id ??
+    missions[0]?.mission_id ??
+    null;
 
   const anyLoading = propLoading || omLoading || crLoading || jbLoading;
 
@@ -624,6 +633,11 @@ export function OmnisLabScreen({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <GuardrailAlertCard />
         <CostSummaryCard />
+      </div>
+
+      {/* 3e. Mission Event Log — drill-down read-only (W7) */}
+      <div className="mb-4">
+        <MissionEventLogCard missionId={activeMissionId} limit={12} />
       </div>
 
       {/* 4. Próxima ação (dominante) + guardrail (restrições) */}

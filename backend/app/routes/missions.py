@@ -201,6 +201,23 @@ def _project_state(mission_id: str, base: dict) -> dict:
     }
 
 
+@router.get("/{mission_id}/events")
+def mission_events(
+    mission_id: str,
+    limit: int = Query(default=20, ge=1, le=100),
+):
+    """Últimos N eventos de uma missão específica — READ-ONLY."""
+    _limit = int(limit) if isinstance(limit, (int, float, str)) else 20
+    events = _read_events(mission_id)
+    # Return most-recent first
+    events_rev = list(reversed(events))[:_limit]
+    return {
+        "mission_id": mission_id,
+        "total": len(events),
+        "data": events_rev,
+    }
+
+
 @router.get("/active")
 def missions_active(
     limit: int = Query(default=10, ge=1, le=50),
