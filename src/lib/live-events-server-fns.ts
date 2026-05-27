@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 
 type Envelope<T> = { data: T | null; error: string | null };
 
-const OMNIS_BASE_URL = process.env.OMNIS_API_BASE_URL ?? "http://localhost:5100";
+const OMNIS_BASE_URL = process.env.OMNIS_API_BASE_URL ?? "http://localhost:8765";
 const OMNIS_API_KEY =
   process.env.KRATOS_OMNIS_API_KEY ??
   process.env.OMNIS_API_KEY ??
@@ -18,7 +18,7 @@ const EventsStatusSchema = z.object({
 export interface LiveEventsStatus {
   connected: boolean;
   subscribers: number;
-  endpoint: "/v1/events/status" | "/live/status";
+  endpoint: "/v1/events/status" | "/events/status";
 }
 
 function buildHeaders(): HeadersInit {
@@ -31,7 +31,7 @@ function buildHeaders(): HeadersInit {
   return headers;
 }
 
-async function probe(path: "/v1/events/status" | "/live/status"): Promise<LiveEventsStatus> {
+async function probe(path: "/v1/events/status" | "/events/status"): Promise<LiveEventsStatus> {
   const res = await fetch(`${OMNIS_BASE_URL}${path}`, {
     method: "GET",
     headers: buildHeaders(),
@@ -61,7 +61,7 @@ export const fetchLiveEventsStatus = createServerFn({ method: "GET" }).handler(
     } catch (primaryErr) {
       try {
         // Legacy alias fallback while migration window is open.
-        const data = await probe("/live/status");
+        const data = await probe("/events/status");
         return { data, error: null };
       } catch (fallbackErr) {
         const msg =
