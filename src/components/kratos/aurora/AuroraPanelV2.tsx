@@ -13,7 +13,7 @@ import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { StatusDot } from "@/components/kratos/base/StatusDot";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
-import { AuroraOrb } from "./AuroraOrb";
+import { AuroraOrb, type OrbState } from "./AuroraOrb";
 import { AuroraSignalList, type AuroraSignal } from "./AuroraSignalList";
 import type { MissionLensData } from "@/hooks/useMissionLens";
 import type { DriftState } from "@/hooks/useDriftDetection";
@@ -45,6 +45,17 @@ export function AuroraPanelV2({
   const isLive = sourceType === "live";
   const isError = sourceType === "error";
   const orbActive = isLive || sourceType === "cache";
+
+  // Derive semantic orb state from data source + loading
+  const orbState: OrbState = isLoading
+    ? "thinking"
+    : isError
+      ? "offline"
+      : sourceType === "live"
+        ? "live"
+        : sourceType === "cache"
+          ? "idle"
+          : "offline";
 
   // Derive greeting from lens context
   const greeting = useMemo(() => {
@@ -112,7 +123,7 @@ export function AuroraPanelV2({
     return (
       <GlassPanel padding="md" className="space-y-3">
         <div className="flex items-center gap-3">
-          <AuroraOrb active={false} />
+          <AuroraOrb state="offline" />
           <div>
             <div
               className="text-[10px] kratos-mono uppercase tracking-[0.15em]"
@@ -138,7 +149,7 @@ export function AuroraPanelV2({
     return (
       <GlassPanel padding="md" className="space-y-3">
         <div className="flex items-center gap-3">
-          <AuroraOrb active={false} />
+          <AuroraOrb state="offline" />
           <div>
             <div
               className="text-[10px] kratos-mono uppercase tracking-[0.15em]"
@@ -171,7 +182,7 @@ export function AuroraPanelV2({
     <GlassPanel padding="md" className="space-y-3">
       {/* Header — Orb + label + status */}
       <div className="flex items-center gap-3">
-        <AuroraOrb active={orbActive} pulse={isLive} />
+        <AuroraOrb state={orbState} />
 
         <div className="min-w-0 flex-1">
           <div

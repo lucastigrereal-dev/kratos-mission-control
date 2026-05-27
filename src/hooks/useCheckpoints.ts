@@ -45,13 +45,40 @@ export function useCheckpoint(id: string) {
 export function useCreateCheckpoint() {
   const queryClient = useQueryClient();
 
-  return useMutation<Checkpoint, Error, CreateCheckpoint>({
+  return useMutation<Checkpoint, Error, CreateCheckpoint, { previous: Checkpoint[] | undefined }>({
     mutationFn: async (input) => {
       const result = await createCheckpoint({ data: input });
       if (result.error || !result.data) throw new Error(result.error ?? "Falha ao criar checkpoint");
       return result.data;
     },
-    onSuccess: () => {
+    // W5-B3: Optimistic insert — item appears immediately, rolls back on error
+    onMutate: async (newCheckpoint) => {
+      await queryClient.cancelQueries({ queryKey: checkpointKeys.all });
+      const previous = queryClient.getQueryData<Checkpoint[]>(checkpointKeys.all);
+      const now = new Date().toISOString();
+      const optimistic: Checkpoint = {
+        id: crypto.randomUUID(),
+        projetoId: newCheckpoint.projetoId ?? null,
+        titulo: newCheckpoint.titulo,
+        descricao: newCheckpoint.descricao,
+        progresso: 0,
+        status: "pending",
+        deadline: newCheckpoint.deadline ?? null,
+        criadoEm: now,
+        atualizadoEm: now,
+      };
+      queryClient.setQueryData<Checkpoint[]>(
+        checkpointKeys.all,
+        (old) => [...(old ?? []), optimistic],
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(checkpointKeys.all, context.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: checkpointKeys.all });
     },
   });
@@ -63,17 +90,34 @@ export function useUpdateCheckpoint() {
   return useMutation<
     Checkpoint | null,
     Error,
-    { id: string; input: UpdateCheckpoint }
+    { id: string; input: UpdateCheckpoint },
+    { previous: Checkpoint[] | undefined }
   >({
     mutationFn: async ({ id, input }) => {
       const result = await updateCheckpoint({ data: { id, ...input } });
       if (result.error) throw new Error(result.error);
       return result.data;
     },
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: checkpointKeys.detail(variables.id),
-      });
+    // W5-B3: Optimistic patch — update item in-place before server confirms
+    onMutate: async ({ id, input }) => {
+      await queryClient.cancelQueries({ queryKey: checkpointKeys.all });
+      const previous = queryClient.getQueryData<Checkpoint[]>(checkpointKeys.all);
+      queryClient.setQueryData<Checkpoint[]>(checkpointKeys.all, (old) =>
+        (old ?? []).map((c) =>
+          c.id === id
+            ? { ...c, ...input, atualizadoEm: new Date().toISOString() }
+            : c,
+        ),
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(checkpointKeys.all, context.previous);
+      }
+    },
+    onSettled: (_data, _err, variables) => {
+      queryClient.invalidateQueries({ queryKey: checkpointKeys.detail(variables.id) });
       queryClient.invalidateQueries({ queryKey: checkpointKeys.all });
     },
   });

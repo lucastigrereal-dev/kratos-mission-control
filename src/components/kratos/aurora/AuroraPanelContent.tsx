@@ -8,6 +8,7 @@ import { NextActionBlock } from "@/components/kratos/shell/NextActionBlock";
 import { AuroraQuickActions } from "./AuroraQuickActions";
 import { AuroraInsightCard } from "./AuroraInsightCard";
 import { AuroraCommandPalette } from "./AuroraCommandPalette";
+import { FioMentalPanel } from "./FioMentalPanel";
 import { useMissionLens } from "@/hooks/useMissionLens";
 import { useDriftDetection } from "@/hooks/useDriftDetection";
 import { useAuroraInsight } from "@/hooks/useAuroraInsight";
@@ -101,6 +102,9 @@ export function AuroraPanelContent() {
               isError={insightError}
               onRefetch={refetchInsight}
             />
+
+            {/* W3-B4: Fio Mental — running OMNIS missions, read-only */}
+            <FioMentalPanel />
 
             {/* Next best action — replaces static AuroraMessagePreview */}
             <NextActionBlock
