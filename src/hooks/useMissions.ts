@@ -3,25 +3,14 @@ import {
   MissionsEnvelopeSchema,
   type MissionSummary,
 } from "../../api-contract/missions.schema";
-
-const BASE_URL =
-  typeof window !== "undefined"
-    ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-    : "http://localhost:5100";
+import { apiGet } from "../lib/api/client";
 
 async function fetchMissions(limit = 10): Promise<MissionSummary[]> {
-  try {
-    const res = await fetch(`${BASE_URL}/missions/active?limit=${limit}`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) return [];
-    const raw: unknown = await res.json();
-    const parsed = MissionsEnvelopeSchema.safeParse(raw);
-    if (!parsed.success) return [];
-    return parsed.data.data;
-  } catch {
-    return [];
-  }
+  const result = await apiGet(`/missions/active?limit=${limit}`);
+  if (!result.ok) return [];
+  const parsed = MissionsEnvelopeSchema.safeParse(result.raw);
+  if (!parsed.success) return [];
+  return parsed.data.data;
 }
 
 export function useMissions(limit = 10) {

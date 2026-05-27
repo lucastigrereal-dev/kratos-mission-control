@@ -1,25 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { OmnisHealthEnvelopeSchema } from "../../api-contract/omnis-health.schema";
 import type { OmnisHealthScore } from "../../api-contract/omnis-health.schema";
-
-const BASE_URL =
-  typeof window !== "undefined"
-    ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-    : "http://localhost:5100";
+import { apiGet } from "../lib/api/client";
 
 async function fetchOmnisHealthScore(): Promise<OmnisHealthScore | null> {
-  try {
-    const res = await fetch(`${BASE_URL}/omnis-health/score`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) return null;
-    const raw: unknown = await res.json();
-    const parsed = OmnisHealthEnvelopeSchema.safeParse(raw);
-    if (!parsed.success) return null;
-    return parsed.data.data;
-  } catch {
-    return null;
-  }
+  const result = await apiGet("/omnis-health/score");
+  if (!result.ok) return null;
+  const parsed = OmnisHealthEnvelopeSchema.safeParse(result.raw);
+  if (!parsed.success) return null;
+  return parsed.data.data;
 }
 
 export function useOmnisHealthScore() {

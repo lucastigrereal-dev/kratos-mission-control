@@ -1,25 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { AgenciaQueueEnvelopeSchema } from "../../api-contract/agencia.schema";
 import type { AgenciaQueueSummary } from "../../api-contract/agencia.schema";
-
-const BASE_URL =
-  typeof window !== "undefined"
-    ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-    : "http://localhost:5100";
+import { apiGet } from "../lib/api/client";
 
 async function fetchAgenciaQueue(): Promise<AgenciaQueueSummary | null> {
-  try {
-    const res = await fetch(`${BASE_URL}/agencia/queue-summary`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) return null;
-    const raw: unknown = await res.json();
-    const parsed = AgenciaQueueEnvelopeSchema.safeParse(raw);
-    if (!parsed.success) return null;
-    return parsed.data.data;
-  } catch {
-    return null;
-  }
+  const result = await apiGet("/agencia/queue-summary");
+  if (!result.ok) return null;
+  const parsed = AgenciaQueueEnvelopeSchema.safeParse(result.raw);
+  if (!parsed.success) return null;
+  return parsed.data.data;
 }
 
 export function useAgenciaQueue() {

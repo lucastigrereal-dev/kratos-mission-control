@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import type { DataSource } from "../../api-contract/source-badge.schema";
+import { apiGet } from "../lib/api/client";
 
 // --- Schema do /live/snapshot (campos reais do backend) ---
 const CollectorStatusEntrySchema = z.object({
@@ -60,9 +61,6 @@ function deriveHealth(cpu: number, ram: number): SystemHealth {
 }
 
 // --- Fetch ---
-const BASE_URL = typeof window !== "undefined"
-  ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-  : "http://localhost:5100";
 
 interface CollectorDictEntry {
   source?: string;
@@ -76,50 +74,44 @@ interface CollectorDictEntry {
 }
 
 async function fetchSnapshot(): Promise<{ pulse: SystemPulseData | null; sourceType: DataSource }> {
-  try {
-    const res = await fetch(`${BASE_URL}/live/snapshot`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) return { pulse: null, sourceType: "error" };
-    const raw = await res.json();
-    const parsed = SnapshotEnvelopeSchema.safeParse(raw);
-    if (!parsed.success) return { pulse: null, sourceType: "error" };
+  const result = await apiGet("/live/snapshot");
+  if (!result.ok) return { pulse: null, sourceType: "error" };
+  const raw = result.raw;
+  const parsed = SnapshotEnvelopeSchema.safeParse(raw);
+  if (!parsed.success) return { pulse: null, sourceType: "error" };
 
-    const payload = parsed.data;
-    const meta = payload._live_meta;
-    const sourceType: DataSource = meta?.mode === "live" ? "live"
-      : meta?.mode === "degraded" ? "cache"
-      : "live";
+  const payload = parsed.data;
+  const meta = payload._live_meta;
+  const sourceType: DataSource = meta?.mode === "live" ? "live"
+    : meta?.mode === "degraded" ? "cache"
+    : "live";
 
-    // Extract collector data from the real backend shape (dict of named collectors)
-    const collectors = (payload.collector_status ?? {}) as Record<string, CollectorDictEntry>;
-    const system = collectors.system ?? {};
-    const docker = collectors.docker ?? {};
+  // Extract collector data from the real backend shape (dict of named collectors)
+  const collectors = (payload.collector_status ?? {}) as Record<string, CollectorDictEntry>;
+  const system = collectors.system ?? {};
+  const docker = collectors.docker ?? {};
 
-    const cpu = system.cpu_percent ?? 0;
-    const ram = system.memory_percent ?? 0;
-    const dockerRunning = docker.running ?? 0;
+  const cpu = system.cpu_percent ?? 0;
+  const ram = system.memory_percent ?? 0;
+  const dockerRunning = docker.running ?? 0;
 
-    // git dirty: read from the git collector entry if present
-    const git = collectors.git ?? {};
-    const gitDirty = (git as { dirty?: boolean }).dirty === true;
+  // git dirty: read from the git collector entry if present
+  const git = collectors.git ?? {};
+  const gitDirty = (git as { dirty?: boolean }).dirty === true;
 
-    const alerts: Array<{ collector: string; status: string; error?: string | null }> = [];
-    for (const [name, c] of Object.entries(collectors)) {
-      if (c.status === "degraded" || c.status === "error" || c.status === "offline") {
-        alerts.push({ collector: name, status: c.status ?? "unknown", error: c.error ?? null });
-      }
+  const alerts: Array<{ collector: string; status: string; error?: string | null }> = [];
+  for (const [name, c] of Object.entries(collectors)) {
+    if (c.status === "degraded" || c.status === "error" || c.status === "offline") {
+      alerts.push({ collector: name, status: c.status ?? "unknown", error: c.error ?? null });
     }
-
-    const health = deriveHealth(cpu, ram);
-
-    return {
-      pulse: { cpuPercent: cpu, ramPercent: ram, dockerRunning, gitDirty, health, alerts },
-      sourceType,
-    };
-  } catch {
-    return { pulse: null, sourceType: "error" };
   }
+
+  const health = deriveHealth(cpu, ram);
+
+  return {
+    pulse: { cpuPercent: cpu, ramPercent: ram, dockerRunning, gitDirty, health, alerts },
+    sourceType,
+  };
 }
 
 // --- Hook ---

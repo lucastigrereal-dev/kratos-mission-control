@@ -1,32 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
-import { z } from "zod";
 import type { AuroraInsight } from "../../api-contract/aurora.schema";
 import { AuroraInsightEnvelopeSchema } from "../../api-contract/aurora.schema";
-
-const BASE_URL =
-  typeof window !== "undefined"
-    ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-    : "http://localhost:5100";
+import { apiGet } from "../lib/api/client";
 
 async function fetchAuroraInsight(): Promise<{
   insight: AuroraInsight | null;
   isLive: boolean;
 }> {
-  try {
-    const res = await fetch(`${BASE_URL}/aurora/insight`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) return { insight: null, isLive: false };
-    const raw: unknown = await res.json();
-    const parsed = AuroraInsightEnvelopeSchema.safeParse(raw);
-    if (!parsed.success) return { insight: null, isLive: false };
-    return {
-      insight: parsed.data.data,
-      isLive: parsed.data.source === "live",
-    };
-  } catch {
-    return { insight: null, isLive: false };
-  }
+  const result = await apiGet("/aurora/insight");
+  if (!result.ok) return { insight: null, isLive: false };
+  const parsed = AuroraInsightEnvelopeSchema.safeParse(result.raw);
+  if (!parsed.success) return { insight: null, isLive: false };
+  return {
+    insight: parsed.data.data,
+    isLive: parsed.data.source === "live",
+  };
 }
 
 interface UseAuroraInsightResult {

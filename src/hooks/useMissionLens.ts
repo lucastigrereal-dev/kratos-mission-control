@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { DataSource } from "../../api-contract/source-badge.schema";
+import { apiGet } from "../lib/api/client";
 
 // --- Schema Zod inline ---
 const MissionLensDataSchema = z.object({
@@ -67,58 +68,39 @@ export type MissionLensData = z.infer<typeof MissionLensDataSchema>;
 export type MissionLensEnvelope = z.infer<typeof MissionLensEnvelopeSchema>;
 
 // --- Fetch function com fallback ---
-const BASE_URL =
-  typeof window !== "undefined"
-    ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-    : "http://localhost:5100";
-
 async function fetchMissionLens(): Promise<{
   data: MissionLensData | null;
   sourceType: DataSource;
 }> {
   // Tenta /mission/lens primeiro
-  try {
-    const res = await fetch(`${BASE_URL}/mission/lens`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (res.ok) {
-      const raw: unknown = await res.json();
-      const parsed = MissionLensEnvelopeSchema.safeParse(raw);
-      if (parsed.success) {
-        const src = parsed.data.source;
-        const sourceType: DataSource =
-          src === "real"
-            ? "live"
-            : src === "cached"
+  const primary = await apiGet("/mission/lens");
+  if (primary.ok) {
+    const parsed = MissionLensEnvelopeSchema.safeParse(primary.raw);
+    if (parsed.success) {
+      const src = parsed.data.source;
+      const sourceType: DataSource =
+        src === "real"
+          ? "live"
+          : src === "cached"
+            ? "cache"
+            : src === "fallback"
               ? "cache"
-              : src === "fallback"
-                ? "cache"
-                : src === "mock"
-                  ? "mock"
-                  : src === "error"
-                    ? "error"
-                    : "live";
-        return { data: parsed.data.data, sourceType };
-      }
+              : src === "mock"
+                ? "mock"
+                : src === "error"
+                  ? "error"
+                  : "live";
+      return { data: parsed.data.data, sourceType };
     }
-  } catch {
-    // fallback abaixo
   }
 
   // Fallback para /live/snapshot
-  try {
-    const res = await fetch(`${BASE_URL}/live/snapshot`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (res.ok) {
-      const raw: unknown = await res.json();
-      const parsed = MissionLensEnvelopeSchema.safeParse(raw);
-      if (parsed.success && parsed.data.data) {
-        return { data: parsed.data.data, sourceType: "cache" };
-      }
+  const fallback = await apiGet("/live/snapshot");
+  if (fallback.ok) {
+    const parsed = MissionLensEnvelopeSchema.safeParse(fallback.raw);
+    if (parsed.success && parsed.data.data) {
+      return { data: parsed.data.data, sourceType: "cache" };
     }
-  } catch {
-    // fallback final
   }
 
   return { data: null, sourceType: "error" };

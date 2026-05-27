@@ -4,11 +4,7 @@ import {
   type CaptionDraft,
   type ContentDraftsEnvelope,
 } from "../../api-contract/content-drafts.schema";
-
-const BASE_URL =
-  typeof window !== "undefined"
-    ? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5100")
-    : "http://localhost:5100";
+import { apiGet } from "../lib/api/client";
 
 async function fetchApprovalQueue(
   status = "needs_review",
@@ -20,20 +16,13 @@ async function fetchApprovalQueue(
     por_status: {},
     source: "empty",
   };
-  try {
-    const params = new URLSearchParams({ limit: String(limit) });
-    if (status) params.set("status", status);
-    const res = await fetch(`${BASE_URL}/content/drafts?${params}`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) return empty;
-    const raw: unknown = await res.json();
-    const parsed = ContentDraftsEnvelopeSchema.safeParse(raw);
-    if (!parsed.success) return empty;
-    return parsed.data;
-  } catch {
-    return empty;
-  }
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (status) params.set("status", status);
+  const result = await apiGet(`/content/drafts?${params}`);
+  if (!result.ok) return empty;
+  const parsed = ContentDraftsEnvelopeSchema.safeParse(result.raw);
+  if (!parsed.success) return empty;
+  return parsed.data;
 }
 
 export function useApprovalQueue(limit = 20) {
