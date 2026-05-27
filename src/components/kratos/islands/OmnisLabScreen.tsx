@@ -13,6 +13,8 @@ import type { OmnisCrew, OmnisJob } from "../../../../api-contract/omnis.schema"
 import { HealthScoreCard } from "@/components/kratos/omnis/HealthScoreCard";
 import { MissionRunsCard } from "@/components/kratos/omnis/MissionRunsCard";
 import { MissionGraphCard } from "@/components/kratos/omnis/MissionGraphCard";
+import { GuardrailAlertCard } from "@/components/kratos/omnis/GuardrailAlertCard";
+import { CostSummaryCard } from "@/components/kratos/omnis/CostSummaryCard";
 import {
   Cpu,
   Workflow,
@@ -616,6 +618,12 @@ export function OmnisLabScreen({
       {/* 3c. Mission Graph — estado das missões ativas */}
       <div className="mb-4">
         <MissionGraphCard />
+      </div>
+
+      {/* 3d. Guardrails + Custo (W7+W8) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <GuardrailAlertCard />
+        <CostSummaryCard />
       </div>
 
       {/* 4. Próxima ação (dominante) + guardrail (restrições) */}

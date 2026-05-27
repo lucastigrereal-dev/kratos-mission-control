@@ -21,6 +21,10 @@ export const MissionSummarySchema = z.object({
   error_count: z.number().int().min(0).default(0),
   last_error: z.string().nullable().optional(),
   event_count: z.number().int().min(0).default(0),
+  // W7 — guardrail state
+  budget_exceeded: z.boolean().default(false),
+  approval_pending: z.boolean().default(false),
+  approval_reason: z.string().nullable().optional(),
 });
 
 export const MissionsEnvelopeSchema = z.object({

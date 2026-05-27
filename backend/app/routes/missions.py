@@ -103,6 +103,10 @@ def _project_state(mission_id: str, base: dict) -> dict:
     last_event_type: str | None = None
     last_event_at: str | None = None
     errors: list[str] = []
+    # W7 — guardrail/approval state
+    budget_exceeded = False
+    approval_pending = False
+    approval_reason: str | None = None
 
     for ev in events:
         etype = ev.get("event_type", "")
@@ -145,6 +149,13 @@ def _project_state(mission_id: str, base: dict) -> dict:
                 msg = ev.get("payload", {}).get("error", "")
                 if msg:
                     errors.append(msg)
+            case "budget_exceeded":
+                budget_exceeded = True
+            case "approval_requested":
+                approval_pending = True
+                approval_reason = ev.get("payload", {}).get("reason") or ev.get("payload", {}).get("message")
+            case "approval_granted" | "approval_rejected":
+                approval_pending = False
 
     # W3 — enrich checkpoint with file data
     checkpoint_at: str | None = None
@@ -183,6 +194,10 @@ def _project_state(mission_id: str, base: dict) -> dict:
         "error_count": len(errors),
         "last_error": errors[-1] if errors else None,
         "event_count": len(events),
+        # W7 — guardrail
+        "budget_exceeded": budget_exceeded,
+        "approval_pending": approval_pending,
+        "approval_reason": approval_reason,
     }
 
 
