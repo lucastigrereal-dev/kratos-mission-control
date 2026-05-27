@@ -15,5 +15,6 @@ without exposing secrets in browser `VITE_*` variables.
 
 - Do **not** use `VITE_KRATOS_OMNIS_API_KEY`.
 - Keep the key server-side only.
+- Canonical auth header is `X-KRATOS-KEY` (do not use `X-API-Key` in new integrations).
 - Frontend hooks should call KRATOS server functions, not OMNIS directly for authenticated routes.
 - SSE status probe uses `/v1/events/status` first and falls back to `/events/status` during migration.

@@ -24,9 +24,8 @@ export interface LiveEventsStatus {
 function buildHeaders(): HeadersInit {
   const headers: HeadersInit = {};
   if (OMNIS_API_KEY) {
-    // Header canônico v1 + alias temporário para compat.
+    // Header canônico v1.
     (headers as Record<string, string>)["X-KRATOS-KEY"] = OMNIS_API_KEY;
-    (headers as Record<string, string>)["X-API-Key"] = OMNIS_API_KEY;
   }
   return headers;
 }
