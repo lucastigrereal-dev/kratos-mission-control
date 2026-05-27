@@ -1,8 +1,9 @@
 /**
- * ModelCostDashboard — W10-B7
+ * ModelCostDashboard — W10-B7 · v2.1 Quality-First
  *
- * Mostra breakdown de custo por modelo (Ollama-First policy).
+ * Mostra breakdown de custo por modelo (Política Ollama-First v2.1).
  * Calcula economia vs cenário hipotético 100% Anthropic.
+ * Reflete os 6 nomes lógicos canônicos — nunca hardcode real model name.
  *
  * Fonte futura: /omnis/cost-breakdown (OMNIS W22-B9 budget enforcement).
  * Por enquanto usa dados das missões ativas + mock de modelo.
@@ -13,19 +14,26 @@
 import { DollarSign, TrendingDown, Cpu, Zap, AlertTriangle } from "lucide-react";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { useMissions } from "@/hooks/useMissions";
+import {
+  MODEL_DISPLAY_NAMES,
+  MODEL_REAL_NAMES,
+  isPolicyViolation,
+} from "../../../../api-contract/models.schema";
 
 // ── Preços de referência (USD por 1M tokens) — Maio 2026 ─────────────────
-// Ollama local = $0 (custo infra própria, não contado aqui)
+// Ollama local/cloud = $0 (custo infra própria, não contado aqui)
 // Anthropic oficial (simplificado para cálculo de economia)
 const ANTHROPIC_PRICE_PER_1M_TOKENS_USD = 3.0; // sonnet médio input+output
 
 // ── Mock de breakdown por modelo ─────────────────────────────────────────
 // Fonte futura: /omnis/cost-breakdown
-// Hoje: derivado das missões ativas + política Ollama-First
+// Hoje: 6 nomes lógicos v2.1 Quality-First (ver api-contract/models.schema.ts)
+// name = LogicalModel — label via MODEL_DISPLAY_NAMES — nunca hardcode real model
 
 interface ModelUsage {
-  name: string;
-  label: string;
+  name: string;          // LogicalModel key (ollama-fast, ollama-code, …)
+  label: string;         // Human-readable via MODEL_DISPLAY_NAMES
+  realModel: string;     // Real model name para tooltip (via MODEL_REAL_NAMES)
   provider: "ollama" | "anthropic";
   tokens_used: number;
   cost_usd: number;
@@ -34,36 +42,58 @@ interface ModelUsage {
 
 const MOCK_MODEL_USAGE: ModelUsage[] = [
   {
-    name: "deepseek-v4-pro",
-    label: "DeepSeek-V4 Pro",
+    name: "ollama-fast",
+    label: MODEL_DISPLAY_NAMES["ollama-fast"],
+    realModel: MODEL_REAL_NAMES["ollama-fast"],
     provider: "ollama",
-    tokens_used: 284_000,
+    tokens_used: 186_000,
     cost_usd: 0.0,
-    pct: 61,
+    pct: 40,
   },
   {
-    name: "glm-5.1",
-    label: "GLM-5.1",
+    name: "ollama-code",
+    label: MODEL_DISPLAY_NAMES["ollama-code"],
+    realModel: MODEL_REAL_NAMES["ollama-code"],
     provider: "ollama",
-    tokens_used: 98_000,
+    tokens_used: 93_000,
     cost_usd: 0.0,
-    pct: 21,
+    pct: 20,
   },
   {
-    name: "kimi-k2.6",
-    label: "Kimi-K2.6",
+    name: "ollama-build",
+    label: MODEL_DISPLAY_NAMES["ollama-build"],
+    realModel: MODEL_REAL_NAMES["ollama-build"],
     provider: "ollama",
-    tokens_used: 63_000,
+    tokens_used: 70_000,
     cost_usd: 0.0,
-    pct: 13,
+    pct: 15,
   },
   {
-    name: "claude-sonnet",
-    label: "Claude Sonnet",
-    provider: "anthropic",
-    tokens_used: 23_500,
-    cost_usd: 0.071,
-    pct: 5,
+    name: "ollama-smart",
+    label: MODEL_DISPLAY_NAMES["ollama-smart"],
+    realModel: MODEL_REAL_NAMES["ollama-smart"],
+    provider: "ollama",
+    tokens_used: 70_000,
+    cost_usd: 0.0,
+    pct: 15,
+  },
+  {
+    name: "ollama-longctx",
+    label: MODEL_DISPLAY_NAMES["ollama-longctx"],
+    realModel: MODEL_REAL_NAMES["ollama-longctx"],
+    provider: "ollama",
+    tokens_used: 32_500,
+    cost_usd: 0.0,
+    pct: 7,
+  },
+  {
+    name: "ollama-backup",
+    label: MODEL_DISPLAY_NAMES["ollama-backup"],
+    realModel: MODEL_REAL_NAMES["ollama-backup"],
+    provider: "ollama",
+    tokens_used: 14_000,
+    cost_usd: 0.0,
+    pct: 3,
   },
 ];
 
@@ -98,9 +128,14 @@ function ModelRow({ m }: { m: ModelUsage }) {
           style={{ background: barColor }}
           aria-hidden
         />
-        {/* Name */}
-        <span className="flex-1 text-[11px] kratos-mono truncate" style={{ color: "var(--kratos-text-primary)" }}>
-          {m.label}
+        {/* Name + real model hint */}
+        <span className="flex-1 min-w-0">
+          <span className="block text-[11px] kratos-mono truncate" style={{ color: "var(--kratos-text-primary)" }}>
+            {m.label}
+          </span>
+          <span className="block text-[9px] kratos-mono truncate" style={{ color: "var(--kratos-text-muted)", opacity: 0.7 }}>
+            {m.realModel}
+          </span>
         </span>
         {/* Tokens */}
         <span className="text-[10px] kratos-mono shrink-0" style={{ color: "var(--kratos-text-muted)" }}>
@@ -161,9 +196,9 @@ export function ModelCostDashboard() {
     budgetUsedPct > 50 ? "var(--kratos-warn)" :
     "var(--kr-success, var(--kratos-ok))";
 
-  // Check for policy violation (any Claude Opus usage → should be 0%)
-  const opusUsage = MOCK_MODEL_USAGE.filter((m) => m.name.includes("opus"));
-  const policyViolation = opusUsage.length > 0;
+  // Policy v2.1: opus/gpt-*/claude-3-*/gemini-ultra devem ser 0% — alerta visual
+  const violatingModels = MOCK_MODEL_USAGE.filter((m) => isPolicyViolation(m.name) || isPolicyViolation(m.realModel));
+  const policyViolation = violatingModels.length > 0;
 
   return (
     <GlassPanel padding="md" className="space-y-4">
@@ -196,7 +231,7 @@ export function ModelCostDashboard() {
           }}
         >
           <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
-          Opus detectado — viola política Ollama-First. Verificar config.
+          Modelo proibido detectado ({violatingModels.map((m) => m.name).join(", ")}) — viola política Ollama-First v2.1. Verificar config.
         </div>
       )}
 
@@ -296,13 +331,13 @@ export function ModelCostDashboard() {
         Fonte futura: <span className="kratos-mono">/omnis/cost-breakdown</span> via OMNIS W22-B9.
         Política:{" "}
         <a
-          href="https://www.notion.so/36d22eba8f0881519268f05675380a8c"
+          href="https://www.notion.so/36d22eba8f088199a2d6cf5a7e958cee"
           target="_blank"
           rel="noreferrer"
           className="underline"
           style={{ color: "var(--kratos-accent)" }}
         >
-          Ollama-First v2.0 ↗
+          Quality-First v2.1 ↗
         </a>
       </p>
     </GlassPanel>
