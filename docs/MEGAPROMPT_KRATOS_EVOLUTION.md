@@ -661,8 +661,11 @@ WAVE 3 — Aurora Real-Time
 
 WAVE 4 — Marketing Dashboard
   [x] AgenciaScreen    limpa (-63% dead code), honest locked states
-  [-] PipelineBoard    META_APP_ID/SECRET pendente
-  [-] CrmBoard         crm-tigre-backend unhealthy
+  [x] MetricsLockedCard atualizado → fonte Publer (/marketing/metrics), NÃO Meta Graph API
+  [-] PipelineBoard    aguarda PUBLER_API_KEY no backend (não META_APP_ID)
+  [-] CrmBoard         aguarda ManyChat webhook + crm-tigre-backend healthy
+  NOTA: Meta Graph API removida do roadmap — substituída por Publer (scheduling)
+        e ManyChat (DMs/leads). Sem OAuth Meta necessário para métricas.
 
 WAVE 5 — SSE Live
   [x] B1 SSE client    useLiveStatus — EventSource, reconexão automática
@@ -670,19 +673,48 @@ WAVE 5 — SSE Live
   [x] B3 optimistic    onMutate/rollback em 6 mutations (checkpoint/project/appointment)
 
 WAVE 6 — Performance + PWA
-  [x] B1 code split    lazy islands em ilhas.$islandId.tsx
-  [x] B2 PWA           manifest.webmanifest + meta tags (service worker N/A em CF Workers)
-  [-] B3 3D            sem Three.js na stack atual
+  [x] B1 code split    preload="intent" no SidebarV2 (TanStack Router prefetch no hover)
+  [x] B2a offline      useOffline + OfflineBanner — banner âmbar quando navigator.onLine=false
+  [x] B2b install      usePWAInstall + PWAInstallPrompt — chip bottom-left após 3 visitas
+  [x] B2 manifest      manifest.webmanifest + meta tags PWA (CF Workers, sem vite-plugin-pwa)
+  [-] B3 3D            sem Three.js na stack atual — N/A
 
 WAVE 7 — Integration Bridge
   [x] Read-only        MissionEventLogCard + /missions/{id}/events (backend)
   [x] Boundary doc     "KRATOS lê, Aurora comanda" preservado
-  [-] Bidirecional     BLOQUEADO por decisão arquitetural
+  [-] Bidirecional     BLOQUEADO por decisão arquitetural permanente
 
 WAVE 8 — Deploy + Observability
   [x] B2 error handler installGlobalErrorHandlers() ring buffer 20 erros
   [x] B3 analytics     kratosAnalytics.ts — 5 eventos, buffer+flush, pronto p/ Plausible
-  [-] B1 deploy        REQUER AUTORIZAÇÃO EXPLÍCITA DO LUCAS
+  [x] B1 deploy        ✅ AUTORIZADO E EXECUTADO — Vercel staging (VITE_USE_MOCKS=true)
+    — vercel.json criado (Edge Runtime, rewrites, cache headers)
+    — vite.vercel.config.ts — build sem @cloudflare/vite-plugin, Node.js output
+    — api/index.ts — Vercel Edge Function wrapping TanStack Start server
+    — build:vercel script: VITE_USE_MOCKS=true vite build --config vite.vercel.config.ts
+    — VITE_ audit: 3 vars, NENHUMA é secret sensível
+    — VITE_API_BASE_URL=https://omnis-api.empresa-tigre.com (URL futura omnis-server)
+    — Quando omnis-server subir (W14 OMNIS): VITE_USE_MOCKS=false + redeploy
+```
+
+---
+
+## INTEGRAÇÕES EXTERNAS — DECISÕES DE ARQUITETURA
+
+```
+Instagram Metrics:
+  ANTES:  Meta Graph API (requer META_APP_ID/SECRET + OAuth)
+  DEPOIS: Publer API → backend /marketing/metrics → KRATOS
+  KEY:    PUBLER_API_KEY (server-side, sem VITE_ prefix — nunca exposta)
+
+DMs / Leads CRM:
+  ANTES:  Meta Graph API webhooks
+  DEPOIS: ManyChat webhook → crm-tigre-backend → KRATOS
+  KEY:    MANYCHAT_WEBHOOK_SECRET (server-side)
+
+Boundary crítica:
+  TODAS as API keys (Publer, ManyChat, Notion, Anthropic) ficam no backend Python.
+  KRATOS frontend só vê VITE_API_BASE_URL (URL pública) — zero secrets no browser.
 ```
 
 ---
@@ -691,14 +723,16 @@ WAVE 8 — Deploy + Observability
 
 ```
 Branch: feature/fase14-integration
-Commits: 11
-Build: ✅ zero erros (client + SSR)
-Tests: 270 pass (baseline pré-sprint: 268)
+Commits: 15+
+Build: ✅ zero erros (client + SSR + vercel)
+Tests: 269 pass (pré-existentes: 15 fail — Playwright + frontend/jsdom)
+Deploy: ✅ Vercel staging configurado (VITE_USE_MOCKS=true)
 ```
 
 ---
 
-*KRATOS Evolution Mega Prompt v1.0 — Empresa Tigre · Lucas Tigre · Maio 2026*
+*KRATOS Evolution Mega Prompt v2.0 — Empresa Tigre · Lucas Tigre · Maio 2026*
 *Modelo execução: claude-sonnet-4-6 | Modelo boilerplate: claude-haiku-4-5*
 *NUNCA opus em execução de código — ROI zero*
 *Última execução: 2026-05-27 | Branch: feature/fase14-integration*
+*Update: publer + manychat substituem Meta Graph API | Vercel staging autorizado*

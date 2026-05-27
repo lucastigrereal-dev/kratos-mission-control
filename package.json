@@ -14,7 +14,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
-    "deploy": "wrangler deploy --config dist/server/wrangler.json"
+    "deploy": "wrangler deploy --config dist/server/wrangler.json",
+    "build:vercel": "VITE_USE_MOCKS=true vite build --config vite.vercel.config.ts"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",

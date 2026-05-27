@@ -146,7 +146,8 @@ function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
   );
 }
 
-// ── MetricsLockedCard — EmptyState honesto até Meta OAuth ─────────────────
+// ── MetricsLockedCard — EmptyState honesto até Publer API ─────────────────
+// Fonte: /marketing/metrics (Publer) — NÃO Meta Graph API (W4 decisão)
 
 function MetricsLockedCard() {
   return (
@@ -168,8 +169,14 @@ function MetricsLockedCard() {
         </span>
       </div>
       <p className="text-[11px]" style={{ color: "var(--kratos-text-muted)" }}>
-        Alcance, engajamento e crescimento de seguidores disponíveis após conectar a API do Instagram.
-        Bloqueio ativo: <span className="kratos-mono" style={{ color: "var(--kr-warning)" }}>META_APP_ID/SECRET</span> não configurados.
+        Alcance, engajamento e crescimento via{" "}
+        <span className="kratos-mono" style={{ color: "var(--kratos-text-secondary)" }}>
+          /marketing/metrics
+        </span>{" "}
+        (fonte: Publer — não Meta Graph API).{" "}
+        Bloqueio ativo:{" "}
+        <span className="kratos-mono" style={{ color: "var(--kr-warning)" }}>PUBLER_API_KEY</span>{" "}
+        não configurada no backend.
       </p>
     </GlassPanel>
   );
