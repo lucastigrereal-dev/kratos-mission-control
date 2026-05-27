@@ -5,7 +5,7 @@ import { getServices } from "../../backend/services/store";
 export const getServicesHealth = createServerFn({ method: "GET" })
   .handler(async (): Promise<{ data: Service[] | null; error: string | null }> => {
     try {
-      const services = getServices();
+      const services = await getServices();
       const parsed = ServiceSchema.array().safeParse(services);
       if (!parsed.success) {
         return { data: null, error: parsed.error.message };
