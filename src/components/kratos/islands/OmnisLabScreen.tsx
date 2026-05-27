@@ -16,6 +16,7 @@ import { MissionRunsCard } from "@/components/kratos/omnis/MissionRunsCard";
 import { MissionGraphCard } from "@/components/kratos/omnis/MissionGraphCard";
 import { GuardrailAlertCard } from "@/components/kratos/omnis/GuardrailAlertCard";
 import { CostSummaryCard } from "@/components/kratos/omnis/CostSummaryCard";
+import { ModelCostDashboard } from "@/components/kratos/omnis/ModelCostDashboard";
 import { MissionEventLogCard } from "@/components/kratos/omnis/MissionEventLogCard";
 import {
   Cpu,
@@ -633,6 +634,11 @@ export function OmnisLabScreen({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <GuardrailAlertCard />
         <CostSummaryCard />
+      </div>
+
+      {/* 3e-extra. Cost Dashboard — breakdown Ollama-First (W10-B7) */}
+      <div className="mb-4">
+        <ModelCostDashboard />
       </div>
 
       {/* 3e. Mission Event Log — drill-down read-only (W7) */}
