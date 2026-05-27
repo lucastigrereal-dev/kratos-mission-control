@@ -15,6 +15,7 @@ OMNIS_DIR = Path(os.environ.get("OMNIS_DIR", r"C:\Users\lucas\omnis-control"))
 MISSIONS_DIR = OMNIS_DIR / "data" / "missions"
 INDEX_PATH = MISSIONS_DIR / "index.jsonl"
 EVENTS_DIR = MISSIONS_DIR / "events"
+CHECKPOINTS_DIR = MISSIONS_DIR / "checkpoints"
 
 # Mapeamento de event_type → label humano curto
 EVENT_LABELS: dict[str, str] = {
@@ -145,6 +146,22 @@ def _project_state(mission_id: str, base: dict) -> dict:
                 if msg:
                     errors.append(msg)
 
+    # W3 — enrich checkpoint with file data
+    checkpoint_at: str | None = None
+    checkpoint_completed_steps: list[str] = []
+    checkpoint_pause_reason: str | None = None
+    if checkpoint_id:
+        ckpt_path = CHECKPOINTS_DIR / mission_id / f"{checkpoint_id}.json"
+        try:
+            if ckpt_path.exists():
+                ckpt_data = json.loads(ckpt_path.read_text(encoding="utf-8"))
+                checkpoint_at = ckpt_data.get("created_at")
+                state_snap = ckpt_data.get("state", {})
+                checkpoint_completed_steps = state_snap.get("completed_steps", []) or []
+                checkpoint_pause_reason = state_snap.get("pause_reason")
+        except Exception:
+            pass
+
     return {
         "mission_id": mission_id,
         "title": base.get("title", ""),
@@ -156,6 +173,9 @@ def _project_state(mission_id: str, base: dict) -> dict:
         "last_retry_node": last_retry_node,
         "checkpoint_id": checkpoint_id,
         "checkpoint_label": checkpoint_label,
+        "checkpoint_at": checkpoint_at,
+        "checkpoint_completed_steps": checkpoint_completed_steps,
+        "checkpoint_pause_reason": checkpoint_pause_reason,
         "cumulative_cost_usd": cumulative_cost_usd,
         "last_event_type": last_event_type,
         "last_event_label": EVENT_LABELS.get(last_event_type or "", last_event_type or ""),

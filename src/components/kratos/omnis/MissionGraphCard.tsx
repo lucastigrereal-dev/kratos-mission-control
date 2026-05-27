@@ -1,4 +1,4 @@
-import { GitBranch, Circle, CheckCircle2, XCircle, PauseCircle, Clock, RotateCcw, Save } from "lucide-react";
+import { GitBranch, Circle, CheckCircle2, XCircle, PauseCircle, Clock, RotateCcw, Save, Play } from "lucide-react";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { useMissions } from "@/hooks/useMissions";
 import type { MissionSummary } from "../../../../api-contract/missions.schema";
@@ -91,6 +91,31 @@ function MissionRow({ mission }: { mission: MissionSummary }) {
         </div>
       )}
 
+      {/* W3 — Checkpoint: onde parou / retomável */}
+      {mission.checkpoint_id && mission.checkpoint_label && (
+        <div
+          className="flex items-start gap-1.5 ml-5 px-1.5 py-1 rounded"
+          style={{ background: "color-mix(in oklab, var(--kr-success) 6%, transparent)" }}
+        >
+          <Play className="h-2.5 w-2.5 shrink-0 mt-0.5" style={{ color: "var(--kr-success)" }} />
+          <div className="min-w-0">
+            <span className="text-[10px] leading-tight block" style={{ color: "var(--kr-success)" }}>
+              {mission.checkpoint_label}
+            </span>
+            {mission.checkpoint_pause_reason && (
+              <span className="text-[9px] kratos-mono block" style={{ color: "var(--kratos-text-muted)" }}>
+                pausado: {mission.checkpoint_pause_reason}
+              </span>
+            )}
+            {mission.checkpoint_at && (
+              <span className="text-[9px] kratos-mono" style={{ color: "var(--kratos-text-muted)" }}>
+                salvo {relativeTime(mission.checkpoint_at)}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Badges row: retry + checkpoint + cost */}
       <div className="flex items-center gap-2 ml-5 flex-wrap">
         {mission.retry_count > 0 && (
@@ -116,7 +141,7 @@ function MissionRow({ mission }: { mission: MissionSummary }) {
             title={mission.checkpoint_label ?? undefined}
           >
             <Save className="h-2.5 w-2.5" />
-            checkpoint
+            retomável
           </span>
         )}
         {mission.cumulative_cost_usd > 0 && (
