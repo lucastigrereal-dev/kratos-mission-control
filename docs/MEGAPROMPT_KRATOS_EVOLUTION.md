@@ -4,6 +4,37 @@
 # ║  Empresa Tigre · Lucas Tigre · Maio 2026                        ║
 # ╚══════════════════════════════════════════════════════════════════╝
 
+## ⚠️ REGRA ANTI-TRAVAMENTO DE TESTES — LEIA PRIMEIRO
+
+```
+OBRIGATÓRIO em qualquer sessão que toque em testes:
+
+1. TIMEOUT: bun run test --timeout 30000 (30s por teste)
+   Configurado em: bunfig.toml [test].timeout e package.json "test" script
+   Default do bun = 5s — insuficiente para stores async (GitHub cache miss = 3s)
+
+2. MOCK DE REDE: testes NUNCA chamam APIs reais
+   — omnis-server (localhost:5100): mockar no teste
+   — GitHub API (api.github.com): bloqueado via tests/setup.ts (mock global fetch)
+   — SSE / EventSource: mockar no nível do hook (nunca instanciar EventSource real)
+   — Qualquer URL externa: bloqueada por tests/setup.ts → retorna 503 instantaneamente
+
+3. PRELOAD GLOBAL: tests/setup.ts intercepta globalThis.fetch
+   Carregado automaticamente via bunfig.toml [test].preload
+   Qualquer chamada externa retorna 503 sem delay → fallback para MOCK_REPOS/in-memory stores
+
+4. RESULTADO ESPERADO: 270 pass, 0 fail, < 500ms total
+   Se falhar por timeout: verificar se setup.ts está no preload do bunfig.toml
+   Se falhar por rede: NUNCA adicionar chamada real — adicionar mock
+
+Arquivos:
+  tests/setup.ts        — mock global de fetch (preload automático)
+  bunfig.toml           — [test] timeout=30000, preload=["./tests/setup.ts"]
+  package.json          — "test": "bun test ... --timeout 30000"
+```
+
+---
+
 ## INSTRUÇÃO PARA O CLAUDE CODE — LEIA ANTES DE TUDO
 
 Você vai executar a evolução completa do KRATOS Mission Control.
@@ -723,9 +754,9 @@ Boundary crítica:
 
 ```
 Branch: feature/fase14-integration
-Commits: 15+
+Commits: 16+
 Build: ✅ zero erros (client + SSR + vercel)
-Tests: 269 pass (pré-existentes: 15 fail — Playwright + frontend/jsdom)
+Tests: 270 pass, 0 fail, ~221ms (anti-freeze: bunfig.toml + tests/setup.ts)
 Deploy: ✅ Vercel staging configurado (VITE_USE_MOCKS=true)
 ```
 

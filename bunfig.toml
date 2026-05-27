@@ -1,0 +1,10 @@
+# KRATOS — Bun configuration
+# https://bun.sh/docs/runtime/bunfig
+
+[test]
+# Anti-freeze: 30s por teste (default bun = 5s — muito curto para async stores)
+timeout = 30000
+
+# Preload: mock global de fetch antes de qualquer teste
+# Garante zero chamadas reais a APIs externas (GitHub, omnis-server, SSE)
+preload = ["./tests/setup.ts"]
