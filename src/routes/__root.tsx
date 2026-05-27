@@ -8,7 +8,10 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import { installGlobalErrorHandlers } from "@/lib/analytics/errorHandler";
+import { trackRouteView } from "@/lib/analytics/kratosAnalytics";
 
 import appCss from "../styles.css?url";
 import { AppShell } from "@/components/kratos/shell/AppShell";
@@ -176,6 +179,16 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isWorld = pathname === "/";
+
+  // W8-B2: Install global error handler once on mount
+  useEffect(() => {
+    installGlobalErrorHandlers();
+  }, []);
+
+  // W8-B3: Track route views on pathname change
+  useEffect(() => {
+    trackRouteView(pathname);
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>

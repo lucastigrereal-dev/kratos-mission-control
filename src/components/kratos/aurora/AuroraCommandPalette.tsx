@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
+import { trackAuroraCommand } from "@/lib/analytics/kratosAnalytics";
 
 // --- Command registry ---
 interface CommandItem {
@@ -165,7 +166,10 @@ export function AuroraCommandPalette({
   // Execute command
   const executeCommand = useCallback(
     (cmd: CommandItem) => {
+      const t0 = performance.now();
       cmd.action();
+      // W8-B3: Track aurora command execution
+      trackAuroraCommand(cmd.id, true, Math.round(performance.now() - t0));
       onCommand?.(cmd.id);
       onClose();
     },
