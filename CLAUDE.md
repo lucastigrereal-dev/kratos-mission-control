@@ -1,3 +1,26 @@
+---
+## ⚡ Política Oficial de Roteamento de Modelos v2.0 — Ollama-First
+
+**Verdade institucional (Notion):** https://www.notion.so/36d22eba8f0881519268f05675380a8c
+
+O KRATOS NÃO chama modelos diretamente — comandos passam pela Aurora (boundary "KRATOS lê, Aurora comanda"). Mas exibe info de modelo/custo no Cost Dashboard, e essa info DEVE refletir a política abaixo.
+
+### O que o KRATOS pode mostrar:
+- Modelo que respondeu cada mensagem Aurora (deepseek-v4-pro, glm-5.1, kimi-k2.6, sonnet, haiku)
+- Cost breakdown por modelo no /sistema/custo
+- Alertas se opus ou gpt-* aparecer (deveria ser sempre 0%)
+
+### Regras invioláveis no KRATOS:
+- ❌ NUNCA secret com prefixo VITE_ (PUBLER_API_KEY, OLLAMA_API_KEY, ANTHROPIC_API_KEY ficam server-side)
+- ❌ NUNCA hardcode model name em componente UI
+- ❌ NUNCA chamar API de modelo direto do browser
+- ✅ Schemas Zod refletem os nomes lógicos (ollama-fast/code/smart, fallback-*)
+- ✅ Cost Dashboard deve mostrar economia vs cenário 100% Anthropic
+
+### Para devs futuros:
+Antes de mexer em qualquer schema relacionado a "model_used" ou "cost", leia a página Notion acima.
+---
+
 # KRATOS — Mission Control
 
 **Stack:** React 19 · TanStack Start · TanStack Router · TanStack Query · Tailwind v4 · Radix UI · shadcn/ui · Zod · Vite 7 · Bun · Cloudflare Workers
