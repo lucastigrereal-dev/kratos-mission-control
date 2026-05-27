@@ -6,7 +6,7 @@ without exposing secrets in browser `VITE_*` variables.
 ## Required
 
 - `OMNIS_API_BASE_URL`  
-  Example: `http://localhost:8765`
+  Example: `http://localhost:8001`
 
 - `KRATOS_OMNIS_API_KEY`  
   Secret sent as `X-KRATOS-KEY` by server functions.

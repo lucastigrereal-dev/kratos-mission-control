@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 
 type Envelope<T> = { data: T | null; error: string | null };
 
-const OMNIS_BASE_URL = process.env.OMNIS_API_BASE_URL ?? "http://localhost:8765";
+const OMNIS_BASE_URL = process.env.OMNIS_API_BASE_URL ?? "http://localhost:8001";
 const OMNIS_API_KEY =
   process.env.KRATOS_OMNIS_API_KEY ??
   process.env.OMNIS_API_KEY ??
