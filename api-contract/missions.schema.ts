@@ -7,6 +7,8 @@ export const MissionSummarySchema = z.object({
   status: z.enum(["draft", "running", "paused", "completed", "failed", "cancelled"]),
   current_step: z.string().nullable().optional(),
   retry_count: z.number().int().min(0).default(0),
+  max_retries: z.number().int().min(1).default(3),
+  last_retry_node: z.string().nullable().optional(),
   checkpoint_id: z.string().nullable().optional(),
   checkpoint_label: z.string().nullable().optional(),
   cumulative_cost_usd: z.number().min(0).default(0),

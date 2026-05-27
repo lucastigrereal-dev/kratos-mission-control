@@ -100,9 +100,10 @@ function MissionRow({ mission }: { mission: MissionSummary }) {
               background: "color-mix(in oklab, var(--kr-warning) 10%, transparent)",
               color: "var(--kr-warning)",
             }}
+            title={mission.last_retry_node ? `nó: ${mission.last_retry_node}` : undefined}
           >
             <RotateCcw className="h-2.5 w-2.5" />
-            {mission.retry_count}x retry
+            tentativa {mission.retry_count}/{mission.max_retries ?? 3}
           </span>
         )}
         {mission.checkpoint_id && (

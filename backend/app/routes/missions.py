@@ -94,6 +94,8 @@ def _project_state(mission_id: str, base: dict) -> dict:
     status = base.get("status", "draft")
     current_step: str | None = None
     retry_count = 0
+    max_retries = 3  # padrão do OMNIS TaskState
+    last_retry_node: str | None = None
     checkpoint_id: str | None = None
     checkpoint_label: str | None = None
     cumulative_cost_usd = 0.0
@@ -110,6 +112,10 @@ def _project_state(mission_id: str, base: dict) -> dict:
         match etype:
             case "mission_started":
                 status = "running"
+                # max_retries pode estar no payload do mission_started
+                _mr = ev.get("payload", {}).get("max_retries")
+                if _mr is not None:
+                    max_retries = int(_mr)
             case "mission_completed":
                 status = "completed"
             case "mission_failed":
@@ -126,6 +132,11 @@ def _project_state(mission_id: str, base: dict) -> dict:
                 current_step = None
             case "retry_attempted":
                 retry_count += 1
+                last_retry_node = ev.get("payload", {}).get("node") or ev.get("payload", {}).get("step")
+                # max_retries pode estar no payload
+                _mr = ev.get("payload", {}).get("max_retries")
+                if _mr is not None:
+                    max_retries = int(_mr)
             case "checkpoint_created":
                 checkpoint_id = ev.get("payload", {}).get("checkpoint_id")
                 checkpoint_label = ev.get("payload", {}).get("label", "")
@@ -141,6 +152,8 @@ def _project_state(mission_id: str, base: dict) -> dict:
         "status": status,
         "current_step": current_step,
         "retry_count": retry_count,
+        "max_retries": max_retries,
+        "last_retry_node": last_retry_node,
         "checkpoint_id": checkpoint_id,
         "checkpoint_label": checkpoint_label,
         "cumulative_cost_usd": cumulative_cost_usd,
