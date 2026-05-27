@@ -87,7 +87,7 @@ export function DriftIndicator({ driftState, minutesOff, nudgeMessage, originalM
               origin: "drift",
               errors: [],
               stale: sourceType === "error" || sourceType === "stale",
-              updated_at: null,
+              updated_at: new Date().toISOString(),
               confidence: sourceType === "live" ? 95 : 60,
             }}
             size="sm"

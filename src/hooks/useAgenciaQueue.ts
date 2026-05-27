@@ -16,6 +16,7 @@ export function useAgenciaQueue() {
     queryKey: ["agencia-queue"],
     queryFn: fetchAgenciaQueue,
     staleTime: 60_000,
+    refetchInterval: 120_000, // W11-B3: dados de fila de marketing refrescam a cada 2min se SSE cair
     retry: 1,
   });
 

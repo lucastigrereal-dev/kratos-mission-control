@@ -232,7 +232,7 @@ export function AgoraView() {
                 origin: "mission-lens",
                 errors: [],
                 stale: lensSourceType === "error" || lensSourceType === "stale",
-                updated_at: lensUpdatedAt,
+                updated_at: lensUpdatedAt ?? new Date().toISOString(),
                 confidence: lensSourceType === "live" ? 95 : 60,
               }}
               size="sm"

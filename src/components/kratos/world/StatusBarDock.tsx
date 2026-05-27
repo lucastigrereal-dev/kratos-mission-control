@@ -153,7 +153,7 @@ export function StatusBarDock({
           origin: "mission-lens",
           errors: [],
           stale: lensSourceType === "error" || lensSourceType === "stale",
-          updated_at: lensLastUpdatedAt,
+          updated_at: lensLastUpdatedAt ?? new Date().toISOString(),
           confidence: lensSourceType === "live" ? 95 : 60,
         }}
         size="sm"

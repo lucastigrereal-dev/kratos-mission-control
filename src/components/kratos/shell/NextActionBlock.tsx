@@ -32,7 +32,7 @@ function makeSourceMeta(sourceType: DataSource, updatedAt?: string | null) {
   return {
     source: sourceType,
     stale: sourceType === "stale",
-    updated_at: updatedAt ?? null,
+    updated_at: updatedAt ?? new Date().toISOString(),
     errors: sourceType === "error" ? ["Falha ao carregar próxima ação"] : [],
   };
 }

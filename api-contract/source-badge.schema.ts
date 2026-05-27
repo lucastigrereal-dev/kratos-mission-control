@@ -15,7 +15,15 @@ export const DataSourceSchema = z.enum([
 ]);
 export type DataSource = z.infer<typeof DataSourceSchema>;
 
-export const DataOriginSchema = z.enum(["akasha", "omnis", "github", "local", "mock"]);
+export const DataOriginSchema = z.enum([
+  "akasha",
+  "omnis",
+  "github",
+  "local",
+  "mock",
+  "mission-lens", // KRATOS internal — dados do OMNIS filtrados pela lens de missão
+  "drift",        // KRATOS internal — detector de desvio de foco
+]);
 export type DataOrigin = z.infer<typeof DataOriginSchema>;
 
 export const SourceBadgeMetaSchema = z.object({

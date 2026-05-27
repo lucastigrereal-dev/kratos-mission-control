@@ -23,8 +23,8 @@ import {
 } from "@/hooks/useCheckpoints";
 import { useLiveStatus } from "@/hooks/useLiveStatus";
 import type { LiveState } from "@/components/kratos/base/LiveStatusIndicator";
-import type { DataSource } from "../../../api-contract/source-badge.schema";
-import type { SourceBadgeMeta } from "../../../api-contract/source-badge.schema";
+import type { DataSource } from "../../../../api-contract/source-badge.schema";
+import type { SourceBadgeMeta } from "../../../../api-contract/source-badge.schema";
 
 /* --------------------------------------------------*\
  * KratosContext — Single source of truth for all
@@ -56,7 +56,7 @@ interface KratosContextValue {
 
   /** Dashboard snapshot (meta badges) */
   dashboardSnapshot: {
-    data: import("../../../api-contract/dashboard.schema").DashboardSnapshotData | null;
+    data: import("../../../../api-contract/dashboard.schema").DashboardSnapshotData | null;
     meta: SourceBadgeMeta | null;
     isLoading: boolean;
     isError: boolean;

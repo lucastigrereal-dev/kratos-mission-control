@@ -90,7 +90,7 @@ export function CurrentMissionBar({
               origin: "mission-lens",
               errors: [],
               stale: sourceType === "error" || sourceType === "stale",
-              updated_at: null,
+              updated_at: new Date().toISOString(),
               confidence: sourceType === "live" ? 95 : 60,
             }}
             size="sm"
