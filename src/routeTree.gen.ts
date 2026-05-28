@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SistemaRouteImport } from './routes/sistema'
 import { Route as ProjetosRouteImport } from './routes/projetos'
+import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ContextoRouteImport } from './routes/contexto'
 import { Route as CheckpointsRouteImport } from './routes/checkpoints'
 import { Route as AgoraRouteImport } from './routes/agora'
@@ -26,6 +27,11 @@ const SistemaRoute = SistemaRouteImport.update({
 const ProjetosRoute = ProjetosRouteImport.update({
   id: '/projetos',
   path: '/projetos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContextoRoute = ContextoRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/agora': typeof AgoraRoute
   '/checkpoints': typeof CheckpointsRoute
   '/contexto': typeof ContextoRoute
+  '/perfil': typeof PerfilRoute
   '/projetos': typeof ProjetosRoute
   '/sistema': typeof SistemaRoute
   '/ilhas/$islandId': typeof IlhasIslandIdRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/agora': typeof AgoraRoute
   '/checkpoints': typeof CheckpointsRoute
   '/contexto': typeof ContextoRoute
+  '/perfil': typeof PerfilRoute
   '/projetos': typeof ProjetosRoute
   '/sistema': typeof SistemaRoute
   '/ilhas/$islandId': typeof IlhasIslandIdRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/agora': typeof AgoraRoute
   '/checkpoints': typeof CheckpointsRoute
   '/contexto': typeof ContextoRoute
+  '/perfil': typeof PerfilRoute
   '/projetos': typeof ProjetosRoute
   '/sistema': typeof SistemaRoute
   '/ilhas/$islandId': typeof IlhasIslandIdRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/agora'
     | '/checkpoints'
     | '/contexto'
+    | '/perfil'
     | '/projetos'
     | '/sistema'
     | '/ilhas/$islandId'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/agora'
     | '/checkpoints'
     | '/contexto'
+    | '/perfil'
     | '/projetos'
     | '/sistema'
     | '/ilhas/$islandId'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/agora'
     | '/checkpoints'
     | '/contexto'
+    | '/perfil'
     | '/projetos'
     | '/sistema'
     | '/ilhas/$islandId'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   AgoraRoute: typeof AgoraRoute
   CheckpointsRoute: typeof CheckpointsRoute
   ContextoRoute: typeof ContextoRoute
+  PerfilRoute: typeof PerfilRoute
   ProjetosRoute: typeof ProjetosRoute
   SistemaRoute: typeof SistemaRoute
   IlhasIslandIdRoute: typeof IlhasIslandIdRoute
@@ -148,6 +161,13 @@ declare module '@tanstack/react-router' {
       path: '/projetos'
       fullPath: '/projetos'
       preLoaderRoute: typeof ProjetosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contexto': {
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgoraRoute: AgoraRoute,
   CheckpointsRoute: CheckpointsRoute,
   ContextoRoute: ContextoRoute,
+  PerfilRoute: PerfilRoute,
   ProjetosRoute: ProjetosRoute,
   SistemaRoute: SistemaRoute,
   IlhasIslandIdRoute: IlhasIslandIdRoute,
