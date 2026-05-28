@@ -166,8 +166,8 @@ import {
 } from "../../src/lib/kratos-routes";
 
 describe("src/lib/kratos-routes — KRATOS_ROUTES", () => {
-  it("has 7 route entries", () => {
-    expect(KRATOS_ROUTES.length).toBe(7);
+  it("has 8 route entries", () => {
+    expect(KRATOS_ROUTES.length).toBe(8);
   });
 
   it("root / is NOT visible in sidebar", () => {
@@ -200,8 +200,8 @@ describe("src/lib/kratos-routes — VISIBLE_ROUTES", () => {
     expect(paths).not.toContain("/");
   });
 
-  it("has 6 visible routes (all except /)", () => {
-    expect(VISIBLE_ROUTES.length).toBe(6);
+  it("has 7 visible routes (all except /)", () => {
+    expect(VISIBLE_ROUTES.length).toBe(7);
   });
 
   it("all expected pages are visible", () => {
@@ -212,6 +212,7 @@ describe("src/lib/kratos-routes — VISIBLE_ROUTES", () => {
     expect(paths).toContain("/projetos");
     expect(paths).toContain("/contexto");
     expect(paths).toContain("/sistema");
+    expect(paths).toContain("/perfil");
   });
 });
 

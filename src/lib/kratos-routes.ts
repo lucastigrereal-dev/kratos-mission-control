@@ -6,6 +6,7 @@ import {
   GitCommitHorizontal,
   Cpu,
   FolderGit2,
+  User,
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
@@ -66,6 +67,13 @@ export const KRATOS_ROUTES: readonly KratosRoute[] = [
     path: "/sistema",
     label: "Sistema",
     icon: Cpu,
+    section: "sistema",
+    visibleInSidebar: true,
+  },
+  {
+    path: "/perfil",
+    label: "Perfil",
+    icon: User,
     section: "sistema",
     visibleInSidebar: true,
   },

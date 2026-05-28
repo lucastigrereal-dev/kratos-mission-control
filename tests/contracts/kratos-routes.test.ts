@@ -2,8 +2,8 @@ import { describe, it, expect } from "bun:test";
 import { KRATOS_ROUTES, VISIBLE_ROUTES } from "../../src/lib/kratos-routes";
 
 describe("KRATOS_ROUTES contract", () => {
-  it("has exactly 7 routes defined", () => {
-    expect(KRATOS_ROUTES.length).toBe(7);
+  it("has exactly 8 routes defined", () => {
+    expect(KRATOS_ROUTES.length).toBe(8);
   });
 
   it("has no duplicate paths", () => {
@@ -17,7 +17,7 @@ describe("KRATOS_ROUTES contract", () => {
     }
   });
 
-  it("includes the 7 expected routes", () => {
+  it("includes the 8 expected routes", () => {
     const paths = KRATOS_ROUTES.map((r) => r.path).sort();
     expect(paths).toEqual([
       "/",
@@ -25,6 +25,7 @@ describe("KRATOS_ROUTES contract", () => {
       "/agora",
       "/checkpoints",
       "/contexto",
+      "/perfil",
       "/projetos",
       "/sistema",
     ]);
@@ -38,8 +39,8 @@ describe("KRATOS_ROUTES contract", () => {
     }
   });
 
-  it("exactly 6 routes are visible in sidebar", () => {
-    expect(VISIBLE_ROUTES.length).toBe(6);
+  it("exactly 7 routes are visible in sidebar", () => {
+    expect(VISIBLE_ROUTES.length).toBe(7);
   });
 
   it("dashboard (/) is not visible in sidebar", () => {
@@ -54,6 +55,6 @@ describe("KRATOS_ROUTES contract", () => {
     }
     expect(sections.get("operacao")).toBe(3);
     expect(sections.get("memoria")).toBe(2);
-    expect(sections.get("sistema")).toBe(1);
+    expect(sections.get("sistema")).toBe(2);
   });
 });
