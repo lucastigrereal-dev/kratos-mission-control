@@ -5,6 +5,7 @@ import { AuroraDrawer } from "./AuroraDrawer";
 import { AuroraOrb } from "./AuroraOrb";
 import { BottomDockV2 } from "./BottomDockV2";
 import { OfflineBanner } from "./OfflineBanner";
+import { BackendOfflineBanner } from "../base/BackendStatusBadge";
 import { PWAInstallPrompt } from "./PWAInstallPrompt";
 import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
 import { useSSEToasts } from "@/hooks/useSSEToasts";
@@ -126,6 +127,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* W6-B2a: Offline indicator — slim bar above main content */}
       <OfflineBanner />
+
+      {/* W0-B4: Backend watchdog banner — só mostra quando browser online mas backend caiu */}
+      <BackendOfflineBanner />
 
       {/* W6-B2b: PWA install chip — bottom-left, after 3 visits */}
       <PWAInstallPrompt />
