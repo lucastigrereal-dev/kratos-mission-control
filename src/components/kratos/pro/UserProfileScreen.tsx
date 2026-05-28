@@ -26,6 +26,7 @@ import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { SectionTitle } from "@/components/kratos/ui-primitives/SectionTitle";
 import { useOmnisStatus } from "@/hooks/useOmnis";
 import { useAkashaStatus } from "@/hooks/useAkasha";
+import { BillingScreen } from "@/components/kratos/pro/BillingScreen";
 
 const accent = "var(--kr-accent-cyan)";
 
@@ -456,6 +457,9 @@ export function UserProfileScreen() {
           />
         </div>
       </KratosCard>
+
+      {/* Billing — W18 */}
+      <BillingScreen />
 
       {/* Onboarding Checklist */}
       <KratosCard header={<SectionTitle icon={CheckCircle2} title="Setup KRATOS" />}>
