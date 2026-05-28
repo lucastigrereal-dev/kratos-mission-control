@@ -191,6 +191,12 @@ def _get_collector_status() -> dict:
             d = git_data["data"]
             result["dirty"] = d.get("dirty", 0) > 0
             result["dirty_count"] = d.get("dirty", 0)
+            repos = d.get("repositories", [])
+            primary = next(
+                (r for r in repos if "kratos" in r.get("name", "").lower()),
+                repos[0] if repos else {},
+            )
+            result["branch"] = primary.get("branch", "—")
         return result
 
     def _fetch_activitywatch():

@@ -30,40 +30,20 @@ import { useDriftDetection } from "@/hooks/useDriftDetection";
 import { usePausedCheckpoints, useResumeCheckpoint } from "@/hooks/useCheckpoints";
 import { useTasksToday } from "@/hooks/useTasks";
 import { useProjectsAPI } from "@/hooks/useProjects";
+import { useSystemPulse } from "@/hooks/useSystemPulse";
 
 const DEFAULT_OWNER = "lucastigrereal-dev";
 
-// --- Mock data para os 6 IslandCards ---
-const MOCK_SYSTEM_DATA: SystemIslandData = {
-  cpuPercent: 34,
-  ramPercent: 62,
-  health: "healthy",
-};
+// W1: MOCK_TASKS_DATA removido — useTasksToday() fornece dados reais
+// W2: MOCK_CONTEXT_DATA removido — substituído por projects real
+// W6: MOCK_SYSTEM_DATA, MOCK_DOCKER_DATA, MOCK_GIT_DATA, MOCK_ALERTS_DATA
+//     removidos — useSystemPulse() fornece dados reais com SourceBadge
 
-const MOCK_DOCKER_DATA: DockerIslandData = {
-  containers: [
-    { name: "kratos-dev", status: "running" },
-    { name: "akasha-db", status: "running" },
-    { name: "omnis-api", status: "stopped" },
-  ],
-  runningCount: 2,
-  totalCount: 3,
-};
-
-const MOCK_GIT_DATA: GitIslandData = {
-  branch: "main",
-  dirty: true,
-  ahead: 2,
-  behind: 0,
-};
-
-// W1: MOCK_TASKS_DATA removido — useTasksToday() fornece dados reais com SourceBadge
-// W2: MOCK_CONTEXT_DATA removido — context card substituído por projects (real data)
-
-const MOCK_ALERTS_DATA: AlertsIslandData = {
-  alerts: [
-    { id: "a1", message: "Container omnis-api parado", severity: "high" },
-  ],
+/** Mapeia status do collector alert para severity do IslandCard. */
+const ALERT_SEVERITY: Record<string, "critical" | "high" | "medium"> = {
+  error:    "critical",
+  degraded: "high",
+  offline:  "medium",
 };
 
 // --- Layout helpers para os ProgressRings ---
@@ -116,6 +96,31 @@ export function DashboardView({
 
   // W2: Projects reais do backend
   const { projects: projectsAPI, sourceType: projectsSourceType, isLoading: projectsLoading } = useProjectsAPI();
+
+  // W6: System/Docker/Git/Alerts reais do /live/snapshot
+  const { pulse, isLoading: systemLoading, sourceType: systemSourceType } = useSystemPulse();
+
+  const systemIslandData: SystemIslandData | null = pulse
+    ? { cpuPercent: pulse.cpuPercent, ramPercent: pulse.ramPercent, health: pulse.health }
+    : null;
+
+  const dockerIslandData: DockerIslandData | null = pulse
+    ? { containers: [], runningCount: pulse.dockerRunning, totalCount: pulse.dockerTotal }
+    : null;
+
+  const gitIslandData: GitIslandData | null = pulse
+    ? { branch: pulse.gitBranch ?? "—", dirty: pulse.gitDirty, ahead: 0, behind: 0 }
+    : null;
+
+  const alertsIslandData: AlertsIslandData | null = pulse
+    ? {
+        alerts: pulse.alerts.map((a, i) => ({
+          id:       `sys-${i}`,
+          message:  a.error ? `${a.collector}: ${a.error}` : `${a.collector} ${a.status}`,
+          severity: ALERT_SEVERITY[a.status] ?? "medium",
+        })),
+      }
+    : null;
 
   // Novos hooks
   const { lens, sourceType: lensSourceType, lastUpdatedAt: lensUpdatedAt } = useMissionLens();
@@ -298,20 +303,23 @@ export function DashboardView({
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
         <IslandCard
           domain="system"
-          data={MOCK_SYSTEM_DATA}
-          sourceType="mock"
+          data={systemIslandData}
+          sourceType={systemSourceType}
+          isLoading={systemLoading}
           compact
         />
         <IslandCard
           domain="docker"
-          data={MOCK_DOCKER_DATA}
-          sourceType="mock"
+          data={dockerIslandData}
+          sourceType={systemSourceType}
+          isLoading={systemLoading}
           compact
         />
         <IslandCard
           domain="git"
-          data={MOCK_GIT_DATA}
-          sourceType="mock"
+          data={gitIslandData}
+          sourceType={systemSourceType}
+          isLoading={systemLoading}
           compact
         />
         <IslandCard
@@ -338,8 +346,9 @@ export function DashboardView({
         />
         <IslandCard
           domain="alerts"
-          data={MOCK_ALERTS_DATA}
-          sourceType="mock"
+          data={alertsIslandData}
+          sourceType={systemSourceType}
+          isLoading={systemLoading}
           compact
         />
       </div>

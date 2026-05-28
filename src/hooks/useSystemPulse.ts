@@ -41,7 +41,9 @@ export interface SystemPulseData {
   cpuPercent: number;
   ramPercent: number;
   dockerRunning: number;
+  dockerTotal: number;
   gitDirty: boolean;
+  gitBranch: string | null;
   health: SystemHealth;
   alerts: Array<{ collector: string; status: string; error?: string | null }>;
 }
@@ -71,6 +73,8 @@ interface CollectorDictEntry {
   running?: number;
   unhealthy?: number;
   error?: string;
+  dirty?: boolean;
+  branch?: string;
 }
 
 async function fetchSnapshot(): Promise<{ pulse: SystemPulseData | null; sourceType: DataSource }> {
@@ -94,10 +98,12 @@ async function fetchSnapshot(): Promise<{ pulse: SystemPulseData | null; sourceT
   const cpu = system.cpu_percent ?? 0;
   const ram = system.memory_percent ?? 0;
   const dockerRunning = docker.running ?? 0;
+  const dockerTotal = docker.total ?? 0;
 
-  // git dirty: read from the git collector entry if present
+  // git: dirty flag + primary branch from kratos collector
   const git = collectors.git ?? {};
-  const gitDirty = (git as { dirty?: boolean }).dirty === true;
+  const gitDirty = git.dirty === true;
+  const gitBranch = git.branch ?? null;
 
   const alerts: Array<{ collector: string; status: string; error?: string | null }> = [];
   for (const [name, c] of Object.entries(collectors)) {
@@ -109,7 +115,7 @@ async function fetchSnapshot(): Promise<{ pulse: SystemPulseData | null; sourceT
   const health = deriveHealth(cpu, ram);
 
   return {
-    pulse: { cpuPercent: cpu, ramPercent: ram, dockerRunning, gitDirty, health, alerts },
+    pulse: { cpuPercent: cpu, ramPercent: ram, dockerRunning, dockerTotal, gitDirty, gitBranch, health, alerts },
     sourceType,
   };
 }
