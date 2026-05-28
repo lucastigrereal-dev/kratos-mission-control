@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Wallet,
   PiggyBank,
@@ -7,6 +8,7 @@ import {
   Landmark,
   BarChart3,
 } from "lucide-react";
+import { useIslandDock } from "./shared/IslandDockContext";
 import { KratosCard } from "@/components/kratos/ui-primitives/KratosCard";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { ProgressRing } from "@/components/kratos/ui-primitives/ProgressRing";
@@ -74,6 +76,20 @@ export function TesouroScreen({
   error = null,
   isEmpty = false,
 }: TesouroScreenProps) {
+  const { setData } = useIslandDock();
+
+  useEffect(() => {
+    setData({
+      islandId: "tesouro",
+      label: "Finanças",
+      value: patrimonio.total ?? "—",
+      progress: 0,
+      progressColor: "var(--kr-island-tesouro)",
+      quickActions: [{ label: "Registrar" }, { label: "Meta" }],
+    });
+    return () => setData(null);
+  }, [setData]);
+
   return (
     <IslandPageFrame theme="tesouro">
       {isLoading ? (

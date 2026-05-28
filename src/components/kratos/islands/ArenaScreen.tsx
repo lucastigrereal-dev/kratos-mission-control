@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   TrendingUp,
   DollarSign,
@@ -8,6 +9,7 @@ import {
   ChevronRight,
   Zap,
 } from "lucide-react";
+import { useIslandDock } from "./shared/IslandDockContext";
 import { KratosCard } from "@/components/kratos/ui-primitives/KratosCard";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { ProgressRing } from "@/components/kratos/ui-primitives/ProgressRing";
@@ -97,6 +99,21 @@ export function ArenaScreen({
   error = null,
   isEmpty = false,
 }: ArenaScreenProps) {
+  const { setData } = useIslandDock();
+  const totalDeals = pipeline.reduce((sum, s) => sum + s.count, 0);
+
+  useEffect(() => {
+    setData({
+      islandId: "arena",
+      label: "Pipeline",
+      value: totalDeals > 0 ? `${totalDeals} deals` : "—",
+      progress: metaPct,
+      progressColor: "var(--kr-island-arena)",
+      quickActions: [{ label: "Novo Lead" }, { label: "Follow-up" }],
+    });
+    return () => setData(null);
+  }, [setData, totalDeals]);
+
   return (
     <>
       {isLoading ? (

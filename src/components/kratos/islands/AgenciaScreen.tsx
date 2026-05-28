@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
+import { useIslandDock } from "./shared/IslandDockContext";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
@@ -402,12 +404,28 @@ export function AgenciaScreen({
     isLoading: queueLoading,
     isError: queueError,
   } = useAgenciaQueue();
+  const { setData } = useIslandDock();
 
   // hasData = true quando content_queue do OMNIS tem itens reais.
   const hasData = summary != null;
   const loading = isLoading || queueLoading;
   const errorMsg =
     error ?? (queueError ? "Erro ao carregar fila de conteúdo" : null);
+
+  const queueTotal = summary?.total_items ?? 0;
+  const queuePending = summary?.pending_items ?? 0;
+
+  useEffect(() => {
+    setData({
+      islandId: "agencia",
+      label: "Fila",
+      value: queueTotal > 0 ? `${queuePending} pendentes` : "—",
+      progress: queueTotal > 0 ? Math.round(((queueTotal - queuePending) / queueTotal) * 100) : 0,
+      progressColor: "var(--kr-island-agencia)",
+      quickActions: [{ label: "Criar Conteúdo" }, { label: "Agendar" }],
+    });
+    return () => setData(null);
+  }, [setData, queueTotal, queuePending]);
 
   return (
     <IslandPageFrame theme="agencia">

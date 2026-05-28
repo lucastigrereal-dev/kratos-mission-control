@@ -165,16 +165,28 @@
   --kratos-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
   /* ── Island / nav semantic colors ── */
-  --kr-island-vision:   oklch(0.65 0.20 285);
-  --kr-island-mission:  oklch(0.55 0.22 25);
-  --kr-island-project:  oklch(0.70 0.17 55);
-  --kr-island-agenda:  oklch(0.60 0.20 255);
-  --kr-island-people:   oklch(0.65 0.20 145);
-  --kr-island-resource: oklch(0.80 0.15 85);
-  --kr-island-analytics:oklch(0.65 0.14 185);
-  --kr-island-academy:  oklch(0.55 0.20 275);
-  --kr-island-omnis:    oklch(0.55 0.20 295);
-  --kr-island-settings: oklch(0.55 0.05 270);
+  --kr-island-vision:       oklch(0.65 0.20 285);
+  --kr-island-mission:      oklch(0.55 0.22 25);
+  --kr-island-project:      oklch(0.70 0.17 55);
+  --kr-island-agenda:       oklch(0.60 0.20 255);
+  --kr-island-people:       oklch(0.65 0.20 145);
+  --kr-island-resource:     oklch(0.80 0.15 85);
+  --kr-island-analytics:    oklch(0.65 0.14 185);
+  --kr-island-academy:      oklch(0.55 0.20 275);
+  --kr-island-omnis:        oklch(0.55 0.20 295);
+  --kr-island-settings:     oklch(0.55 0.05 270);
+
+  /* ── KRATOS 10 Ilhas ─────────────────────────────────── */
+  --kr-island-agencia:      oklch(0.65 0.22 355);  /* rose — mídia e conteúdo */
+  --kr-island-akasha:       oklch(0.60 0.20 265);  /* indigo — memória e conhecimento */
+  --kr-island-nimbus:       oklch(0.65 0.18 220);  /* sky — viagens e aventura */
+  --kr-island-arena:        oklch(0.70 0.20 60);   /* amber — vendas e conquistas */
+  --kr-island-vila:         oklch(0.65 0.18 145);  /* green — família e vida real */
+  --kr-island-forja:        oklch(0.62 0.22 35);   /* red-orange — corpo e treino */
+  --kr-island-observatorio: oklch(0.65 0.17 195);  /* teal — projetos e estratégia */
+  --kr-island-filosofia:    oklch(0.62 0.20 290);  /* purple — sabedoria e leitura */
+  --kr-island-tesouro:      oklch(0.72 0.18 85);   /* gold — finanças pessoais */
+  --kr-island-financas:     oklch(0.72 0.18 85);   /* alias: tesouro */
 
   --kr-duration-fast: 150ms;
   --kr-duration-normal: 250ms;

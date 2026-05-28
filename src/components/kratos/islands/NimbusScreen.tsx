@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { Plane } from "lucide-react";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
+import { useIslandDock } from "./shared/IslandDockContext";
 
 function DreamPortal() {
   return (
@@ -69,6 +71,20 @@ function DreamPortal() {
 }
 
 export function NimbusScreen() {
+  const { setData } = useIslandDock();
+
+  useEffect(() => {
+    setData({
+      islandId: "nimbus",
+      label: "Viagens",
+      value: "—",
+      progress: 0,
+      progressColor: "var(--kr-island-nimbus)",
+      quickActions: [{ label: "+ Destino" }, { label: "Checklist" }],
+    });
+    return () => setData(null);
+  }, [setData]);
+
   return (
     <IslandPageFrame theme="nimbus">
       <IslandPageHeader

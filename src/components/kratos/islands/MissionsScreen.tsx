@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { GitBranch, Circle, CheckCircle2, XCircle, PauseCircle, Clock, RotateCcw, Save, ChevronRight } from "lucide-react";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
+import { useIslandDock } from "./shared/IslandDockContext";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
@@ -178,10 +180,25 @@ export function MissionsScreen({
   isEmpty = false,
 }: MissionsScreenProps) {
   const { missions, isLoading: queryLoading } = useMissions(20);
+  const { setData } = useIslandDock();
   const loading = externalLoading || queryLoading;
 
   const runningCount = missions.filter((m) => m.status === "running").length;
   const completedCount = missions.filter((m) => m.status === "completed").length;
+
+  useEffect(() => {
+    setData({
+      islandId: "omnis",
+      label: "Missões",
+      value: missions.length > 0 ? `${runningCount} ativas` : "—",
+      progress: missions.length > 0
+        ? Math.round((completedCount / missions.length) * 100)
+        : 0,
+      progressColor: "var(--kr-island-omnis)",
+      quickActions: [{ label: "Run Crew" }, { label: "Stop All" }],
+    });
+    return () => setData(null);
+  }, [setData, missions.length, runningCount, completedCount]);
 
   return (
     <IslandPageFrame theme="omnis">
