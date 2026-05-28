@@ -19,6 +19,7 @@ import { CostSummaryCard } from "@/components/kratos/omnis/CostSummaryCard";
 import { ModelCostDashboard } from "@/components/kratos/omnis/ModelCostDashboard";
 import { MissionEventLogCard } from "@/components/kratos/omnis/MissionEventLogCard";
 import { OmnisExecutionCockpit } from "@/components/kratos/omnis/OmnisExecutionCockpit";
+import { AppFactoryPanel } from "@/components/kratos/omnis/AppFactoryPanel";
 import {
   Cpu,
   Workflow,
@@ -650,6 +651,11 @@ export function OmnisLabScreen({
       {/* 3f. Execution Cockpit — W15 Live Monitor */}
       <div className="mb-4">
         <OmnisExecutionCockpit />
+      </div>
+
+      {/* 3g. App Factory — W16 template catalog */}
+      <div className="mb-4">
+        <AppFactoryPanel />
       </div>
 
       {/* 4. Próxima ação (dominante) + guardrail (restrições) */}
