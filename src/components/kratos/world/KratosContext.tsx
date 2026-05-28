@@ -79,6 +79,7 @@ interface KratosContextValue {
   liveStatus: {
     liveState: LiveState;
     isSSEConnected: boolean;
+    isSSEDeadState: boolean;
     sourceType: DataSource;
   };
 
