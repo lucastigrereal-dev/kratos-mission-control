@@ -13,7 +13,7 @@
 ```
 
 Isso sobe:
-- ✅ Backend FastAPI em `http://localhost:8000`
+- ✅ Backend FastAPI em `http://localhost:5100`
 - ✅ Frontend Vite em `http://localhost:5173`
 - ✅ Verifica ActivityWatch em `:5600`
 
@@ -48,7 +48,7 @@ Sobe backend + frontend + verifica AW. Aguarda health check (30s timeout).
 
 ```
 [1/4] Verifica venv
-[2/4] Backend (uvicorn app.main:app :8000) → logs/backend.log
+[2/4] Backend (uvicorn app.main:app :5100) → logs/backend.log
 [3/4] Frontend (bun run dev :5173) → logs/frontend.log
 [4/4] Verifica ActivityWatch :5600
       ↓

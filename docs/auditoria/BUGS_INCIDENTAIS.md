@@ -83,4 +83,42 @@ useEffect(() => {
 
 ---
 
-_Atualizado em: 2026-05-28 | Wave W0_
+---
+
+## #003 — project-store.test.ts: sort flaky em execução paralela
+
+**Encontrado em:** W1-B9 (gate de testes final)  
+**Wave adequada para fix:** Qualquer wave que toque stores/tests  
+**Severidade:** LOW (flaky apenas em paralelo, passa 100% em isolamento)
+
+### Arquivo afetado:
+
+`tests/stores/project-store.test.ts` — linha 155
+
+```typescript
+// Teste: "lists all sorted by prioridade desc then atualizadoEm desc"
+// A e C criados com prioridade=3. Quando timestamps são iguais (mesma milissegundo
+// em CPUs rápidas), a ordem entre A e C é não-determinística.
+expect(all[1].nome).toBe("A"); // Flaky: às vezes recebe "C"
+```
+
+### Hipótese de fix:
+
+```typescript
+// Usar Bun.sleepSync(1) entre criação de A e C para garantir timestamps distintos
+const a = store.create({ nome: "A", prioridade: 3 });
+Bun.sleepSync(1); // ← adicionar aqui
+const b = store.create({ nome: "B", prioridade: 5 });
+const c = store.create({ nome: "C", prioridade: 3 });
+```
+
+### Notas:
+
+- Não introduzido por W1 — pré-existente (sort não-estável para timestamps iguais)
+- Em `bun test tests/stores/project-store.test.ts` isolado: 14/14 pass, 0 fail
+- Em `bun test tests/stores tests/contracts` paralelo: falha esporadicamente
+- Não bloqueia W1 (teste passa em isolamento, falha só por race condition de timestamp)
+
+---
+
+_Atualizado em: 2026-05-28 | Wave W1_

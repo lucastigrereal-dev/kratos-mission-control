@@ -2,7 +2,7 @@
 <#
 .SYNOPSIS
     KRATOS Mission Control — Start Script
-    Sobe: Backend (FastAPI :8000) + Frontend (Vite :5173) + verifica ActivityWatch (:5600)
+    Sobe: Backend (FastAPI :5100) + Frontend (Vite :5173) + verifica ActivityWatch (:5600)
 
 .DESCRIPTION
     W0 — Backend Liveness (ksw-w0-backend-alive)
@@ -25,7 +25,7 @@ $LOGS_DIR    = Join-Path $ROOT "logs"
 $LOG_BACKEND = Join-Path $LOGS_DIR "backend.log"
 $LOG_FRONTEND = Join-Path $LOGS_DIR "frontend.log"
 
-$BACKEND_PORT  = 8000
+$BACKEND_PORT  = 5100
 $FRONTEND_PORT = 5173
 $AW_PORT       = 5600
 $HEALTH_URL    = "http://localhost:$BACKEND_PORT/health"

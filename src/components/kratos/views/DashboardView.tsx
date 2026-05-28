@@ -28,6 +28,7 @@ import { useTrackedRepos, useGithubRepo, useGithubConfig } from "@/hooks/useGith
 import { useMissionLens } from "@/hooks/useMissionLens";
 import { useDriftDetection } from "@/hooks/useDriftDetection";
 import { usePausedCheckpoints, useResumeCheckpoint } from "@/hooks/useCheckpoints";
+import { useTasksToday } from "@/hooks/useTasks";
 
 const DEFAULT_OWNER = "lucastigrereal-dev";
 
@@ -55,13 +56,7 @@ const MOCK_GIT_DATA: GitIslandData = {
   behind: 0,
 };
 
-const MOCK_TASKS_DATA: TasksIslandData = {
-  urgent: [
-    { id: "1", title: "Fase 2.5 - AuroraPanel", overdue: false },
-    { id: "2", title: "Bug: login redirect quebrado", overdue: true },
-  ],
-  totalCount: 5,
-};
+// W1: MOCK_TASKS_DATA removido — useTasksToday() fornece dados reais com SourceBadge
 
 const MOCK_CONTEXT_DATA: ContextIslandData = {
   activeApp: "VS Code",
@@ -119,6 +114,9 @@ export function DashboardView({
   const snap = useDashboardSnapshot();
   const ghConfig = useGithubConfig();
   const { data: trackedRepos, isLoading: reposLoading } = useTrackedRepos();
+
+  // W1: Tasks reais do backend
+  const { tasks: tasksToday, sourceType: tasksSourceType, isLoading: tasksLoading } = useTasksToday();
 
   // Novos hooks
   const { lens, sourceType: lensSourceType, lastUpdatedAt: lensUpdatedAt } = useMissionLens();
@@ -319,8 +317,13 @@ export function DashboardView({
         />
         <IslandCard
           domain="tasks"
-          data={MOCK_TASKS_DATA}
-          sourceType="mock"
+          data={
+            tasksToday
+              ? { urgent: tasksToday.urgent, totalCount: tasksToday.totalCount }
+              : null
+          }
+          sourceType={tasksSourceType}
+          isLoading={tasksLoading}
           compact
         />
         <IslandCard

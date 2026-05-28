@@ -24,10 +24,16 @@ def overdue():
 @router.get("/doing")
 def doing():
     try:
-        all_tasks = get_tasks()
-        return [t for t in all_tasks if t.get("status") == "doing"]
+        envelope = get_tasks()
+        all_tasks = envelope.get("data", [])
+        filtered = [t for t in all_tasks if t.get("status") == "doing"]
+        return {
+            "data": filtered,
+            "source": envelope.get("source", "live"),
+            "source_ts": envelope.get("source_ts", ""),
+        }
     except Exception:
-        return []
+        return {"data": [], "source": "mock", "source_ts": ""}
 
 
 @router.get("/unfinished")

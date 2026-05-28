@@ -1,6 +1,6 @@
 /**
  * useBackendHealth — W0-B3
- * Watchdog que faz poll direto em http://localhost:8000/health a cada 30s.
+ * Watchdog que faz poll direto em http://localhost:5100/health a cada 30s.
  * Marca "offline" após 2 falhas consecutivas de rede.
  * Expõe retry() para force-check manual.
  *
@@ -13,7 +13,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
-const BACKEND_HEALTH_URL = "http://localhost:8000/health";
+const BACKEND_HEALTH_URL = "http://localhost:5100/health";
 const POLL_INTERVAL_MS   = 30_000;  // poll a cada 30s
 const OFFLINE_THRESHOLD  = 2;       // falhas consecutivas de rede → "offline"
 const FETCH_TIMEOUT_MS   = 5_000;   // timeout por tentativa

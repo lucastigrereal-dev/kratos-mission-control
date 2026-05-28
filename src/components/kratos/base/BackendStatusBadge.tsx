@@ -1,6 +1,6 @@
 /**
  * BackendStatusBadge — W0-B4
- * Indicador inline de saúde do Python backend (localhost:8000).
+ * Indicador inline de saúde do Python backend (localhost:5100).
  * 4 estados: live / degraded / offline / unknown.
  *
  * Exports:

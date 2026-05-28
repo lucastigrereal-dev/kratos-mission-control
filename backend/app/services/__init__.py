@@ -264,8 +264,43 @@ def get_alerts():
     return []
 
 
-def get_tasks():
-    """Return real tasks from SQLite, falling back to mock on failure."""
+def _task_row_to_dict(row) -> dict:
+    """Convert a SQLite Row to task dict. Reused by all task queries."""
+    return {
+        "id": row["id"],
+        "title": row["title"],
+        "project_id": row["project_id"] or "",
+        "status": row["status"] or "inbox",
+        "priority": row["priority"] or "medium",
+        "source": row["source"] or "manual",
+        "due_date": row["due_date"] or "",
+        "created_at": row["created_at"],
+        "updated_at": row["updated_at"],
+    }
+
+
+def _task_envelope(data: list, source: str) -> dict:
+    """W1-B5: Standard task response envelope.
+    Shape: { data: [...], source: "live"|"mock", source_ts: iso }
+    """
+    return {
+        "data": data,
+        "source": source,
+        "source_ts": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def _mock_task_envelope(filename: str) -> dict:
+    """Return mock tasks wrapped in envelope with source='mock'."""
+    raw = _load_json(filename)
+    items = raw if isinstance(raw, list) else []
+    return _task_envelope(items, "mock")
+
+
+def get_tasks() -> dict:
+    """W1-B3: Return all tasks. SQLite → live envelope. Exception → mock envelope.
+    Empty SQLite table returns live envelope with empty list (NOT mock).
+    """
     try:
         from app.db import get_db
         db = get_db()
@@ -275,28 +310,13 @@ def get_tasks():
             "FROM tasks ORDER BY created_at DESC"
         ).fetchall()
         db.close()
-        result = []
-        for row in rows:
-            result.append({
-                "id": row["id"],
-                "title": row["title"],
-                "project_id": row["project_id"] or "",
-                "status": row["status"] or "inbox",
-                "priority": row["priority"] or "medium",
-                "source": row["source"] or "manual",
-                "due_date": row["due_date"] or "",
-                "created_at": row["created_at"],
-                "updated_at": row["updated_at"],
-            })
-        if result:
-            return result
+        return _task_envelope([_task_row_to_dict(r) for r in rows], "live")
     except Exception:
-        pass
-    return _load_json("tasks.json")
+        return _mock_task_envelope("tasks.json")
 
 
-def get_today_tasks():
-    """Return tasks due today from SQLite, falling back to mock."""
+def get_today_tasks() -> dict:
+    """W1-B3: Return tasks due today from SQLite. Live or mock envelope."""
     try:
         from app.db import get_db
         from datetime import date as dt_date
@@ -309,28 +329,13 @@ def get_today_tasks():
             (today,)
         ).fetchall()
         db.close()
-        result = []
-        for row in rows:
-            result.append({
-                "id": row["id"],
-                "title": row["title"],
-                "project_id": row["project_id"] or "",
-                "status": row["status"] or "inbox",
-                "priority": row["priority"] or "medium",
-                "source": row["source"] or "manual",
-                "due_date": row["due_date"] or "",
-                "created_at": row["created_at"],
-                "updated_at": row["updated_at"],
-            })
-        if result or rows is not None:
-            return result
+        return _task_envelope([_task_row_to_dict(r) for r in rows], "live")
     except Exception:
-        pass
-    return _load_json("today_tasks.json")
+        return _mock_task_envelope("today_tasks.json")
 
 
-def get_overdue_tasks():
-    """Return overdue tasks from SQLite, falling back to mock."""
+def get_overdue_tasks() -> dict:
+    """W1-B3: Return overdue tasks from SQLite. Live or mock envelope."""
     try:
         from app.db import get_db
         from datetime import date as dt_date
@@ -344,27 +349,13 @@ def get_overdue_tasks():
             (today,)
         ).fetchall()
         db.close()
-        result = []
-        for row in rows:
-            result.append({
-                "id": row["id"],
-                "title": row["title"],
-                "project_id": row["project_id"] or "",
-                "status": row["status"] or "inbox",
-                "priority": row["priority"] or "medium",
-                "source": row["source"] or "manual",
-                "due_date": row["due_date"] or "",
-                "created_at": row["created_at"],
-                "updated_at": row["updated_at"],
-            })
-        return result
+        return _task_envelope([_task_row_to_dict(r) for r in rows], "live")
     except Exception:
-        pass
-    return _load_json("overdue_tasks.json")
+        return _mock_task_envelope("overdue_tasks.json")
 
 
-def get_unfinished_items():
-    """Return tasks not in done/cancelled status from SQLite."""
+def get_unfinished_items() -> dict:
+    """W1-B3: Return tasks not done/cancelled from SQLite. Live or mock envelope."""
     try:
         from app.db import get_db
         db = get_db()
@@ -375,24 +366,9 @@ def get_unfinished_items():
             "ORDER BY created_at DESC"
         ).fetchall()
         db.close()
-        result = []
-        for row in rows:
-            result.append({
-                "id": row["id"],
-                "title": row["title"],
-                "project_id": row["project_id"] or "",
-                "status": row["status"] or "inbox",
-                "priority": row["priority"] or "medium",
-                "source": row["source"] or "manual",
-                "due_date": row["due_date"] or "",
-                "created_at": row["created_at"],
-                "updated_at": row["updated_at"],
-            })
-        if result:
-            return result
+        return _task_envelope([_task_row_to_dict(r) for r in rows], "live")
     except Exception:
-        pass
-    return _load_json("unfinished_items.json")
+        return _mock_task_envelope("unfinished_items.json")
 
 
 def get_project_goals():

@@ -114,6 +114,20 @@ const MOCK_REGISTRY: Record<string, unknown> = {
       { name: "Akasha (pgvector)", status: "healthy", latency_ms: 31 },
     ],
   },
+  // ── W1: Tasks mocks (source=mock, VITE_USE_MOCKS=true only) ─────────────
+  "/tasks/today": {
+    data: [
+      { id: "mock-t1", title: "Fechar W1 — tasks reality", project_id: "kratos-mission-control", status: "doing", priority: "high", source: "mock", due_date: new Date().toISOString().split("T")[0], created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "mock-t2", title: "Corrigir SourceBadge no DashboardView", project_id: "kratos-mission-control", status: "inbox", priority: "medium", source: "mock", due_date: "", created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    ],
+    source: "mock",
+    source_ts: new Date().toISOString(),
+  },
+  "/tasks": {
+    data: [],
+    source: "mock",
+    source_ts: new Date().toISOString(),
+  },
   // ── W10-B1: Marketing Island mocks ───────────────────────────────────────
   "/agencia/queue-summary": {
     data: {
