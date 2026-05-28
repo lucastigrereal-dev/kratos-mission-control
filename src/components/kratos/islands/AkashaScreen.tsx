@@ -2,10 +2,13 @@ import { useEffect } from "react";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
+import { KratosCard } from "@/components/kratos/ui-primitives/KratosCard";
+import { SectionTitle } from "@/components/kratos/ui-primitives/SectionTitle";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { useIslandDock } from "./shared/IslandDockContext";
-import { useAkashaStatus } from "@/hooks/useAkasha";
+import { useAkashaStatus, useAkashaSearch } from "@/hooks/useAkasha";
+import { AkashaSearchPanel } from "@/components/kratos/akasha/AkashaSearchPanel";
 import type { AkashaStatusData } from "@/lib/akasha-server-fns";
 import {
   ShieldCheck,
@@ -17,6 +20,7 @@ import {
   BadgeCheck,
   BadgeAlert,
   BadgeX,
+  Search,
 } from "lucide-react";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -213,6 +217,7 @@ function SourcePanel({ data }: { data: AkashaStatusData }) {
 export function AkashaScreen() {
   const { data, isLoading, isError, error } = useAkashaStatus();
   const { setData } = useIslandDock();
+  const searchState = useAkashaSearch(6);
 
   useEffect(() => {
     if (!data) return;
@@ -247,6 +252,11 @@ export function AkashaScreen() {
           />
 
           <VaultCrystal />
+
+          {/* Search panel — primary action W13 */}
+          <KratosCard header={<SectionTitle icon={Search} title="Busca Semântica no Vault" />}>
+            <AkashaSearchPanel searchState={searchState} />
+          </KratosCard>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             {data ? (
