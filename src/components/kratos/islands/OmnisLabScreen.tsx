@@ -18,6 +18,7 @@ import { GuardrailAlertCard } from "@/components/kratos/omnis/GuardrailAlertCard
 import { CostSummaryCard } from "@/components/kratos/omnis/CostSummaryCard";
 import { ModelCostDashboard } from "@/components/kratos/omnis/ModelCostDashboard";
 import { MissionEventLogCard } from "@/components/kratos/omnis/MissionEventLogCard";
+import { OmnisExecutionCockpit } from "@/components/kratos/omnis/OmnisExecutionCockpit";
 import {
   Cpu,
   Workflow,
@@ -644,6 +645,11 @@ export function OmnisLabScreen({
       {/* 3e. Mission Event Log — drill-down read-only (W7) */}
       <div className="mb-4">
         <MissionEventLogCard missionId={activeMissionId} limit={12} />
+      </div>
+
+      {/* 3f. Execution Cockpit — W15 Live Monitor */}
+      <div className="mb-4">
+        <OmnisExecutionCockpit />
       </div>
 
       {/* 4. Próxima ação (dominante) + guardrail (restrições) */}
