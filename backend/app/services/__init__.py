@@ -34,8 +34,50 @@ def get_now():
 
 # ── Projects ─────────────────────────────────────────────────────────────────
 
-def get_projects():
-    """Return real projects from SQLite, falling back to mock on failure."""
+def _project_row_to_dict(row) -> dict:
+    """Convert a SQLite Row to project dict. Reused by all project queries."""
+    return {
+        "id": row["id"],
+        "name": row["name"],
+        "description": row["description"] or "",
+        "type": row["type"] or "product",
+        "status": row["status"] or "active",
+        "phase": row["phase"] or "",
+        "priority": row["priority"] or "medium",
+        "repo_path": row["repo_path"] or "",
+        "next_action": row["next_action"] or "",
+        "deadline": row["deadline"] or "",
+        "last_activity": row["last_activity"] or "",
+        "risk_level": row["risk_level"] or "low",
+        "outputs_count": row["outputs_count"] or 0,
+        "created_at": row["created_at"],
+        "updated_at": row["updated_at"],
+    }
+
+
+def _project_envelope(data: list, source: str) -> dict:
+    """W2-B1: Standard project response envelope.
+    Shape: { data: [...], source: "live"|"mock", source_ts: iso }
+    Empty SQLite list is valid live data — NOT a signal to fall back to mock.
+    """
+    return {
+        "data": data,
+        "source": source,
+        "source_ts": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def _mock_project_envelope(filename: str) -> dict:
+    """Return mock projects wrapped in envelope with source='mock'."""
+    raw = _load_json(filename)
+    items = raw if isinstance(raw, list) else []
+    return _project_envelope(items, "mock")
+
+
+def get_projects() -> dict:
+    """W2-B1: Return all projects. SQLite → live envelope. Exception → mock envelope.
+    Empty SQLite table returns live envelope with empty list (NOT mock).
+    """
     try:
         from app.db import get_db
         db = get_db()
@@ -46,30 +88,9 @@ def get_projects():
             "FROM projects ORDER BY updated_at DESC"
         ).fetchall()
         db.close()
-        result = []
-        for row in rows:
-            result.append({
-                "id": row["id"],
-                "name": row["name"],
-                "description": row["description"] or "",
-                "type": row["type"] or "product",
-                "status": row["status"] or "active",
-                "phase": row["phase"] or "",
-                "priority": row["priority"] or "medium",
-                "repo_path": row["repo_path"] or "",
-                "next_action": row["next_action"] or "",
-                "deadline": row["deadline"] or "",
-                "last_activity": row["last_activity"] or "",
-                "risk_level": row["risk_level"] or "low",
-                "outputs_count": row["outputs_count"] or 0,
-                "created_at": row["created_at"],
-                "updated_at": row["updated_at"],
-            })
-        if result:
-            return result
+        return _project_envelope([_project_row_to_dict(r) for r in rows], "live")
     except Exception:
-        pass
-    return _load_json("projects.json")
+        return _mock_project_envelope("projects.json")
 
 
 def get_project_detail(project_id: str):
@@ -111,8 +132,8 @@ def get_project_detail(project_id: str):
     filename = mapping.get(project_id)
     if filename:
         return _load_json(filename)
-    projects = get_projects()
-    for p in projects:
+    envelope = get_projects()
+    for p in envelope.get("data", []):
         if p["id"] == project_id:
             return p
     return None

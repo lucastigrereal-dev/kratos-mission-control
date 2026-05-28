@@ -14,7 +14,7 @@ import type {
   DockerIslandData,
   GitIslandData,
   TasksIslandData,
-  ContextIslandData,
+  ProjectsIslandData,
   AlertsIslandData,
 } from "@/components/kratos/shell/IslandCard";
 import { DriftIndicator } from "@/components/kratos/shell/DriftIndicator";
@@ -29,6 +29,7 @@ import { useMissionLens } from "@/hooks/useMissionLens";
 import { useDriftDetection } from "@/hooks/useDriftDetection";
 import { usePausedCheckpoints, useResumeCheckpoint } from "@/hooks/useCheckpoints";
 import { useTasksToday } from "@/hooks/useTasks";
+import { useProjectsAPI } from "@/hooks/useProjects";
 
 const DEFAULT_OWNER = "lucastigrereal-dev";
 
@@ -57,12 +58,7 @@ const MOCK_GIT_DATA: GitIslandData = {
 };
 
 // W1: MOCK_TASKS_DATA removido — useTasksToday() fornece dados reais com SourceBadge
-
-const MOCK_CONTEXT_DATA: ContextIslandData = {
-  activeApp: "VS Code",
-  project: "KRATOS Mission Control",
-  minutesInSession: 47,
-};
+// W2: MOCK_CONTEXT_DATA removido — context card substituído por projects (real data)
 
 const MOCK_ALERTS_DATA: AlertsIslandData = {
   alerts: [
@@ -117,6 +113,9 @@ export function DashboardView({
 
   // W1: Tasks reais do backend
   const { tasks: tasksToday, sourceType: tasksSourceType, isLoading: tasksLoading } = useTasksToday();
+
+  // W2: Projects reais do backend
+  const { projects: projectsAPI, sourceType: projectsSourceType, isLoading: projectsLoading } = useProjectsAPI();
 
   // Novos hooks
   const { lens, sourceType: lensSourceType, lastUpdatedAt: lensUpdatedAt } = useMissionLens();
@@ -327,9 +326,14 @@ export function DashboardView({
           compact
         />
         <IslandCard
-          domain="context"
-          data={MOCK_CONTEXT_DATA}
-          sourceType="mock"
+          domain="projects"
+          data={
+            projectsAPI
+              ? { active: projectsAPI.active, activeCount: projectsAPI.activeCount, totalCount: projectsAPI.totalCount }
+              : null
+          }
+          sourceType={projectsSourceType}
+          isLoading={projectsLoading}
           compact
         />
         <IslandCard

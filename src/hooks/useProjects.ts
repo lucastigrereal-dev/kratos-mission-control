@@ -6,11 +6,68 @@ import {
   updateProject,
   deleteProject,
 } from "@/lib/project-server-fns";
+import { apiGet } from "@/lib/api/client";
+import {
+  ProjectEnvelopeSchema,
+  projectEnvelopeToIslandData,
+  type ProjectsIslandResult,
+  type ProjectDataSource,
+} from "../../api-contract/project.schema";
 import type {
   Project,
   CreateProject,
   UpdateProject,
 } from "../../api-contract/project.schema";
+import type { DataSource } from "../../api-contract/source-badge.schema";
+
+// ── useProjectsAPI — Python backend (W2) ─────────────────────────────────────
+
+/** Map backend source string to frontend DataSource (source-badge) */
+function toDataSource(src: ProjectDataSource): DataSource {
+  if (src === "live")   return "live";
+  if (src === "mock")   return "mock";
+  if (src === "cached") return "cache";
+  return "partial";
+}
+
+async function fetchProjectsFromAPI(): Promise<ProjectsIslandResult | null> {
+  const result = await apiGet("/projects");
+  if (!result.ok || result.raw == null) return null;
+  const parsed = ProjectEnvelopeSchema.safeParse(result.raw);
+  if (!parsed.success) throw new Error(`projects schema mismatch: ${parsed.error.message}`);
+  return projectEnvelopeToIslandData(parsed.data);
+}
+
+export interface UseProjectsAPIResult {
+  projects: ProjectsIslandResult | null;
+  sourceType: DataSource;
+  isLoading: boolean;
+  isError: boolean;
+  refetch: () => void;
+}
+
+export function useProjectsAPI(): UseProjectsAPIResult {
+  const qc = useQueryClient();
+
+  const query = useQuery({
+    queryKey:             ["projects", "api"],
+    queryFn:              fetchProjectsFromAPI,
+    staleTime:            30_000,
+    refetchInterval:      60_000,
+    retry:                1,
+    refetchOnWindowFocus: false,
+  });
+
+  const sourceType = toDataSource(query.data?.source ?? "mock");
+
+  return {
+    projects:  query.data ?? null,
+    sourceType,
+    isLoading: query.isLoading,
+    isError:   query.isError,
+    refetch:   () => void qc.invalidateQueries({ queryKey: ["projects", "api"] }),
+  };
+}
 
 const projectKeys = {
   all: ["projects"] as const,

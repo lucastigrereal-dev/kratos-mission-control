@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from "react";
-import { Cpu, Container, GitBranch, CheckSquare, MapPin, AlertTriangle } from "lucide-react";
+import { Cpu, Container, GitBranch, CheckSquare, MapPin, AlertTriangle, FolderKanban } from "lucide-react";
 import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
@@ -29,7 +29,7 @@ class IslandErrorBoundary extends Component<
 }
 
 // --- Tipos dos dados por domínio ---
-export type IslandDomain = "system" | "docker" | "git" | "tasks" | "context" | "alerts";
+export type IslandDomain = "system" | "docker" | "git" | "tasks" | "projects" | "context" | "alerts";
 
 export interface SystemIslandData {
   cpuPercent: number;
@@ -65,11 +65,18 @@ export interface AlertsIslandData {
   alerts: Array<{ id: string; message: string; severity: "critical" | "high" | "medium" }>;
 }
 
+export interface ProjectsIslandData {
+  active: Array<{ id: string; name: string; riskLevel: string }>;
+  activeCount: number;
+  totalCount: number;
+}
+
 export type IslandData =
   | { domain: "system"; data: SystemIslandData | null }
   | { domain: "docker"; data: DockerIslandData | null }
   | { domain: "git"; data: GitIslandData | null }
   | { domain: "tasks"; data: TasksIslandData | null }
+  | { domain: "projects"; data: ProjectsIslandData | null }
   | { domain: "context"; data: ContextIslandData | null }
   | { domain: "alerts"; data: AlertsIslandData | null };
 
@@ -83,12 +90,13 @@ interface IslandCardProps {
 
 // --- Helpers visuais ---
 const DOMAIN_META: Record<IslandDomain, { label: string; icon: typeof Cpu; question: string }> = {
-  system: { label: "Sistema", icon: Cpu, question: "CPU & RAM" },
-  docker: { label: "Docker", icon: Container, question: "Containers" },
-  git: { label: "Git", icon: GitBranch, question: "Branch atual" },
-  tasks: { label: "Tarefas", icon: CheckSquare, question: "O que está urgente?" },
-  context: { label: "Contexto", icon: MapPin, question: "Onde você está?" },
-  alerts: { label: "Alertas", icon: AlertTriangle, question: "O que está em risco?" },
+  system:   { label: "Sistema",   icon: Cpu,            question: "CPU & RAM" },
+  docker:   { label: "Docker",    icon: Container,      question: "Containers" },
+  git:      { label: "Git",       icon: GitBranch,      question: "Branch atual" },
+  tasks:    { label: "Tarefas",   icon: CheckSquare,    question: "O que está urgente?" },
+  projects: { label: "Projetos",  icon: FolderKanban,   question: "Projetos ativos" },
+  context:  { label: "Contexto",  icon: MapPin,         question: "Onde você está?" },
+  alerts:   { label: "Alertas",   icon: AlertTriangle,  question: "O que está em risco?" },
 };
 
 function HealthBar({ value, color }: { value: number; color: string }) {
@@ -224,6 +232,43 @@ function TasksContent({ data }: { data: TasksIslandData }) {
   );
 }
 
+function ProjectsContent({ data }: { data: ProjectsIslandData }) {
+  if (data.active.length === 0) {
+    return <EmptyState title="Sem projetos ativos" description="Nenhum projeto em andamento." />;
+  }
+  return (
+    <div className="space-y-1.5">
+      {data.active.slice(0, 3).map((p) => {
+        const riskColor =
+          p.riskLevel === "critical" || p.riskLevel === "high"
+            ? "var(--kratos-critical)"
+            : p.riskLevel === "medium"
+              ? "var(--kratos-warn)"
+              : "var(--kratos-ok)";
+        return (
+          <div key={p.id} className="flex items-start gap-2">
+            <span
+              className="inline-block h-1.5 w-1.5 rounded-full shrink-0 mt-1"
+              style={{ background: riskColor }}
+            />
+            <span
+              className="text-[11px] leading-snug truncate"
+              style={{ color: "var(--kratos-text-secondary)" }}
+            >
+              {p.name}
+            </span>
+          </div>
+        );
+      })}
+      {data.totalCount > 3 && (
+        <div className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
+          {data.activeCount} ativos / {data.totalCount} total
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ContextContent({ data }: { data: ContextIslandData }) {
   return (
     <div className="space-y-1.5">
@@ -313,6 +358,8 @@ export function IslandCard({
         return <GitContent data={data as GitIslandData} />;
       case "tasks":
         return <TasksContent data={data as TasksIslandData} />;
+      case "projects":
+        return <ProjectsContent data={data as ProjectsIslandData} />;
       case "context":
         return <ContextContent data={data as ContextIslandData} />;
       case "alerts":

@@ -114,6 +114,16 @@ const MOCK_REGISTRY: Record<string, unknown> = {
       { name: "Akasha (pgvector)", status: "healthy", latency_ms: 31 },
     ],
   },
+  // ── W2: Projects mocks (source=mock, VITE_USE_MOCKS=true only) ──────────
+  "/projects": {
+    data: [
+      { id: "mock-p1", name: "KRATOS Mission Control", description: "Cockpit pessoal de missão", type: "product", status: "active", phase: "w2", priority: "high", repo_path: "kratos-mission-control", next_action: "Fechar W2 — projects reality", deadline: "", last_activity: new Date().toISOString(), risk_level: "low", outputs_count: 3, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+      { id: "mock-p2", name: "OMNIS Runtime", description: "Runtime de agentes autônomos", type: "product", status: "active", phase: "parallel-fabric-p2", priority: "high", repo_path: "omnis-runtime-bridge", next_action: "Wave status skill", deadline: "", last_activity: new Date(Date.now() - 3600000).toISOString(), risk_level: "medium", outputs_count: 14, created_at: new Date().toISOString(), updated_at: new Date(Date.now() - 3600000).toISOString() },
+      { id: "mock-p3", name: "Instagramas", description: "Operação 6 perfis — 2.3M seguidores", type: "media", status: "active", phase: "operacional", priority: "critical", repo_path: "", next_action: "Pipeline publi semana", deadline: "", last_activity: new Date(Date.now() - 1800000).toISOString(), risk_level: "low", outputs_count: 28, created_at: new Date().toISOString(), updated_at: new Date(Date.now() - 1800000).toISOString() },
+    ],
+    source: "mock",
+    source_ts: new Date().toISOString(),
+  },
   // ── W1: Tasks mocks (source=mock, VITE_USE_MOCKS=true only) ─────────────
   "/tasks/today": {
     data: [
