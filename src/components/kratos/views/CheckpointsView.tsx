@@ -145,8 +145,8 @@ export function CheckpointsView() {
           description="Não reconstrua do zero. Retome."
         />
         <ErrorState
-          message={error?.message ?? "Erro ao carregar checkpoints"}
-          onRetry={() => refetch()}
+          title="Erro ao carregar checkpoints"
+          description={error?.message ?? "Não foi possível carregar os checkpoints."}
         />
       </div>
     );
@@ -246,10 +246,12 @@ export function CheckpointsView() {
 
       {/* Empty state */}
       {checkpoints.length === 0 ? (
-        <EmptyState
-          eyebrow="Nenhum checkpoint ainda"
-          title="Seu primeiro save game está a um clique."
-          action={
+        <div className="space-y-4">
+          <EmptyState
+            title="Nenhum checkpoint ainda"
+            description="Seu primeiro save game está a um clique."
+          />
+          <div className="flex justify-center">
             <button
               type="button"
               onClick={() => setShowCreate(true)}
@@ -263,8 +265,8 @@ export function CheckpointsView() {
               <Bookmark className="h-4 w-4" />
               Criar primeiro checkpoint
             </button>
-          }
-        />
+          </div>
+        </div>
       ) : (
         <>
           {/* Resume + Summary row */}

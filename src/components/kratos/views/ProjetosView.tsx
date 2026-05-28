@@ -89,11 +89,13 @@ export function ProjetosView() {
     );
   }
 
-  function handleToggleStatus(project: Project) {
-    setPendingId(project.id);
+  function handleToggleStatus(id: string) {
+    const project = items.find((p) => p.id === id);
+    if (!project) return;
+    setPendingId(id);
     const nextStatus: ProjectStatus = project.status === "active" ? "paused" : "active";
     updateMutation.mutate(
-      { id: project.id, input: { status: nextStatus } },
+      { id, input: { status: nextStatus } },
       { onSettled: () => setPendingId(null) }
     );
   }

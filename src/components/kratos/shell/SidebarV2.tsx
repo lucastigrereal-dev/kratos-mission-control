@@ -17,7 +17,7 @@ import { KratosLogo } from "../icons/KratosLogo";
 interface NavItem {
   to: string;
   label: string;
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties; strokeWidth?: number }>;
   color: string;
   activeColor: string;
 }

@@ -8,7 +8,7 @@ export function useContextSnapshot() {
 
   const query = useQuery<{ data: ContextSnapshot | null; error: string | null }>({
     queryKey: ["contexto", "snapshot"],
-    queryFn: () => getContextSnapshot({ refresh: false }),
+    queryFn: () => getContextSnapshot({ data: { refresh: false } }),
     staleTime: 15_000,
     refetchInterval: 30_000,
     retry: false,
@@ -35,7 +35,7 @@ export function useContextoMissionSnapshot(opts?: { refresh?: boolean }) {
     meta: SourceBadgeMeta;
   }>({
     queryKey: ["contexto", "mission-snapshot"],
-    queryFn: () => getContextoSnapshot({ refresh }),
+    queryFn: () => getContextoSnapshot({ data: { refresh } }),
     staleTime: 15_000,
     refetchInterval: 30_000,
     retry: false,

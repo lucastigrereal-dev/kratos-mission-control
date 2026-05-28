@@ -137,7 +137,7 @@ export function FocusTodayCard({
 /* --- Internal sub-component --- */
 
 interface SectionBlockProps {
-  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean; style?: React.CSSProperties }>;
   label: string;
   color: string;
   children: React.ReactNode;

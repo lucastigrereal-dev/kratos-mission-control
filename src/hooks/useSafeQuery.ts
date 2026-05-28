@@ -22,26 +22,37 @@ export function useSafeQuery<TData>({
   staleTime = 60_000,
   timeoutMs = 2500,
 }: UseSafeQueryOptions<TData>): UseQueryResult<TData, Error> {
-  return useQuery<TData, Error>({
+  const wrappedQueryFn = async (): Promise<TData> => {
+    try {
+      return await Promise.race([queryFn(), timeoutPromise<TData>(timeoutMs)]);
+    } catch (error) {
+      if (fallbackData !== undefined) return fallbackData;
+      if (error instanceof Error) throw error;
+      throw new Error("safe-query-failed");
+    }
+  };
+
+  // Separate overloads: with initialData (DefinedUseQueryResult) vs without
+  if (fallbackData !== undefined) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useQuery({
+      queryKey,
+      enabled,
+      retry: false,
+      refetchOnWindowFocus: false,
+      staleTime,
+      initialData: fallbackData as NonNullable<TData>,
+      queryFn: wrappedQueryFn,
+    }) as UseQueryResult<TData, Error>;
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useQuery({
     queryKey,
     enabled,
     retry: false,
     refetchOnWindowFocus: false,
     staleTime,
-    ...(fallbackData !== undefined
-      ? { initialData: fallbackData, placeholderData: fallbackData }
-      : {}),
-    queryFn: async () => {
-      try {
-        return await Promise.race([
-          queryFn(),
-          timeoutPromise<TData>(timeoutMs),
-        ])
-      } catch (error) {
-        if (fallbackData !== undefined) return fallbackData
-        if (error instanceof Error) throw error
-        throw new Error("safe-query-failed")
-      }
-    },
-  })
+    queryFn: wrappedQueryFn,
+  });
 }

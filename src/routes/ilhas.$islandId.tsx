@@ -56,7 +56,8 @@ const ISLAND_DOCK_DATA: Record<string, IslandDockData> = {
   tesouro: { islandId: "tesouro", label: "Finanças", progressColor: "var(--kr-island-tesouro)", quickActions: [{ label: "Registrar" }, { label: "Meta" }] },
 };
 
-const ISLAND_SCREENS: Record<string, React.LazyExoticComponent<() => JSX.Element>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ISLAND_SCREENS: Record<string, React.LazyExoticComponent<React.ComponentType<any>>> = {
   omnis: lazy(() =>
     import("@/components/kratos/islands/OmnisLabScreen").then((m) => ({ default: m.OmnisLabScreen })),
   ),

@@ -31,9 +31,11 @@ export interface DashboardSummary {
     project: string;
   } | null;
   isLoading: boolean;
+  isError: boolean;
+  error: Error | null;
 }
 
-export type DashboardLoaderData = Omit<DashboardSummary, "isLoading">;
+export type DashboardLoaderData = Omit<DashboardSummary, "isLoading" | "isError" | "error">;
 
 export function useDashboard(): DashboardSummary {
   const cp = useQuery({
@@ -56,7 +58,7 @@ export function useDashboard(): DashboardSummary {
 
   const cx = useQuery({
     queryKey: ["contexto", "snapshot"],
-    queryFn: () => getContextSnapshot({ refresh: false }),
+    queryFn: () => getContextSnapshot({ data: { refresh: false } }),
     staleTime: 15_000,
   });
 
@@ -93,6 +95,8 @@ export function useDashboard(): DashboardSummary {
         }
       : null,
     isLoading: cp.isLoading || pr.isLoading || ap.isLoading || cx.isLoading,
+    isError: cp.isError || pr.isError || ap.isError || cx.isError,
+    error: cp.error ?? pr.error ?? ap.error ?? cx.error ?? null,
   };
 }
 

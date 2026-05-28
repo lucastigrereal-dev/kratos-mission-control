@@ -111,7 +111,12 @@ function KratosWorldPageInner({ ssrData }: { ssrData?: DashboardLoaderData }) {
             energy={87}
             level={47}
             xp={32780}
-            sourceType={ctx.lensSourceType}
+            sourceType={
+              // Map extended DataSource values to WorldTopHud subset
+              ctx.lensSourceType === "partial" || ctx.lensSourceType === "computed"
+                ? "cache"
+                : (ctx.lensSourceType as "live" | "cache" | "mock" | "stale" | "error" | "fallback")
+            }
           />
         </div>
 

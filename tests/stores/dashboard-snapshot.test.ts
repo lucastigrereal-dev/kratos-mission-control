@@ -35,8 +35,9 @@ describe("Dashboard Snapshot Sources", () => {
       const pending = list.filter((c) => c.status === "pending").length;
       const inProgress = list.filter((c) => c.status === "in_progress").length;
       const completed = list.filter((c) => c.status === "completed").length;
-      const archived = list.filter((c) => c.status === "archived").length;
-      expect(pending + inProgress + completed + archived).toBe(list.length);
+      const cancelled = list.filter((c) => c.status === "cancelled").length;
+      const blocked = list.filter((c) => c.status === "blocked").length;
+      expect(pending + inProgress + completed + cancelled + blocked).toBe(list.length);
     });
   });
 

@@ -1,13 +1,18 @@
 import { ArrowUp, ArrowDown, Minus } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+type IconComponent = React.ComponentType<{
+  className?: string;
+  style?: React.CSSProperties;
+  "aria-hidden"?: boolean;
+}>;
 
 interface MetricBadgeProps {
   value: number | string;
   label: string;
   delta?: number;
   tone?: "positive" | "negative" | "neutral";
-  icon?: LucideIcon;
+  icon?: IconComponent;
   className?: string;
 }
 

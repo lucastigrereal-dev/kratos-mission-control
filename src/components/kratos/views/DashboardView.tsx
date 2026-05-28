@@ -232,7 +232,7 @@ export function DashboardView({
             GitHub não configurado
           </span>
         )}
-        {snap.data?.degraded && (
+        {(snap.data?.services?.degraded ?? 0) > 0 && (
           <span
             className="text-[0.65rem] rounded-full border px-2 py-0.5"
             style={{

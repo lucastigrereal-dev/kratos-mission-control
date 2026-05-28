@@ -42,7 +42,14 @@ export const fetchOmnisStatus = createServerFn({ method: "GET" }).handler(
   async (): Promise<Envelope<OmnisStatus>> => {
     try {
       const mock = getOmnisStatus();
-      let live: { test_count?: number; atualizadoEm?: string } = {};
+      let live: {
+        test_count?: number;
+        atualizadoEm?: string;
+        workflows_registered?: number;
+        active_mission_title?: string | null;
+        last_run_id?: string | null;
+        last_run_status?: string | null;
+      } = {};
       try {
         live = await fetchOmnisPythonStatus();
       } catch {
@@ -53,9 +60,9 @@ export const fetchOmnisStatus = createServerFn({ method: "GET" }).handler(
         ...(live.test_count != null ? { test_count: live.test_count } : {}),
         ...(live.atualizadoEm ? { atualizadoEm: live.atualizadoEm } : {}),
         ...(live.workflows_registered != null ? { workflows_registered: live.workflows_registered } : {}),
-        ...(live.active_mission_title !== undefined ? { active_mission_title: live.active_mission_title } : {}),
-        ...(live.last_run_id !== undefined ? { last_run_id: live.last_run_id } : {}),
-        ...(live.last_run_status !== undefined ? { last_run_status: live.last_run_status } : {}),
+        ...(live.active_mission_title != null ? { active_mission_title: live.active_mission_title } : {}),
+        ...(live.last_run_id != null ? { last_run_id: live.last_run_id } : {}),
+        ...(live.last_run_status != null ? { last_run_status: live.last_run_status } : {}),
       };
       const parsed = OmnisStatusSchema.safeParse(merged);
       if (!parsed.success) {

@@ -27,15 +27,15 @@ export const getCheckpoints = createServerFn({ method: "GET" }).handler(
   },
 );
 
-export const getCheckpoint = createServerFn({ method: "GET" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<Envelope<Checkpoint>> => {
+export const getCheckpoint = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }): Promise<Envelope<Checkpoint>> => {
     try {
       return { data: getById(data.id) ?? null, error: null };
     } catch (e) {
       return { data: null, error: e instanceof Error ? e.message : "Falha ao buscar checkpoint" };
     }
-  },
-);
+  });
 
 export const createCheckpoint = createServerFn({ method: "POST" })
   .inputValidator(CreateCheckpointSchema)
@@ -68,12 +68,12 @@ export const updateCheckpoint = createServerFn({ method: "POST" })
     },
   );
 
-export const deleteCheckpoint = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<Envelope<boolean>> => {
+export const deleteCheckpoint = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }): Promise<Envelope<boolean>> => {
     try {
       return { data: storeRemove(data.id), error: null };
     } catch (e) {
       return { data: null, error: e instanceof Error ? e.message : "Falha ao deletar checkpoint" };
     }
-  },
-);
+  });

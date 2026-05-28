@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
       getCheckpoints({}),
       getProjects({}),
       getAppointments({}),
-      getContextSnapshot({ refresh: false }),
+      getContextSnapshot({ data: { refresh: false } }),
     ]) as [
       PromiseSettledResult<Envelope<Checkpoint[]>>,
       PromiseSettledResult<Envelope<Project[]>>,
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/")({
       PromiseSettledResult<Envelope<ContextSnapshot>>,
     ];
 
-    const extract = <T,>(result: PromiseSettledResult<Envelope<T>>): T[] => {
+    const extract = <T,>(result: PromiseSettledResult<Envelope<T[]>>): T[] => {
       if (result.status === "fulfilled") return result.value.data ?? [];
       return [];
     };

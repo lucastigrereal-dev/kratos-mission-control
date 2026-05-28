@@ -65,10 +65,7 @@ function OperatorBadge({
           <img
             src={avatarUrl}
             alt={name}
-            className="h-11 w-11 rounded-full object-cover ring-2"
-            style={{
-              ringColor: "var(--kr-gold, #FFD700)",
-            }}
+            className="h-11 w-11 rounded-full object-cover ring-2 ring-[var(--kr-gold,#FFD700)]"
           />
         ) : (
           <div
@@ -143,7 +140,7 @@ function StatPill({
   label,
   iconColor,
 }: {
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties; strokeWidth?: number }>;
   value: string;
   label: string;
   iconColor: string;

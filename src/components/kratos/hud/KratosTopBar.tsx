@@ -25,7 +25,7 @@ const CONNECTION_LABELS: Record<ConnectionState, string> = {
   offline: "OFFLINE",
 };
 
-const CONNECTION_ICONS: Record<ConnectionState, React.ComponentType<{ className?: string }>> = {
+const CONNECTION_ICONS: Record<ConnectionState, React.ComponentType<{ className?: string; style?: React.CSSProperties; "aria-hidden"?: boolean }>> = {
   live: Radio,
   polling: RefreshCw,
   reconnecting: RefreshCw,

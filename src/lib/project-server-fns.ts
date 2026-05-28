@@ -27,15 +27,15 @@ export const getProjects = createServerFn({ method: "GET" }).handler(
   },
 );
 
-export const getProject = createServerFn({ method: "GET" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<Envelope<Project>> => {
+export const getProject = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }): Promise<Envelope<Project>> => {
     try {
       return { data: getById(data.id) ?? null, error: null };
     } catch (e) {
       return { data: null, error: e instanceof Error ? e.message : "Falha ao buscar projeto" };
     }
-  },
-);
+  });
 
 export const createProject = createServerFn({ method: "POST" })
   .inputValidator(CreateProjectSchema)
@@ -66,12 +66,12 @@ export const updateProject = createServerFn({ method: "POST" })
     },
   );
 
-export const deleteProject = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<Envelope<boolean>> => {
+export const deleteProject = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }): Promise<Envelope<boolean>> => {
     try {
       return { data: storeRemove(data.id), error: null };
     } catch (e) {
       return { data: null, error: e instanceof Error ? e.message : "Falha ao deletar projeto" };
     }
-  },
-);
+  });

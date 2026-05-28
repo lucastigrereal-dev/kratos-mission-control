@@ -34,11 +34,7 @@ export function OperatorWelcomeCard({
           <img
             src={avatarUrl}
             alt={operatorName}
-            className="h-10 w-10 rounded-full object-cover ring-2 ring-offset-1"
-            style={{
-              ringColor: "var(--kr-gold)",
-              ringOffsetColor: "var(--kr-surface-deep)",
-            }}
+            className="h-10 w-10 rounded-full object-cover ring-2 ring-[var(--kr-gold)] ring-offset-1 ring-offset-[var(--kr-surface-deep)]"
           />
         ) : (
           <div

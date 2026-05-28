@@ -27,15 +27,15 @@ export const getAppointments = createServerFn({ method: "GET" }).handler(
   },
 );
 
-export const getAppointment = createServerFn({ method: "GET" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<Envelope<Appointment>> => {
+export const getAppointment = createServerFn({ method: "GET" })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }): Promise<Envelope<Appointment>> => {
     try {
       return { data: getById(data.id) ?? null, error: null };
     } catch (e) {
       return { data: null, error: e instanceof Error ? e.message : "Falha ao buscar compromisso" };
     }
-  },
-);
+  });
 
 export const createAppointment = createServerFn({ method: "POST" })
   .inputValidator(CreateAppointmentSchema)
@@ -66,12 +66,12 @@ export const updateAppointment = createServerFn({ method: "POST" })
     },
   );
 
-export const deleteAppointment = createServerFn({ method: "POST" }).handler(
-  async ({ data }: { data: { id: string } }): Promise<Envelope<boolean>> => {
+export const deleteAppointment = createServerFn({ method: "POST" })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }): Promise<Envelope<boolean>> => {
     try {
       return { data: storeRemove(data.id), error: null };
     } catch (e) {
       return { data: null, error: e instanceof Error ? e.message : "Falha ao deletar compromisso" };
     }
-  },
-);
+  });
