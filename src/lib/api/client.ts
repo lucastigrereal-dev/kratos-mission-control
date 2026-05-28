@@ -114,6 +114,36 @@ const MOCK_REGISTRY: Record<string, unknown> = {
       { name: "Akasha (pgvector)", status: "healthy", latency_ms: 31 },
     ],
   },
+  // ── W3: Context mocks (source=mock, VITE_USE_MOCKS=true only) ───────────
+  "/context/current": {
+    current_app:            "Claude Code",
+    current_title:          "KRATOS Mission Control",
+    current_url:            "",
+    current_domain:         "kratos.local",
+    project_guess:          "KRATOS",
+    mission_guess:          "Wave execution — Kratos Supreme",
+    reason_guess:           "Detectado pela janela ativa do Claude Code",
+    confidence:             72,
+    focus_project_today:    "KRATOS",
+    on_focus:               true,
+    focus_drift_minutes:    0,
+    drift_minutes:          0,
+    active_since:           new Date(Date.now() - 42 * 60 * 1000).toISOString(),
+    context_switches_today: 3,
+    source:                 "mock",
+    collector_status:       "offline",
+    drift: {
+      state:                "on_focus",
+      severity:             "none",
+      minutes_out_of_focus: 0,
+      reason:               "Foco mantido no projeto KRATOS",
+      current_app:          "Claude Code",
+      current_title:        "KRATOS Mission Control",
+      inferred_project:     "KRATOS",
+      expected_project:     "KRATOS",
+      should_suggest_checkpoint: false,
+    },
+  },
   // ── W2: Projects mocks (source=mock, VITE_USE_MOCKS=true only) ──────────
   "/projects": {
     data: [

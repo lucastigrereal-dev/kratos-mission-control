@@ -10,7 +10,7 @@ import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { StatusCard } from "@/components/kratos/base/StatusCard";
 import { SourceBadgeIndicator } from "@/components/kratos/base/SourceBadgeIndicator";
-import { useContextSnapshot, useContextoMissionSnapshot } from "@/hooks/useContexto";
+import { useContextAPI } from "@/hooks/useContexto";
 import type { BrowserTab } from "../../../../api-contract/contexto.schema";
 
 type BrowserItemStatus = "active" | "stale" | "distraction" | "unknown";
@@ -33,8 +33,8 @@ function mapTabs(tabs: BrowserTab[]) {
 }
 
 export function ContextoView() {
-  const { snapshot, isLoading, isError, error, refetch } = useContextSnapshot();
-  const mission = useContextoMissionSnapshot();
+  // W3: dados reais do ActivityWatch via Python backend /context/current
+  const { snapshot, meta, isLoading, isError, error, refetch } = useContextAPI();
 
   if (isLoading) {
     return (
@@ -87,7 +87,7 @@ export function ContextoView() {
         description="Save game mental do KRATOS. Sem reconstruir do zero."
       />
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <SourceBadgeIndicator meta={mission.meta} />
+        <SourceBadgeIndicator meta={meta} />
         {snapshot.confidence < 45 && (
           <span
             className="text-[0.65rem] rounded-full border px-2 py-0.5"
@@ -100,7 +100,7 @@ export function ContextoView() {
             Baixa confiança — verifique manualmente
           </span>
         )}
-        {mission.meta?.stale && (
+        {meta?.stale && (
           <span
             className="text-[0.65rem] rounded-full border px-2 py-0.5"
             style={{
