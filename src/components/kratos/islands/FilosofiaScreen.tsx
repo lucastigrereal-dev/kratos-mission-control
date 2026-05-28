@@ -4,7 +4,6 @@ import {
   Lightbulb,
   Target,
   Star,
-  Quote,
   Library,
   Sparkles,
   ChevronRight,
@@ -16,6 +15,7 @@ import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { useIslandDock } from "./shared/IslandDockContext";
+import { InsightOfTheDay } from "@/components/kratos/akasha/InsightOfTheDay";
 
 const accent = "var(--kr-island-filosofia)";
 
@@ -162,32 +162,11 @@ export function FilosofiaScreen() {
           />
         </KratosCard>
 
-        {/* Insight do Dia */}
+        {/* Insight do Dia — W14 auto-learning via Akasha */}
         <KratosCard
           header={<SectionTitle icon={Lightbulb} title="Insight do Dia" />}
         >
-          <div
-            className="rounded-lg p-3"
-            style={{
-              background: `color-mix(in oklab, ${accent} 5%, var(--kratos-surface-3))`,
-              border: `1px solid color-mix(in oklab, ${accent} 15%, transparent)`,
-            }}
-          >
-            <div className="flex gap-2">
-              <Quote className="h-4 w-4 shrink-0 mt-0.5" style={{ color: accent }} aria-hidden />
-              <div>
-                <p className="text-[12px] italic leading-relaxed" style={{ color: "var(--kratos-text-secondary)" }}>
-                  Você tem poder sobre sua mente, não sobre os eventos externos. Perceba isso e encontrará sua força.
-                </p>
-                <p className="text-[10px] mt-1.5 font-semibold" style={{ color: accent }}>
-                  Marco Aurélio · Meditações
-                </p>
-              </div>
-            </div>
-          </div>
-          <p className="text-[10px] mt-2 text-center" style={{ color: "var(--kratos-text-muted)" }}>
-            Insight aleatório da Biblioteca Sabedoria — busca semântica personalizada em W13.
-          </p>
+          <InsightOfTheDay accent={accent} />
         </KratosCard>
 
         {/* Categorias */}

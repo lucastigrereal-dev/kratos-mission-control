@@ -194,9 +194,21 @@ function RootComponent() {
 
   // W8-B2: Install global error handler once on mount
   // W11-B6: Start Web Vitals collection
+  // W14: Register service worker
   useEffect(() => {
     installGlobalErrorHandlers();
     reportWebVitals();
+
+    // Service worker registration (PWA offline support)
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js", { scope: "/" })
+        .catch((err) => {
+          if (import.meta.env?.DEV) {
+            console.debug("[kratos] SW registration failed:", err);
+          }
+        });
+    }
   }, []);
 
   // W8-B3: Track route views on pathname change
