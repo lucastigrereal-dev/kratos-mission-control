@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AgoraView } from "@/components/kratos/views/AgoraView";
+import { RouteErrorBoundary } from "@/components/kratos/base/RouteErrorBoundary";
 
 export const Route = createFileRoute("/agora")({
   head: () => ({
@@ -12,4 +13,5 @@ export const Route = createFileRoute("/agora")({
     ],
   }),
   component: () => <AgoraView />,
+  errorComponent: RouteErrorBoundary,
 });

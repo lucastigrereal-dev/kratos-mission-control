@@ -1,5 +1,5 @@
 /**
- * KRATOS Analytics — W8-B3
+ * KRATOS Analytics — W8-B3 | Sentry wired W11-B5
  *
  * Lightweight event tracker — zero external SDK, zero PII.
  * Events são bufferizados em memória e podem ser forwarded para
@@ -116,11 +116,6 @@ export function trackOptimisticCreate(entity: "checkpoint" | "project" | "appoin
  * @param reason    — machine-readable cause: "poll_failure" | "heartbeat_timeout" | "network_error"
  * @param attemptCount — how many failed attempts so far (1-based)
  * @param lastEventId  — last OMNIS event ID seen before disconnect (optional, for replay)
- *
- * // TODO(W11-B3): Sentry.captureMessage('sse_disconnect', {
- * //   level: attemptCount >= 3 ? 'error' : 'warning',
- * //   extra: { reason, attemptCount, lastEventId },
- * // });
  */
 export function trackSSEDisconnect(
   reason: "poll_failure" | "heartbeat_timeout" | "network_error",
@@ -132,26 +127,39 @@ export function trackSSEDisconnect(
     attempt: attemptCount,
     ...(lastEventId ? { last_event_id: lastEventId.slice(0, 40) } : {}),
   });
+
+  // Sentry — report as warning (>= 3 attempts → error)
+  import("@/lib/sentry").then(({ captureMessage, addBreadcrumb }) => {
+    if (attemptCount >= 3) {
+      captureMessage("sse_disconnect", "error", { reason, attemptCount, lastEventId });
+    } else {
+      addBreadcrumb(`SSE disconnected: ${reason}`, "sse", { reason, attemptCount, lastEventId }, "warning");
+    }
+  }).catch(() => { /* no-op */ });
 }
 
 /**
  * Track SSE reconnect success.
  *
  * @param attemptNumber — which attempt succeeded (≥1)
- *
- * // TODO(W11-B3): Sentry.addBreadcrumb({ category: 'sse', message: 'reconnected', data: { attemptNumber } });
  */
 export function trackSSEReconnect(attemptNumber: number): void {
   track("sse_reconnect", { attempt: attemptNumber });
+
+  import("@/lib/sentry").then(({ addBreadcrumb }) => {
+    addBreadcrumb("SSE reconnected", "sse", { attemptNumber }, "info");
+  }).catch(() => { /* no-op */ });
 }
 
 /**
  * Track SSE initial connection success (first connect after page load).
- *
- * // TODO(W11-B3): Sentry.addBreadcrumb({ category: 'sse', message: 'connected_initial' });
  */
 export function trackSSEConnect(): void {
   track("sse_connect", { source: "initial" });
+
+  import("@/lib/sentry").then(({ addBreadcrumb }) => {
+    addBreadcrumb("SSE connected (initial)", "sse", { source: "initial" }, "info");
+  }).catch(() => { /* no-op */ });
 }
 
 /** Track error boundary catch */

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ProjetosView } from "@/components/kratos/views/ProjetosView";
+import { RouteErrorBoundary } from "@/components/kratos/base/RouteErrorBoundary";
 
 export const Route = createFileRoute("/projetos")({
   head: () => ({
@@ -9,4 +10,5 @@ export const Route = createFileRoute("/projetos")({
     ],
   }),
   component: () => <ProjetosView />,
+  errorComponent: RouteErrorBoundary,
 });

@@ -11,7 +11,12 @@ import {
 import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { installGlobalErrorHandlers } from "@/lib/analytics/errorHandler";
-import { trackRouteView } from "@/lib/analytics/kratosAnalytics";
+import { trackRouteView, trackErrorBoundary } from "@/lib/analytics/kratosAnalytics";
+import { initSentry, captureError } from "@/lib/sentry";
+import { reportWebVitals } from "@/lib/webVitals";
+
+// Inicializa Sentry na importação do módulo (antes de qualquer render)
+initSentry();
 
 import appCss from "../styles.css?url";
 import { AppShell } from "@/components/kratos/shell/AppShell";
@@ -63,6 +68,13 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+
+  // W11-B5: Capture to Sentry + internal analytics
+  useEffect(() => {
+    captureError(error, { route: pathname, scope: "root-error-boundary" });
+    trackErrorBoundary(pathname, error.name);
+  }, [error, pathname]);
 
   return (
     <div
@@ -181,8 +193,10 @@ function RootComponent() {
   const isWorld = pathname === "/";
 
   // W8-B2: Install global error handler once on mount
+  // W11-B6: Start Web Vitals collection
   useEffect(() => {
     installGlobalErrorHandlers();
+    reportWebVitals();
   }, []);
 
   // W8-B3: Track route views on pathname change

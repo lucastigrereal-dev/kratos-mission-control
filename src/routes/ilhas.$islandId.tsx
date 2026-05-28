@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect } from "react";
+import { RouteErrorBoundary } from "@/components/kratos/base/RouteErrorBoundary";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { IslandPageFrame } from "@/components/kratos/islands/shared/IslandPageFrame";
 import { IslandPageHeader } from "@/components/kratos/islands/shared/IslandPageHeader";
@@ -164,4 +165,5 @@ export const Route = createFileRoute("/ilhas/$islandId")({
     ],
   }),
   component: IslandRoute,
+  errorComponent: RouteErrorBoundary,
 });

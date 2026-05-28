@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckpointsView } from "@/components/kratos/views/CheckpointsView";
+import { RouteErrorBoundary } from "@/components/kratos/base/RouteErrorBoundary";
 
 export const Route = createFileRoute("/checkpoints")({
   head: () => ({
@@ -12,4 +13,5 @@ export const Route = createFileRoute("/checkpoints")({
     ],
   }),
   component: CheckpointsView,
+  errorComponent: RouteErrorBoundary,
 });

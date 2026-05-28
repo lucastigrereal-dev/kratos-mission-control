@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SistemaView } from "@/components/kratos/views/SistemaView";
+import { RouteErrorBoundary } from "@/components/kratos/base/RouteErrorBoundary";
 
 export const Route = createFileRoute("/sistema")({
   head: () => ({
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/sistema")({
     ],
   }),
   component: SistemaPage,
+  errorComponent: RouteErrorBoundary,
 });
 
 function SistemaPage() {

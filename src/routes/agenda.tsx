@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AgendaView } from "@/components/kratos/views/AgendaView";
+import { RouteErrorBoundary } from "@/components/kratos/base/RouteErrorBoundary";
 
 export const Route = createFileRoute("/agenda")({
   head: () => ({
@@ -13,4 +14,5 @@ export const Route = createFileRoute("/agenda")({
     ],
   }),
   component: AgendaView,
+  errorComponent: RouteErrorBoundary,
 });
