@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { useIslandDock } from "./shared/IslandDockContext";
@@ -8,14 +8,27 @@ import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { EmptyState } from "@/components/kratos/base/EmptyState";
 import { useAgenciaQueue } from "@/hooks/useAgenciaQueue";
 import { ContentDraftsCard } from "@/components/kratos/omnis/ContentDraftsCard";
+import { PageCard } from "@/components/kratos/islands/marketing/PageCard";
+import { PerformanceCharts } from "@/components/kratos/islands/marketing/PerformanceCharts";
+import { PageSwitcher } from "@/components/kratos/shell/PageSwitcher";
+import { usePageMetrics } from "@/hooks/usePageMetrics";
+import { useCrossPageAnalytics } from "@/hooks/useCrossPageAnalytics";
+import type { UsePageMetricsResult } from "@/hooks/usePageMetrics";
+import type { PeriodFilter } from "@/hooks/useCrossPageAnalytics";
+import type { PageSelection } from "@/components/kratos/shell/PageSwitcher";
+import {
+  PAGE_PROFILES,
+  PAGE_SLUGS,
+  TOTAL_FOLLOWERS,
+} from "../../../../api-contract/marketing.schema";
 import type { AgenciaQueueSummary } from "../../../../api-contract/agencia.schema";
 import {
   CalendarClock,
   Layers,
-  BarChart2,
   Users,
   TrendingUp,
   Calendar,
+  Instagram,
 } from "lucide-react";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -34,7 +47,7 @@ function formatSlotDate(iso: string): string {
 }
 
 const STATUS_CFG: Record<string, { label: string; color: string }> = {
-  caption_ready: { label: "Caption pronta",  color: "var(--kr-success)" },
+  caption_ready: { label: "Caption pronta",  color: "var(--kratos-ok)" },
   needs_asset:   { label: "Aguarda asset",   color: "var(--kr-warning)" },
   done:          { label: "Publicado",        color: "var(--kratos-text-muted)" },
   published:     { label: "Publicado",        color: "var(--kratos-text-muted)" },
@@ -42,7 +55,13 @@ const STATUS_CFG: Record<string, { label: string; color: string }> = {
   unknown:       { label: "Desconhecido",     color: "var(--kratos-text-muted)" },
 };
 
-// ── QueueSummaryCard — dado real do OMNIS content_queue.jsonl ─────────────
+function fmtNum(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(n >= 100_000 ? 0 : 1)}K`;
+  return String(n);
+}
+
+// ── QueueSummaryCard ─────────────────────────────────────────────────────────
 
 function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
   const accent = "var(--kr-island-agencia)";
@@ -52,7 +71,6 @@ function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
 
   return (
     <GlassPanel padding="md" className="space-y-4">
-      {/* Header */}
       <div className="flex items-center gap-2">
         <Layers className="h-4 w-4 shrink-0" style={{ color: accent }} />
         <span className="text-[13px] font-semibold" style={{ color: "var(--kratos-text-primary)" }}>
@@ -66,20 +84,19 @@ function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
         </span>
       </div>
 
-      {/* Progress — % prontos */}
       <div>
         <div className="flex justify-between items-center mb-1.5">
           <span className="text-[10px]" style={{ color: "var(--kratos-text-muted)" }}>
             Prontos para publicar
           </span>
-          <span className="text-[10px] kratos-mono font-medium" style={{ color: "var(--kr-success)" }}>
+          <span className="text-[10px] kratos-mono font-medium" style={{ color: "var(--kratos-ok)" }}>
             {captionReady} / {summary.total}
           </span>
         </div>
         <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--kratos-surface-4)" }}>
           <div
             className="h-full rounded-full"
-            style={{ width: `${readyPct}%`, background: "var(--kr-success)" }}
+            style={{ width: `${readyPct}%`, background: "var(--kratos-ok)" }}
             role="progressbar"
             aria-valuenow={readyPct}
             aria-valuemin={0}
@@ -88,7 +105,6 @@ function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
         </div>
       </div>
 
-      {/* Breakdown por status */}
       <div className="space-y-1.5">
         {statusEntries.map(([status, count]) => {
           const cfg = STATUS_CFG[status];
@@ -101,9 +117,7 @@ function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
               <span className="text-[11px] flex-1" style={{ color: "var(--kratos-text-secondary)" }}>
                 {label}
               </span>
-              <span className="text-[11px] kratos-mono font-medium" style={{ color }}>
-                {count}
-              </span>
+              <span className="text-[11px] kratos-mono font-medium" style={{ color }}>{count}</span>
               <span className="text-[9px] kratos-mono w-7 text-right shrink-0" style={{ color: "var(--kratos-text-muted)" }}>
                 {pct}%
               </span>
@@ -112,7 +126,6 @@ function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
         })}
       </div>
 
-      {/* Próximo slot */}
       {summary.proximo_slot && (
         <div
           className="flex items-start gap-2.5 pt-3"
@@ -149,113 +162,10 @@ function QueueSummaryCard({ summary }: { summary: AgenciaQueueSummary }) {
   );
 }
 
-// ── MarketingMetricsCard — demo data (MOCK) — Publer real: W10-B4 ─────────
-// Fonte futura: /agencia/metrics (Publer) — NÃO Meta Graph API (W4 decisão)
-
-interface AccountMetric {
-  handle: string;
-  followers: number;
-  reach: number;
-  engagement_pct: number;
-}
-
-const MOCK_METRICS: AccountMetric[] = [
-  { handle: "lucastigrereal",    followers: 690_000, reach: 41_200, engagement_pct: 4.8 },
-  { handle: "oinatalrn",         followers: 630_000, reach: 37_800, engagement_pct: 5.1 },
-  { handle: "agenteviajabrasil", followers: 452_000, reach: 28_400, engagement_pct: 4.3 },
-  { handle: "afamiliatigrereal", followers: 320_000, reach: 19_600, engagement_pct: 3.9 },
-  { handle: "oquecomernatalrn",  followers: 249_000, reach: 17_800, engagement_pct: 5.6 },
-  { handle: "natalaivoueu",      followers: 240_000, reach: 15_200, engagement_pct: 4.7 },
-];
-
-function fmtNum(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(n >= 100_000 ? 0 : 1)}K`;
-  return String(n);
-}
-
-function MarketingMetricsCard() {
-  const accent = "var(--kr-island-agencia)";
-  const totalFollowers = MOCK_METRICS.reduce((s, a) => s + a.followers, 0);
-  const totalReach = MOCK_METRICS.reduce((s, a) => s + a.reach, 0);
-  const avgEng = (MOCK_METRICS.reduce((s, a) => s + a.engagement_pct, 0) / MOCK_METRICS.length).toFixed(1);
-
-  return (
-    <GlassPanel padding="md" className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center gap-2">
-        <BarChart2 className="h-4 w-4 shrink-0" style={{ color: accent }} />
-        <span className="text-[13px] font-semibold" style={{ color: "var(--kratos-text-primary)" }}>
-          Métricas de Performance
-        </span>
-        <span
-          className="ml-auto text-[9px] kratos-mono px-1.5 py-0.5 rounded font-bold"
-          style={{
-            background: "color-mix(in oklab, var(--kratos-warn) 15%, transparent)",
-            border: "1px solid color-mix(in oklab, var(--kratos-warn) 30%, transparent)",
-            color: "var(--kratos-warn)",
-          }}
-        >
-          DEMO
-        </span>
-      </div>
-
-      {/* Totals row */}
-      <div className="grid grid-cols-3 gap-2">
-        {[
-          { label: "Total seguidores", value: fmtNum(totalFollowers), color: accent },
-          { label: "Alcance 7 dias",   value: fmtNum(totalReach),     color: "var(--kr-success)" },
-          { label: "Eng. médio",       value: `${avgEng}%`,           color: "var(--kr-info, var(--kratos-info))" },
-        ].map(({ label, value, color }) => (
-          <div
-            key={label}
-            className="rounded-lg p-2 text-center"
-            style={{ background: "var(--kratos-surface-4)" }}
-          >
-            <div className="text-[14px] font-bold kratos-mono" style={{ color }}>
-              {value}
-            </div>
-            <div className="text-[9px] mt-0.5 leading-tight" style={{ color: "var(--kratos-text-muted)" }}>
-              {label}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Per-account breakdown */}
-      <div className="space-y-1.5">
-        {MOCK_METRICS.map((a) => {
-          const engColor =
-            a.engagement_pct >= 5 ? "var(--kr-success)" :
-            a.engagement_pct >= 4 ? accent :
-            "var(--kratos-text-muted)";
-          return (
-            <div key={a.handle} className="flex items-center gap-2">
-              <span className="text-[10px] kratos-mono flex-1 truncate" style={{ color: "var(--kratos-text-secondary)" }}>
-                @{a.handle}
-              </span>
-              <span className="text-[10px] kratos-mono w-14 text-right" style={{ color: "var(--kratos-text-muted)" }}>
-                {fmtNum(a.followers)}
-              </span>
-              <span className="text-[10px] kratos-mono w-10 text-right font-medium" style={{ color: engColor }}>
-                {a.engagement_pct}%
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
-      <p className="text-[9px]" style={{ color: "var(--kratos-text-muted)" }}>
-        Fonte futura: <span className="kratos-mono">/agencia/metrics</span> via Publer — disponível em W10-B4.
-      </p>
-    </GlassPanel>
-  );
-}
-
-// ── ContentCalendarStrip — próximos 7 posts planejados (MOCK) ─────────────
+// ── ContentCalendarStrip ─────────────────────────────────────────────────────
 
 interface CalendarPost {
-  date: string; // "2026-05-28"
+  date: string;
   time: string;
   account: string;
   caption: string;
@@ -273,12 +183,11 @@ const MOCK_CALENDAR: CalendarPost[] = [
 ];
 
 const CAL_STATUS_CFG: Record<CalendarPost["status"], { label: string; color: string }> = {
-  ready:       { label: "Pronto",      color: "var(--kr-success)" },
+  ready:       { label: "Pronto",      color: "var(--kratos-ok)" },
   needs_asset: { label: "Falta asset", color: "var(--kratos-warn)" },
   draft:       { label: "Rascunho",    color: "var(--kratos-text-muted)" },
 };
 
-/** "2026-05-28" → "Qua 28" */
 function fmtCalDate(iso: string): string {
   try {
     const [, , d] = iso.split("-");
@@ -320,7 +229,6 @@ function ContentCalendarStrip() {
               className="flex items-start gap-2.5 rounded-lg px-2 py-1.5 -mx-2 kratos-card-hover"
               style={{ transition: "background 0.15s" }}
             >
-              {/* Date + time */}
               <div className="shrink-0 text-right" style={{ minWidth: "52px" }}>
                 <div className="text-[10px] kratos-mono font-medium" style={{ color: "var(--kratos-text-primary)" }}>
                   {fmtCalDate(post.date)}
@@ -329,15 +237,11 @@ function ContentCalendarStrip() {
                   {post.time}
                 </div>
               </div>
-
-              {/* Dot */}
               <div
                 className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0"
                 style={{ background: cfg.color }}
                 aria-hidden
               />
-
-              {/* Caption + account */}
               <div className="flex-1 min-w-0">
                 <div className="text-[11px] leading-snug truncate" style={{ color: "var(--kratos-text-primary)" }}>
                   {post.caption}
@@ -354,7 +258,7 @@ function ContentCalendarStrip() {
   );
 }
 
-// ── CrmTeaser — placeholder até CRM backend saudável ─────────────────────
+// ── CrmTeaserCard ─────────────────────────────────────────────────────────────
 
 function CrmTeaserCard() {
   return (
@@ -386,7 +290,119 @@ function CrmTeaserCard() {
   );
 }
 
-// ── Main Export ────────────────────────────────────────────────────────────
+// ── MultiPageCockpit — W12-B1 ────────────────────────────────────────────────
+// Hooks chamados em nível de componente — 6 slugs fixos, sem loop de hooks.
+
+function MultiPageCockpit() {
+  const accent = "var(--kr-island-agencia)";
+  const [period, setPeriod] = useState<PeriodFilter>(7);
+  const [selectedPage, setSelectedPage] = useState<PageSelection>("all");
+
+  // 6 hooks fixos (regra: não em loop — slugs nunca mudam)
+  const m0 = usePageMetrics("lucastigrereal",    period);
+  const m1 = usePageMetrics("oinatalrn",         period);
+  const m2 = usePageMetrics("agenteviajabrasil", period);
+  const m3 = usePageMetrics("afamiliatigrereal", period);
+  const m4 = usePageMetrics("oquecomernatalrn",  period);
+  const m5 = usePageMetrics("natalaivoueu",      period);
+
+  const crossAnalytics = useCrossPageAnalytics(period);
+
+  const allHooks: UsePageMetricsResult[] = [m0, m1, m2, m3, m4, m5];
+
+  // Top performer = highest reach (gets 🔥 badge)
+  const hotSlug = useMemo(() => {
+    let best: string | null = null;
+    let bestReach = -1;
+    PAGE_SLUGS.forEach((slug, i) => {
+      const reach = allHooks[i]?.metrics?.reach ?? 0;
+      if (reach > bestReach) { bestReach = reach; best = slug; }
+    });
+    return best;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [m0.metrics, m1.metrics, m2.metrics, m3.metrics, m4.metrics, m5.metrics]);
+
+  // Filter displayed pages
+  const visibleSlugs: string[] = selectedPage === "all" ? [...PAGE_SLUGS] : [selectedPage as string];
+
+  // Aggregate for header bar
+  const totalReach = allHooks.reduce((s, h) => s + (h.metrics?.reach ?? 0), 0);
+  const avgEngagement =
+    allHooks.filter((h) => h.metrics != null).length > 0
+      ? allHooks.reduce((s, h) => s + (h.metrics?.engagement_rate_pct ?? 0), 0) /
+        allHooks.filter((h) => h.metrics != null).length
+      : 0;
+
+  return (
+    <div className="space-y-3">
+      {/* Header: aggregate totals */}
+      <GlassPanel padding="md" className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Instagram className="h-4 w-4 shrink-0" style={{ color: accent }} />
+          <span className="text-[13px] font-semibold" style={{ color: "var(--kratos-text-primary)" }}>
+            Multi-Page Cockpit
+          </span>
+          <span className="text-[9px] kratos-mono ml-auto" style={{ color: "var(--kratos-text-muted)" }}>
+            {fmtNum(TOTAL_FOLLOWERS)} seguidores totais
+          </span>
+        </div>
+
+        {/* Aggregate metrics */}
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { label: "Seguidores",   value: fmtNum(TOTAL_FOLLOWERS), color: accent },
+            { label: "Alcance 7d",   value: fmtNum(totalReach),       color: "var(--kratos-ok)" },
+            { label: "Eng. médio",   value: `${avgEngagement.toFixed(1)}%`, color: "var(--kratos-info, #60a5fa)" },
+          ].map(({ label, value, color }) => (
+            <div
+              key={label}
+              className="rounded-lg p-2 text-center"
+              style={{ background: "var(--kratos-surface-4)" }}
+            >
+              <div className="text-[14px] font-bold kratos-mono" style={{ color }}>
+                {value}
+              </div>
+              <div className="text-[9px] mt-0.5 leading-tight" style={{ color: "var(--kratos-text-muted)" }}>
+                {label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Page switcher */}
+        <PageSwitcher selected={selectedPage} onChange={setSelectedPage} compact />
+      </GlassPanel>
+
+      {/* PageCard grid */}
+      <div className={visibleSlugs.length === 1 ? "space-y-0" : "grid grid-cols-2 gap-3"}>
+        {visibleSlugs.map((slug) => {
+          const idx = PAGE_SLUGS.indexOf(slug as typeof PAGE_SLUGS[number]);
+          const hook = allHooks[idx] ?? allHooks[0]!;
+          return (
+            <PageCard
+              key={slug}
+              profile={PAGE_PROFILES[slug as keyof typeof PAGE_PROFILES]}
+              metrics={hook.metrics}
+              sourceType={hook.sourceType}
+              isLoading={hook.isLoading}
+              isHot={slug === hotSlug}
+            />
+          );
+        })}
+      </div>
+
+      {/* Cross-page performance charts */}
+      <PerformanceCharts
+        analytics={crossAnalytics.analytics}
+        period={period}
+        onPeriodChange={setPeriod}
+        isLoading={crossAnalytics.isLoading}
+      />
+    </div>
+  );
+}
+
+// ── AgenciaScreen (export) ────────────────────────────────────────────────────
 
 interface AgenciaScreenProps {
   isLoading?: boolean;
@@ -406,14 +422,17 @@ export function AgenciaScreen({
   } = useAgenciaQueue();
   const { setData } = useIslandDock();
 
-  // hasData = true quando content_queue do OMNIS tem itens reais.
   const hasData = summary != null;
   const loading = isLoading || queueLoading;
   const errorMsg =
     error ?? (queueError ? "Erro ao carregar fila de conteúdo" : null);
 
-  const queueTotal = summary?.total_items ?? 0;
-  const queuePending = summary?.pending_items ?? 0;
+  const queueTotal = summary?.total ?? 0;
+  const queuePending = summary
+    ? Object.entries(summary.por_status)
+        .filter(([status]) => !["done", "published", "cancelled"].includes(status))
+        .reduce((s, [, count]) => s + count, 0)
+    : 0;
 
   useEffect(() => {
     setData({
@@ -456,11 +475,11 @@ export function AgenciaScreen({
           {/* Calendário editorial — próximos 7 posts (DEMO até Publer W10-B4) */}
           <ContentCalendarStrip />
 
+          {/* W12 — Multi-Page Cockpit: 6 PageCards + PerformanceCharts */}
+          <MultiPageCockpit />
+
           {/* Dado real: fila de aprovação de captions (caption_drafts.jsonl) */}
           <ContentDraftsCard />
-
-          {/* Métricas de performance por conta (DEMO até Publer W10-B4) */}
-          <MarketingMetricsCard />
 
           {/* CRM teaser — Arena island tem pipeline completo */}
           <CrmTeaserCard />
