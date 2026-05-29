@@ -33,6 +33,7 @@ import { useProjectsAPI } from "@/hooks/useProjects";
 import { useSystemPulse } from "@/hooks/useSystemPulse";
 import { useMissions } from "@/hooks/useMissions";
 import { ActiveMissionsPanel } from "@/components/kratos/omnis/ActiveMissionsPanel";
+import { InsightOfTheDay } from "@/components/kratos/akasha/InsightOfTheDay";
 
 const DEFAULT_OWNER = "lucastigrereal-dev";
 
@@ -454,6 +455,9 @@ export function DashboardView({
               <span style={{ color: "var(--kratos-accent)" }}>&rarr;</span>
             </button>
           </div>
+
+          {/* W14: Insight do Dia — contextual, não-intrusivo */}
+          <InsightOfTheDay compact />
         </div>
       </div>
 
