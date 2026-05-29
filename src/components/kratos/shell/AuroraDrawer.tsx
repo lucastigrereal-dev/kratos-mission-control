@@ -1,3 +1,11 @@
+/**
+ * AuroraDrawer — W4.5
+ * Painel lateral de inteligência Aurora.
+ * Wired to real tasks (useTasksToday), appointments (useAppointments),
+ * and mission lens (useMissionLens). MOCK_TASKS + MOCK_AGENDA removidos.
+ * MOCK_QUOTE mantido (conteúdo estático editorial, não dado operacional).
+ */
+
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle2,
@@ -7,31 +15,51 @@ import {
   Quote,
   X,
   Sparkles,
+  AlertCircle,
 } from "lucide-react";
 import { StatusDot } from "../base/StatusDot";
+import { LoadingState } from "../base/LoadingState";
+import { useTasksToday } from "@/hooks/useTasks";
+import { useAppointments } from "@/hooks/useAppointments";
+import { useMissionLens } from "@/hooks/useMissionLens";
+import type { Appointment } from "../../../../api-contract/appointment.schema";
 
-interface AuroraDrawerProps {
-  open: boolean;
-  onClose: () => void;
-  topOffset?: number;
-}
+// ── Static quote (editorial, not operational data) ────────────────────────────
 
-const MOCK_TASKS = [
-  { id: "1", label: "Revisar pipeline de conteúdo", done: true },
-  { id: "2", label: "Responder propostas pendentes", done: false },
-  { id: "3", label: "1 check-in com equipe", done: false },
-];
-
-const MOCK_AGENDA = [
-  { time: "10:00", label: "Reunião Omnis Lab", type: "work" as const },
-  { time: "14:00", label: "Call Comercial", type: "work" as const },
-  { time: "16:00", label: "Tempo livre", type: "break" as const },
-];
-
-const MOCK_QUOTE = {
+const STATIC_QUOTE = {
   text: "Disciplina é a ponte entre metas e realizações.",
   author: "Jim Rohn",
 };
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function todayStr(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function appointmentTypeColor(tipo: Appointment["tipo"]): string {
+  if (tipo === "deep_work") return "var(--kr-info, #3b82f6)";
+  if (tipo === "checkpoint") return "var(--kr-ok, #22c55e)";
+  if (tipo === "admin") return "var(--kr-warn, #f59e0b)";
+  return "var(--kr-info, #3b82f6)";
+}
+
+function deriveAuroraAgenda(appointments: Appointment[]): Appointment[] {
+  const today = todayStr();
+  return appointments
+    .filter((a) => a.data === today && a.status !== "completed")
+    .sort((a, b) => (a.horario ?? "23:59").localeCompare(b.horario ?? "23:59"))
+    .slice(0, 3);
+}
+
+function focusStateLabel(state: string | undefined): string {
+  if (!state) return "contexto ativo";
+  if (state === "on_focus" || state === "execution") return "em foco";
+  if (state === "off_focus" || state === "standby") return "em standby";
+  return state.replace(/_/g, " ");
+}
+
+// ── Motion config ─────────────────────────────────────────────────────────────
 
 const prefersReduced =
   typeof window !== "undefined"
@@ -40,11 +68,33 @@ const prefersReduced =
 
 const DRAWER_DURATION = prefersReduced ? 0 : 0.25;
 
+// ── Component ─────────────────────────────────────────────────────────────────
+
+interface AuroraDrawerProps {
+  open: boolean;
+  onClose: () => void;
+  topOffset?: number;
+}
+
 export function AuroraDrawer({
   open,
   onClose,
   topOffset = 90,
 }: AuroraDrawerProps) {
+  // ── Real data hooks (always called — TanStack Query deduplicates) ─────────
+  const { tasks, isLoading: tasksLoading } = useTasksToday();
+  const { data: appointments, isLoading: apptLoading } = useAppointments();
+  const { lens, isLoading: lensLoading } = useMissionLens();
+
+  // ── Derive display data ───────────────────────────────────────────────────
+  const urgentTasks = tasks?.urgent.slice(0, 3) ?? [];
+  const agendaItems = deriveAuroraAgenda(appointments ?? []);
+
+  const missionName  = lens?.mission_lens?.current_mission ?? "—";
+  const focusState   = focusStateLabel(lens?.context?.focus_state);
+  const nextAction   = lens?.next_best_action?.action ?? "Definir próxima ação";
+  const isLensReady  = !lensLoading && lens !== null;
+
   return (
     <AnimatePresence>
       {open && (
@@ -130,14 +180,14 @@ export function AuroraDrawer({
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-3 space-y-4">
-              {/* Aurora context widget */}
+
+              {/* Aurora context widget — wired to MissionLens (W4.5) */}
               <div
                 className="rounded-xl p-3 space-y-2"
                 style={{
                   background:
                     "linear-gradient(135deg, rgba(59,130,246,0.1), rgba(99,102,241,0.06))",
-                  border:
-                    "1px solid rgba(99,102,241,0.15)",
+                  border: "1px solid rgba(99,102,241,0.15)",
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -149,93 +199,131 @@ export function AuroraDrawer({
                     Contexto Atual
                   </span>
                 </div>
-                <p
-                  className="text-[12px] leading-relaxed"
-                  style={{ color: "var(--kr-text-secondary, #8a8a9a)" }}
-                >
-                  Você está em foco. Missão ativa há 47 min. Sem drift detectado.
-                </p>
+
+                {lensLoading ? (
+                  <LoadingState lines={2} compact />
+                ) : isLensReady ? (
+                  <p
+                    className="text-[12px] leading-relaxed"
+                    style={{ color: "var(--kr-text-secondary, #8a8a9a)" }}
+                  >
+                    {missionName !== "—"
+                      ? `Missão: ${missionName}. Estado: ${focusState}.`
+                      : `Estado: ${focusState}.`}
+                  </p>
+                ) : (
+                  <p
+                    className="text-[12px] leading-relaxed"
+                    style={{ color: "var(--kr-text-muted)" }}
+                  >
+                    Contexto indisponível.
+                  </p>
+                )}
+
                 <p
                   className="text-[11px] font-medium"
                   style={{ color: "var(--kr-text-primary, #f0f0f2)" }}
                 >
-                  → Próxima ação: Finalizar HUD adaptativo
+                  → {nextAction}
                 </p>
               </div>
 
               <Divider />
 
-              {/* Tasks */}
+              {/* Tasks — wired to useTasksToday() (W4.5) */}
               <div className="space-y-2">
                 <SectionLabel>Foco do Dia</SectionLabel>
-                {MOCK_TASKS.map((task) => (
-                  <div key={task.id} className="flex items-center gap-2">
-                    {task.done ? (
-                      <CheckCircle2
-                        className="h-4 w-4 shrink-0"
-                        style={{ color: "var(--kr-ok, #22c55e)" }}
-                      />
-                    ) : (
-                      <Circle
-                        className="h-4 w-4 shrink-0"
-                        style={{ color: "var(--kr-text-muted, #4a4a5a)" }}
-                      />
-                    )}
-                    <span
-                      className="text-[12px] leading-snug"
-                      style={{
-                        color: task.done
-                          ? "var(--kr-text-muted)"
-                          : "var(--kr-text-secondary, #8a8a9a)",
-                        textDecoration: task.done ? "line-through" : "none",
-                      }}
-                    >
-                      {task.label}
-                    </span>
-                  </div>
-                ))}
+
+                {tasksLoading ? (
+                  <LoadingState lines={3} compact />
+                ) : urgentTasks.length === 0 ? (
+                  <p
+                    className="text-[11px]"
+                    style={{ color: "var(--kr-text-muted)" }}
+                  >
+                    Sem tarefas urgentes agora.
+                  </p>
+                ) : (
+                  urgentTasks.map((task) => (
+                    <div key={task.id} className="flex items-start gap-2">
+                      {task.overdue ? (
+                        <AlertCircle
+                          className="h-4 w-4 shrink-0 mt-0.5"
+                          style={{ color: "var(--kr-critical, #ef4444)" }}
+                          aria-label="Atrasada"
+                        />
+                      ) : (
+                        <Circle
+                          className="h-4 w-4 shrink-0 mt-0.5"
+                          style={{ color: "var(--kr-text-muted, #4a4a5a)" }}
+                        />
+                      )}
+                      <span
+                        className="text-[12px] leading-snug"
+                        style={{
+                          color: task.overdue
+                            ? "var(--kr-critical, #ef4444)"
+                            : "var(--kr-text-secondary, #8a8a9a)",
+                        }}
+                      >
+                        {task.title}
+                      </span>
+                    </div>
+                  ))
+                )}
               </div>
 
               <Divider />
 
-              {/* Agenda */}
+              {/* Agenda — wired to useAppointments() (W4.5) */}
               <div className="space-y-2">
                 <SectionLabel>Agenda de Hoje</SectionLabel>
-                {MOCK_AGENDA.map((item, i) => (
-                  <div key={i} className="flex items-center gap-2.5">
-                    <div className="flex items-center gap-1 shrink-0 w-12">
-                      <Clock
-                        className="h-3 w-3"
-                        style={{ color: "var(--kr-text-muted)" }}
+
+                {apptLoading ? (
+                  <LoadingState lines={3} compact />
+                ) : agendaItems.length === 0 ? (
+                  <p
+                    className="text-[11px]"
+                    style={{ color: "var(--kr-text-muted)" }}
+                  >
+                    Sem compromissos hoje.
+                  </p>
+                ) : (
+                  agendaItems.map((item) => (
+                    <div key={item.id} className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-1 shrink-0 w-12">
+                        <Clock
+                          className="h-3 w-3"
+                          style={{ color: "var(--kr-text-muted)" }}
+                        />
+                        <span
+                          className="text-[10px] font-medium"
+                          style={{ color: "var(--kr-text-muted)" }}
+                        >
+                          {item.horario ?? "dia"}
+                        </span>
+                      </div>
+                      <div
+                        className="h-1.5 w-1.5 rounded-full shrink-0"
+                        style={{ background: appointmentTypeColor(item.tipo) }}
                       />
                       <span
-                        className="text-[10px] font-medium"
-                        style={{ color: "var(--kr-text-muted)" }}
+                        className="text-[12px] truncate"
+                        style={{ color: "var(--kr-text-secondary)" }}
                       >
-                        {item.time}
+                        {item.titulo}
                       </span>
                     </div>
-                    <div
-                      className="h-1.5 w-1.5 rounded-full shrink-0"
-                      style={{
-                        background:
-                          item.type === "break"
-                            ? "var(--kr-ok, #22c55e)"
-                            : "var(--kr-info, #3b82f6)",
-                      }}
-                    />
-                    <span
-                      className="text-[12px]"
-                      style={{ color: "var(--kr-text-secondary)" }}
-                    >
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
+                  ))
+                )}
+
                 <button
                   type="button"
                   className="flex items-center gap-1 text-[10px] font-medium transition-colors hover:text-[var(--kr-text-primary)] rounded-md px-1 py-0.5"
                   style={{ color: "var(--kr-text-muted)" }}
+                  onClick={() => {
+                    window.location.href = "/agenda";
+                  }}
                 >
                   Ver agenda completa
                   <ChevronRight className="h-3 w-3" />
@@ -244,7 +332,7 @@ export function AuroraDrawer({
 
               <Divider />
 
-              {/* Quote */}
+              {/* Quote — static editorial content */}
               <div
                 className="rounded-xl p-3 space-y-1.5"
                 style={{
@@ -260,13 +348,13 @@ export function AuroraDrawer({
                   className="text-[11px] leading-relaxed italic"
                   style={{ color: "var(--kr-text-secondary)" }}
                 >
-                  "{MOCK_QUOTE.text}"
+                  "{STATIC_QUOTE.text}"
                 </p>
                 <p
                   className="text-[10px] font-medium"
                   style={{ color: "var(--kr-text-muted)" }}
                 >
-                  — {MOCK_QUOTE.author}
+                  — {STATIC_QUOTE.author}
                 </p>
               </div>
             </div>
@@ -276,6 +364,8 @@ export function AuroraDrawer({
     </AnimatePresence>
   );
 }
+
+// ── Sub-components ────────────────────────────────────────────────────────────
 
 function Divider() {
   return (
