@@ -20,12 +20,25 @@ export function useAkashaStatus() {
 
 // ── Collections ───────────────────────────────────────────────────────────────
 
+// Mock fallback — shown when Akasha backend is offline (OMNIS W25 pré-requisito)
+const MOCK_COLLECTIONS = [
+  { name: "filosofia",   count: 1_200, description: "Filosofia e Sabedoria" },
+  { name: "negocios",    count:   850, description: "Negócios e Estratégia" },
+  { name: "viagens",     count:   640, description: "Viagens e Destinos" },
+  { name: "saude",       count:   420, description: "Saúde e Bem-estar" },
+  { name: "tecnologia",  count:   380, description: "Tecnologia e IA" },
+  { name: "projetos",    count:   290, description: "Projetos e Missões" },
+];
+
 export function useAkashaCollections() {
   const query = useQuery<AkashaCollectionsResponse | null, Error>({
     queryKey: ["akasha", "collections"],
     queryFn: async () => {
       const result = await fetchAkashaCollections();
-      if (result.error) throw new Error(result.error);
+      if (result.error) {
+        // Backend offline → return mock data so UI remains functional
+        return { collections: MOCK_COLLECTIONS, total_chunks: undefined, total_docs: undefined };
+      }
       return result.data;
     },
     staleTime: 300_000, // 5 min — collections change rarely
@@ -33,7 +46,7 @@ export function useAkashaCollections() {
   });
 
   return {
-    collections: query.data?.collections ?? [],
+    collections: query.data?.collections ?? MOCK_COLLECTIONS,
     totalChunks: query.data?.total_chunks,
     totalDocs: query.data?.total_docs,
     isLoading: query.isLoading,

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IslandPageHeader } from "./shared/IslandPageHeader";
 import { IslandPageFrame } from "./shared/IslandPageFrame";
 import { GlassPanel } from "@/components/kratos/ui-primitives/GlassPanel";
@@ -7,7 +7,7 @@ import { SectionTitle } from "@/components/kratos/ui-primitives/SectionTitle";
 import { LoadingState } from "@/components/kratos/base/LoadingState";
 import { ErrorState } from "@/components/kratos/base/ErrorState";
 import { useIslandDock } from "./shared/IslandDockContext";
-import { useAkashaStatus, useAkashaSearch } from "@/hooks/useAkasha";
+import { useAkashaStatus, useAkashaSearch, useAkashaCollections } from "@/hooks/useAkasha";
 import { AkashaSearchPanel } from "@/components/kratos/akasha/AkashaSearchPanel";
 import type { AkashaStatusData } from "@/lib/akasha-server-fns";
 import {
@@ -32,8 +32,8 @@ function vaultStatusLabel(status: AkashaStatusData["vault_status"]): string {
 }
 
 function vaultStatusColor(status: AkashaStatusData["vault_status"]): string {
-  if (status === "healthy") return "var(--kr-success)";
-  if (status === "degraded") return "var(--kr-warning)";
+  if (status === "healthy") return "var(--kratos-ok)";
+  if (status === "degraded") return "var(--kratos-warn)";
   return "var(--kratos-critical)";
 }
 
@@ -44,8 +44,8 @@ function sourceBadgeLabel(badge: AkashaStatusData["source_badge"]): string {
 }
 
 function sourceBadgeColor(badge: AkashaStatusData["source_badge"]): string {
-  if (badge === "confirmed") return "var(--kr-success)";
-  if (badge === "partial") return "var(--kr-warning)";
+  if (badge === "confirmed") return "var(--kratos-ok)";
+  if (badge === "partial") return "var(--kratos-warn)";
   return "var(--kratos-critical)";
 }
 
@@ -139,7 +139,7 @@ function VaultStatusPanel({ data }: VaultStatusPanelProps) {
             </p>
             <p
               className="text-[10px] kratos-mono uppercase"
-              style={{ color: data.postgres ? "var(--kr-success)" : "var(--kratos-critical)" }}
+              style={{ color: data.postgres ? "var(--kratos-ok)" : "var(--kratos-critical)" }}
             >
               {data.postgres ? "Respondendo" : "Inacessível"}
             </p>
@@ -217,7 +217,17 @@ function SourcePanel({ data }: { data: AkashaStatusData }) {
 export function AkashaScreen() {
   const { data, isLoading, isError, error } = useAkashaStatus();
   const { setData } = useIslandDock();
-  const searchState = useAkashaSearch(6);
+  const [searchCollection, setSearchCollection] = useState<string | undefined>(undefined);
+  const searchState = useAkashaSearch(6, searchCollection);
+  const { collections } = useAkashaCollections();
+
+  // Re-run search when collection filter changes (if query is active)
+  useEffect(() => {
+    if (searchState.query.trim().length >= 3 && searchState.hasSearched) {
+      searchState.search(searchState.query.trim());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchCollection]);
 
   useEffect(() => {
     if (!data) return;
@@ -255,7 +265,12 @@ export function AkashaScreen() {
 
           {/* Search panel — primary action W13 */}
           <KratosCard header={<SectionTitle icon={Search} title="Busca Semântica no Vault" />}>
-            <AkashaSearchPanel searchState={searchState} />
+            <AkashaSearchPanel
+              searchState={searchState}
+              collections={collections}
+              selectedCollection={searchCollection}
+              onCollectionChange={setSearchCollection}
+            />
           </KratosCard>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

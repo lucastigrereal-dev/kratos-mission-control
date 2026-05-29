@@ -7,9 +7,9 @@
  * Gracefully handles: backend offline, empty results, searching state.
  */
 import { useRef, type KeyboardEvent } from "react";
-import { Search, X, Loader2, Database, Sparkles, AlertTriangle } from "lucide-react";
+import { Search, X, Loader2, Database, Sparkles, AlertTriangle, Filter } from "lucide-react";
 import type { UseAkashaSearchState } from "@/hooks/useAkasha";
-import type { AkashaSearchResult } from "../../../../api-contract/akasha.schema";
+import type { AkashaSearchResult, AkashaCollection } from "../../../../api-contract/akasha.schema";
 
 const accent = "var(--kr-island-akasha)";
 
@@ -18,8 +18,8 @@ const accent = "var(--kr-island-akasha)";
 function ScoreBadge({ score }: { score: number }) {
   const pct = Math.round(score * 100);
   const color =
-    pct >= 85 ? "var(--kr-success)" :
-    pct >= 60 ? "var(--kr-warning)" :
+    pct >= 85 ? "var(--kratos-ok)" :
+    pct >= 60 ? "var(--kratos-warn)" :
     "var(--kratos-text-muted)";
   return (
     <span
@@ -80,16 +80,79 @@ function ResultRow({ result }: { result: AkashaSearchResult }) {
   );
 }
 
+// ── Collection filter chips ───────────────────────────────────────────────────
+
+interface CollectionChipsProps {
+  collections: AkashaCollection[];
+  selected: string | undefined;
+  onChange: (name: string | undefined) => void;
+}
+
+function CollectionChips({ collections, selected, onChange }: CollectionChipsProps) {
+  if (collections.length === 0) return null;
+  const shown = collections.slice(0, 6); // max 6 chips (TDAH limit)
+
+  return (
+    <div className="flex items-center gap-1.5 flex-wrap" role="group" aria-label="Filtrar por coleção">
+      <Filter className="h-3 w-3 shrink-0" style={{ color: "var(--kratos-text-muted)" }} aria-hidden />
+      <button
+        type="button"
+        onClick={() => onChange(undefined)}
+        className="rounded-full px-2 py-0.5 text-[9px] kratos-mono font-medium transition-all"
+        style={{
+          background: selected == null
+            ? "color-mix(in oklab, var(--kr-island-akasha) 18%, transparent)"
+            : "var(--kratos-surface-3)",
+          color: selected == null ? accent : "var(--kratos-text-muted)",
+          border: selected == null
+            ? "1px solid color-mix(in oklab, var(--kr-island-akasha) 35%, transparent)"
+            : "1px solid var(--kratos-border)",
+        }}
+        aria-pressed={selected == null}
+      >
+        todas
+      </button>
+      {shown.map((col) => (
+        <button
+          key={col.name}
+          type="button"
+          onClick={() => onChange(selected === col.name ? undefined : col.name)}
+          className="rounded-full px-2 py-0.5 text-[9px] kratos-mono font-medium transition-all"
+          style={{
+            background: selected === col.name
+              ? "color-mix(in oklab, var(--kr-island-akasha) 18%, transparent)"
+              : "var(--kratos-surface-3)",
+            color: selected === col.name ? accent : "var(--kratos-text-muted)",
+            border: selected === col.name
+              ? "1px solid color-mix(in oklab, var(--kr-island-akasha) 35%, transparent)"
+              : "1px solid var(--kratos-border)",
+          }}
+          aria-pressed={selected === col.name}
+          title={`${col.description ?? col.name} · ${col.count.toLocaleString()} chunks`}
+        >
+          {col.name}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 interface AkashaSearchPanelProps {
   searchState: UseAkashaSearchState;
+  collections?: AkashaCollection[];
+  selectedCollection?: string;
+  onCollectionChange?: (name: string | undefined) => void;
   placeholder?: string;
   maxHeight?: string;
 }
 
 export function AkashaSearchPanel({
   searchState,
+  collections,
+  selectedCollection,
+  onCollectionChange,
   placeholder = "Busca semântica no vault… ex: 'estoicismo', 'receita', 'meta financeira'",
   maxHeight = "460px",
 }: AkashaSearchPanelProps) {
@@ -110,6 +173,15 @@ export function AkashaSearchPanel({
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Collection filter chips — shown when collections are available */}
+      {collections && collections.length > 0 && onCollectionChange && (
+        <CollectionChips
+          collections={collections}
+          selected={selectedCollection}
+          onChange={onCollectionChange}
+        />
+      )}
+
       {/* Search input */}
       <div
         className="flex items-center gap-2 rounded-xl px-3 py-2.5 transition-all duration-150"
