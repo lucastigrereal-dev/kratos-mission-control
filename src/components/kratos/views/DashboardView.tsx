@@ -31,6 +31,8 @@ import { usePausedCheckpoints, useResumeCheckpoint } from "@/hooks/useCheckpoint
 import { useTasksToday } from "@/hooks/useTasks";
 import { useProjectsAPI } from "@/hooks/useProjects";
 import { useSystemPulse } from "@/hooks/useSystemPulse";
+import { useMissions } from "@/hooks/useMissions";
+import { ActiveMissionsPanel } from "@/components/kratos/omnis/ActiveMissionsPanel";
 
 const DEFAULT_OWNER = "lucastigrereal-dev";
 
@@ -99,6 +101,9 @@ export function DashboardView({
 
   // W6: System/Docker/Git/Alerts reais do /live/snapshot
   const { pulse, isLoading: systemLoading, sourceType: systemSourceType } = useSystemPulse();
+
+  // W4: Missions reais do OMNIS
+  const { missions, sourceType: missionsSourceType, isLoading: missionsLoading } = useMissions(5);
 
   const systemIslandData: SystemIslandData | null = pulse
     ? { cpuPercent: pulse.cpuPercent, ramPercent: pulse.ramPercent, health: pulse.health }
@@ -452,10 +457,22 @@ export function DashboardView({
         </div>
       </div>
 
-      {/* Row 4: GitHub tracked repos */}
+      {/* Row 4: OMNIS active missions (W4) — visível apenas quando há missões ou loading */}
+      {(missionsLoading || missions.length > 0) && (
+        <div className="mb-6">
+          <ActiveMissionsPanel
+            missions={missions}
+            sourceType={missionsSourceType}
+            isLoading={missionsLoading}
+          />
+        </div>
+      )}
+
+      {/* Row 5: GitHub tracked repos */}
       {reposLoading && (
         <div>
           <div className="kratos-eyebrow mb-3">GitHub · Repositórios monitorados</div>
+
           <LoadingState lines={3} compact />
         </div>
       )}
