@@ -42,7 +42,7 @@ jobs:
         run: bunx tsc --noEmit
 
       - name: Test (stores + contracts)
-        run: bun test tests/
+        run: bun run test
 
       - name: Install Playwright browsers
         run: bunx playwright install chromium --with-deps
@@ -51,6 +51,7 @@ jobs:
         run: bun run test:e2e
         env:
           PLAYWRIGHT_AUTO_DEV: "1"
+          VITE_USE_MOCKS: "true"
 
     # No deploy step — deploy requires explicit Lucas authorization
     # No secrets used in this workflow — GITHUB_TOKEN / OMNIS_BASE_URL are Worker secrets

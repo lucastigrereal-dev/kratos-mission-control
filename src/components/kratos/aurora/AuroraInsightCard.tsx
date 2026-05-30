@@ -5,8 +5,8 @@ import type { AuroraInsight } from "../../../../api-contract/aurora.schema";
 const MAX_TEXT_CHARS = 220; // trunca texto longo; usuário expande se quiser
 
 const CONFIDENCE_COLORS: Record<string, string> = {
-  high: "var(--kr-success)",
-  medium: "var(--kr-warning)",
+  high: "var(--kratos-ok)",
+  medium: "var(--kratos-warn)",
   low: "var(--kratos-text-muted)",
 };
 

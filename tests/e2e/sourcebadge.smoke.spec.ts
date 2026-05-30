@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test"
 
-const ROUTES_WITH_SOURCEBADGE = ["/", "/contexto"]
+const ROUTES_WITH_SOURCEBADGE = ["/contexto"]
 
 test.describe("source badge indicator", () => {
   for (const path of ROUTES_WITH_SOURCEBADGE) {

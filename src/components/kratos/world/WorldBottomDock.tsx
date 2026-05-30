@@ -24,7 +24,7 @@ export function WorldBottomDock({ className }: WorldBottomDockProps) {
       <div
         className="flex items-center gap-3 rounded-xl px-4 py-3"
         style={{
-          background: "linear-gradient(135deg, #1E3A8A 0%, #172554 100%)",
+          background: "linear-gradient(135deg, var(--kr-castle-roof) 0%, var(--kr-ocean) 100%)",
           border: "1px solid color-mix(in oklab, white 12%, transparent)",
           boxShadow: "0 8px 24px color-mix(in oklab, black 40%, transparent)",
         }}
@@ -34,13 +34,13 @@ export function WorldBottomDock({ className }: WorldBottomDockProps) {
           style={{
             width: 32,
             height: 32,
-            background: "linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)",
+            background: "linear-gradient(135deg, var(--kr-sky) 0%, var(--kr-castle-roof) 100%)",
           }}
         >
-          <Music className="h-4 w-4" style={{ color: "#E0F2FE" }} />
+          <Music className="h-4 w-4" style={{ color: "var(--kr-sky-light)" }} />
         </div>
         <div className="leading-tight">
-          <p className="text-[10px] font-bold" style={{ color: "#93C5FD" }}>
+          <p className="text-[10px] font-bold" style={{ color: "var(--kr-sky-light)" }}>
             Koopa Road
           </p>
           <p className="text-[9px]" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
@@ -53,7 +53,8 @@ export function WorldBottomDock({ className }: WorldBottomDockProps) {
       <div
         className="flex items-center gap-3 rounded-xl px-4 py-3"
         style={{
-          background: "linear-gradient(135deg, #0F766E 0%, #115E59 100%)",
+          background:
+            "linear-gradient(135deg, var(--kr-island-nimbus) 0%, color-mix(in oklab, var(--kr-island-nimbus) 55%, var(--kr-ocean-deep)) 100%)",
           border: "1px solid color-mix(in oklab, white 12%, transparent)",
           boxShadow: "0 8px 24px color-mix(in oklab, black 40%, transparent)",
         }}
@@ -63,13 +64,14 @@ export function WorldBottomDock({ className }: WorldBottomDockProps) {
           style={{
             width: 32,
             height: 32,
-            background: "linear-gradient(135deg, #2DD4BF 0%, #0D9488 100%)",
+            background:
+              "linear-gradient(135deg, var(--kr-accent-cyan-bright) 0%, var(--kr-accent-cyan) 100%)",
           }}
         >
-          <Cloud className="h-4 w-4" style={{ color: "#CCFBF1" }} />
+          <Cloud className="h-4 w-4" style={{ color: "var(--kr-accent-green-light)" }} />
         </div>
         <div className="leading-tight">
-          <p className="text-[10px] font-bold" style={{ color: "#5EEAD4" }}>
+          <p className="text-[10px] font-bold" style={{ color: "var(--kr-accent-blue-cyan)" }}>
             NIMBUS
           </p>
           <p className="text-[9px]" style={{ color: "color-mix(in oklab, white 50%, transparent)" }}>
@@ -92,12 +94,13 @@ export function WorldBottomDock({ className }: WorldBottomDockProps) {
               style={{
                 width: 48,
                 height: 48,
-                background: "linear-gradient(135deg, #4F46E5 0%, #3730A3 100%)",
+                background:
+                  "linear-gradient(135deg, var(--kr-accent-indigo) 0%, color-mix(in oklab, var(--kr-accent-indigo) 65%, black) 100%)",
                 border: "2px solid color-mix(in oklab, white 20%, transparent)",
                 boxShadow: "0 4px 12px color-mix(in oklab, black 30%, transparent)",
               }}
             >
-              <Icon className="h-4 w-4" style={{ color: "#E0E7FF" }} />
+              <Icon className="h-4 w-4" style={{ color: "var(--kr-accent-purple-light)" }} />
             </div>
             <span className="text-[9px] font-medium" style={{ color: "color-mix(in oklab, white 70%, transparent)" }}>
               {s.label}

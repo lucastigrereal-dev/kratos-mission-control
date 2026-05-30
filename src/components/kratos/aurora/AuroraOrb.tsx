@@ -73,15 +73,15 @@ const STATE_CFG: Record<
     float: undefined,
   },
   degraded: {
-    ringTop: "var(--kr-warning)",
-    ringRight: "rgba(251,191,36,0.3)",
+    ringTop: "var(--kratos-warn)",
+    ringRight: "color-mix(in oklab, var(--kratos-warn) 30%, transparent)",
     coreGradient:
-      "radial-gradient(circle at 30% 30%, #FDE68A 0%, var(--kr-warning) 55%, transparent 90%)",
-    glow: "0 0 16px color-mix(in oklab, var(--kr-warning) 35%, transparent)",
+      "radial-gradient(circle at 30% 30%, color-mix(in oklab, var(--kratos-warn) 60%, white) 0%, var(--kratos-warn) 55%, transparent 90%)",
+    glow: "0 0 16px color-mix(in oklab, var(--kratos-warn) 35%, transparent)",
     opacity: 0.9,
     spinDuration: "5s",
     hasPulseRing: true,
-    pulseRingColor: "color-mix(in oklab, var(--kr-warning) 25%, transparent)",
+    pulseRingColor: "color-mix(in oklab, var(--kratos-warn) 25%, transparent)",
     float: undefined,
   },
   offline: {

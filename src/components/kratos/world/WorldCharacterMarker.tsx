@@ -37,7 +37,8 @@ export function WorldCharacterMarker({
           style={{
             width: 48,
             height: 60,
-            background: "linear-gradient(180deg, #EF4444 0%, #B91C1C 100%)",
+            background:
+              "linear-gradient(180deg, var(--kratos-critical) 0%, color-mix(in oklab, var(--kratos-critical) 65%, black) 100%)",
             transform: "rotate(-6deg)",
             zIndex: 1,
             borderRadius: "8px 8px 3px 3px",
@@ -49,8 +50,10 @@ export function WorldCharacterMarker({
           style={{
             width: 24,
             height: 24,
-            background: "linear-gradient(180deg, #FDBA74 0%, #FB923C 100%)",
-            border: "2px solid #EA580C",
+            background:
+              "linear-gradient(180deg, color-mix(in oklab, var(--kr-accent-orange-light) 70%, white) 0%, color-mix(in oklab, var(--kr-accent-orange-lighter) 55%, var(--kr-accent-gold-pale)) 100%)",
+            border:
+              "2px solid color-mix(in oklab, var(--kr-accent-orange-lighter) 45%, var(--kr-earth-dark))",
           }}
         />
         {/* Torso — K shirt */}
@@ -59,17 +62,17 @@ export function WorldCharacterMarker({
           style={{
             width: 32,
             height: 40,
-            background: "linear-gradient(180deg, #3B82F6 0%, #1D4ED8 100%)",
+            background: "linear-gradient(180deg, var(--kr-sky) 0%, var(--kr-castle-roof) 100%)",
             marginTop: -3,
           }}
         >
-          <span className="text-[12px] font-black" style={{ color: "#FFD700" }}>K</span>
+          <span className="text-[12px] font-black" style={{ color: "var(--kr-gold)" }}>K</span>
           {/* Belt */}
           <div
             className="absolute bottom-1 left-0 right-0"
             style={{
               height: 4,
-              background: "#F59E0B",
+              background: "var(--kr-warning)",
             }}
           />
         </div>
@@ -80,7 +83,7 @@ export function WorldCharacterMarker({
             style={{
               width: 11,
               height: 18,
-              background: "#1E3A8A",
+              background: "var(--kr-castle-roof)",
             }}
           />
           <div
@@ -88,7 +91,7 @@ export function WorldCharacterMarker({
             style={{
               width: 11,
               height: 18,
-              background: "#1E3A8A",
+              background: "var(--kr-castle-roof)",
             }}
           />
         </div>
@@ -98,8 +101,8 @@ export function WorldCharacterMarker({
           <div
             className="absolute -top-1 -right-1 z-20 h-2.5 w-2.5 rounded-full border border-white"
             style={{
-              background: "#FACC15",
-              boxShadow: "0 0 6px #FACC15",
+              background: "var(--kr-accent-gold-light)",
+              boxShadow: "0 0 6px var(--kr-accent-gold-light)",
             }}
           />
         )}
@@ -110,7 +113,7 @@ export function WorldCharacterMarker({
         <span
           className="mt-1 whitespace-nowrap rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
           style={{
-            color: "#FFFFFF",
+            color: "var(--kr-text-primary)",
             background: "color-mix(in oklab, black 50%, transparent)",
             textShadow: "0 1px 2px black",
           }}

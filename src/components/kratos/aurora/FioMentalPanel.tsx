@@ -33,9 +33,9 @@ function statusVis(status: MissionSummary["status"]): StatusVis {
     case "running":
       return { icon: Circle, color: "var(--kr-accent-cyan)", pulse: true };
     case "paused":
-      return { icon: PauseCircle, color: "var(--kr-warning)", pulse: false };
+      return { icon: PauseCircle, color: "var(--kratos-warn)", pulse: false };
     case "completed":
-      return { icon: CheckCircle2, color: "var(--kr-success)", pulse: false };
+      return { icon: CheckCircle2, color: "var(--kratos-ok)", pulse: false };
     default:
       return { icon: Circle, color: "var(--kratos-text-muted)", pulse: false };
   }

@@ -1,24 +1,32 @@
 import { test, expect } from "@playwright/test"
 
 const ROUTES = [
-  { path: "/", heading: "KRATOS" },
+  { path: "/", shellLabel: "KRATOS Mission Control" },
   { path: "/agora", heading: "Você está aqui." },
   { path: "/agenda", heading: "Plano do dia, prazos e decisões" },
   { path: "/checkpoints", heading: "Seu save game mental para retomar sem se perder." },
   { path: "/projetos", heading: "Projetos conhecidos" },
   { path: "/contexto", heading: "Onde você está, onde se perdeu e como voltar." },
   { path: "/sistema", heading: "Saúde dos serviços e referência visual" },
-]
+] as const
 
 test.describe("snapshot states", () => {
-  for (const { path, heading } of ROUTES) {
-    test(`${path} settles into a final state`, async ({ page }) => {
+  for (const route of ROUTES) {
+    test(`${route.path} settles into a final state`, async ({ page }) => {
+      const { path } = route
       await page.goto(path)
 
-      // The heading must be visible (any state — loading, error, empty, or live)
-      await expect(
-        page.getByRole("heading", { name: heading }),
-      ).toBeVisible({ timeout: 15_000 })
+      if ("heading" in route) {
+        // The heading must be visible (any state — loading, error, empty, or live)
+        await expect(
+          page.getByRole("heading", { name: route.heading }),
+        ).toBeVisible({ timeout: 15_000 })
+      } else {
+        // Dashboard root renders the world shell (not a heading-based screen)
+        await expect(
+          page.locator(`[aria-label='${route.shellLabel}']`),
+        ).toBeVisible({ timeout: 15_000 })
+      }
 
       // After settling, any loading spinners should resolve
       await page.waitForTimeout(2000)
@@ -32,9 +40,11 @@ test.describe("snapshot states", () => {
 
   test("/ does not crash to white screen", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" })
-    // Shell landmarks — sidebar and topbar should always be present
+    // Shell landmarks should always be present
+    await expect(page.locator("[aria-label='KRATOS Mission Control']")).toBeVisible({
+      timeout: 10_000,
+    })
     await expect(page.locator("nav").first()).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByRole("heading", { name: "KRATOS" })).toBeVisible()
   })
 
   test("/sistema shows at least one status section", async ({ page }) => {

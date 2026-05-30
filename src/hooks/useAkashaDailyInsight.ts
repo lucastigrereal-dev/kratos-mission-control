@@ -11,6 +11,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { searchAkasha } from "@/lib/akasha-server-fns";
+import { isSearchAkashaEnvelope } from "@/lib/akasha-guards";
 
 export interface AkashaDailyInsight {
   content: string;
@@ -114,9 +115,14 @@ export function useAkashaDailyInsight(): UseAkashaDailyInsightResult {
   const query = useQuery<AkashaDailyInsight, Error>({
     queryKey: ["akasha-daily-insight", dateKey],
     queryFn: async (): Promise<AkashaDailyInsight> => {
-      const result = await searchAkasha({
+      const result: unknown = await searchAkasha({
         data: { query: topic, limit: 3 },
       });
+
+      if (!isSearchAkashaEnvelope(result)) {
+        console.warn("[AkashaDailyInsight] envelope inválido — usando fallback estático");
+        return getStaticFallback();
+      }
 
       if (result.error || !result.data || result.data.results.length === 0) {
         return getStaticFallback();

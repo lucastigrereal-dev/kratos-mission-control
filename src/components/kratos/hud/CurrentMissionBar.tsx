@@ -66,7 +66,7 @@ export function CurrentMissionBar({
               className="h-full rounded-full"
               style={{
                 width: `${clamped}%`,
-                background: "var(--kr-success)",
+                background: "var(--kratos-ok)",
               }}
             />
           </div>

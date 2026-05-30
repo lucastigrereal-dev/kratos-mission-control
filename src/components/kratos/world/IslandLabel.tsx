@@ -9,16 +9,46 @@ interface IslandLabelProps {
 }
 
 const themeAccentMap: Record<string, { color: string; bg: string }> = {
-  omnis: { color: "#60A5FA", bg: "#1E3A8A" },
-  agencia: { color: "#F87171", bg: "#7F1D1D" },
-  akasha: { color: "#34D399", bg: "#064E3B" },
-  filosofia: { color: "#A78BFA", bg: "#4C1D95" },
-  financas: { color: "#34D399", bg: "#064E3B" },
-  forja: { color: "#FB923C", bg: "#7C2D12" },
-  observatorio: { color: "#60A5FA", bg: "#1E3A8A" },
-  vila: { color: "#34D399", bg: "#064E3B" },
-  arena: { color: "#F87171", bg: "#7F1D1D" },
-  nimbus: { color: "#5EEAD4", bg: "#0F766E" },
+  omnis: {
+    color: "var(--kr-island-omnis)",
+    bg: "color-mix(in oklab, var(--kr-island-omnis) 40%, black)",
+  },
+  agencia: {
+    color: "var(--kr-island-agencia)",
+    bg: "color-mix(in oklab, var(--kr-island-agencia) 40%, black)",
+  },
+  akasha: {
+    color: "var(--kr-island-akasha)",
+    bg: "color-mix(in oklab, var(--kr-island-akasha) 40%, black)",
+  },
+  filosofia: {
+    color: "var(--kr-island-filosofia)",
+    bg: "color-mix(in oklab, var(--kr-island-filosofia) 40%, black)",
+  },
+  financas: {
+    color: "var(--kr-island-financas)",
+    bg: "color-mix(in oklab, var(--kr-island-financas) 40%, black)",
+  },
+  forja: {
+    color: "var(--kr-island-forja)",
+    bg: "color-mix(in oklab, var(--kr-island-forja) 40%, black)",
+  },
+  observatorio: {
+    color: "var(--kr-island-observatorio)",
+    bg: "color-mix(in oklab, var(--kr-island-observatorio) 40%, black)",
+  },
+  vila: {
+    color: "var(--kr-island-vila)",
+    bg: "color-mix(in oklab, var(--kr-island-vila) 40%, black)",
+  },
+  arena: {
+    color: "var(--kr-island-arena)",
+    bg: "color-mix(in oklab, var(--kr-island-arena) 40%, black)",
+  },
+  nimbus: {
+    color: "var(--kr-island-nimbus)",
+    bg: "color-mix(in oklab, var(--kr-island-nimbus) 40%, black)",
+  },
 };
 
 /**
@@ -50,7 +80,7 @@ export function IslandLabel({
         style={{
           width: 6,
           height: 6,
-          background: accent?.color ?? "#9CA3AF",
+          background: accent?.color ?? "var(--kr-text-muted)",
           opacity: 0.8,
         }}
         aria-hidden="true"
@@ -60,22 +90,22 @@ export function IslandLabel({
       <div
         className="flex flex-col items-center rounded-lg px-3 py-1"
         style={{
-          background: accent?.bg ?? "#1E293B",
-          border: `1.5px solid ${accent?.color ?? "#475569"}`,
-          boxShadow: `0 4px 12px color-mix(in oklab, black 35%, transparent), 0 0 8px color-mix(in oklab, ${accent?.color ?? "#475569"} 20%, transparent)`,
+          background: accent?.bg ?? "var(--kr-surface-mid)",
+          border: `1.5px solid ${accent?.color ?? "var(--kr-surface-high)"}`,
+          boxShadow: `0 4px 12px color-mix(in oklab, black 35%, transparent), 0 0 8px color-mix(in oklab, ${accent?.color ?? "var(--kr-surface-high)"} 20%, transparent)`,
           minWidth: 100,
         }}
       >
         <span
           className="text-[10px] font-black uppercase tracking-wider whitespace-nowrap"
-          style={{ color: "#FFFFFF" }}
+          style={{ color: "var(--kr-text-primary)" }}
         >
           {title}
         </span>
         {subtitle && (
           <span
             className="mt-0.5 text-[9px] whitespace-nowrap"
-            style={{ color: accent?.color ?? "#94A3B8" }}
+            style={{ color: accent?.color ?? "var(--kr-text-secondary)" }}
           >
             {subtitle}
           </span>

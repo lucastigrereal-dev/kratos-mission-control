@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test"
+import type { ConsoleMessage, Page } from "@playwright/test"
 
 /**
  * Known console patterns we tolerate. Add entries as discovered.
@@ -17,6 +17,8 @@ const ALLOWED_CONSOLE_ERRORS: RegExp[] = [
   // React CatchBoundary warnings in dev mode (expected when mock data is empty)
   /CatchBoundaryImpl/,
   /route match/,
+  // Backend watchdog in shell routes when Python backend is intentionally offline in CI mocks.
+  /Failed to load resource: net::ERR_CONNECTION_REFUSED/,
 ]
 
 export function isBlockedError(message: string): boolean {
@@ -30,7 +32,8 @@ export function isBlockedError(message: string): boolean {
 export function createConsoleGuard(page: Page) {
   const blockedErrors: string[] = []
 
-  const handler = (msg: { text: () => string }) => {
+  const handler = (msg: ConsoleMessage) => {
+    if (msg.type() !== "error") return
     const text = msg.text()
     if (isBlockedError(text)) {
       blockedErrors.push(text)

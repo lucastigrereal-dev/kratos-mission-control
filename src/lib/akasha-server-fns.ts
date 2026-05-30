@@ -19,6 +19,44 @@ export type AkashaStatusData = {
 };
 
 type Envelope<T> = { data: T | null; error: string | null };
+type SerializableMetadataValue = string | number | boolean | null;
+type SerializableMetadata = Record<string, SerializableMetadataValue>;
+type SerializableSearchResult = Omit<AkashaSearchResponse["results"][number], "metadata"> & {
+  metadata?: SerializableMetadata;
+};
+type AkashaSearchResponseSerializable = Omit<AkashaSearchResponse, "results"> & {
+  results: SerializableSearchResult[];
+};
+
+function toSerializableMetadata(
+  metadata: Record<string, unknown> | undefined,
+): SerializableMetadata | undefined {
+  if (!metadata) return undefined;
+  const serialized: SerializableMetadata = {};
+  for (const [key, value] of Object.entries(metadata)) {
+    if (
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "boolean" ||
+      value === null
+    ) {
+      serialized[key] = value;
+    }
+  }
+  return Object.keys(serialized).length > 0 ? serialized : undefined;
+}
+
+function toSerializableSearchResponse(
+  payload: AkashaSearchResponse,
+): AkashaSearchResponseSerializable {
+  return {
+    ...payload,
+    results: payload.results.map((result) => ({
+      ...result,
+      metadata: toSerializableMetadata(result.metadata),
+    })),
+  };
+}
 
 export const fetchAkashaStatus = createServerFn({ method: "GET" }).handler(
   async (): Promise<Envelope<AkashaStatusData>> => {
@@ -67,7 +105,7 @@ export const searchAkasha = createServerFn({ method: "POST" })
     limit: z.number().int().min(1).max(20).default(5),
     collection: z.string().optional(),
   }))
-  .handler(async ({ data }): Promise<Envelope<AkashaSearchResponse>> => {
+  .handler(async ({ data }): Promise<Envelope<AkashaSearchResponseSerializable>> => {
     try {
       const res = await fetch(`${KRATOS_PYTHON_URL}/akasha/search`, {
         method: "POST",
@@ -83,9 +121,9 @@ export const searchAkasha = createServerFn({ method: "POST" })
         const wrapped = (raw as { data?: unknown })?.data;
         const parsed2 = AkashaSearchResponseSchema.safeParse(wrapped);
         if (!parsed2.success) throw new Error("Formato de resposta Akasha inesperado");
-        return { data: parsed2.data, error: null };
+        return { data: toSerializableSearchResponse(parsed2.data), error: null };
       }
-      return { data: parsed.data, error: null };
+      return { data: toSerializableSearchResponse(parsed.data), error: null };
     } catch (e) {
       return { data: null, error: e instanceof Error ? e.message : "Falha na busca Akasha" };
     }
