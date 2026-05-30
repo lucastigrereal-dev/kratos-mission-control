@@ -92,9 +92,9 @@ function MockBadge() {
     <span
       className="inline-flex items-center rounded px-1 py-px text-[7px] font-bold uppercase tracking-wider"
       style={{
-        background: "rgba(251,191,36,0.15)",
-        color: "#FBBF24",
-        border: "1px solid rgba(251,191,36,0.3)",
+        background: "color-mix(in oklab, var(--kr-warning) 15%, transparent)",
+        color: "var(--kr-accent-amber-bright)",
+        border: "1px solid color-mix(in oklab, var(--kr-warning) 30%, transparent)",
       }}
     >
       MOCK
@@ -109,8 +109,8 @@ function AuroraCard() {
     <div
       className="rounded-2xl p-4 mb-5"
       style={{
-        background: "rgba(124,58,237,0.10)",
-        border: "1px solid rgba(139,92,246,0.22)",
+        background: "color-mix(in oklab, var(--kr-island-omnis) 10%, transparent)",
+        border: "1px solid color-mix(in oklab, var(--kr-accent-purple-lighter) 22%, transparent)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
       }}
@@ -118,14 +118,14 @@ function AuroraCard() {
       <div className="flex items-start gap-3">
         <div
           className="flex-shrink-0 h-7 w-7 rounded-full flex items-center justify-center mt-0.5"
-          style={{ background: "rgba(139,92,246,0.18)" }}
+          style={{ background: "color-mix(in oklab, var(--kr-accent-purple-lighter) 18%, transparent)" }}
         >
-          <Sparkles className="h-3.5 w-3.5" style={{ color: "#A78BFA" }} aria-hidden />
+          <Sparkles className="h-3.5 w-3.5" style={{ color: "var(--kr-accent-purple-lighter)" }} aria-hidden />
         </div>
         <div>
           <p
             className="text-[10px] font-bold uppercase tracking-[0.15em] mb-1"
-            style={{ color: "#A78BFA" }}
+            style={{ color: "var(--kr-accent-purple-lighter)" }}
           >
             Aurora · Modo Visual Seguro
           </p>
@@ -184,14 +184,14 @@ function ProximaAcaoCard() {
   return (
     <IslandGlassCard
       padding="md"
-      accentLine="linear-gradient(90deg, #7C3AED, #8B5CF6)"
+      accentLine="linear-gradient(90deg, var(--kr-island-omnis), var(--kr-accent-purple))"
       className="pt-5"
     >
       <div className="flex items-center gap-2 mb-2">
-        <Target className="h-4 w-4" style={{ color: "#A78BFA" }} aria-hidden />
+        <Target className="h-4 w-4" style={{ color: "var(--kr-accent-purple-lighter)" }} aria-hidden />
         <h3
           className="text-[10px] font-bold uppercase tracking-[0.15em]"
-          style={{ color: "#A78BFA" }}
+          style={{ color: "var(--kr-accent-purple-lighter)" }}
         >
           Próxima Ação
         </h3>
@@ -229,10 +229,10 @@ function GuardrailCard() {
       className="pt-5"
     >
       <div className="flex items-center gap-2 mb-3">
-        <ShieldAlert className="h-4 w-4" style={{ color: "#F59E0B" }} aria-hidden />
+        <ShieldAlert className="h-4 w-4" style={{ color: "var(--kr-warning)" }} aria-hidden />
         <h3
           className="text-[10px] font-bold uppercase tracking-[0.15em]"
-          style={{ color: "#F59E0B" }}
+          style={{ color: "var(--kr-warning)" }}
         >
           Não Fazer Agora
         </h3>
@@ -240,7 +240,7 @@ function GuardrailCard() {
       <div className="space-y-1.5">
         {GUARDRAIL_ITEMS.map((item) => (
           <div key={item} className="flex items-center gap-2">
-            <XCircle className="h-3 w-3 flex-shrink-0" style={{ color: "#EF4444" }} aria-hidden />
+            <XCircle className="h-3 w-3 flex-shrink-0" style={{ color: "var(--kratos-critical)" }} aria-hidden />
             <span className="text-[11px]" style={{ color: "rgba(255,255,255,0.55)" }}>
               {item}
             </span>

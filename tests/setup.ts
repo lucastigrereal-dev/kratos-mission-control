@@ -17,7 +17,7 @@
 
 const _realFetch = globalThis.fetch;
 
-globalThis.fetch = async (
+const mockFetch = async (
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<Response> => {
@@ -49,6 +49,10 @@ globalThis.fetch = async (
     },
   );
 };
+
+globalThis.fetch = Object.assign(mockFetch, {
+  preconnect: () => undefined,
+}) as typeof fetch;
 
 // Restaurar fetch real ao final (por precaução — bun isola workers mas não custa)
 // afterAll(() => { globalThis.fetch = _realFetch; });

@@ -13,15 +13,15 @@ const statusConfig: Record<
   { dot: string; label: string }
 > = {
   active: {
-    dot: "#22C55E",
+    dot: "var(--kr-success)",
     label: "EM ANDAMENTO",
   },
   paused: {
-    dot: "#F59E0B",
+    dot: "var(--kr-warning)",
     label: "PAUSADA",
   },
   completed: {
-    dot: "#22C55E",
+    dot: "var(--kr-success)",
     label: "CONCLUÍDA",
   },
 };
@@ -47,16 +47,16 @@ export function MissionBanner({
         className,
       )}
       style={{
-        background: "linear-gradient(135deg, #1E3A8A 0%, #172554 100%)",
-        borderColor: "#F59E0B",
+        background: "linear-gradient(135deg, var(--kr-castle-roof) 0%, var(--kr-ocean) 100%)",
+        borderColor: "var(--kr-warning)",
         boxShadow:
-          "0 8px 32px color-mix(in oklab, black 40%, transparent), 0 0 16px color-mix(in oklab, #F59E0B 15%, transparent)",
+          "0 8px 32px color-mix(in oklab, black 40%, transparent), 0 0 16px color-mix(in oklab, var(--kr-warning) 15%, transparent)",
       }}
     >
       {/* Gold header */}
       <span
         className="text-[9px] font-black uppercase tracking-[0.2em]"
-        style={{ color: "#FFD700" }}
+        style={{ color: "var(--kr-gold)" }}
       >
         MISSÃO ATUAL
       </span>
@@ -64,7 +64,7 @@ export function MissionBanner({
       {/* Mission text */}
       <span
         className="mt-0.5 block max-w-[200px] truncate text-center text-sm font-bold leading-tight"
-        style={{ color: "#FFFFFF" }}
+        style={{ color: "var(--kr-text-primary)" }}
       >
         {mission}
       </span>
@@ -72,7 +72,7 @@ export function MissionBanner({
       {/* Subtitle from mockup */}
       <span
         className="mt-0.5 block text-center text-[10px] font-medium"
-        style={{ color: "#93C5FD" }}
+        style={{ color: "var(--kr-sky-light)" }}
       >
         ENQUANTO VIVO O PRESENTE
       </span>

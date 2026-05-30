@@ -24,7 +24,7 @@ export function AgendaTodayCard({ items = defaultItems }: AgendaTodayCardProps) 
       <div className="flex items-center gap-2 mb-3">
         <Clock
           className="h-4 w-4"
-          style={{ color: "var(--kr-warning)" }}
+          style={{ color: "var(--kratos-warn)" }}
           aria-hidden
         />
         <span
