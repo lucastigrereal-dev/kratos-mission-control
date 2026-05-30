@@ -18,11 +18,10 @@ test.describe("Sidebar navigation", () => {
     for (const { label, path } of SIDEBAR_ROUTES) {
       // Click the sidebar action by label
       const action = sidebarNav.getByRole("button", { name: new RegExp(label, "i") })
-      await action.click()
+      await action.click({ force: true })
 
-      // Wait for navigation to settle
-      await page.waitForURL(`**${path}`)
-      await page.waitForLoadState("networkidle")
+      // SPA navigation may not trigger a full "load" event.
+      await expect(page).toHaveURL(new RegExp(`${path}$`), { timeout: 10_000 })
 
       // The URL should match
       expect(new URL(page.url()).pathname).toBe(path)

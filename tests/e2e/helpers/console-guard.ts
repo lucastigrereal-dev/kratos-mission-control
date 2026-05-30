@@ -17,6 +17,8 @@ const ALLOWED_CONSOLE_ERRORS: RegExp[] = [
   // React CatchBoundary warnings in dev mode (expected when mock data is empty)
   /CatchBoundaryImpl/,
   /route match/,
+  // Backend watchdog in shell routes when Python backend is intentionally offline in CI mocks.
+  /Failed to load resource: net::ERR_CONNECTION_REFUSED/,
 ]
 
 export function isBlockedError(message: string): boolean {
