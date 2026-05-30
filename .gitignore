@@ -11,6 +11,7 @@ dist-vercel/
 dist-ssr
 build/
 frontend/dist/
+frontend/tsconfig.tsbuildinfo
 .output
 .vinxi
 .tanstack/**
