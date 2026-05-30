@@ -42,7 +42,7 @@ jobs:
         run: bunx tsc --noEmit
 
       - name: Test (stores + contracts)
-        run: bun test tests/
+        run: bun run test
 
       - name: Install Playwright browsers
         run: bunx playwright install chromium --with-deps
