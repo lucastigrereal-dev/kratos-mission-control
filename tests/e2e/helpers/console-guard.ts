@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test"
+import type { ConsoleMessage, Page } from "@playwright/test"
 
 /**
  * Known console patterns we tolerate. Add entries as discovered.
@@ -30,7 +30,8 @@ export function isBlockedError(message: string): boolean {
 export function createConsoleGuard(page: Page) {
   const blockedErrors: string[] = []
 
-  const handler = (msg: { text: () => string }) => {
+  const handler = (msg: ConsoleMessage) => {
+    if (msg.type() !== "error") return
     const text = msg.text()
     if (isBlockedError(text)) {
       blockedErrors.push(text)

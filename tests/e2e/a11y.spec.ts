@@ -18,8 +18,8 @@ test.describe("Basic accessibility", () => {
     await page.goto("/")
     await page.waitForLoadState("networkidle")
 
-    // The sidebar is a navigation landmark
-    const nav = page.locator("aside[aria-label='Navegação principal']")
+    // Sidebar nav landmark in the world shell
+    const nav = page.locator("nav[aria-label='Navegação principal']").first()
     await expect(nav).toBeVisible()
   })
 
@@ -44,8 +44,8 @@ test.describe("Basic accessibility", () => {
     await page.goto("/")
     await page.waitForLoadState("networkidle")
 
-    // Ensure no focusable element is invisible or off-screen
-    const main = page.locator("main").first()
-    await expect(main).toBeVisible()
+    // World shell root should always be present
+    const shell = page.locator("[aria-label='KRATOS Mission Control']")
+    await expect(shell).toBeVisible()
   })
 })

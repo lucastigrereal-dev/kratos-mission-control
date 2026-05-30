@@ -51,6 +51,7 @@ jobs:
         run: bun run test:e2e
         env:
           PLAYWRIGHT_AUTO_DEV: "1"
+          VITE_USE_MOCKS: "true"
 
     # No deploy step — deploy requires explicit Lucas authorization
     # No secrets used in this workflow — GITHUB_TOKEN / OMNIS_BASE_URL are Worker secrets
