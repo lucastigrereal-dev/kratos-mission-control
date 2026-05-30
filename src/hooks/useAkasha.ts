@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { fetchAkashaStatus, searchAkasha, fetchAkashaCollections, type AkashaStatusData } from "@/lib/akasha-server-fns";
+import { isSearchAkashaEnvelope } from "@/lib/akasha-guards";
 import type { AkashaSearchResponse, AkashaCollectionsResponse } from "../../api-contract/akasha.schema";
 
 // ── Status ────────────────────────────────────────────────────────────────────
@@ -84,7 +85,10 @@ export function useAkashaSearch(limit = 5, collection?: string): UseAkashaSearch
 
   const mutation = useMutation<AkashaSearchResponse | null, Error, string>({
     mutationFn: async (q: string) => {
-      const result = await searchAkasha({ data: { query: q, limit, collection } });
+      const result: unknown = await searchAkasha({ data: { query: q, limit, collection } });
+      if (!isSearchAkashaEnvelope(result)) {
+        throw new Error("Resposta Akasha inválida");
+      }
       if (result.error) throw new Error(result.error);
       return result.data;
     },
