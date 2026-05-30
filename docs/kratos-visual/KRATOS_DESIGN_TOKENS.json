@@ -1,0 +1,204 @@
+{
+  "color": {
+    "sky": {
+      "top": { "value": "#06060d", "type": "color" },
+      "mid": { "value": "#0a1020", "type": "color" },
+      "horizon": { "value": "#0e1830", "type": "color" }
+    },
+    "ocean": {
+      "deep": { "value": "#060d1a", "type": "color" },
+      "mid": { "value": "#0a1530", "type": "color" },
+      "shallow": { "value": "#0e1e40", "type": "color" },
+      "surface": { "value": "rgba(14, 30, 64, 0.35)", "type": "color" },
+      "abyss": { "value": "#040810", "type": "color" }
+    },
+    "azure": {
+      "50": { "value": "#eff6ff", "type": "color" },
+      "100": { "value": "#dbeafe", "type": "color" },
+      "200": { "value": "#bfdbfe", "type": "color" },
+      "300": { "value": "#93c5fd", "type": "color" },
+      "400": { "value": "#60a5fa", "type": "color" },
+      "500": { "value": "#3b82f6", "type": "color" },
+      "600": { "value": "#2563eb", "type": "color" },
+      "700": { "value": "#1d4ed8", "type": "color" },
+      "800": { "value": "#1e40af", "type": "color" },
+      "900": { "value": "#1e3a8a", "type": "color" }
+    },
+    "teal": {
+      "400": { "value": "#34d399", "type": "color" },
+      "500": { "value": "#10b981", "type": "color" }
+    },
+    "cyan": {
+      "400": { "value": "#22d3ee", "type": "color" },
+      "500": { "value": "#06b6d4", "type": "color" }
+    },
+    "green": {
+      "400": { "value": "#4ade80", "type": "color" },
+      "500": { "value": "#22c55e", "type": "color" },
+      "600": { "value": "#16a34a", "type": "color" }
+    },
+    "yellow": {
+      "400": { "value": "#facc15", "type": "color" },
+      "500": { "value": "#eab308", "type": "color" }
+    },
+    "orange": {
+      "400": { "value": "#fb923c", "type": "color" },
+      "500": { "value": "#f97316", "type": "color" }
+    },
+    "red": {
+      "400": { "value": "#f87171", "type": "color" },
+      "500": { "value": "#ef4444", "type": "color" },
+      "600": { "value": "#dc2626", "type": "color" }
+    },
+    "purple": {
+      "400": { "value": "#a78bfa", "type": "color" },
+      "500": { "value": "#8b5cf6", "type": "color" },
+      "600": { "value": "#7c3aed", "type": "color" }
+    },
+    "island": {
+      "omnis": { "value": "#7C3AED", "type": "color" },
+      "akasha": { "value": "#059669", "type": "color" },
+      "arena": { "value": "#DC2626", "type": "color" },
+      "agencia": { "value": "#F97316", "type": "color" },
+      "vila": { "value": "#16A34A", "type": "color" },
+      "observatorio": { "value": "#1E3A8A", "type": "color" },
+      "nimbus": { "value": "#0EA5E9", "type": "color" },
+      "financas": { "value": "#166534", "type": "color" },
+      "forja": { "value": "#475569", "type": "color" },
+      "filosofia": { "value": "#7C3AED", "type": "color" }
+    },
+    "status": {
+      "healthy": { "value": "{color.green.400}", "type": "color" },
+      "degraded": { "value": "{color.yellow.400}", "type": "color" },
+      "critical": { "value": "{color.red.400}", "type": "color" },
+      "offline": { "value": "{color.text.muted}", "type": "color" },
+      "stale": { "value": "{color.orange.400}", "type": "color" }
+    },
+    "text": {
+      "primary": { "value": "#e4e4ef", "type": "color" },
+      "secondary": { "value": "#9d9db5", "type": "color" },
+      "muted": { "value": "#5e5e78", "type": "color" },
+      "disabled": { "value": "#3e3e54", "type": "color" },
+      "inverse": { "value": "#0a0a14", "type": "color" }
+    },
+    "background": {
+      "abyss": { "value": "#06060d", "type": "color" },
+      "deep": { "value": "#0a0a14", "type": "color" },
+      "primary": { "value": "#0e0e1a", "type": "color" },
+      "secondary": { "value": "#121220", "type": "color" },
+      "tertiary": { "value": "#161628", "type": "color" },
+      "card": { "value": "#1a1a2e", "type": "color" },
+      "cardHover": { "value": "#1f1f36", "type": "color" }
+    },
+    "border": {
+      "subtle": { "value": "rgba(255, 255, 255, 0.04)", "type": "color" },
+      "default": { "value": "rgba(255, 255, 255, 0.07)", "type": "color" },
+      "strong": { "value": "rgba(255, 255, 255, 0.12)", "type": "color" },
+      "accent": { "value": "rgba(255, 255, 255, 0.18)", "type": "color" },
+      "glass": { "value": "rgba(255, 255, 255, 0.1)", "type": "color" }
+    },
+    "glass": {
+      "bg": { "value": "rgba(15, 23, 42, 0.55)", "type": "color" },
+      "bgStrong": { "value": "rgba(15, 23, 42, 0.75)", "type": "color" },
+      "bgLight": { "value": "rgba(15, 23, 42, 0.35)", "type": "color" },
+      "bgHover": { "value": "rgba(15, 23, 42, 0.68)", "type": "color" },
+      "border": { "value": "rgba(255, 255, 255, 0.08)", "type": "color" },
+      "borderStrong": { "value": "rgba(255, 255, 255, 0.14)", "type": "color" },
+      "borderAccent": { "value": "rgba(255, 255, 255, 0.18)", "type": "color" }
+    }
+  },
+  "typography": {
+    "font": {
+      "sans": { "value": "\"Inter\", system-ui, -apple-system, \"Segoe UI\", sans-serif", "type": "fontFamily" },
+      "mono": { "value": "\"JetBrains Mono\", \"Fira Code\", \"Cascadia Code\", monospace", "type": "fontFamily" }
+    },
+    "size": {
+      "xs": { "value": "0.6875rem", "type": "fontSize" },
+      "sm": { "value": "0.75rem", "type": "fontSize" },
+      "base": { "value": "0.8125rem", "type": "fontSize" },
+      "md": { "value": "0.875rem", "type": "fontSize" },
+      "lg": { "value": "1rem", "type": "fontSize" },
+      "xl": { "value": "1.125rem", "type": "fontSize" },
+      "2xl": { "value": "1.375rem", "type": "fontSize" },
+      "3xl": { "value": "1.75rem", "type": "fontSize" }
+    },
+    "weight": {
+      "light": { "value": "300", "type": "fontWeight" },
+      "normal": { "value": "400", "type": "fontWeight" },
+      "medium": { "value": "500", "type": "fontWeight" },
+      "semibold": { "value": "600", "type": "fontWeight" },
+      "bold": { "value": "700", "type": "fontWeight" }
+    },
+    "lineHeight": {
+      "tight": { "value": "1.2", "type": "lineHeight" },
+      "normal": { "value": "1.5", "type": "lineHeight" },
+      "relaxed": { "value": "1.7", "type": "lineHeight" }
+    },
+    "letterSpacing": {
+      "tight": { "value": "-0.02em", "type": "letterSpacing" },
+      "normal": { "value": "0", "type": "letterSpacing" },
+      "wide": { "value": "0.04em", "type": "letterSpacing" },
+      "label": { "value": "0.08em", "type": "letterSpacing" }
+    }
+  },
+  "spacing": {
+    "1": { "value": "4px", "type": "spacing" },
+    "2": { "value": "8px", "type": "spacing" },
+    "3": { "value": "12px", "type": "spacing" },
+    "4": { "value": "16px", "type": "spacing" },
+    "5": { "value": "20px", "type": "spacing" },
+    "6": { "value": "24px", "type": "spacing" },
+    "8": { "value": "32px", "type": "spacing" },
+    "10": { "value": "40px", "type": "spacing" },
+    "12": { "value": "48px", "type": "spacing" },
+    "16": { "value": "64px", "type": "spacing" },
+    "hud": { "value": "8px", "type": "spacing" },
+    "section": { "value": "16px", "type": "spacing" },
+    "panel": { "value": "20px", "type": "spacing" },
+    "page": { "value": "32px", "type": "spacing" }
+  },
+  "radius": {
+    "sm": { "value": "6px", "type": "borderRadius" },
+    "md": { "value": "8px", "type": "borderRadius" },
+    "lg": { "value": "12px", "type": "borderRadius" },
+    "xl": { "value": "16px", "type": "borderRadius" },
+    "2xl": { "value": "24px", "type": "borderRadius" },
+    "full": { "value": "9999px", "type": "borderRadius" }
+  },
+  "shadow": {
+    "sm": { "value": "0 1px 3px rgba(0, 0, 0, 0.4)", "type": "boxShadow" },
+    "md": { "value": "0 4px 12px rgba(0, 0, 0, 0.45)", "type": "boxShadow" },
+    "lg": { "value": "0 8px 28px rgba(0, 0, 0, 0.55)", "type": "boxShadow" },
+    "float": { "value": "0 12px 40px rgba(0, 0, 0, 0.6)", "type": "boxShadow" },
+    "glass": { "value": "0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05)", "type": "boxShadow" },
+    "glassHover": { "value": "0 12px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08)", "type": "boxShadow" }
+  },
+  "motion": {
+    "duration": {
+      "instant": { "value": "0.08s", "type": "time" },
+      "fast": { "value": "0.15s", "type": "time" },
+      "normal": { "value": "0.25s", "type": "time" },
+      "medium": { "value": "0.4s", "type": "time" },
+      "slow": { "value": "0.6s", "type": "time" },
+      "float": { "value": "6s", "type": "time" },
+      "cloud": { "value": "40s", "type": "time" }
+    },
+    "easing": {
+      "spring": { "value": "cubic-bezier(0.34, 1.56, 0.64, 1)", "type": "cubicBezier" },
+      "smooth": { "value": "cubic-bezier(0.16, 1, 0.3, 1)", "type": "cubicBezier" },
+      "inOut": { "value": "cubic-bezier(0.65, 0, 0.35, 1)", "type": "cubicBezier" }
+    }
+  },
+  "zIndex": {
+    "world": { "value": "0", "type": "zIndex" },
+    "island": { "value": "10", "type": "zIndex" },
+    "bridge": { "value": "5", "type": "zIndex" },
+    "cloud": { "value": "3", "type": "zIndex" },
+    "hud": { "value": "100", "type": "zIndex" },
+    "sidebar": { "value": "200", "type": "zIndex" },
+    "rail": { "value": "200", "type": "zIndex" },
+    "dock": { "value": "300", "type": "zIndex" },
+    "overlay": { "value": "400", "type": "zIndex" },
+    "aurora": { "value": "350", "type": "zIndex" }
+  }
+}
