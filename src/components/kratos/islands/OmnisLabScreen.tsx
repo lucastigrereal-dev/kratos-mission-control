@@ -20,6 +20,7 @@ import { ModelCostDashboard } from "@/components/kratos/omnis/ModelCostDashboard
 import { MissionEventLogCard } from "@/components/kratos/omnis/MissionEventLogCard";
 import { OmnisExecutionCockpit } from "@/components/kratos/omnis/OmnisExecutionCockpit";
 import { AppFactoryPanel } from "@/components/kratos/omnis/AppFactoryPanel";
+import { MissionCommandPanel } from "@/components/kratos/omnis/MissionCommandPanel";
 import {
   Cpu,
   Workflow,
@@ -651,6 +652,11 @@ export function OmnisLabScreen({
       {/* 3f. Execution Cockpit — W15 Live Monitor */}
       <div className="mb-4">
         <OmnisExecutionCockpit />
+      </div>
+
+      {/* 3f2. Mission Command Panel — W19 Dry-Run Write Bridge */}
+      <div className="mb-4">
+        <MissionCommandPanel />
       </div>
 
       {/* 3g. App Factory — W16 template catalog */}
