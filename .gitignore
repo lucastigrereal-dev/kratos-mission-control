@@ -52,6 +52,9 @@ Thumbs.db
 *.sln
 *.sw?
 
+# Claude Code / Codex agent runtime dirs
+.agents/
+
 # Misc
 _debug_*.py
 *.tmp
